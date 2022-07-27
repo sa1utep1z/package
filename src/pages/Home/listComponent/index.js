@@ -112,8 +112,14 @@ export const Header = ({search, range}) => {
 
 export const homeFooter = () => (
   <>
-    <View style={styles.footer}></View>
+    <View style={styles.homeFooter}></View>
     <Text style={styles.footerText}>- 深圳市众鼎人力集团 -</Text>
+  </>
+);
+
+export const footer = () => (
+  <>
+    <Text style={styles.footer}>- 深圳市众鼎人力集团 -</Text>
   </>
 );
 
@@ -224,7 +230,14 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     fontWeight: '700'
   },
-  footer: {
+  footer:{
+    height: 13, 
+    textAlign: 'center',
+    marginBottom: 10,
+    fontSize: 10,
+    color: '#999999'
+  },
+  homeFooter: {
     height: 13, 
     borderBottomLeftRadius: 30, 
     borderBottomRightRadius: 30, 

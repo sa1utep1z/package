@@ -5,40 +5,33 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 
 import NAVIGATION_KEYS from '../../../navigator/key';
+import EmptyArea from '../../EmptyArea';
 
 const CompanyListDialog = (props, ref) => {
   const navigation = useNavigation();
 
   const [showList, setShowList] = useState(false);
-  const [list, setList] = useState([]);
+  const [list, setList] = useState({
+    companyName: '',
+    list: []
+  });
 
   useImperativeHandle(ref, () => {
     return { setShowList, setList };
   }, []);
 
-  let DATA = [];
-  for(let i = 0; i < 20; i++){
-    DATA.push({
-      title: `企业芜湖${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    })
-  }
-
   const gotoDetail = (item) => {
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
       companyName: item.title
     });
-  }
+  };
 
   return (
     <Dialog
       isVisible={showList}
       onBackdropPress={()=> setShowList(!showList)}>
       <View style={styles.listArea}>
-        <Text style={styles.listTitle}>龙华CN</Text>
+        <Text style={styles.listTitle}>{list.companyName || '无'}</Text>
         <AntDesign
           name='closecircleo'
           size={26}
@@ -51,7 +44,7 @@ const CompanyListDialog = (props, ref) => {
           <Text style={[styles.head, styles.flex_1]}>详情</Text>
         </View>
         <ScrollView style={styles.scrollArea}>
-          {list?.length && list.map((item, index) => {
+          {list.list.length ? list.list.map((item, index) => {
             const isLastIndex = index === list.length - 1;
             return (
               <View style={[styles.listItem, isLastIndex && styles.noBorder]} key={item.orderId}>
@@ -62,7 +55,7 @@ const CompanyListDialog = (props, ref) => {
                 </TouchableOpacity>
               </View>
             )
-          })}
+          }) : <EmptyArea /> }
         </ScrollView>
       </View>
     </Dialog>

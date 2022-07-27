@@ -1,22 +1,50 @@
-import React from "react";
+import React, {useRef} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import moment from "moment";
+import { useToast } from "react-native-toast-notifications";
 
 import InternationalSeaApi from "../../../../request/InternationalSeaApi";
 import EmptyArea from "../../../../components/EmptyArea";
+import { SEAS_SOURCE_TYPE, SUCCESS_CODE } from "../../../../utils/const";
+import ReceiveDialog from "../../../../components/Sea/ReceiveDialog";
+import ToastInfoInModal from "../../../../components/ToastInfoInModal";
+import { footer } from "../../../Home/listComponent";
 
 const InternationalSea = () => {
+  const toast = useToast();
+
+  const dialogRef = useRef(null);
+  const toastInfoRef = useRef();
+
   const { isLoading, data = [], isError, error, refetch } = useQuery(['internationalSea'], InternationalSeaApi.InternationalSea);
+  console.log('data', data)
+  if(isError){
+    toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
+  }
+  if(data?.code !== SUCCESS_CODE){
+    toast.show(`${data?.msg}`, { type: 'danger' });
+  }
 
   const receiveOnPress = async(item) => {
     try{
       const res = await InternationalSeaApi.Receive(item.poolId);
       console.log('res', res);
-      refetch()
+      dialogRef?.current.setShowDialog(false);
+      if(res.code !== SUCCESS_CODE){
+        toastInfoRef.current.toast(`${res.msg}`, 'danger');
+        return;
+      }
+      toastInfoRef.current.toast(`领取成功！`, 'success');
+      refetch();
     }catch(err) {
       console.log('err', err);
     }
+  };
+
+  const receiveMember = (item) => {
+    dialogRef?.current.setShowDialog(true);
+    dialogRef?.current.setDialogContent(item);
   };
 
   const refreshControl = (
@@ -30,12 +58,12 @@ const InternationalSea = () => {
   );
 
   return (
-    <ScrollView style={styles.screen} refreshControl={refreshControl}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle} style={styles.screen} refreshControl={refreshControl}>
       {data?.data?.length ? data.data.map((item, index)=>{
         const day = moment(new Date(item.registerDate)).format('YYYY/MM/DD');
         const isLastIndex = data.data.length - 1 === index;
         return (
-          <View style={[styles.itemArea, isLastIndex && {marginBottom: 20}]} key={index}>
+          <View style={[styles.itemArea]} key={index}>
             <View style={styles.textArea}>
               <View style={styles.titleArea}>
                 <Text style={styles.text}>姓名：</Text>
@@ -76,7 +104,7 @@ const InternationalSea = () => {
               <View style={styles.titleArea}>
                 <Text style={styles.text}>会员来源：</Text>
               </View>
-              <Text style={styles.text}>{item.sourceType}</Text>
+              <Text style={styles.text}>{SEAS_SOURCE_TYPE[item.sourceType]}</Text>
             </View>
             <View style={[styles.textArea, styles.lastItem]}>
               <View style={styles.leftArea}>
@@ -85,21 +113,26 @@ const InternationalSea = () => {
                 </View>
                 <Text style={styles.text}>{day}</Text>
               </View>
-              <TouchableOpacity style={styles.pressBtn} onPress={() => receiveOnPress(item)}>
+              <TouchableOpacity style={styles.pressBtn} onPress={() => receiveMember(item)}>
                 <Text style={styles.btnText}>领取</Text>
               </TouchableOpacity>
             </View>
           </View>
         )
       }) : <EmptyArea />}
+      <ReceiveDialog ref={dialogRef} receive={receiveOnPress}/>
+      <ToastInfoInModal ref={toastInfoRef}/>
+      {footer()}
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
+  contentContainerStyle: {
     paddingTop: 10
+  },
+  screen: {
+    flex: 1
   },
   itemArea: {
     alignItems: 'center', 

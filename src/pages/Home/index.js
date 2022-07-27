@@ -11,6 +11,7 @@ import NAVIGATION_KEYS from "../../navigator/key";
 import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
+import { useMemo } from "react";
 
 const Home = (props) => {
   const {navigation} = props;
@@ -20,17 +21,28 @@ const Home = (props) => {
   const detailRef = useRef(null);
   const listRef = useRef(null);
 
-  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
+  const [searchContent, setSearchContent] = useState({ pageSize: 10, pageNumber: 1 });
+  const [showList, setShowList] = useState([]);
 
   useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    return () => setSearchContent({pageSize: 5, pageNumber: 1});
   }, [])
 
+  useMemo(()=>{
+    setShowList(data);
+  },[searchContent])
+
+  useMemo(()=>{
+    console.log('showList',showList);
+  },[showList])
+
   const { isLoading, data, isError, error, refetch } = useQuery(['homePage', searchContent], HomeApi.HomePage);
+  console.log('data', data);
   if(isError){
-    toast.show(`${error.message}，请联系管理员！`, { type: 'danger' });
+    toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
   }
   if(data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
@@ -49,12 +61,26 @@ const Home = (props) => {
         recruitEnd: searchContent?.recruitEnd
       }
       const res = await HomeApi.CompanyList(params);
-      current?.setList(res.data); 
+      const newList = {
+        companyName: item.companyName,
+        list: res.data
+      };
+      current?.setList(newList); 
       return;
     }
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
       companyName: item.companyName
     });
+  };
+
+  const onEndReached = () => {
+    console.log('触底了啊');
+    if(data && data?.data?.hasNext){
+      const newSearchContent = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      if(data.data.pageNumber !== newSearchContent.pageNumber){
+        setSearchContent(newSearchContent);
+      }
+    }
   };
 
   const search = (values) => {
@@ -87,7 +113,7 @@ const Home = (props) => {
   );
 
   return(
-    <>
+    <View style={{flex: 1}}>
       <FlatList
         data={data?.data?.content}
         keyExtractor={item => item.orderId}
@@ -96,15 +122,14 @@ const Home = (props) => {
         ListHeaderComponent={<Header search={search} range={setRangeDate} />}
         ListFooterComponent={homeFooter}
         ListEmptyComponent={empty}
+        initialNumToRender={8}
         keyboardShouldPersistTaps='handled'
-        onEndReachedThreshold={0.8}
-        onEndReached={()=>{
-          console.log('划到底咯！');
-        }}
+        onEndReachedThreshold={0.01}
+        onEndReached={onEndReached}
       />
       <CompanyDetailDialog ref={detailRef} message={msg}/>
       <CompanyListDialog ref={listRef}/>
-    </>
+    </View>
 )};
 
 const styles = StyleSheet.create({

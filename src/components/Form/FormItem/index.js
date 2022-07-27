@@ -3,12 +3,21 @@ import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Text, Input} from '@rneui/themed';
 import {ErrorMessage} from 'formik';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { WebView } from 'react-native-webview';
 
-const FormItem = ({field, form, ...rest}) => {
+const FormItem = ({
+  field, 
+  form, 
+  labelArea,
+  labelStyle,
+  inputStyle,
+  inputContainerStyle,
+  containerStyle,
+  ...rest
+}) => {
+
   const label = (
-    <View style={styles.labelArea}>
-      <Text style={[styles.label, rest.isRequired && {marginRight: 4}]}>{rest.title}</Text>
+    <View style={[styles.labelArea, labelArea]}>
+      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}</Text>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
     </View>
   );
@@ -24,16 +33,17 @@ const FormItem = ({field, form, ...rest}) => {
     </TouchableOpacity>
   );
 
+  console.log('rest', rest) 
   return (
     <>
       <Input
         value={field.value}
-        label={rest.title && label}
+        label={label}
         placeholder={rest.placeholder || `请输入${rest.title}`}
         onChangeText={form.handleChange(field.name)}
-        containerStyle={[styles.containerStyle, rest?.noBorder && styles.noBorder]}
-        inputStyle={styles.inputStyle}
-        inputContainerStyle={styles.noBorder}
+        containerStyle={[styles.containerStyle, rest?.noBorder && styles.noBorder, containerStyle]}
+        inputStyle={[styles.inputStyle, inputStyle, !rest.editable && {color: '#CCCCCC'}]}
+        inputContainerStyle={[styles.noBorder, inputContainerStyle]}
         rightIcon={rest.OCR && OCRArea}
         {...rest}
       />

@@ -40,7 +40,11 @@ const NAVIGATION_KEYS = {
   TABBAR: 'tabbar',
   WORKBENCH: 'workbench',
   MESSAGE: 'message',
-  MINE: 'mine'
+  MINE: 'mine',
+
+  //我的
+  PERSONAL_CARD: 'personal_card',
+  RESET: 'reset'
 };
 
 export default NAVIGATION_KEYS;

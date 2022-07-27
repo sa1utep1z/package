@@ -160,6 +160,10 @@ const styles = StyleSheet.create({
     flex: 1, 
     paddingHorizontal: 10
   },
+  btnArea: {
+    height: 70, 
+    justifyContent: 'center'
+  },
   buttonStyle: {
     height: 45,
     backgroundColor: '#409EFF',
@@ -180,10 +184,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     marginLeft: 10,
     marginBottom: 10
-  },
-  btnArea: {
-    height: 70, 
-    justifyContent: 'center'
   },
   cardArea: {
     backgroundColor: '#fff', 

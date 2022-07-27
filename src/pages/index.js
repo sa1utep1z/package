@@ -41,7 +41,11 @@ const NAVIGATION_PAGES_LIST = {
   //工具栏
   WORKBENCH: require('./WorkBench'),
   MESSAGE: require('./Message'),
-  MINE: require('./Mine')
+  MINE: require('./Mine'),
+
+  //我的
+  PERSONAL_CARD: require('./Mine/PersonalCard'),
+  RESET: require('./Mine/Reset')
 };
 
 module.exports = FilterNavigationList(NAVIGATION_PAGES_LIST);

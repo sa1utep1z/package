@@ -256,6 +256,25 @@ export default Navigator = () => {
     </>
   );
 
+  const mine = (
+    <>
+      <Stack.Screen
+        name={NAVIGATION_KEYS.PERSONAL_CARD}
+        component={NAVIGATION_PAGES.PERSONAL_CARD}
+        options={{
+          headerTitle: '对外名片',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.RESET}
+        component={NAVIGATION_PAGES.RESET}
+        options={{
+          headerTitle: '重置密码',
+        }}
+      />
+    </>
+  );
+
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator 
@@ -268,6 +287,7 @@ export default Navigator = () => {
         {home}
         {list}
         {workbench}
+        {mine}
         <Stack.Screen
           name={NAVIGATION_KEYS.TABBAR}
           component={Tabbar}

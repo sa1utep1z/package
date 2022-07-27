@@ -120,3 +120,11 @@ export const CHANGING_STAGE_LIST_IN_DIALOG = [
     {title: '放弃入职', value: 'giveUp'}
   ]},
 ];
+
+export const SEAS_SOURCE_TYPE = {
+  'IMPORT': '后台导入',
+  'VISITOR': '游客关注',
+  'INPUT': '招聘员录入',
+  'SUPPLIER': '供应商导入',
+  'SHARE': '分享裂变'
+};
