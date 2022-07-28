@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
     color: '#999999'
   },
   title: {
-    color: '#000', 
+    fontSize: 14,
+    color: '#000',
     fontWeight: 'bold'
   }
 });

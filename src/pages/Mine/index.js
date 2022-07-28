@@ -89,7 +89,7 @@ const Mine = () => {
       </View>
       <NormalDialog 
         ref={dialogRef} 
-        content={pressType === 'reset' ? '将向您绑定的手机发送验证码' : '确定退出当前账号吗？'}
+        contentText={pressType === 'reset' ? '将向您绑定的手机发送验证码' : '确定退出当前账号吗？'}
         confirmButton={pressType === 'reset' && '找回密码'}
         confirm={pressType === 'reset' ? reset : logout}
       />

@@ -91,9 +91,13 @@ const SelectItem = ({
   };
 
   const clearSelected = () => {
-    setSelectedItemList([]);
+    // setSelectedItemList([]);
     const newArr = deepCopy(list);
-    newArr.map(item => item.isChecked = false);
+    if(newArr.find(item => item.isChecked)){
+      newArr.map(item => item.isChecked = false);
+    }else{ 
+      newArr.map(item => item.isChecked = true);
+    }
     setList(newArr);
   };
 
@@ -129,51 +133,58 @@ const SelectItem = ({
 
       <Dialog
         isVisible={showSelectItems}
+        overlayStyle={styles.overlayStyle}
         onBackdropPress={()=> setShowSelectItems(!showSelectItems)}>
           <View style={styles.dialogTitleArea}>
             <Text style={styles.dialogTitle}>请选择{title}</Text>
-            {!!(selectedItemList.length > 1) && <Text style={styles.clearSelected} onPress={clearSelected}>取消全选</Text>}
+            <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
+              <Text style={styles.selectAll_text}>全选</Text>
+            </TouchableOpacity>
           </View>
-          {canSearch && <SearchInput
-            borderRadius = {8}
-            placeholder='请输入企业名称'
-            smallSize
-            // autoFocus
-            withoutButton
-            keyboardType='default'
-            onChange={onChanging}
-            fontStyle={{fontSize: 14}}
-            searchInputStyle={styles.searchInputStyle}
-          />}
-          {list.length ? 
-            <ScrollView style={[
-              styles.scrollArea, 
-              canSearch && styles.canSearchWithScrollView,
-              bottomButton && styles.bottomButtonWithScrollView
-            ]}>
-              {
-                list.map((item, index) => {
-                  const isLastIndex = index === list.length - 1;
-                  const checkedItem = item.isChecked;
-                  return (
-                    <TouchableOpacity 
-                      key={item.id} 
-                      style={[styles.scrollItem, isLastIndex && styles.noBorder]} 
-                      onPress={() => pressItem(item)}>
-                      <Text>{item.title}</Text>
-                      <CheckBox
-                        center
-                        checked={checkedItem}
-                        onPress={() => pressItem(item)}
-                        containerStyle={styles.checkBox_containerStyle}
-                        checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
-                        uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
-                      />
-                    </TouchableOpacity>
-                )})
-              }
-            </ScrollView> : <EmptyArea withSearch />
-          }
+          <View style={{paddingHorizontal: 10}}>
+            {canSearch && <SearchInput
+              borderRadius = {8}
+              placeholder='请输入企业名称'
+              smallSize
+              // autoFocus
+              withoutButton
+              keyboardType='default'
+              onChange={onChanging}
+              fontStyle={{fontSize: 14}}
+              searchInputStyle={styles.searchInputStyle}
+            />}
+            {list.length ? 
+              <View style={{borderBottomWidth: 1, borderColor: '#E3E3E3', marginBottom: 10}}>
+                <ScrollView style={[
+                  styles.scrollArea, 
+                  canSearch && styles.canSearchWithScrollView,
+                  bottomButton && styles.bottomButtonWithScrollView
+                ]}>
+                  {
+                    list.map((item, index) => {
+                      const isLastIndex = index === list.length - 1;
+                      const checkedItem = item.isChecked;
+                      return (
+                        <TouchableOpacity 
+                          key={item.id} 
+                          style={[styles.scrollItem, isLastIndex && styles.noBorder]} 
+                          onPress={() => pressItem(item)}>
+                          <Text>{item.title}</Text>
+                          <CheckBox
+                            center
+                            checked={checkedItem}
+                            onPress={() => pressItem(item)}
+                            containerStyle={styles.checkBox_containerStyle}
+                            checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
+                            uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
+                          />
+                        </TouchableOpacity>
+                    )})
+                  }
+                </ScrollView>
+              </View> : <EmptyArea withSearch />
+            }
+          </View>
           {bottomButton && <View style={styles.bottomButtonArea}>
             <TouchableOpacity style={styles.bottomLeft} onPress={() => setShowSelectItems(!showSelectItems)}>
               <Text style={styles.leftText}>取消</Text>
@@ -189,10 +200,13 @@ const SelectItem = ({
 
 const styles = StyleSheet.create({
   selectItemArea: {
+    flex: 1,
     flexDirection: 'row', 
     alignItems: 'center'
   },
   showLittleTitleText: {
+    fontSize: 14,
+    color: '#000',
     fontWeight: 'bold'
   },
   noLittleTitle: {
@@ -224,16 +238,24 @@ const styles = StyleSheet.create({
   noItem: {
     color: '#999999'
   },
+  overlayStyle: {
+    padding: 0, 
+    paddingTop: 20, 
+    borderRadius: 6
+  },
   dialogTitleArea: {
-    marginBottom: 15
+    marginBottom: 10
   },
   dialogTitle: {
     textAlign: 'center', 
-    fontSize: 18
+    fontSize: 18,
+    fontWeight: 'bold'
   },
-  clearSelected: {
+  selectAll: {
     position: 'absolute', 
-    right: 0, 
+    right: 20
+  },
+  selectAll_text: {
     color: '#409EFF'
   },
   searchInputStyle: {
@@ -289,14 +311,14 @@ const styles = StyleSheet.create({
   },
   bottomButtonArea: {
     flexDirection: 'row', 
-    height: 35
+    height: 45
   },
   bottomLeft: {
     flex: 1, 
-    borderWidth: 1, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    borderBottomLeftRadius: 8, 
+    borderBottomLeftRadius: 6, 
+    borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
   leftText: {
@@ -308,7 +330,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center', 
     backgroundColor: '#409EFF', 
-    borderBottomRightRadius: 8
+    borderBottomRightRadius: 6,
+    borderTopWidth: 1,
+    borderColor: '#E3E3E3'
   },
   rightText: {
     fontSize: 16, 

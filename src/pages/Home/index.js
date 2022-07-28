@@ -12,6 +12,7 @@ import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
 import { useMemo } from "react";
+import { deepCopy } from "../../utils";
 
 const Home = (props) => {
   const {navigation} = props;
@@ -21,32 +22,46 @@ const Home = (props) => {
   const detailRef = useRef(null);
   const listRef = useRef(null);
 
-  const [searchContent, setSearchContent] = useState({ pageSize: 10, pageNumber: 1 });
-  const [showList, setShowList] = useState([]);
+  const [searchContent, setSearchContent] = useState({ pageSize: 10, pageNumber: 0 });
+  const [showList, setShowList] = useState({
+    content: []
+  });
 
   useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    return () => setSearchContent({pageSize: 5, pageNumber: 1});
+    return () => setSearchContent({pageSize: 10, pageNumber: 0});
   }, [])
 
-  useMemo(()=>{
-    setShowList(data);
-  },[searchContent])
-
-  useMemo(()=>{
-    console.log('showList',showList);
-  },[showList])
-
-  const { isLoading, data, isError, error, refetch } = useQuery(['homePage', searchContent], HomeApi.HomePage);
-  console.log('data', data);
+  const { isLoading, data, isError, error, refetch, status } = useQuery(['homePage', searchContent], HomeApi.HomePage);
   if(isError){
-    toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
+    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
   }
-  if(data?.code !== SUCCESS_CODE){
+  if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
+
+  useMemo(()=>{
+    if(data){
+      //如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
+      if(showList.hasNext && data.data.pageNumber !== showList.pageNumber){
+        const concatList = showList.content.concat(data.data.content);
+        showList.content = concatList;
+        showList.pageNumber = data.data.pageNumber;
+        showList.hasNext = data.data.hasNext;
+        setShowList(showList);  
+        return;
+      }
+      setShowList(data.data);
+    }
+  },[data])
+
+  // useMemo(()=>{
+  //   console.log('searchContent',searchContent);
+  //   console.log('data', data);
+  // },[searchContent])
+
 
   const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
 
@@ -74,21 +89,22 @@ const Home = (props) => {
   };
 
   const onEndReached = () => {
-    console.log('触底了啊');
-    if(data && data?.data?.hasNext){
-      const newSearchContent = {...searchContent, pageNumber: searchContent.pageNumber += 1};
-      if(data.data.pageNumber !== newSearchContent.pageNumber){
-        setSearchContent(newSearchContent);
-      }
+    if(showList.hasNext){
+      console.log('这里增加页数了')
+      setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
     }
   };
 
   const search = (values) => {
-    setSearchContent({...searchContent, companyName: values});
+    setSearchContent({...searchContent, companyName: values, pageNumber: 0});
   };
 
   const setRangeDate = (rangeDate) => {
-    setSearchContent({...searchContent, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate});
+    setSearchContent({...searchContent, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate, pageNumber: 0});
+  };
+
+  const refresh = () => {
+    setSearchContent({...searchContent, pageNumber: 0});
   };
 
   const renderItem = ({item, index}) => {
@@ -108,14 +124,14 @@ const Home = (props) => {
   const refreshControl = (
     <RefreshControl
       refreshing={isLoading}
-      onRefresh={refetch}
+      onRefresh={refresh}
     />
   );
 
   return(
     <View style={{flex: 1}}>
       <FlatList
-        data={data?.data?.content}
+        data={showList?.content}
         keyExtractor={item => item.orderId}
         renderItem={renderItem}
         refreshControl={refreshControl}

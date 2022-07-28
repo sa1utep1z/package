@@ -7,7 +7,8 @@ import { listFooter, empty } from "../../../pages/Home/listComponent";
 const BottomList = ({
     list,
     tabList,
-    renderItem
+    renderItem,
+    listHead
   }) => {
   const [index, setIndex] = useState(0);
   const [showList, setShowList] = useState([]);
@@ -41,6 +42,7 @@ const BottomList = ({
       {/* <TabView value={index} onChange={setIndex} animationType="spring"> */}
         {/* {tabList.map((tab, index)=> (
           <TabView.Item key={index} style={styles.tabView}> */}
+            {listHead}
             <FlatList 
               data={showList}
               style={{backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E3E3E3'}}

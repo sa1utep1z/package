@@ -69,6 +69,12 @@ export const TAB_OF_LIST = {
     {title: '状态',type: 'status'},
     {title: '打卡记录',type: 'record'},
     {title: '来源',type: 'from'}
+  ],
+  MY_MEMBERS: [
+    {title: '全部', type: 'all'},
+    {title: '待处理', type: 'waitToHandle'},
+    {title: '无意向', type: 'noIntention'},
+    {title: '已报名', type: 'signedUp'}
   ]
 };
 

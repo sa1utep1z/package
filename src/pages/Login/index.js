@@ -61,40 +61,47 @@ const Login = (props) => {
       password: md5(values.password)
     };
 
-    const res = await httpRequest.post('admin/login/app', params);
-    console.log('login->res',res);
-    if(res.code !== SUCCESS_CODE){
-      toast.show(`${res.msg}`, { type: 'danger' });
-      return;
-    }
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{
-            name: NAVIGATION_KEYS.TABBAR,
-        }]
-      })
-    );
+    try{
+      const res = await httpRequest.post('admin/login/app', params);
+      console.log('login->res',res);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`${res.msg}`, { type: 'danger' });
+        return;
+      }
 
-    //保存token
-    storage.save({
-      key: 'token',
-      data: res.data,
-      expires: null
-    });
-
-    //保存账号密码
-    if(remember){
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{
+              name: NAVIGATION_KEYS.TABBAR,
+          }]
+        })
+      );
+  
+      //保存token
       storage.save({
-        key: 'userMsg',
-        data: {
-          account: values.user,
-          password: values.password
-        },
-        expires: 30 * 1000 * 3600 * 24 //30天保存
-      })
-    }else{
-      storage.remove({ key: 'userMsg' });
+        key: 'token',
+        data: res.data,
+        expires: null
+      });
+  
+      //保存账号密码
+      if(remember){
+        storage.save({
+          key: 'userMsg',
+          data: {
+            account: values.user,
+            password: values.password
+          },
+          expires: 30 * 1000 * 3600 * 24 //30天保存
+        })
+      }else{
+        storage.remove({ key: 'userMsg' });
+      }
+    }catch(err) {
+      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      return;
     }
   };
 
@@ -263,8 +270,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 0,
-    borderWidth: 1
+    bottom: 0
   },
   checkBox_containerStyle: {
     height: 20,

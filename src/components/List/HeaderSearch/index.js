@@ -12,6 +12,7 @@ import DateRangePicker from './DateRangePicker';
 const HeaderSearch = ({
   batchOperate,
   noStoreAndStaff = false,
+  canFilterStatus = false,
     ...rest
   }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -68,12 +69,14 @@ const HeaderSearch = ({
     if(noStoreAndStaff){
       return {
         enterprise: [],
+        status: [],
         search: '',
         dateRange: {}
       };
     }
     return {
       enterprise: [],
+      status: [],
       store: [],
       staff: [],
       search: '',
@@ -99,11 +102,11 @@ const HeaderSearch = ({
           if(!showSearch) return <></>
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
-              <View style={{marginBottom: 8}}>
+              <View style={{flexDirection: 'row', marginBottom: 8}}>
                 <Field
                   title="企业"
                   name="enterprise"
-                  placeholder="请点击选择企业或进入搜索内容"
+                  placeholder={canFilterStatus ? '请选择企业' : '请点击选择企业或手动输入筛选'}
                   showLittleTitle
                   canSearch
                   bottomButton
@@ -115,6 +118,22 @@ const HeaderSearch = ({
                   selectList={DATA_enterprise}
                   component={SelectItem}
                 />
+                {canFilterStatus && <Field
+                  title="状态"
+                  name="status"
+                  placeholder="请选择状态"
+                  showLittleTitle
+                  canSearch
+                  bottomButton
+                  noBorder
+                  formalLabel={false}
+                  lastButton={batch}
+                  selectContainerStyle={{marginLeft: 10}}
+                  selectAreaStyle={styles.selectAreaStyle}
+                  selectAreaTextStyle={styles.fontSize}
+                  selectList={DATA_enterprise}
+                  component={SelectItem}
+                />}
               </View>
               {!noStoreAndStaff && <View style={{flexDirection: 'row', marginBottom: 8}}>
                 <Field
@@ -126,7 +145,6 @@ const HeaderSearch = ({
                   noBorder
                   formalLabel={false}
                   selectList={DATA_store}
-                  selectContainerStyle={styles.selectContainerStyle}
                   selectAreaStyle={styles.selectAreaStyle}
                   selectAreaTextStyle={styles.fontSize}
                   component={SelectItem}
@@ -141,7 +159,6 @@ const HeaderSearch = ({
                   noBorder
                   formalLabel={false}
                   selectList={DATA_staff}
-                  selectContainerStyle={styles.selectContainerStyle}
                   selectAreaStyle={styles.selectAreaStyle}
                   selectAreaTextStyle={styles.fontSize}
                   component={SelectItem}
