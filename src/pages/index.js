@@ -37,6 +37,9 @@ const NAVIGATION_PAGES_LIST = {
   MY_COMMISSION: require('./WorkBench/OtherFunction/MyCommission'),
   MY_MEMBERS: require('./WorkBench/OtherFunction/MyMembers'),
   PAY_MANAGEMENT: require('./WorkBench/OtherFunction/PayManagement'),
+
+  //我的会员
+  EDIT_RETURN_VISIT: require('./WorkBench/OtherFunction/MyMembers/EditReturnView'),
   
   //工具栏
   WORKBENCH: require('./WorkBench'),

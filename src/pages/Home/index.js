@@ -90,7 +90,6 @@ const Home = (props) => {
 
   const onEndReached = () => {
     if(showList.hasNext){
-      console.log('这里增加页数了')
       setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
     }
   };

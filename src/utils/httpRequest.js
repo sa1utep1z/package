@@ -17,10 +17,14 @@ const handleUnauthorized = () => {
 
 instance.interceptors.request.use(async(config) => {
   config.headers['X-Device'] = 'app';
-  const token = await storage.load({ key: 'token' });
-  if(token){
-    config.headers['X-User-Token'] = token;
-    return config;
+  try{
+    const token = await storage.load({ key: 'token' });
+    if(token){
+      config.headers['X-User-Token'] = token;
+      return config;
+    }
+  }catch(err){
+    console.log('token-err', err);
   }
   return config;
 }, (error) =>{

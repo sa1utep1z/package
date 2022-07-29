@@ -60,7 +60,7 @@ const Reset = () => {
                       name="newPassword"
                       placeholder="设置新密码（6~20位字符）"
                       title="新密码"
-                      labelArea={styles.labelArea}
+                      labelAreaStyle={styles.labelAreaStyle}
                       maxLength={20}
                       component={FormItem}
                     />
@@ -69,7 +69,7 @@ const Reset = () => {
                       placeholder="请输入验证码"
                       title="验证码"
                       maxLength={6}
-                      labelArea={styles.labelArea}
+                      labelAreaStyle={styles.labelAreaStyle}
                       containerStyle={{borderBottomWidth: 0}}
                       component={FormItem}
                       rightIcon={
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   disabledBorderBottomColor: {
     borderBottomColor: '#E3E3E3'
   },
-  labelArea: {
+  labelAreaStyle: {
     justifyContent: 'center',
     marginRight: 0
   },

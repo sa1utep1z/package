@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from "react";
-import { View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -17,6 +17,7 @@ import NAVIGATION_KEYS from "../../../../navigator/key";
 import { MEMBER_INFO, TAB_OF_LIST } from "../../../../utils/const";
 import MyMembersApi from "../../../../request/MyMembersApi";
 import NormalDialog from "../../../../components/NormalDialog";
+import { checkedType } from "../../../../utils";
 
 const MyMembers = () => {
   const navigation = useNavigation();
@@ -32,6 +33,11 @@ const MyMembers = () => {
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
 
   const [memberInfoList, setMemberInfoList] = useState(MEMBER_INFO);
+  
+  const [dialogContent, setDialogContent] = useState({
+    dialogTitle: '哈哈',
+    content: <></>
+  });
 
   useEffect(()=>{
     navigation.setOptions({
@@ -43,7 +49,6 @@ const MyMembers = () => {
   const { isLoading, data, isError, error, refetch, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
   console.log('data', data);
   console.log('isError', isError, 'error', error);
-
 
   const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
 
@@ -62,7 +67,25 @@ const MyMembers = () => {
   const showNewestDialog = () => NewestStateDialogRef.current.setShowDialog(true);
   const callMemberPhone = () => callPhoneRef.current.setShowCallPhone(true);
   const gotoRecordOfWorking = () => navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING);
-  const showDialog = () => dialogRef.current.setShowDialog(true);
+  const showDialog = (type) => {
+    dialogRef.current.setShowDialog(true);
+    switch(type){
+      case 'ruzhi':
+        setDialogContent({
+          dialogTitle: '入职记录',
+          content: ruzhiDialogContent
+        });
+        return;
+      case 'huifang':
+        setDialogContent({
+          dialogTitle: '回访记录',
+          content: huifangDialogContent,
+          rightTitle: '编辑',
+          rightTitleOnPress: rightTitleOnPress
+        });
+        return;
+    }
+  };
 
   let list = [];
   for(let i = 0; i < 30; i++){
@@ -76,12 +99,19 @@ const MyMembers = () => {
     })
   };
 
+  const rightTitleOnPress = () => {
+    navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
+      huifangList
+    });
+    dialogRef.current.setShowDialog(false);
+  };
+
   const renderItem = ({item}) => {
     const renderList = [
       { fieldName: item.name, pressFun: callMemberPhone},
       { fieldName: item.factory, pressFun: showFactoryDetail },
-      { fieldName: item.press, pressFun: showDialog},
-      { fieldName: item.press, pressFun: showDialog},
+      { fieldName: item.press, pressFun: () => showDialog('ruzhi')},
+      { fieldName: item.press, pressFun: () => showDialog('huifang')},
       { fieldName: item.state},
       { fieldName: item.press ,pressFun: showMemberDetail}
     ];
@@ -98,16 +128,61 @@ const MyMembers = () => {
     )
   };
 
-  const ruzhiList = [
+  const huifangList = [
+    {title: '会员标签', value: [
+      {title: '标签一', type: 'tag_1'},
+      {title: '标签二', type: 'tag_2'},
+      {title: '标签三', type: 'tag_3'},
+      {title: '标签四', type: 'tag_4'},
+      {title: '标签五', type: 'tag_4'},
+      {title: '标签六', type: 'tag_4'},
+      {title: '标签七', type: 'tag_4'},
+      {title: '标签八', type: 'tag_4'},
+      {title: '标签九', type: 'tag_4'},
+      {title: '标签十', type: 'tag_4'}
+    ]},
+    {title: '会员姓名', value: '什么鬼'},
+    {title: '会员手机号', value: '18889999999'},
+    {title: '会员意愿', value: `${true ? '有意愿' : '无意愿'}`},
+    {title: '意向企业', value: '富士康ACKN'},
+    {title: '本次回访记录', value: '无'},
+    {title: '下次回访记录', value: '无'},
+    {title: '历史回访记录', value: '无'}
+  ];
 
+  const huifangDialogContent = (
+    <ScrollView style={{maxHeight: 300}}>
+      {huifangList.map((item, index) => {
+        return (
+          <View style={{flexDirection: 'row', minHeight: 30, alignItems: 'center', marginHorizontal: 20}} key={index}>
+            <Text style={{color: '#000', width: 100, textAlign: 'right'}}>{item.title}：</Text>
+            <View style={[{paddingLeft: 5, flex: 1, justifyContent: 'center', borderBottomWidth: 1, borderColor: '#EFEFEF'}, index === 0 && {
+              borderBottomWidth: 0
+            }]}>
+              {checkedType(item.value) === 'Array' ? 
+                <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                  {item.value.map((itemValue, itemIndex) => <Text key={itemIndex} style={[
+                    {paddingHorizontal: 8, borderWidth: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 12, borderRadius: 4, marginRight: 4, marginBottom: 2, borderColor: '#E6A23C', color: '#E6A23C', backgroundColor: '#fcf2e4'},
+                    itemIndex % 2 === 0 && {borderColor: '#409EFF', color: '#409EFF', backgroundColor: '#F4F9FF'},
+                    itemIndex % 3 === 0 && {borderColor: '#00D789', color: '#00D789', backgroundColor: '#F3FFFB'}]}>{itemValue.title}</Text>)}
+                </View>:
+              <Text>{item.value}</Text>}
+            </View>
+          </View>
+        )
+      })}
+    </ScrollView>
+  );
+
+  const ruzhiList = [
     {qiye: '富士康-ACKN', rDate: '2022/05/02', lDate: '2022/09/23', days: '100'},
     {qiye: '白石', rDate: '2022/05/02', lDate: '2022/09/23', days: '60'},
     {qiye: '爱普生-BBC', rDate: '2022/05/02', lDate: '2022/09/23', days: '156'},
     {qiye: '哇哈哈', rDate: '2022/05/02', lDate: '2022/09/23', days: '356'}
-  ]
+  ];
 
-  const content = (
-    <View style={{minHeight: 30, margin: 10, borderTopWidth: 1, borderLeftWidth: 1, borderBottomWidth: 0, borderColor: '#409EFF'}}>
+  const ruzhiDialogContent = (
+    <View style={{minHeight: 30, marginHorizontal: 10, borderTopWidth: 1, borderLeftWidth: 1, borderBottomWidth: 0, borderColor: '#409EFF'}}>
       <View style={{flexDirection: 'row', backgroundColor: '#ecf5ff'}}>
         <View style={{flex: 1, height: 30, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderBottomWidth: 1, borderColor: '#409EFF'}}>
           <Text style={{fontSize: 12, color: '#000', fontWeight: 'bold'}}>入职企业</Text>
@@ -160,8 +235,7 @@ const MyMembers = () => {
       />
       <NormalDialog 
         ref={dialogRef}
-        title="入职记录"
-        content={content}
+        dialogContent={dialogContent}
       />
       <CompanyDetailDialog 
         ref={detailRef}

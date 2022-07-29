@@ -3,12 +3,18 @@ import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Text, CheckBox} from '@rneui/themed';
 import { WebView } from 'react-native-webview';
 
-const TwoRadio = ({field, form, ...rest}) => {
+const TwoRadio = ({
+  field, 
+  form, 
+  title,
+  labelAreaStyle,
+  ...rest
+}) => {
   const [radio, setRadio] = useState(false);
 
   const pressTrue = () => {
     radio && setRadio(!radio);
-    form.setFieldValue('tip', radio);
+    form.setFieldValue(field.name, radio);
   };
 
   const pressFaild = () => {
@@ -17,29 +23,34 @@ const TwoRadio = ({field, form, ...rest}) => {
   }
 
   return (
-    <View style={styles.radioArea}>
-      <TouchableOpacity style={styles.radio} onPress={pressTrue}>
-        <CheckBox
-          center
-          checked={!radio}
-          onPress={pressTrue}
-          containerStyle={styles.checkBox_containerStyle}
-          checkedIcon={<Text style={[styles.checkBox_icon, radio && styles.falseColor]}>{'\ue669'}</Text>}
-          uncheckedIcon={<Text style={[styles.checkBox_icon, radio && styles.falseColor]}>{'\ue68d'}</Text>}
-        />
-        <Text>是</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.radio} onPress={pressFaild}>
-        <CheckBox
-          center
-          checked={radio}
-          onPress={pressFaild}
-          containerStyle={styles.checkBox_containerStyle}
-          checkedIcon={<Text style={[styles.checkBox_icon, !radio && styles.falseColor]}>{'\ue669'}</Text>}
-          uncheckedIcon={<Text style={[styles.checkBox_icon, !radio && styles.falseColor]}>{'\ue68d'}</Text>}
-        />
-        <Text>否</Text>
-      </TouchableOpacity>
+    <View style={{flexDirection: 'row', paddingHorizontal: 10, borderColor: '#E3E3E3', borderBottomWidth: 1}}>
+      <View style={[{width: 80, justifyContent: 'center', alignItems: 'center', marginRight: 5}, labelAreaStyle]}>
+        <Text>{title}</Text>
+      </View>
+      <View style={styles.radioArea}>
+        <TouchableOpacity style={styles.radio} onPress={pressTrue}>
+          <CheckBox
+            center
+            checked={!radio}
+            onPress={pressTrue}
+            containerStyle={styles.checkBox_containerStyle}
+            checkedIcon={<Text style={[styles.checkBox_icon, radio && styles.falseColor]}>{'\ue669'}</Text>}
+            uncheckedIcon={<Text style={[styles.checkBox_icon, radio && styles.falseColor]}>{'\ue68d'}</Text>}
+          />
+          <Text>是</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.radio} onPress={pressFaild}>
+          <CheckBox
+            center
+            checked={radio}
+            onPress={pressFaild}
+            containerStyle={styles.checkBox_containerStyle}
+            checkedIcon={<Text style={[styles.checkBox_icon, !radio && styles.falseColor]}>{'\ue669'}</Text>}
+            uncheckedIcon={<Text style={[styles.checkBox_icon, !radio && styles.falseColor]}>{'\ue68d'}</Text>}
+          />
+          <Text>否</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
@@ -49,14 +60,13 @@ const styles = StyleSheet.create({
     height: 48, 
     flexDirection: 'row', 
     backgroundColor: '#fff', 
-    borderRadius: 8
+    flex: 1
   },
   radio: {
     width: 60, 
     height: '100%', 
     flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center'
+    alignItems: 'center'
   },
   checkBox_containerStyle: {
     height: 20,
@@ -64,7 +74,7 @@ const styles = StyleSheet.create({
     padding: 0,
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0)',
-    marginRight: 5
+    marginRight: 5,
   },
   checkBox_icon: {
     fontFamily: "iconfont", 

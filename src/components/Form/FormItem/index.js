@@ -7,7 +7,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 const FormItem = ({
   field, 
   form, 
-  labelArea,
+  labelAreaStyle,
   labelStyle,
   inputStyle,
   inputContainerStyle,
@@ -16,7 +16,7 @@ const FormItem = ({
 }) => {
 
   const label = (
-    <View style={[styles.labelArea, labelArea]}>
+    <View style={[styles.labelArea, labelAreaStyle]}>
       <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}</Text>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
     </View>
@@ -33,7 +33,6 @@ const FormItem = ({
     </TouchableOpacity>
   );
 
-  console.log('rest', rest) 
   return (
     <>
       <Input
@@ -64,7 +63,6 @@ const styles = StyleSheet.create({
     borderColor: '#E3E3E3',
     borderBottomWidth: 1,
     paddingRight: 0,
-    paddingHorizontal: 10
   },
   noBorder: {
     flex: 1,
@@ -85,12 +83,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',  
     alignItems: 'center', 
     justifyContent: 'center', 
-    marginRight: 20
+    marginRight: 10
   },
   label: {
-    fontWeight: 'bold', 
-    fontSize: 16, 
-    maxWidth: 70, 
     textAlign: 'center'
   },
   required: {

@@ -19,6 +19,7 @@ const SelectItem = ({
     title,
     placeholder,
     noBorder,
+    labelAreaStyle,
     selectContainerStyle,
     selectAreaStyle,
     selectAreaTextStyle,
@@ -107,12 +108,12 @@ const SelectItem = ({
         <Text style={styles.showLittleTitleText}>{title}：</Text>
       }
       {formalLabel && 
-        <View style={[styles.labelArea, !showLittleTitle && styles.labelArea_noLittle]}>
+        <View style={[styles.labelArea, !showLittleTitle && styles.labelArea_noLittle, labelAreaStyle]}>
           <Text style={styles.label}>{title}</Text>
           {rest.isRequired && <Text style={styles.required}>*</Text>}
         </View>
       }
-      <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+      <View style={styles.rightArea}>
         <TouchableOpacity 
           style={[styles.selectArea, !showLittleTitle && styles.selectArea_noLittle, noBorder && styles.noBorder, selectAreaStyle]}
           onPress={() => setShowSelectItems(!showSelectItems)}>
@@ -214,6 +215,11 @@ const styles = StyleSheet.create({
     borderColor: '#E3E3E3', 
     paddingLeft: 10
   },
+  rightArea: {
+    flex: 1, 
+    flexDirection: 'row', 
+    alignItems: 'center'
+  },
   selectArea: {
     flex: 1,
     height: 48, 
@@ -221,12 +227,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: '#E3E3E3',
-    paddingHorizontal: 15
+    borderColor: '#E3E3E3'
   },
   selectArea_noLittle: {
-    paddingLeft: 0, 
-    paddingRight: 15
+    paddingRight: 10
   },
   noBorder: {
     borderBottomWidth: 0
@@ -346,12 +350,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   labelArea_noLittle: {
-    marginRight: 20
+    marginRight: 10
   },
   label: {
-    fontWeight: 'bold', 
-    fontSize: 16, 
-    maxWidth: 70, 
     textAlign: 'center'
   },
   required: {

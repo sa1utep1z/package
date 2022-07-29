@@ -256,6 +256,18 @@ export default Navigator = () => {
     </>
   );
 
+  const myMembers = (
+    <>
+      <Stack.Screen
+        name={NAVIGATION_KEYS.EDIT_RETURN_VISIT}
+        component={NAVIGATION_PAGES.EDIT_RETURN_VISIT}
+        options={{
+          headerTitle: '编辑回访记录',
+        }}
+      />
+    </>
+  )
+
   const mine = (
     <>
       <Stack.Screen
@@ -287,6 +299,7 @@ export default Navigator = () => {
         {home}
         {list}
         {workbench}
+        {myMembers}
         {mine}
         <Stack.Screen
           name={NAVIGATION_KEYS.TABBAR}

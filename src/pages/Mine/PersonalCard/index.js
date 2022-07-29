@@ -43,7 +43,7 @@ const PersonalCard = () => {
                 <Field
                   name="name"
                   title="姓名"
-                  labelArea={styles.labelArea}
+                  labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
                   editable={isEditing}
                   component={FormItem}
@@ -51,7 +51,7 @@ const PersonalCard = () => {
                 <Field
                   name="phone"
                   title="手机号"
-                  labelArea={styles.labelArea}
+                  labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
                   editable={false}
                   component={FormItem}
@@ -59,7 +59,7 @@ const PersonalCard = () => {
                 <Field
                   name="weChat"
                   title="微信号"
-                  labelArea={styles.labelArea}
+                  labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
                   editable={false}
                   component={FormItem}
@@ -68,7 +68,7 @@ const PersonalCard = () => {
                   name="store"
                   title="门店"
                   containerStyle={{borderBottomWidth: 0}}
-                  labelArea={styles.labelArea}
+                  labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
                   editable={false}
                   component={FormItem}
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     marginRight: 20, 
     fontSize: 16
   },
-  labelArea: {
+  labelAreaStyle: {
     justifyContent: 'flex-start'
   },
   inputStyle: {

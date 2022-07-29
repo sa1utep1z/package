@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, ToastAndroid} from 'react-native';
 import { useToast } from "react-native-toast-notifications";
 import { CommonActions } from '@react-navigation/native';
 import {Text, Button, CheckBox} from '@rneui/themed';
@@ -34,9 +34,11 @@ const Login = (props) => {
 
   const [radio, setRadio] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=> {
     getUserMsg();
+    storage.remove({ key: 'token' });
   },[])
 
   const getUserMsg = async() => {
@@ -55,20 +57,24 @@ const Login = (props) => {
   };
 
   const login = async(values) => {
+    console.log('你点击了')
+    setLoading(true);
     const params = {
       loginType: 'pwd',
       account: values.user,
       password: md5(values.password)
     };
-
+    console.log('params', params);
     try{
       const res = await httpRequest.post('admin/login/app', params);
       console.log('login->res',res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`${res.msg}`, { type: 'danger' });
+        setLoading(false);
         return;
       }
 
+      setLoading(false);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -100,7 +106,8 @@ const Login = (props) => {
       }
     }catch(err) {
       console.log('err', err);
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`请确认网络是否开启，或稍后重试`, { type: 'danger' });
+      setLoading(false);
       return;
     }
   };
@@ -157,8 +164,9 @@ const Login = (props) => {
                   />
                   <Button
                     title="登 录"
+                    loading={loading}
                     onPress={handleSubmit}
-                    buttonStyle={styles.buttonStyle}
+                    buttonStyle={[styles.buttonStyle, loading && {backgroundColor: '#CCCCCC'}]}
                     containerStyle={styles.buttonContainerStyle}
                   />
                 </View>

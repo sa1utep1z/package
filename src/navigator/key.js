@@ -36,6 +36,9 @@ const NAVIGATION_KEYS = {
   MY_MEMBERS: 'my_members',
   PAY_MANAGEMENT: 'pay_management',
 
+  //我的会员
+  EDIT_RETURN_VISIT: 'edit_return_visit',
+
   //工具栏
   TABBAR: 'tabbar',
   WORKBENCH: 'workbench',

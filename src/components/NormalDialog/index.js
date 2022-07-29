@@ -1,18 +1,23 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
+import { useEffect } from 'react';
 
 const NormalDialog = ({
-  contentText = '确定吗',
-  confirm,
-  content,
-  title,
-  rightTitle,
-  singleButton = false,
-  rightTitleOnPress,
-  confirmButton
+  dialogContent
 }, ref) => {
   const [showDialog, setShowDialog] = useState(false);
+
+  const { 
+    contentText = '确定吗', 
+    content,
+    dialogTitle,
+    rightTitle,
+    rightTitleOnPress,
+    singleButton = false,
+    confirmText,
+    confirmOnPress,
+  } = dialogContent;
 
   useImperativeHandle(ref, () => {
     return { setShowDialog };
@@ -23,23 +28,24 @@ const NormalDialog = ({
       isVisible={showDialog}
       overlayStyle={styles.dialogStyle}
       onBackdropPress={()=> setShowDialog(!showDialog)}>
-        <View>
-          <Text style={styles.title}>{title || '温馨提示'}</Text>
-          {rightTitle && <TouchableOpacity style={{position: 'absolute', right: 20}} onPress={rightTitleOnPress}>
-            <Text style={{color: '#409EFF'}}>{rightTitle || '编辑'}</Text>
+        <View style={styles.titleArea}>
+          <Text style={styles.title}>{dialogTitle || '温馨提示'}</Text>
+          {!!rightTitle && 
+          <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
+            <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
           </TouchableOpacity>}
         </View>
-        {content ? content : <Text style={styles.content}>{contentText}</Text>}
+        {content ? content: <Text style={styles.content}>{contentText}</Text>}
         <View style={styles.bottomButtonArea}>
-          {singleButton ? <TouchableOpacity style={{borderTopWidth: 1,     borderColor: '#E3E3E3', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{fontSize: 16}}>提交</Text>
+          {singleButton ? <TouchableOpacity style={styles.singleButton}>
+            <Text style={styles.singleButtonText}>提交</Text>
           </TouchableOpacity> : 
           <>
             <TouchableOpacity style={styles.bottomLeft} onPress={() => setShowDialog(!showDialog)}>
               <Text style={styles.leftText}>取消</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomRight} onPress={confirm}>
-              <Text style={styles.rightText}>{confirmButton || '确认'}</Text>
+            <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress}>
+              <Text style={styles.rightText}>{confirmText || '确认'}</Text>
             </TouchableOpacity>
           </>}
         </View>
@@ -48,18 +54,33 @@ const NormalDialog = ({
 }
 
 const styles = StyleSheet.create({
-  bottomButtonArea: {
-    flexDirection: 'row', 
-    height: 45
-  },
   dialogStyle: {
     padding: 0, 
-    paddingTop: 20, 
-    borderRadius: 6
+    borderRadius: 6,
+  },
+  titleArea: {
+    marginTop: 20, 
+    marginBottom: 10
+  },
+  bottomButtonArea: {
+    flexDirection: 'row', 
+    height: 45,
+    marginTop: 10
+  },
+  singleButton: {
+    flex: 1, 
+    borderTopWidth: 1,
+    borderColor: '#E3E3E3', 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  singleButtonText: {
+    fontSize: 16
   },
   bottomLeft: {
     flex: 1, 
-    borderWidth: 1, 
+    borderTopWidth: 1,
+    borderRightWidth: 1,
     justifyContent: 'center', 
     alignItems: 'center', 
     borderBottomLeftRadius: 6, 
@@ -85,6 +106,13 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     fontWeight: 'bold', 
     fontSize: 20
+  },
+  rightTitle: {
+    position: 'absolute', 
+    right: 20
+  },
+  rightTitleText: {
+    color: '#409EFF'
   },
   content: {
     textAlign: 'center', 
