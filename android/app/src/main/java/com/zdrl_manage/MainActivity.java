@@ -5,6 +5,8 @@ import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import android.os.Bundle;
 
+import com.pj.demo.Watermark;
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -29,6 +31,8 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(null);
+    //文字可以更改
+    Watermark.getInstance().show(this, "众鼎集团");
   }
 
   public static class MainActivityDelegate extends ReactActivityDelegate {

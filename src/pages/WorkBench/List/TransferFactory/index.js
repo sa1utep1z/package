@@ -9,7 +9,8 @@ import SearchInput from '../../../../components/SearchInput';
 import SelectList from '../../../../components/SelectList';
 import { deepCopy } from '../../../../utils';
 
-const TransferFactory = () => {
+const TransferFactory = (props) => {
+  const {route: params} = props;
   let arr = [];
   for(let i = 0; i < 50; i++ ){
     arr.push({
@@ -19,17 +20,19 @@ const TransferFactory = () => {
     })
   }
 
-  const [listArr, setListArr] = useState(arr);
+  const [listArr, setListArr] = useState(params?.params?.list || arr);
 
   const filterFactory = (value) => {
-    let newArr = deepCopy(arr);
-    const filterArr = newArr.filter(item => item.title.includes(value));
+    let newArr = deepCopy(params?.params?.list);
+    const filterArr = newArr.filter(item => item.label.includes(value));
     setListArr(filterArr);
   }
 
   const selectList = (list) => {
-    console.log('list', list);
-  }
+    if(params?.params?.confirm){
+      params?.params?.confirm(list);
+    }
+  };
 
   return (
     <View style={{flex: 1, alignItems: 'center', paddingTop: 10}}>
@@ -38,7 +41,7 @@ const TransferFactory = () => {
         autoSearch={filterFactory}
         searchPress={filterFactory}
       />
-      <SelectList data={listArr} confirm={selectList} bottomButton />
+      <SelectList data={listArr} confirm={selectList} canMultiChoice={false} bottomButton />
     </View>
   )
 };

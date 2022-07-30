@@ -3,14 +3,22 @@ import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import {Button} from '@rneui/themed';
 import {Formik, Field} from 'formik';
 import * as Yup from 'yup';
+import { useNavigation } from '@react-navigation/native';
 
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
 import LongTextArea from '../../../../../components/Form/LongTextArea';
 import SelectDate from '../../../../../components/Form/SelectDate';
+import SelectTags from '../../../../../components/Form/SelectTags';
 import {IDCard, phone} from '../../../../../utils/validate';
-import { HANDLE_STATE } from '../../../../../utils/const';
 import TwoRadio from '../../../../../components/Form/TwoRadio';
+import MyMembersApi from '../../../../../request/MyMembersApi';
+import { SUCCESS_CODE } from '../../../../../utils/const';
+import { useEffect } from 'react';
+import SelectItemInPage from '../../../../../components/Form/SelectItemInPage';
+import NAVIGATION_KEYS from '../../../../../navigator/key';
+
+let setFieldValue;
 
 const SignUpValidationSchema = Yup.object().shape({
   memberName: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
@@ -19,36 +27,52 @@ const SignUpValidationSchema = Yup.object().shape({
   nextTimeReviewDate: Yup.string().required('请选择下次回访日期')
 });
 
+const initialValues = {
+  memberTags: '',
+  memberName: '',
+  memberPhone: '',
+  memberDecision: true,
+  intendCompany: '',
+  intendSignUpDate: '',
+  thisTimeReviewRecord: '',
+  nextTimeReviewDate: '',
+  recordHistory: '这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录'
+};
+
 const EditReturnView = (props) => {
-  console.log('props', props)
+  const navigation = useNavigation();
   const {route: {params}} = props;
-  const initialValues = {
-    memberTags: '',
-    memberName: '',
-    memberPhone: '',
-    memberDecision: true,
-    intendCompany: [],
-    intendSignUpDate: '',
-    thisTimeReviewRecord: '',
-    nextTimeReviewDate: '',
-    recordHistory: '哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哇哈哈哈哈哈哈哈哈哈哈哈哈'
-  };
-  
-  // for(let index of params){
-  //   initialValues[index.type] = index.value;
-  // }
+
+  const [companyList, setCompanyList] = useState([]);
 
   const onSubmit = (values) => {
     console.log('提交了表单哇呜',values);
-  }
+  };
+
+  useEffect(()=>{
+    getCompanyList();
+  },[])
+
+  const getCompanyList = async() => {
+    try{
+      const res = await MyMembersApi.CompanyList();
+      if(res.code !== SUCCESS_CODE){
+        console.log('接口出错了！');
+      }
+      console.log('res', res);
+      setCompanyList(res.data);
+    }catch(err){
+      console.log('获取企业列表的接口出错了',res);
+    }
+  };
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={SignUpValidationSchema}
       onSubmit={onSubmit}>
-        {({handleSubmit, values, ...rest}) => {
-          console.log('values', values)
+        {({handleSubmit, values, setFieldValue, ...rest}) => {
+          console.log('rest', rest);
           return (
           <View style={{flex: 1}}>
             <ScrollView style={styles.scrollArea}>
@@ -57,7 +81,7 @@ const EditReturnView = (props) => {
                   name="memberTags"
                   title="会员标签"
                   labelAreaStyle={{width: 100}}
-                  component={FormItem}
+                  component={SelectTags}
                 />
                 <Field
                   name="memberName"
@@ -85,9 +109,17 @@ const EditReturnView = (props) => {
                       title="意向报名企业"
                       showTitle
                       noBorder
-                      selectList={HANDLE_STATE}
+                      bottomButton
+                      selectList={[]}
+                      pageOnPress={()=>navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
+                        list: companyList,
+                        confirm: (list) => {
+                          setFieldValue('intendCompany', list[0]);
+                          navigation.goBack();
+                        }
+                      })}
                       labelAreaStyle={{width: 100}}
-                      component={SelectItem}
+                      component={SelectItemInPage}
                     />
                     <Field
                       name="intendSignUpDate"

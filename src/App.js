@@ -1,17 +1,22 @@
 import React from 'react';
+import {Platform} from 'react-native';
 import { ToastProvider } from "react-native-toast-notifications";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { simpleUpdate } from 'react-native-update';
 
 import store from './redux/store';
 import Navigator from './navigator';
 import moment from 'moment';
 import "moment/locale/zh-cn";
+import _updateConfig from '../update.json';
 
 moment.locale('zh-cn');
 
-export default App = () => {
+const { appKey } = _updateConfig[Platform.OS];
+
+const App = () => {
   const queryClient = new QueryClient();
 
   return (
@@ -37,3 +42,5 @@ export default App = () => {
       </ToastProvider>
     </QueryClientProvider>
 )};
+
+export default simpleUpdate(App, { appKey });

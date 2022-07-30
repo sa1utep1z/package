@@ -27,7 +27,7 @@ const SelectList = ({
     const newArr = deepCopy(data);
     newArr.map(item => item.isChecked = false);
     setList(newArr);
-  }, [])
+  }, [data])
 
   useMemo(()=>{
     //有不选的，那CheckRadio就置否；
@@ -50,14 +50,13 @@ const SelectList = ({
   },[isSelectAll])
 
   const pressButton = (item) => {
-    const newArr = deepCopy(!canMultiChoice ? data : list);
-      //把初始数据copy一份，那每次操作就是全新的数组里面去设置isChecked属性，就实现单选；把最新list数据copy一份，每次操作就是新增加isChecked，就实现多选；
-    newArr.map(data => {
-      if(data.id === item.id){
-        data.isChecked = !data.isChecked;
-      }
-    })
-    setList(newArr);
+    const newArr = deepCopy(data);
+    //目前只写了单选的逻辑，单选就是选择原始数据，选择了就设置isChecked，可以保证全局只有一个isChecked
+    if(!canMultiChoice){
+      const pressItem = newArr.find(list => list.value === item.value);
+      pressItem.isChecked = !pressItem.isChecked;
+      setList(newArr);
+    }
 
     let newConfirmList = [...confirmList];
     //单选
@@ -95,17 +94,17 @@ const SelectList = ({
   const renderItem = ({item}) => {
     const isChecked = item.isChecked;
     return (
-    <TouchableOpacity key={item.id} style={styles.listItem} onPress={()=>pressButton(item)}>
-      <Text>{item.title}</Text>
-      <CheckBox
-        center
-        checked={isChecked}
-        onPress={()=>pressButton(item)}
-        containerStyle={styles.checkBox_containerStyle}
-        checkedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue669'}</Text>}
-        uncheckedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue68d'}</Text>}
-      />
-    </TouchableOpacity>
+      <TouchableOpacity key={item.value} style={styles.listItem} onPress={()=>pressButton(item)}>
+        <Text>{item.label}</Text>
+        <CheckBox
+          center
+          checked={isChecked}
+          onPress={()=>pressButton(item)}
+          containerStyle={styles.checkBox_containerStyle}
+          checkedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue669'}</Text>}
+          uncheckedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue68d'}</Text>}
+        />
+      </TouchableOpacity>
   )};
 
   return (
@@ -116,11 +115,11 @@ const SelectList = ({
             <Text style={{color: '#999999'}}>共 <Text style={{color: '#409EFF'}}>{list.length}</Text> 条数据，</Text>
             <Text style={{color: '#999999'}}>已选择 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
           </View>
-          <CheckRadio 
+          {!!canMultiChoice && <CheckRadio 
             checked={isSelectAll}
             onClick={clickAll}
             showAll
-          />
+          />}
         </View>
         <FlatList 
           style={styles.scroll}

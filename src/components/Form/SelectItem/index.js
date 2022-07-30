@@ -323,6 +323,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     borderBottomLeftRadius: 6, 
     borderTopWidth: 1,
+    borderRightWidth: 1,
     borderColor: '#E3E3E3'
   },
   leftText: {
@@ -333,14 +334,13 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: '#409EFF', 
     borderBottomRightRadius: 6,
     borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
   rightText: {
     fontSize: 16, 
-    color: '#fff'
+    color: '#409EFF'
   },
   labelArea: {
     width: 80,

@@ -12,8 +12,11 @@ import com.facebook.soloader.SoLoader;
 import com.zdrl_manage.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
 import com.zdrl_manage_okhttp.CustomOkHttpClientFactory;
 import com.facebook.react.modules.network.OkHttpClientProvider;
+
+import cn.reactnative.modules.update.UpdateContext;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -36,6 +39,11 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected String getJSMainModuleName() {
           return "index";
+        }
+
+        @Override
+        protected String getJSBundleFile() {
+            return UpdateContext.getBundleUrl(MainApplication.this);
         }
       };
 

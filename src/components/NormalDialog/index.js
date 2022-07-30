@@ -1,7 +1,6 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
-import { useEffect } from 'react';
 
 const NormalDialog = ({
   dialogContent
@@ -17,17 +16,20 @@ const NormalDialog = ({
     singleButton = false,
     confirmText,
     confirmOnPress,
+    backOnPress = defaultBackOnPress
   } = dialogContent;
 
   useImperativeHandle(ref, () => {
-    return { setShowDialog };
-  }, []);
+    return { setShowDialog, showDialog };
+  }, [showDialog]);
+
+  const defaultBackOnPress = () => setShowDialog(!showDialog);
 
   return (
     <Dialog
       isVisible={showDialog}
       overlayStyle={styles.dialogStyle}
-      onBackdropPress={()=> setShowDialog(!showDialog)}>
+      onBackdropPress={backOnPress}>
         <View style={styles.titleArea}>
           <Text style={styles.title}>{dialogTitle || '温馨提示'}</Text>
           {!!rightTitle && 
@@ -35,13 +37,16 @@ const NormalDialog = ({
             <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
           </TouchableOpacity>}
         </View>
-        {content ? content: <Text style={styles.content}>{contentText}</Text>}
+        {content ? 
+          <>
+            {content}
+          </>: <Text style={styles.content}>{contentText}</Text>}
         <View style={styles.bottomButtonArea}>
           {singleButton ? <TouchableOpacity style={styles.singleButton}>
             <Text style={styles.singleButtonText}>提交</Text>
           </TouchableOpacity> : 
           <>
-            <TouchableOpacity style={styles.bottomLeft} onPress={() => setShowDialog(!showDialog)}>
+            <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress}>
               <Text style={styles.leftText}>取消</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress}>

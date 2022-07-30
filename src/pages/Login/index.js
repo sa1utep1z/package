@@ -106,7 +106,7 @@ const Login = (props) => {
       }
     }catch(err) {
       console.log('err', err);
-      toast.show(`请确认网络是否开启，或稍后重试`, { type: 'danger' });
+      toast.show(`请确认网络是否开启，或稍后重试,${err}`, { type: 'danger' });
       setLoading(false);
       return;
     }
