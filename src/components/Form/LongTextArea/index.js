@@ -16,8 +16,6 @@ const LongTextArea = ({
   ...rest
 }) => {
 
-  console.log('field', field.value);
-
   return (
     <View style={styles.totalArea}>
       <View style={[styles.titleArea, labelAreaStyle]}>

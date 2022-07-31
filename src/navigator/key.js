@@ -38,6 +38,7 @@ const NAVIGATION_KEYS = {
 
   //我的会员
   EDIT_RETURN_VISIT: 'edit_return_visit',
+  JOIN_IN_SIGN_UP: 'join_in_sign_up',
 
   //工具栏
   TABBAR: 'tabbar',

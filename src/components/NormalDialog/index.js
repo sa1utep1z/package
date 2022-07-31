@@ -1,23 +1,19 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
+import EmptyArea from '../EmptyArea';
 
-const NormalDialog = ({
-  dialogContent
-}, ref) => {
+const NormalDialog = ({dialogContent: {
+  dialogComponent,
+  dialogTitle,
+  rightTitle,
+  rightTitleOnPress,
+  singleButton = false,
+  confirmText,
+  confirmOnPress,
+  backOnPress
+}}, ref) => {
   const [showDialog, setShowDialog] = useState(false);
-
-  const { 
-    contentText = '确定吗', 
-    content,
-    dialogTitle,
-    rightTitle,
-    rightTitleOnPress,
-    singleButton = false,
-    confirmText,
-    confirmOnPress,
-    backOnPress = defaultBackOnPress
-  } = dialogContent;
 
   useImperativeHandle(ref, () => {
     return { setShowDialog, showDialog };
@@ -29,7 +25,7 @@ const NormalDialog = ({
     <Dialog
       isVisible={showDialog}
       overlayStyle={styles.dialogStyle}
-      onBackdropPress={backOnPress}>
+      onBackdropPress={backOnPress || defaultBackOnPress}>
         <View style={styles.titleArea}>
           <Text style={styles.title}>{dialogTitle || '温馨提示'}</Text>
           {!!rightTitle && 
@@ -37,16 +33,13 @@ const NormalDialog = ({
             <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
           </TouchableOpacity>}
         </View>
-        {content ? 
-          <>
-            {content}
-          </>: <Text style={styles.content}>{contentText}</Text>}
+        {dialogComponent ? dialogComponent: <EmptyArea />}
         <View style={styles.bottomButtonArea}>
           {singleButton ? <TouchableOpacity style={styles.singleButton}>
             <Text style={styles.singleButtonText}>提交</Text>
           </TouchableOpacity> : 
           <>
-            <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress}>
+            <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress || defaultBackOnPress}>
               <Text style={styles.leftText}>取消</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress}>
@@ -118,11 +111,6 @@ const styles = StyleSheet.create({
   },
   rightTitleText: {
     color: '#409EFF'
-  },
-  content: {
-    textAlign: 'center', 
-    marginVertical: 20,
-    fontSize: 16
   }
 })
 

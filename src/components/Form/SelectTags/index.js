@@ -12,6 +12,7 @@ import MyMembersApi from '../../../request/MyMembersApi';
 import { SUCCESS_CODE } from '../../../utils/const';
 import { deepCopy } from '../../../utils';
 import { useMemo } from 'react';
+import EmptyArea from '../../EmptyArea';
 
 const SelectTags = ({
   field, 
@@ -50,6 +51,7 @@ const SelectTags = ({
       setLoading(false);
     }catch(err){
       console.log('MemberTagList-->err', err);
+      toast.show(`获取会员标签列表失败，请稍后重试`, { type: 'danger' });
       setLoading(false);
     }
   };
@@ -80,21 +82,20 @@ const SelectTags = ({
     rightTitleOnPress: () => setSelectTags([]),
     content: 
       <ScrollView style={{maxHeight: 300}}>
-        <View style={{borderWidth: 1, borderRadius: 5, marginHorizontal: 10, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingVertical: 10, borderColor: '#CCCCCC'}}>
-          {tagList.map((tag, tagIndex) => {
-            const isSelected = selectTags.find(name => name === tag);
-            return (
-              <TouchableOpacity key={tagIndex} style={[{paddingHorizontal: 5, marginRight: 5, marginBottom: 5, borderRadius: 3, backgroundColor: '#EEEEEE'}, isSelected && {backgroundColor: '#409EFF'}]} onPress={() => pressTag(tag)}>
-                <Text style={[{color: '#999999'}, isSelected && {color: '#fff'}]}>{tag}</Text>
-              </TouchableOpacity>
-            )
-        })}
-        {!tagList.length && <ActivityIndicator animating={loading}/>}
-        </View>
+        {loading ? <ActivityIndicator animating={loading} /> : <View style={{borderWidth: 1, borderRadius: 5, marginHorizontal: 10, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingVertical: 10, borderColor: '#CCCCCC'}}>
+          {tagList.length ?
+            tagList.map((tag, tagIndex) => {
+              const isSelected = selectTags.find(name => name === tag);
+              return (
+                <TouchableOpacity key={tagIndex} style={[{paddingHorizontal: 5, marginRight: 5, marginBottom: 5, borderRadius: 3, backgroundColor: '#EEEEEE'}, isSelected && {backgroundColor: '#409EFF'}]} onPress={() => pressTag(tag)}>
+                  <Text style={[{color: '#999999'}, isSelected && {color: '#fff'}]}>{tag}</Text>
+                </TouchableOpacity>
+              )
+          }): <EmptyArea />}
+        </View>}
       </ScrollView>
   }
 
-  console.log('firle,field.value', field.value);
   return (
     <>
       <View style={[styles.selectArea, field.value.length && {paddingTop: 5}]}>

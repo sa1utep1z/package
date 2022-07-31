@@ -87,12 +87,13 @@ const Mine = () => {
           })}
         </View>
       </View>
-      <NormalDialog 
+      {/* <NormalDialog 
+        {//TODO}
         ref={dialogRef} 
-        contentText={pressType === 'reset' ? '将向您绑定的手机发送验证码' : '确定退出当前账号吗？'}
+        content={<View style={{height:20, borderWidth: 1}}></View>}
         confirmButton={pressType === 'reset' && '找回密码'}
         confirm={pressType === 'reset' ? reset : logout}
-      />
+      /> */}
     </SafeAreaView>
 )};
 

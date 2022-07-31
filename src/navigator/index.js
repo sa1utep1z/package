@@ -265,6 +265,13 @@ export default Navigator = () => {
           headerTitle: '编辑回访记录',
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.JOIN_IN_SIGN_UP}
+        component={NAVIGATION_PAGES.JOIN_IN_SIGN_UP}
+        options={{
+          headerTitle: '会员加入报名',
+        }}
+      />
     </>
   )
 
@@ -331,7 +338,6 @@ const styles = StyleSheet.create({
     paddingLeft: 5
   },
   centerArea: {
-    flex: 1, 
     height: '100%', 
     flexDirection: 'column', 
     alignItems: 'center', 

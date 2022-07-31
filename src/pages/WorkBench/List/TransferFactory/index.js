@@ -11,6 +11,8 @@ import { deepCopy } from '../../../../utils';
 
 const TransferFactory = (props) => {
   const {route: params} = props;
+  const navigation = useNavigation();
+
   let arr = [];
   for(let i = 0; i < 50; i++ ){
     arr.push({
@@ -19,6 +21,14 @@ const TransferFactory = (props) => {
       index: `${i+1}`
     })
   }
+
+  useEffect(()=>{
+    if(params?.params?.pageTitle){
+      navigation.setOptions({
+        headerTitle: params?.params?.pageTitle
+      })
+    }
+  },[])
 
   const [listArr, setListArr] = useState(params?.params?.list || arr);
 

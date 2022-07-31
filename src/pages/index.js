@@ -40,6 +40,7 @@ const NAVIGATION_PAGES_LIST = {
 
   //我的会员
   EDIT_RETURN_VISIT: require('./WorkBench/OtherFunction/MyMembers/EditReturnView'),
+  JOIN_IN_SIGN_UP: require('./WorkBench/OtherFunction/MyMembers/JoinInSignUp'),
   
   //工具栏
   WORKBENCH: require('./WorkBench'),

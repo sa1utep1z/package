@@ -19,6 +19,8 @@ import MyMembersApi from "../../../../request/MyMembersApi";
 import NormalDialog from "../../../../components/NormalDialog";
 import { checkedType } from "../../../../utils";
 
+import Haha from "./Haha";
+
 const MyMembers = () => {
   const navigation = useNavigation();
 
@@ -36,12 +38,11 @@ const MyMembers = () => {
   
   const [dialogContent, setDialogContent] = useState({
     dialogTitle: '哈哈',
-    content: <></>
+    dialogComponent: <></>
   });
 
   useEffect(()=>{
     navigation.setOptions({
-      headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
   }, [])
@@ -70,16 +71,23 @@ const MyMembers = () => {
   const showDialog = (type) => {
     dialogRef.current.setShowDialog(true);
     switch(type){
+      case 'callPhone': 
+      setDialogContent({
+        dialogTitle: '岗位信息',
+        dialogComponent: <Haha message={msg} />
+      });
+        console.log('点击了打电话');
+        return;
       case 'ruzhi':
         setDialogContent({
           dialogTitle: '入职记录',
-          content: ruzhiDialogContent
+          dialogComponent: ruzhiDialogContent
         });
         return;
       case 'huifang':
         setDialogContent({
           dialogTitle: '回访记录',
-          content: huifangDialogContent,
+          dialogComponent: huifangDialogContent,
           rightTitle: '编辑',
           rightTitleOnPress: rightTitleOnPress
         });
@@ -95,7 +103,8 @@ const MyMembers = () => {
       factory: `厂名哈${i+1}`,
       card: `${i%2 === 0 ? '两卡全': i % 3 === 0 ? '缺身份证' : i%5 === 0 ? '缺银行卡': i% 7 ===0 ? '两卡不全': '缺心眼儿'} `,
       state: `${i%2 === 0 ? '在职' : i%3 === 0 ? '离职': '未报到'}`,
-      phone: `18011111111`
+      phone: `18011111111`,
+      join: '加入'
     })
   };
 
@@ -108,12 +117,12 @@ const MyMembers = () => {
 
   const renderItem = ({item}) => {
     const renderList = [
-      { fieldName: item.name, pressFun: callMemberPhone},
+      { fieldName: item.name, pressFun: () => showDialog('callPhone')},
       { fieldName: item.factory, pressFun: showFactoryDetail },
       { fieldName: item.press, pressFun: () => showDialog('ruzhi')},
       { fieldName: item.press, pressFun: () => showDialog('huifang')},
       { fieldName: item.state},
-      { fieldName: item.press ,pressFun: showMemberDetail}
+      { fieldName: item.join ,pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP)}
     ];
     
     return (
