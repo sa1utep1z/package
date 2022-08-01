@@ -4,8 +4,8 @@ import { Text, Dialog } from '@rneui/themed';
 import EmptyArea from '../EmptyArea';
 
 const NormalDialog = ({dialogContent: {
-  dialogComponent,
-  dialogTitle,
+  dialogComponent = <></>,
+  dialogTitle = '',
   rightTitle,
   rightTitleOnPress,
   singleButton = false,

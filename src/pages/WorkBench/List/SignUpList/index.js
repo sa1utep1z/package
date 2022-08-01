@@ -26,6 +26,8 @@ const SignUpList = () => {
 
   const [memberInfoList, setMemberInfoList] = useState(MEMBER_INFO);
 
+  const [dialogContent, setDialogContent] = useState({});
+
   useEffect(()=>{
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
@@ -61,9 +63,41 @@ const SignUpList = () => {
   const showSignUpDetail = () => signUpStateRef.current.setShowDetail(true);
   const callMemberPhone = () => callPhoneRef.current.setShowCallPhone(true);
 
+  // const showDialog = (type) => {
+  //   dialogRef.current.setShowDialog(true);
+  //   switch(type){
+  //     case 'memberDetail': 
+  //       setDialogContent({
+  //         dialogTitle: '会员信息',
+  //         dialogComponent: <MemberDetail />
+  //       });
+  //       return;
+  //     case 'companyDetail': 
+  //       setDialogContent({
+  //         dialogTitle: '企业详情',
+  //         dialogComponent: <CompanyDetail />
+  //       });
+  //       return;
+  //     case 'ruzhi':
+  //       setDialogContent({
+  //         dialogTitle: '入职记录',
+  //         dialogComponent: <EntryRecord />
+  //       });
+  //       return;
+  //     case 'huifang':
+  //       setDialogContent({
+  //         dialogTitle: '回访记录',
+  //         rightTitle: '编辑',
+  //         rightTitleOnPress: rightTitleOnPress,
+  //         dialogComponent: <ReviewRecord />
+  //       });
+  //       return;
+  //   }
+  // };
+
   const renderItem = ({item}) => {
     const renderList = [
-      { fieldName: item.name, pressFun: showFactoryDetail },
+      { fieldName: item.name, pressFun: () => showDialog('companyDetail') },
       { fieldName: item.person, pressFun: showMemberDetail },
       { fieldName: item.type, pressFun: showSignUpDetail },
       { fieldName: item.phone ,pressFun: callMemberPhone, textStyle: {color: '#409EFF'}}

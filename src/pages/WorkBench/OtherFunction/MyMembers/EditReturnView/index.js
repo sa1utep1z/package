@@ -6,7 +6,6 @@ import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 
 import FormItem from '../../../../../components/Form/FormItem';
-import SelectItem from '../../../../../components/Form/SelectItem';
 import LongTextArea from '../../../../../components/Form/LongTextArea';
 import SelectDate from '../../../../../components/Form/SelectDate';
 import SelectTags from '../../../../../components/Form/SelectTags';
@@ -17,8 +16,6 @@ import { SUCCESS_CODE } from '../../../../../utils/const';
 import { useEffect } from 'react';
 import SelectItemInPage from '../../../../../components/Form/SelectItemInPage';
 import NAVIGATION_KEYS from '../../../../../navigator/key';
-
-let setFieldValue;
 
 const SignUpValidationSchema = Yup.object().shape({
   memberName: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),

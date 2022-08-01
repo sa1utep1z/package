@@ -2,7 +2,7 @@ import moment from "moment";
 
 export const SUCCESS_CODE = 0;
 
-export const MEMBER_INFO = [
+export const FAKE_MEMBER_INFO = [
   {type: 'name', title: '姓名', value: '呵呵'},
   {type: 'IDCard', title: '身份证', value: '478523694562315964'},
   {type: 'phone', title: '手机号', value: '18088889999'},
@@ -134,3 +134,37 @@ export const SEAS_SOURCE_TYPE = {
   'SUPPLIER': '供应商导入',
   'SHARE': '分享裂变'
 };
+
+//我的会员-状态
+export const MEMBERS_STATUS = {
+  'SIGN_UP_NO_INTENTION': '无意向',
+  'INTERVIEW_NO_ARRIVE': '未去面试',
+  'INTERVIEW_FAIL': '未通过',
+  'ON_BOARDING_FAIL': '未报到',
+  'JOB_ON': '在职',
+  'PREPARE_JOB_RESIGN': '预离职',
+  'JOB_RESIGN': '离职'
+};
+
+//我的会员-会员信息
+export const MEMBER_INFO_KEY = {
+  'age': '年龄',
+  'bornDay': '出生日',
+  'bornMonth': '出生月份',
+  'gender': '性别',
+  'idNo': '身份证号',
+  'mobile': '手机号',
+  'hometown': '籍贯',
+  'nation': '民族',
+  'recruiterName': '归属招聘员',
+  'registerDate': '注册时间',
+  'sourceType': '来源',
+  'storeName': '归属门店',
+  'userName': '姓名'
+};
+
+export const GENDER = {
+  'FEMALE': '女',
+  'MALE': '男'
+};
+

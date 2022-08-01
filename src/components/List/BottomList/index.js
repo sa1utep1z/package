@@ -47,7 +47,7 @@ const BottomList = ({
               data={showList}
               style={{backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E3E3E3'}}
               renderItem={renderItem}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.poolId}
               getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
               refreshing={refreshing}
               initialNumToRender={15}
