@@ -33,16 +33,10 @@ const MyMembers = () => {
     content: []
   });
 
-  useEffect(async()=>{
+  useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    try{
-      const res = await MyMembersApi.CompanyDetail('62c56a9a4844402adafebd32');
-      console.log('res', res);
-    }catch(err){
-
-    }
   }, [])
 
   const { isLoading, data, isError, error, refetch, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
@@ -145,6 +139,7 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.CompanyDetail(poolId);
+      console.log('res', res)
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -164,6 +159,50 @@ const MyMembers = () => {
     }
   };
 
+  const entryRecordOnPress = async(msg) => {
+    const poolId = msg?.poolId;
+    try{
+      const res = await MyMembersApi.EntryRecord(poolId);
+      console.log('res入职记录', res);
+      if(data?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
+        return;
+      }
+      if(!res.data.length){
+        toast.show('暂无入职记录', {type: 'warning'});
+        return;
+      }
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const reviewRecordOnPress = async(msg) => {
+    console.log('msg', msg);
+    const poolId = msg?.poolId;
+    try{
+      const res = await MyMembersApi.ReviewRecord(poolId);
+      console.log('res回访记录', res);
+      if(data?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
+        return;
+      }
+      if(!res.data.length){
+        toast.show('暂无回访记录', {type: 'warning'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '回访记录',
+        rightTitle: '编辑',
+        rightTitleOnPress: rightTitleOnPress,
+        dialogComponent: <ReviewRecord item={msg} reviewList={res.data}/>
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
   const renderItem = ({item}) => {
     const renderList = [
       { fieldName: item.userName, pressFun: () => memberDetailOnPress(item)},
@@ -178,8 +217,8 @@ const MyMembers = () => {
           toast.show('暂无企业', { type: 'warning' });
         }
       },
-      { fieldName: '查看', pressFun: () => showDialog('entry')},
-      { fieldName: '查看', pressFun: () => showDialog('review')},
+      { fieldName: '查看', pressFun: () => entryRecordOnPress(item)},
+      { fieldName: '查看', pressFun: () => reviewRecordOnPress(item)},
       { fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'},
       { fieldName: '加入', pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP)}
     ];

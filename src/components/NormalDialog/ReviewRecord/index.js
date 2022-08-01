@@ -1,25 +1,13 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import { Text } from '@rneui/themed';
 
 import { checkedType } from '../../../utils';
+import { useState } from 'react';
 
 const fakeList = [
-  {title: '会员标签', value: [
-    {title: '标签一', type: 'tag_1'},
-    {title: '标签二', type: 'tag_2'},
-    {title: '标签三', type: 'tag_3'},
-    {title: '标签四', type: 'tag_4'},
-    {title: '标签五', type: 'tag_4'},
-    {title: '标签六', type: 'tag_4'},
-    {title: '标签七', type: 'tag_4'},
-    {title: '标签八', type: 'tag_4'},
-    {title: '标签九', type: 'tag_4'},
-    {title: '标签十', type: 'tag_4'}
-  ]},
   {title: '会员姓名', value: '什么鬼'},
   {title: '会员手机号', value: '18889999999'},
-  {title: '会员意愿', value: `${true ? '有意愿' : '无意愿'}`},
   {title: '意向企业', value: '富士康ACKN'},
   {title: '本次回访记录', value: '无'},
   {title: '下次回访记录', value: '无'},
@@ -27,22 +15,42 @@ const fakeList = [
 ];
 
 const ReviewRecord = ({
-  reviewList = fakeList
+  item,
+  reviewList
 }) => {
+  const [showList, setShowList] = useState([]);
+
+  useMemo(()=>{
+    let arr = [
+      {title: '姓名', value: item?.userName},
+      {title: '手机号', value: item?.mobile},
+      {title: '历史回访记录', value: reviewList}
+    ];
+    setShowList(arr);
+  },[reviewList])
+
+  useMemo(()=>{
+    console.log('showList',showList);
+  },[showList])
 
   return (
     <ScrollView style={styles.totalArea}>
-      {reviewList.map((item, index) => {
+      {showList.map((item, index) => {
+        console.log('item', item);
         return (
           <View style={styles.listItem} key={index}>
             <Text style={styles.listItem_text}>{item.title}：</Text>
             <View style={[styles.listItem_item, index === 0 && styles.noBoder]}>
               {checkedType(item.value) === 'Array' ? 
                 <View style={styles.item_array}>
-                  {item.value.map((itemValue, itemIndex) => <Text key={itemIndex} style={[
-                    styles.item_array_item,
-                    itemIndex % 2 === 0 && {borderColor: '#409EFF', color: '#409EFF', backgroundColor: '#F4F9FF'},
-                    itemIndex % 3 === 0 && {borderColor: '#00D789', color: '#00D789', backgroundColor: '#F3FFFB'}]}>{itemValue.title}</Text>)}
+                  {item.value.map((renderItem, renderIndex) => {
+                    return (
+                      <View key={renderIndex} style={{flexDirection: 'row'}}>
+                        <Text>{renderItem.userName}</Text>
+                        <Text>{renderItem.content}</Text>
+                      </View>
+                    )
+                  })}
                 </View>:
               <Text>{item.value}</Text>}
             </View>
@@ -79,8 +87,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0 
   },
   item_array: {
-    flexDirection: 'row', 
-    flexWrap: 'wrap'
+    borderWidth: 1
   },
   item_array_item: {
     paddingHorizontal: 8, 
