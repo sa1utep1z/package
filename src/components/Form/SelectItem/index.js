@@ -6,6 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
 import { deepCopy, checkedType } from '../../../utils';
+import { useEffect } from 'react';
 
 const SelectItem = ({
     field, 
@@ -17,6 +18,7 @@ const SelectItem = ({
     formalLabel = true, //一般表单label默认显示，除非有意关掉
     lastButton, //selectItem一行是否添加元素
     title,
+    singleSelect,
     placeholder,
     noBorder,
     labelAreaStyle,
@@ -31,10 +33,16 @@ const SelectItem = ({
 
   const pressItem = (item) => {
     // 单选
-    if(!bottomButton){
-      setShowSelectItems(!showSelectItems);
-      form.setFieldValue(field.name, item);
-      form.handleSubmit();
+    if(singleSelect){
+      const newList = [item];
+      setSelectedItemList(newList);
+      const newArr = deepCopy(selectList);
+      newArr.map(data => {
+        if(data.id === item.id){
+          data.isChecked = !data.isChecked;
+        }
+      });
+      setList(newArr);
       return;
     }
 
@@ -167,7 +175,7 @@ const SelectItem = ({
                       const checkedItem = item.isChecked;
                       return (
                         <TouchableOpacity 
-                          key={item.id} 
+                          key={item.index} 
                           style={[styles.scrollItem, isLastIndex && styles.noBorder]} 
                           onPress={() => pressItem(item)}>
                           <Text>{item.title}</Text>

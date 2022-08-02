@@ -13,6 +13,7 @@ const LongTextArea = ({
   inputStyle,
   inputContainerStyle,
   containerStyle,
+  otherComponent,
   ...rest
 }) => {
 
@@ -22,7 +23,7 @@ const LongTextArea = ({
         <Text style={styles.titleArea_text}>{title}</Text>
       </View>
       <View style={styles.rightArea}>
-        <Input
+        {otherComponent ? otherComponent : <Input
           value={field.value}
           placeholder='暂无回访记录'
           multiline
@@ -30,7 +31,7 @@ const LongTextArea = ({
           inputStyle={styles.inputStyle}
           errorStyle={styles.errorStyle}
           {...rest}
-        />
+        />}
       </View>
     </View>
   )
@@ -56,7 +57,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: '#CCCCCC', 
     borderRadius: 8, 
-    marginVertical: 10
+    marginVertical: 10,
+    padding: 5
   },
   inputContainerStyle: {
     paddingVertical: 5, 

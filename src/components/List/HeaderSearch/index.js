@@ -5,6 +5,7 @@ import {Formik, Field} from 'formik';
 import { Text } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 
+import { STATUS_LIST } from '../../../utils/const';
 import SelectItem from '../../Form/SelectItem';
 import SearchInput from '../../SearchInput';
 import DateRangePicker from './DateRangePicker';
@@ -125,13 +126,14 @@ const HeaderSearch = ({
                   showLittleTitle
                   canSearch
                   bottomButton
+                  singleSelect
                   noBorder
                   formalLabel={false}
                   lastButton={batch}
                   selectContainerStyle={{marginLeft: 10}}
                   selectAreaStyle={styles.selectAreaStyle}
                   selectAreaTextStyle={styles.fontSize}
-                  selectList={DATA_enterprise}
+                  selectList={STATUS_LIST}
                   component={SelectItem}
                 />}
               </View>

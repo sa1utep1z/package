@@ -4,6 +4,8 @@ import {Button} from '@rneui/themed';
 import {Formik, Field} from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import { useToast } from "react-native-toast-notifications";
 
 import FormItem from '../../../../../components/Form/FormItem';
 import LongTextArea from '../../../../../components/Form/LongTextArea';
@@ -19,7 +21,7 @@ import NAVIGATION_KEYS from '../../../../../navigator/key';
 
 const SignUpValidationSchema = Yup.object().shape({
   memberName: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
-  memberPhone: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号'),
+  // memberPhone: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号'),
   intendSignUpDate: Yup.string().required('请选择意向报名日期'),
   nextTimeReviewDate: Yup.string().required('请选择下次回访日期')
 });
@@ -33,33 +35,58 @@ const initialValues = {
   intendSignUpDate: '',
   thisTimeReviewRecord: '',
   nextTimeReviewDate: '',
-  recordHistory: '这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录这里是历史回访记录'
+  recordHistory: ''
 };
 
+let restForm;
+
 const EditReturnView = (props) => {
+  const toast = useToast();
+
   const navigation = useNavigation();
   const {route: {params}} = props;
 
   const [companyList, setCompanyList] = useState([]);
+  const [otherComponent, setOtherComponent] = useState();
 
   const onSubmit = (values) => {
-    console.log('提交了表单哇呜',values);
+    if(params.setFormValue){
+      params.setFormValue(values, params.formList, params.historyList);
+      navigation.goBack();
+    }
   };
 
   useEffect(()=>{
     getCompanyList();
   },[])
 
+  const setFieldValue = () => {
+    const {formList: {userName, mobile}, historyList} = params;
+    restForm.setFieldValue('memberName', userName);
+    restForm.setFieldValue('memberPhone', mobile);
+    const otherComponent = historyList.map((item, index)=> {
+      if(index < 3){
+        return (
+          <View key={index} style={[styles.historyList, index === 2 && {borderBottomWidth: 0}]}>
+            <Text style={{width: 60}}>{item.lastModifiedByName}</Text>
+            <Text style={{width: 80}}>{moment(item.lastModifiedDate).format('YYYY-MM-DD')}</Text>
+            <Text style={{flex: 2}}>{item.content}</Text>
+          </View>
+        )
+      }
+    })
+    setOtherComponent(otherComponent);
+  };
+
   const getCompanyList = async() => {
     try{
       const res = await MyMembersApi.CompanyList();
       if(res.code !== SUCCESS_CODE){
-        console.log('接口出错了！');
+        toast.show(`请求失败，请稍后重试。${res.msg}`, {type: 'danger'});
       }
-      console.log('res', res);
       setCompanyList(res.data);
     }catch(err){
-      console.log('获取企业列表的接口出错了',res);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 
@@ -68,7 +95,8 @@ const EditReturnView = (props) => {
       initialValues={initialValues}
       validationSchema={SignUpValidationSchema}
       onSubmit={onSubmit}>
-        {({handleSubmit, values, setFieldValue, ...rest}) => {
+        {({handleSubmit, values, ...rest}) => {
+          restForm = rest;
           return (
           <View style={{flex: 1}}>
             <ScrollView style={styles.scrollArea}>
@@ -82,6 +110,8 @@ const EditReturnView = (props) => {
                 <Field
                   name="memberName"
                   title="会员姓名"
+                  editable={false}
+                  inputStyle={{color: '#CCCCCC'}}
                   labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
@@ -89,6 +119,8 @@ const EditReturnView = (props) => {
                   name="memberPhone"
                   title="会员手机号"
                   maxLength={11}
+                  editable={false}
+                  inputStyle={{color: '#CCCCCC'}}
                   labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
@@ -110,7 +142,7 @@ const EditReturnView = (props) => {
                       pageOnPress={()=>navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
                         list: companyList,
                         confirm: (list) => {
-                          setFieldValue('intendCompany', list[0]);
+                          rest.setFieldValue('intendCompany', list[0]);
                           navigation.goBack();
                         },
                         pageTitle: '选择意向报名企业'
@@ -143,6 +175,7 @@ const EditReturnView = (props) => {
                   title="历史回访记录"
                   noBorder
                   disabled
+                  otherComponent={otherComponent}
                   labelAreaStyle={{width: 100}}
                   component={LongTextArea}
                 />
@@ -197,6 +230,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', 
     borderRadius: 8,
     marginBottom: 10
+  },
+  historyList: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderBottomWidth: 1, 
+    borderColor: '#999999'
   }
 });
 

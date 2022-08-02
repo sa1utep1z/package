@@ -1,20 +1,22 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
-
-const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
+import { WebView } from 'react-native-webview';
+import EmptyArea from '../../EmptyArea';
 
 const CompanyDetail = ({
-    message = msg
+    message,
+    msg
   }) => {
+    console.log('msg',msg) ;
 
   return (
     <View style={styles.msgArea}>
-      <>
+      <View style={{alignItems: 'center'}}>
         <View style={styles.itemDateArea}>
           <Text>订单名称：</Text>
           <View style={styles.itemDate}>
-            <Text style={{color: '#999999', borderBottomWidth: 1, borderColor: '#999999'}}>哇哈哈</Text>
+            <Text style={{color: '#999999', borderBottomWidth: 1, borderColor: '#999999'}}>{msg.willSignUpCompanyName}</Text>
           </View>
         </View>
         <View style={styles.itemDateArea}>
@@ -23,9 +25,9 @@ const CompanyDetail = ({
             <Text style={{color: '#999999', borderBottomWidth: 1, borderColor: '#999999'}}>2022-04-09</Text>
           </View>
         </View>
-      </>
+      </View>
       <ScrollView style={styles.message}>
-        <Text>{message}</Text>
+        {message ? <WebView scalesPageToFit={false} style={{height: 300}} source={{ html: message }}/> : <EmptyArea />}
       </ScrollView>
     </View>
   )
@@ -33,8 +35,7 @@ const CompanyDetail = ({
 
 const styles = StyleSheet.create({
   msgArea: {
-    maxHeight: 400,
-    alignItems: 'center'
+    maxHeight: 400
   },
   itemDateArea: {
     height: 30, 
@@ -42,15 +43,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemDate: {
-    height: '100%',
     flexDirection: 'row', 
     alignItems: 'center'
   },
   message: {
-    margin: 10,
-    marginBottom: 0,
-    paddingHorizontal: 8,
-    paddingBottom: 10
+    paddingHorizontal: 8
   }
 })
 

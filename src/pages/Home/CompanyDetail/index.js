@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, ScrollView, Image, View, Text} from 'react-native';
 import {Button} from '@rneui/themed';
 import Swiper from 'react-native-swiper';
@@ -12,9 +12,11 @@ const CompanyDetail = (props) => {
 
   const {route: {params}} = props;
 
-  navigation.setOptions({
-    headerTitle: params.companyName,
-  });
+  useEffect(()=>{
+    navigation.setOptions({
+      headerTitle: params.companyName,
+    });
+  },[])
 
   let content;
   for(let i = 0; i < 200; i++){

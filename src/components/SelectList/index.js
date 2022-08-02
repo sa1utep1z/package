@@ -125,7 +125,7 @@ const SelectList = ({
           style={styles.scroll}
           data={list}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.value}
           getItemLayout={(data, index)=>({length: 40, offset: 40 * index, index})}
           initialNumToRender={15}
           ListEmptyComponent={empty}

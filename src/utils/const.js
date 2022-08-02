@@ -168,3 +168,26 @@ export const GENDER = {
   'MALE': '男'
 };
 
+export const STATUS_LIST_KEY = {
+  "ALL": '全部',
+  "NULL": '空',
+  "SIGN_UP_NO_INTENTION": '报名-无意向',
+  "INTERVIEW_NO_ARRIVE": '面试-未去面试',
+  "INTERVIEW_FAIL": '面试-未通过',
+  "ON_BOARDING_FAIL": '入职-未报到',
+  "JOB_ON": '在职',
+  "PREPARE_JOB_RESIGN": '预离职',
+  "JOB_RESIGN": '离职'
+};
+
+export const STATUS_LIST = [
+  {title: '全部', value: 'all', id: 1},
+  {title: '空', value: 'null', id: 2},
+  {title: '报名-无意向', value: 'sign_up_no_intention', id: 3},
+  {title: '面试-未去面试', value: 'interview_no_arrive', id: 4},
+  {title: '面试-未通过', value: 'interview_fail', id: 5},
+  {title: '入职-未报到', value: 'on_boarding_fail', id: 6},
+  {title: '在职', value: 'job_on', id: 7},
+  {title: '预离职', value: 'prepare_job_resign', id: 8},
+  {title: '离职', value: 'job_resign', id: 9}
+]

@@ -18,6 +18,7 @@ import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
 import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 
+
 const MyMembers = () => {
   const toast = useToast();
   
@@ -46,10 +47,7 @@ const MyMembers = () => {
   if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
-
-  useMemo(()=>{
-    console.log('showList',showList);
-  },[showList])
+  console.log('data', data);
 
   useMemo(()=>{
     if(data){
@@ -66,55 +64,11 @@ const MyMembers = () => {
     }
   },[data])
 
-  const showDialog = (type) => {
-    dialogRef.current.setShowDialog(true);
-    switch(type){
-      case 'memberDetail': 
-        setDialogContent({
-          dialogTitle: '会员信息',
-          dialogComponent: <MemberDetail />
-        });
-        return;
-      case 'companyDetail': 
-        setDialogContent({
-          dialogTitle: '企业详情',
-          dialogComponent: <CompanyDetail />
-        });
-        return;
-      case 'entry':
-        setDialogContent({
-          dialogTitle: '入职记录',
-          dialogComponent: <EntryRecord />
-        });
-        return;
-      case 'review':
-        setDialogContent({
-          dialogTitle: '回访记录',
-          rightTitle: '编辑',
-          rightTitleOnPress: rightTitleOnPress,
-          dialogComponent: <ReviewRecord />
-        });
-        return;
-    }
-  };
-
-  let list = [];
-  for(let i = 0; i < 30; i++){
-    list.push({
-      id: `${i}`,
-      name: `某某${i+1}`,
-      factory: `厂名哈${i+1}`,
-      card: `${i%2 === 0 ? '两卡全': i % 3 === 0 ? '缺身份证' : i%5 === 0 ? '缺银行卡': i% 7 ===0 ? '两卡不全': '缺心眼儿'} `,
-      state: `${i%2 === 0 ? '在职' : i%3 === 0 ? '离职': '未报到'}`,
-      phone: `18011111111`,
-      join: '加入'
-    })
-  };
-
-  const rightTitleOnPress = () => {
-    dialogRef.current.setShowDialog(false);
-    //TODO这里路由还要传值；
-    navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT);
+  const rightTitleOnPress = (msg, data) => {
+    navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
+      formList: msg,
+      historyList: data
+    });
   };
 
   const memberDetailOnPress = async(msg) => {
@@ -149,11 +103,10 @@ const MyMembers = () => {
         return;
       }
       dialogRef.current.setShowDialog(true);
-      console.log('res!!!!!!!!!!', res);
-      // setDialogContent({
-      //   dialogTitle: '会员信息',
-      //   dialogComponent: <MemberDetail memberInfoList={res.data}/>
-      // });
+      setDialogContent({
+        dialogTitle: '企业详情',
+        dialogComponent: <CompanyDetail msg={msg} message={res.data.orderPolicyDetail}/>
+      });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -163,7 +116,6 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.EntryRecord(poolId);
-      console.log('res入职记录', res);
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -178,11 +130,9 @@ const MyMembers = () => {
   };
 
   const reviewRecordOnPress = async(msg) => {
-    console.log('msg', msg);
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
-      console.log('res回访记录', res);
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -195,7 +145,7 @@ const MyMembers = () => {
       setDialogContent({
         dialogTitle: '回访记录',
         rightTitle: '编辑',
-        rightTitleOnPress: rightTitleOnPress,
+        rightTitleOnPress: () => rightTitleOnPress(msg, res.data),
         dialogComponent: <ReviewRecord item={msg} reviewList={res.data}/>
       });
     }catch(err){
@@ -233,7 +183,7 @@ const MyMembers = () => {
       </View>
     )
   };
-
+  
   const listHead = (
     <View style={styles.listHead_title}>
       <Text style={styles.listHead_item}>姓名</Text>
@@ -249,7 +199,7 @@ const MyMembers = () => {
     <View style={[styles.screen, showSearch && {paddingTop: 10}]}>
       <HeaderSearch canFilterStatus/>
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{list.length}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{data?.data.total}</Text> 条数据</Text>
       </View> 
       <BottomList 
         list={showList?.content}

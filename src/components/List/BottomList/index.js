@@ -54,7 +54,7 @@ const BottomList = ({
               onEndReachedThreshold={0.2}
               onRefresh={() => console.log('刷新了123')}
               onEndReached={()=>console.log('触底了')}
-              ListFooterComponent={listFooter}
+              ListFooterComponent={showList.length && listFooter}
               ListEmptyComponent={empty}
             />
           {/* </TabView.Item>
