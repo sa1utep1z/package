@@ -23,6 +23,7 @@ const TransferFactory = (props) => {
   }
 
   useEffect(()=>{
+    console.log('params', params);
     if(params?.params?.pageTitle){
       navigation.setOptions({
         headerTitle: params?.params?.pageTitle
@@ -36,6 +37,7 @@ const TransferFactory = (props) => {
     let newArr = deepCopy(params?.params?.list);
     const filterArr = newArr.filter(item => item.label.includes(value));
     setListArr(filterArr);
+    console.log('newArr,',newArr)
   }
 
   const selectList = (list) => {

@@ -39,9 +39,10 @@ const FormItem = ({
         value={field.value}
         label={label}
         placeholder={rest.placeholder || `请输入${rest.title}`}
+        placeholderTextColor="#CCCCCC"
         onChangeText={form.handleChange(field.name)}
         containerStyle={[styles.containerStyle, rest?.noBorder && styles.noBorder, containerStyle]}
-        inputStyle={[styles.inputStyle, inputStyle, !rest.editable && {color: '#CCCCCC'}]}
+        inputStyle={[styles.inputStyle, inputStyle]}
         inputContainerStyle={[styles.noBorder, inputContainerStyle]}
         rightIcon={rest.OCR && OCRArea}
         {...rest}

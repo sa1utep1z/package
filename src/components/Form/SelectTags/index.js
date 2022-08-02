@@ -36,7 +36,6 @@ const SelectTags = ({
     field.value.length && setSelectTags(field.value);
   },[field.value])
 
-
   const showTag = async() => {
     dialogRef?.current.setShowDialog(true);
     setLoading(true);
@@ -80,7 +79,7 @@ const SelectTags = ({
       dialogRef?.current.setShowDialog(false);
     },
     rightTitleOnPress: () => setSelectTags([]),
-    content: 
+    dialogComponent: 
       <ScrollView style={{maxHeight: 300}}>
         {loading ? <ActivityIndicator animating={loading} /> : <View style={{borderWidth: 1, borderRadius: 5, marginHorizontal: 10, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingVertical: 10, borderColor: '#CCCCCC'}}>
           {tagList.length ?
@@ -94,7 +93,7 @@ const SelectTags = ({
           }): <EmptyArea />}
         </View>}
       </ScrollView>
-  }
+  };
 
   return (
     <>

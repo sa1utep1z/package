@@ -2,7 +2,7 @@ import moment from "moment";
 
 export const SUCCESS_CODE = 0;
 
-export const MEMBER_INFO = [
+export const FAKE_MEMBER_INFO = [
   {type: 'name', title: '姓名', value: '呵呵'},
   {type: 'IDCard', title: '身份证', value: '478523694562315964'},
   {type: 'phone', title: '手机号', value: '18088889999'},
@@ -134,3 +134,60 @@ export const SEAS_SOURCE_TYPE = {
   'SUPPLIER': '供应商导入',
   'SHARE': '分享裂变'
 };
+
+//我的会员-状态
+export const MEMBERS_STATUS = {
+  'SIGN_UP_NO_INTENTION': '无意向',
+  'INTERVIEW_NO_ARRIVE': '未去面试',
+  'INTERVIEW_FAIL': '未通过',
+  'ON_BOARDING_FAIL': '未报到',
+  'JOB_ON': '在职',
+  'PREPARE_JOB_RESIGN': '预离职',
+  'JOB_RESIGN': '离职'
+};
+
+//我的会员-会员信息
+export const MEMBER_INFO_KEY = {
+  'age': '年龄',
+  'bornDay': '出生日',
+  'bornMonth': '出生月份',
+  'gender': '性别',
+  'idNo': '身份证号',
+  'mobile': '手机号',
+  'hometown': '籍贯',
+  'nation': '民族',
+  'recruiterName': '归属招聘员',
+  'registerDate': '注册时间',
+  'sourceType': '来源',
+  'storeName': '归属门店',
+  'userName': '姓名'
+};
+
+export const GENDER = {
+  'FEMALE': '女',
+  'MALE': '男'
+};
+
+export const STATUS_LIST_KEY = {
+  "ALL": '全部',
+  "NULL": '空',
+  "SIGN_UP_NO_INTENTION": '报名-无意向',
+  "INTERVIEW_NO_ARRIVE": '面试-未去面试',
+  "INTERVIEW_FAIL": '面试-未通过',
+  "ON_BOARDING_FAIL": '入职-未报到',
+  "JOB_ON": '在职',
+  "PREPARE_JOB_RESIGN": '预离职',
+  "JOB_RESIGN": '离职'
+};
+
+export const STATUS_LIST = [
+  {title: '全部', value: 'all', id: 1},
+  {title: '空', value: 'null', id: 2},
+  {title: '报名-无意向', value: 'sign_up_no_intention', id: 3},
+  {title: '面试-未去面试', value: 'interview_no_arrive', id: 4},
+  {title: '面试-未通过', value: 'interview_fail', id: 5},
+  {title: '入职-未报到', value: 'on_boarding_fail', id: 6},
+  {title: '在职', value: 'job_on', id: 7},
+  {title: '预离职', value: 'prepare_job_resign', id: 8},
+  {title: '离职', value: 'job_resign', id: 9}
+]
