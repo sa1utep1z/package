@@ -1,7 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, ToastAndroid} from 'react-native';
-import { useToast } from "react-native-toast-notifications";
-import { CommonActions } from '@react-navigation/native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  ToastAndroid,
+} from 'react-native';
+import {useToast} from 'react-native-toast-notifications';
+import {CommonActions} from '@react-navigation/native';
 import {Text, Button, CheckBox} from '@rneui/themed';
 import {Formik, Field} from 'formik';
 import * as Yup from 'yup';
@@ -12,21 +18,21 @@ import storage from '../../utils/storage';
 import NAVIGATION_KEYS from '../../navigator/key';
 import Toast from '../../components/Toast';
 import LoginInput from '../../components/LoginInput';
-import { SUCCESS_CODE } from '../../utils/const';
+import {SUCCESS_CODE} from '../../utils/const';
 
 let restForm;
 
 const LoginSchema = Yup.object().shape({
   user: Yup.string().max(20, '输入账号过长').required('请输入账号'),
-  password: Yup.string().min(6, '至少输入6个字符').required('请输入密码')
+  password: Yup.string().min(6, '至少输入6个字符').required('请输入密码'),
 });
 
 const initialValues = {
   user: '',
-  password: ''
+  password: '',
 };
 
-const Login = (props) => {
+const Login = props => {
   const {navigation} = props;
   const toast = useToast();
 
@@ -36,40 +42,40 @@ const Login = (props) => {
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(()=> {
+  useEffect(() => {
     getUserMsg();
-    storage.remove({ key: 'token' });
-  },[])
+    storage.remove({key: 'token'});
+  }, []);
 
-  const getUserMsg = async() => {
-    try{
+  const getUserMsg = async () => {
+    try {
       const userMsg = await storage.load({key: 'userMsg'});
-      if(userMsg){
+      if (userMsg) {
         setRemember(true);
         const {setFieldValue} = restForm;
         const {account, password} = userMsg;
         setFieldValue('user', account);
         setFieldValue('password', password);
       }
-    }catch(err) {
+    } catch (err) {
       console.log('userMsg->notFound', err);
     }
   };
 
-  const login = async(values) => {
-    console.log('你点击了')
+  const login = async values => {
+    console.log('你点击了');
     setLoading(true);
     const params = {
       loginType: 'pwd',
       account: values.user,
-      password: md5(values.password)
+      password: md5(values.password),
     };
     console.log('params', params);
-    try{
+    try {
       const res = await httpRequest.post('admin/login/app', params);
-      console.log('login->res',res);
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`${res.msg}`, { type: 'danger' });
+      console.log('login->res', res);
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`${res.msg}`, {type: 'danger'});
         setLoading(false);
         return;
       }
@@ -78,35 +84,39 @@ const Login = (props) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{
+          routes: [
+            {
               name: NAVIGATION_KEYS.TABBAR,
-          }]
-        })
+            },
+          ],
+        }),
       );
-  
+
       //保存token
       storage.save({
         key: 'token',
         data: res.data,
-        expires: null
+        expires: null,
       });
-  
+
       //保存账号密码
-      if(remember){
+      if (remember) {
         storage.save({
           key: 'userMsg',
           data: {
             account: values.user,
-            password: values.password
+            password: values.password,
           },
-          expires: 30 * 1000 * 3600 * 24 //30天保存
-        })
-      }else{
-        storage.remove({ key: 'userMsg' });
+          expires: 30 * 1000 * 3600 * 24, //30天保存
+        });
+      } else {
+        storage.remove({key: 'userMsg'});
       }
-    }catch(err) {
+    } catch (err) {
       console.log('err', err);
-      toast.show(`请确认网络是否开启，或稍后重试。${err.response._response}`, { type: 'danger' });
+      toast.show(`请确认网络是否开启，或稍后重试。${err.response._response}`, {
+        type: 'danger',
+      });
       navigation.navigate(NAVIGATION_KEYS.TABBAR);
       setLoading(false);
       return;
@@ -114,9 +124,11 @@ const Login = (props) => {
   };
 
   const onSubmit = values => {
-    const {current: {info}} = toastRef;
-    if(!radio) {
-      info("请勾选下方按钮");
+    const {
+      current: {info},
+    } = toastRef;
+    if (!radio) {
+      info('请勾选下方按钮');
       return;
     }
     login(values);
@@ -131,7 +143,9 @@ const Login = (props) => {
           <Text style={styles.title}>登录</Text>
           <Text style={styles.text}>登录注册以后使用更多服务</Text>
         </View>
-        <TouchableOpacity style={styles.registerArea} onPress={()=>navigation.navigate(NAVIGATION_KEYS.REGISTER)}>
+        <TouchableOpacity
+          style={styles.registerArea}
+          onPress={() => navigation.navigate(NAVIGATION_KEYS.REGISTER)}>
           <Text style={styles.registerArea_text}>注册</Text>
         </TouchableOpacity>
       </View>
@@ -140,44 +154,48 @@ const Login = (props) => {
           initialValues={initialValues}
           validationSchema={LoginSchema}
           onSubmit={onSubmit}>
-            {({handleSubmit, ...rest}) => {
-              restForm = rest;
-              return (
-                <View style={styles.formArea}>
-                  <Field
-                    name="user"
-                    label="账号"
-                    component={LoginInput}
-                  />
-                  <Field
-                    name="password"
-                    label="密码"
-                    maxLength={20}
-                    password
-                    component={LoginInput}
-                  />
-                  <CheckBox
-                    right
-                    title="记住密码"
-                    checked={remember}
-                    onPress={rememberOnPress}
-                    containerStyle={styles.checkBox_fieldContainerStyle}
-                  />
-                  <Button
-                    title="登 录"
-                    loading={loading}
-                    onPress={handleSubmit}
-                    buttonStyle={[styles.buttonStyle, loading && {backgroundColor: '#CCCCCC'}]}
-                    containerStyle={styles.buttonContainerStyle}
-                  />
-                </View>
-            )}}
+          {({handleSubmit, ...rest}) => {
+            restForm = rest;
+            return (
+              <View style={styles.formArea}>
+                <Field name="user" label="账号" component={LoginInput} />
+                <Field
+                  name="password"
+                  label="密码"
+                  maxLength={20}
+                  password
+                  component={LoginInput}
+                />
+                <CheckBox
+                  right
+                  title="记住密码"
+                  checked={remember}
+                  onPress={rememberOnPress}
+                  containerStyle={styles.checkBox_fieldContainerStyle}
+                />
+                <Button
+                  title="登 录"
+                  loading={loading}
+                  onPress={handleSubmit}
+                  buttonStyle={[
+                    styles.buttonStyle,
+                    loading && {backgroundColor: '#CCCCCC'},
+                  ]}
+                  containerStyle={styles.buttonContainerStyle}
+                />
+              </View>
+            );
+          }}
         </Formik>
         <View style={styles.underButtonArea}>
-          <TouchableOpacity onPress={()=>navigation.navigate(NAVIGATION_KEYS.VERIFICATION_LOGIN)}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(NAVIGATION_KEYS.VERIFICATION_LOGIN)
+            }>
             <Text>验证码登录</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate(NAVIGATION_KEYS.FORGET_PSW)}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate(NAVIGATION_KEYS.FORGET_PSW)}>
             <Text>忘记密码？</Text>
           </TouchableOpacity>
         </View>
@@ -190,118 +208,127 @@ const Login = (props) => {
             checkedIcon={<Text style={styles.checkBox_icon}>{'\ue669'}</Text>}
             uncheckedIcon={<Text style={styles.checkBox_icon}>{'\ue68d'}</Text>}
           />
-          <Toast ref={toastRef}/>
+          <Toast ref={toastRef} />
           <View style={styles.bottomArea_textArea}>
-            <TouchableOpacity activeOpacity={1} onPress={() => setRadio(!radio)}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => setRadio(!radio)}>
               <Text style={styles.bottomArea_text}>请先阅读并同意</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>navigation.navigate(NAVIGATION_KEYS.USER_AGREEMENT)}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(NAVIGATION_KEYS.USER_AGREEMENT)
+              }>
               <Text style={styles.bottomArea_btnText}>《用户协议》</Text>
             </TouchableOpacity>
             <Text style={styles.bottomArea_text}>和</Text>
-            <TouchableOpacity onPress={()=>navigation.navigate(NAVIGATION_KEYS.PRIVACY_POLICY)}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(NAVIGATION_KEYS.PRIVACY_POLICY)
+              }>
               <Text style={styles.bottomArea_btnText}>《隐私政策》</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
     </View>
-  )};
+  );
+};
 
 const styles = StyleSheet.create({
   totalArea: {
-    flex: 1, 
-    backgroundColor: '#f5f8fa'
+    flex: 1,
+    backgroundColor: '#f5f8fa',
   },
   topArea: {
     height: 180,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   titleArea: {
-    flex: 1, 
-    justifyContent: 'center', 
-    paddingLeft: 12
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 12,
   },
   registerArea: {
-    width: 60, 
-    height: 50, 
-    justifyContent: 'center', 
-    alignItems: 'center'
+    width: 60,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   registerArea_text: {
-    color: '#409EFF', 
-    fontSize: 18
+    color: '#409EFF',
+    fontSize: 18,
   },
   title: {
     width: 118,
     fontWeight: 'bold',
     fontSize: 35,
-    fontFamily: 'PingFang SC'
+    fontFamily: 'PingFang SC',
   },
   text: {
     color: '#999999',
     fontSize: 13,
     fontWeight: '600',
-    paddingLeft: 2
+    paddingLeft: 2,
   },
   centerArea: {
-    flex: 1
+    flex: 1,
   },
   formArea: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   checkBox_fieldContainerStyle: {
-    backgroundColor: 'rgba(0,0,0,0)', 
-    padding: 0
+    backgroundColor: 'rgba(0,0,0,0)',
+    padding: 0,
   },
   buttonStyle: {
     height: 50,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 30,
   },
   buttonContainerStyle: {
     marginHorizontal: 8,
     marginTop: 40,
-    marginBottom: 10
+    marginBottom: 10,
   },
   underButtonArea: {
-    height: 20, 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    paddingHorizontal: 8
+    height: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
   },
   bottomArea: {
-    height: 80, 
+    height: 80,
     width: '100%',
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
   },
   checkBox_containerStyle: {
     height: 20,
     margin: 0,
     padding: 0,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0)'
+    backgroundColor: 'rgba(0,0,0,0)',
   },
   checkBox_icon: {
-    fontFamily: "iconfont", 
-    color: '#DDDDDD', 
-    fontSize: 20
+    fontFamily: 'iconfont',
+    color: '#DDDDDD',
+    fontSize: 20,
   },
   bottomArea_textArea: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   bottomArea_text: {
-    color: '#DDDDDD'
+    color: '#DDDDDD',
   },
   bottomArea_btnText: {
-    fontSize: 14
-  }
-})
+    fontSize: 14,
+  },
+});
 
 export default Login;
