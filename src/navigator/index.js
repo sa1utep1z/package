@@ -262,7 +262,7 @@ export default Navigator = () => {
         name={NAVIGATION_KEYS.EDIT_RETURN_VISIT}
         component={NAVIGATION_PAGES.EDIT_RETURN_VISIT}
         options={{
-          headerTitle: '编辑回访记录',
+          headerTitle: '新增回访记录',
         }}
       />
       <Stack.Screen

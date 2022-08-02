@@ -8,6 +8,7 @@ const BottomList = ({
     list,
     tabList,
     renderItem,
+    onEndReached,
     listHead
   }) => {
   const [index, setIndex] = useState(0);
@@ -16,6 +17,7 @@ const BottomList = ({
 
   useMemo(()=>{
     setShowList(list);
+    console.log('showList', showList)
   },[list])
 
   return (
@@ -51,11 +53,10 @@ const BottomList = ({
               getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
               refreshing={refreshing}
               initialNumToRender={15}
-              onEndReachedThreshold={0.2}
-              onRefresh={() => console.log('刷新了123')}
-              onEndReached={()=>console.log('触底了')}
-              ListFooterComponent={showList.length && listFooter}
+              ListFooterComponent={showList?.length && listFooter}
               ListEmptyComponent={empty}
+              onEndReachedThreshold={0.01}
+              onEndReached={onEndReached}
             />
           {/* </TabView.Item>
         ))} */}

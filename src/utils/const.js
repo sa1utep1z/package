@@ -72,9 +72,9 @@ export const TAB_OF_LIST = {
   ],
   MY_MEMBERS: [
     {title: '全部', type: 'all'},
-    {title: '待处理', type: 'waitToHandle'},
-    {title: '无意向', type: 'noIntention'},
-    {title: '已报名', type: 'signedUp'}
+    {title: '待回访', type: 'preparing'},
+    {title: '有意愿', type: 'haveWill'},
+    {title: '无意愿', type: 'noWill'}
   ]
 };
 
@@ -137,13 +137,17 @@ export const SEAS_SOURCE_TYPE = {
 
 //我的会员-状态
 export const MEMBERS_STATUS = {
+  'NULL': '无',
+  'SIGN_UP_PENDING': '报名待处理',
   'SIGN_UP_NO_INTENTION': '无意向',
   'INTERVIEW_NO_ARRIVE': '未去面试',
   'INTERVIEW_FAIL': '未通过',
   'ON_BOARDING_FAIL': '未报到',
   'JOB_ON': '在职',
   'PREPARE_JOB_RESIGN': '预离职',
-  'JOB_RESIGN': '离职'
+  'JOB_RESIGN': '离职',
+  'INTERVIEW_PENDING': '面试待处理',
+  'ON_BOARDING_PENDING': '入职待处理'
 };
 
 //我的会员-会员信息
@@ -181,13 +185,11 @@ export const STATUS_LIST_KEY = {
 };
 
 export const STATUS_LIST = [
-  {title: '全部', value: 'all', id: 1},
-  {title: '空', value: 'null', id: 2},
-  {title: '报名-无意向', value: 'sign_up_no_intention', id: 3},
-  {title: '面试-未去面试', value: 'interview_no_arrive', id: 4},
-  {title: '面试-未通过', value: 'interview_fail', id: 5},
-  {title: '入职-未报到', value: 'on_boarding_fail', id: 6},
-  {title: '在职', value: 'job_on', id: 7},
-  {title: '预离职', value: 'prepare_job_resign', id: 8},
-  {title: '离职', value: 'job_resign', id: 9}
+  {title: '报名-无意向', value: 'sign_up_no_intention', id: 1},
+  {title: '面试-未去面试', value: 'interview_no_arrive', id: 2},
+  {title: '面试-未通过', value: 'interview_fail', id: 3},
+  {title: '入职-未报到', value: 'on_boarding_fail', id: 4},
+  {title: '在职', value: 'job_on', id: 5},
+  {title: '预离职', value: 'prepare_job_resign', id: 6},
+  {title: '离职', value: 'job_resign', id: 7}
 ]

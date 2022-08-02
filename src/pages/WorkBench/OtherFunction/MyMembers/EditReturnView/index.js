@@ -11,7 +11,6 @@ import FormItem from '../../../../../components/Form/FormItem';
 import LongTextArea from '../../../../../components/Form/LongTextArea';
 import SelectDate from '../../../../../components/Form/SelectDate';
 import SelectTags from '../../../../../components/Form/SelectTags';
-import {IDCard, phone} from '../../../../../utils/validate';
 import TwoRadio from '../../../../../components/Form/TwoRadio';
 import MyMembersApi from '../../../../../request/MyMembersApi';
 import { SUCCESS_CODE } from '../../../../../utils/const';
@@ -49,15 +48,9 @@ const EditReturnView = (props) => {
   const [companyList, setCompanyList] = useState([]);
   const [otherComponent, setOtherComponent] = useState();
 
-  const onSubmit = (values) => {
-    if(params.setFormValue){
-      params.setFormValue(values, params.formList, params.historyList);
-      navigation.goBack();
-    }
-  };
-
   useEffect(()=>{
     getCompanyList();
+    setFieldValue();
   },[])
 
   const setFieldValue = () => {
@@ -89,6 +82,30 @@ const EditReturnView = (props) => {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
+
+  const onSubmit = async(values) => {
+    console.log('你惦记了？');
+    increaseReviewRecord(values);
+  };
+
+  const increaseReviewRecord = async(values) => {
+    const poolId = params.formList.poolId;
+    console.log('values', values);
+    const params = {
+      returnVisitResult: values.memberDecision ? 'HAVE_WILL' : 'NO_WILL',
+      tags: values.memberTags,
+      nextReturnVisitDate: values.nextTimeReviewDate,
+      willSignUpCompanyId: values.intendCompany.value,
+      willSignUpDate: values.intendSignUpDate
+    };
+    console.log('params', params);
+    try{
+      const res = await MyMembersApi.IncreaseReviewRecord(poolId, params);
+      console.log('res', res);
+    }catch(err){
+      console.log('err', err);
+    }
+  }
 
   return (
     <Formik
@@ -183,7 +200,7 @@ const EditReturnView = (props) => {
             </ScrollView>
             <View style={styles.btnArea}>
               <Button
-                title="保 存"
+                title="新 增"
                 onPress={handleSubmit}
                 buttonStyle={styles.buttonStyle}
                 containerStyle={styles.buttonContainerStyle}

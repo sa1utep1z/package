@@ -28,11 +28,12 @@ const MyMembers = () => {
 
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
 
-  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
+  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0});
   const [dialogContent, setDialogContent] = useState({});
   const [showList, setShowList] = useState({
     content: []
   });
+  const [tabList, setTabList] = useState(TAB_OF_LIST.MY_MEMBERS);
 
   useEffect(()=>{
     navigation.setOptions({
@@ -40,19 +41,23 @@ const MyMembers = () => {
     })
   }, [])
 
-  const { isLoading, data, isError, error, refetch, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
+  useMemo(()=>{
+    console.log('data11111111111111', data);
+  }, [tabList])
+
+  const { isLoading, data, isError, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
+  console.log('我的会员的data', data);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
   }
   if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
-  console.log('data', data);
 
   useMemo(()=>{
     if(data){
-      //如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
-      if(showList.hasNext && data.data.pageNumber !== showList.pageNumber){
+      // 如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
+      if(showList?.hasNext && data.data.pageNumber !== showList.pageNumber){
         const concatList = showList.content.concat(data.data.content);
         showList.content = concatList;
         showList.pageNumber = data.data.pageNumber;
@@ -113,9 +118,11 @@ const MyMembers = () => {
   };
 
   const entryRecordOnPress = async(msg) => {
+    console.log('入职记录的msg', msg);
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.EntryRecord(poolId);
+      console.log('入职记录的res', res);
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -124,6 +131,11 @@ const MyMembers = () => {
         toast.show('暂无入职记录', {type: 'warning'});
         return;
       }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '入职记录',
+        dialogComponent: <EntryRecord entryList={res.data}/>
+      });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -133,6 +145,7 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
+      console.log('reviewRecordOnPress--> res', res)
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -151,6 +164,23 @@ const MyMembers = () => {
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
+  };
+
+  const filter = (values) => {
+    const willSignUpCompanyId = values.enterprise.length ? values.enterprise[0].value : '';
+    const storeId = values.store.length ? values.store[0].storeId : '';
+    const memberStatus = values.status.length ? values.status[0].value.toUpperCase() : '';
+
+    setSearchContent({
+      ...searchContent,
+      nextReturnVisitDateStart: values.dateRange.startDate, 
+      nextReturnVisitDateEnd: values.dateRange.endDate, 
+      willSignUpCompanyId,
+      recruiterName: values.staff, 
+      nameOrIdNo: values.search, 
+      storeId,
+      memberStatus
+    });
   };
 
   const renderItem = ({item}) => {
@@ -195,17 +225,30 @@ const MyMembers = () => {
     </View>
   );
 
+  // const onEndReached = () => {
+  //   if(showList.hasNext){
+  //     setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
+  //   }
+  // };
+
   return (
     <View style={[styles.screen, showSearch && {paddingTop: 10}]}>
-      <HeaderSearch canFilterStatus/>
+      <HeaderSearch 
+        canFilterStatus 
+        filterFun={filter} 
+        staffSearch
+        companySingleSelect
+        storeSingleSelect
+      />
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{data?.data.total}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{data?.data?.total || 0}</Text> 条数据</Text>
       </View> 
       <BottomList 
         list={showList?.content}
         renderItem={renderItem}
         listHead={listHead}
-        tabList={TAB_OF_LIST.MY_MEMBERS}
+        // onEndReached={onEndReached}
+        tabList={tabList}
       />
       <NormalDialog 
         ref={dialogRef}

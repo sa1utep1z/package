@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, ScrollView} from 'react-native';
+import {StyleSheet, View, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import { Text } from '@rneui/themed';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 import { MEMBER_INFO_KEY, FAKE_MEMBER_INFO, GENDER, SEAS_SOURCE_TYPE } from '../../../utils/const'; 
 import moment from 'moment';
 import EmptyArea from '../../EmptyArea';
@@ -33,6 +35,10 @@ const MemberDetail = ({
     }
     setShowList(list);
   },[memberInfoList]);
+
+  const callPhone = (item) => {
+    Linking.openURL(`tel:${item.value}`);  
+  };
   
   return (
     <ScrollView style={styles.msgArea}>
@@ -41,9 +47,12 @@ const MemberDetail = ({
           return (
             <View key={index} style={styles.memberItem}>
               <Text style={styles.memberItem_text}>{item.title}:</Text>
-              <View style={styles.memberItem_value}>
+              {item.type === 'mobile' ? <TouchableOpacity style={[styles.memberItem_value, {flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}]} onPress={()=>callPhone(item)}>
+                <Text style={{color: '#409EFF'}}>{item.value}</Text>
+                <Entypo name='phone' size={16} color='#409EFF'/>
+              </TouchableOpacity> : <View style={styles.memberItem_value}>
                 <Text>{item.value || '无'}</Text>
-              </View>
+              </View>}
             </View>
           )
         }) : <EmptyArea />}

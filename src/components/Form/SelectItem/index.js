@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import {StyleSheet, View, TouchableOpacity, ScrollView, FlatList} from 'react-native';
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useToast } from "react-native-toast-notifications";
 
 import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
 import { deepCopy, checkedType } from '../../../utils';
-import { useEffect } from 'react';
 
 const SelectItem = ({
     field, 
     form, 
     canSearch, 
-    bottomButton, //有底部按钮意味支持多选
+    bottomButton, 
     selectList,
     showLittleTitle, //这是名单模块中顶部筛选栏的label样式开关
     formalLabel = true, //一般表单label默认显示，除非有意关掉
@@ -27,9 +27,15 @@ const SelectItem = ({
     selectAreaTextStyle,
     ...rest
   }) => {
+  const toast = useToast();
+
+  const [list, setList] = useState([]);
   const [showSelectItems, setShowSelectItems] = useState(false);
-  const [list, setList] = useState(selectList);
   const [selectedItemList, setSelectedItemList] = useState([]);
+
+  useMemo(()=>{
+    setList(selectList);
+  },[selectList])
 
   const pressItem = (item) => {
     // 单选
@@ -42,6 +48,7 @@ const SelectItem = ({
           data.isChecked = !data.isChecked;
         }
       });
+      console.log('newArr', newArr);
       setList(newArr);
       return;
     }
@@ -108,7 +115,18 @@ const SelectItem = ({
       newArr.map(item => item.isChecked = true);
     }
     setList(newArr);
+    form.setFieldValue(field.name, []);
   };
+
+  const touchItem = () => {
+    if(field.name === 'staff'){
+      if(!form.values.store.length){
+        toast.show(`请先选择门店！`, { type: 'danger' });
+        return;
+      }
+    }
+    setShowSelectItems(!showSelectItems);
+  }
 
   return (
     <View style={[styles.selectItemArea, !showLittleTitle && styles.noLittleTitle, selectContainerStyle]}>
@@ -124,7 +142,7 @@ const SelectItem = ({
       <View style={styles.rightArea}>
         <TouchableOpacity 
           style={[styles.selectArea, !showLittleTitle && styles.selectArea_noLittle, noBorder && styles.noBorder, selectAreaStyle]}
-          onPress={() => setShowSelectItems(!showSelectItems)}>
+          onPress={touchItem}>
           <Text
             style={[styles.selectText, checkFieldValueType() && styles.noItem, selectAreaTextStyle]} 
             ellipsizeMode="tail" 
@@ -146,14 +164,17 @@ const SelectItem = ({
         onBackdropPress={()=> setShowSelectItems(!showSelectItems)}>
           <View style={styles.dialogTitleArea}>
             <Text style={styles.dialogTitle}>请选择{title}</Text>
-            <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
+            {/* <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
               <Text style={styles.selectAll_text}>全选</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            {singleSelect && !!selectedItemList.length && <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
+              <Text style={styles.selectAll_text}>取消选择</Text>
+            </TouchableOpacity>}
           </View>
           <View style={{paddingHorizontal: 10}}>
             {canSearch && <SearchInput
               borderRadius = {8}
-              placeholder='请输入企业名称'
+              placeholder={`请输入${title}名称`}
               smallSize
               // autoFocus
               withoutButton
@@ -164,33 +185,31 @@ const SelectItem = ({
             />}
             {list.length ? 
               <View style={{borderBottomWidth: 1, borderColor: '#E3E3E3', marginBottom: 10}}>
-                <ScrollView style={[
-                  styles.scrollArea, 
-                  canSearch && styles.canSearchWithScrollView,
-                  bottomButton && styles.bottomButtonWithScrollView
-                ]}>
-                  {
-                    list.map((item, index) => {
-                      const isLastIndex = index === list.length - 1;
-                      const checkedItem = item.isChecked;
-                      return (
-                        <TouchableOpacity 
-                          key={item.index} 
-                          style={[styles.scrollItem, isLastIndex && styles.noBorder]} 
-                          onPress={() => pressItem(item)}>
-                          <Text>{item.title}</Text>
-                          <CheckBox
-                            center
-                            checked={checkedItem}
-                            onPress={() => pressItem(item)}
-                            containerStyle={styles.checkBox_containerStyle}
-                            checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
-                            uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
-                          />
-                        </TouchableOpacity>
-                    )})
-                  }
-                </ScrollView>
+                <FlatList 
+                  data={list}
+                  style={[styles.scrollArea, canSearch && styles.canSearchWithScrollView]}
+                  renderItem={({item})=>{
+                    const checkedItem = item.isChecked;
+                    return (
+                      <TouchableOpacity 
+                        style={[styles.scrollItem, item.id === list.length && {borderBottomWidth: 0}]} 
+                        onPress={() => pressItem(item)}>
+                        <Text>{item.title}</Text>
+                        <CheckBox
+                          center
+                          checked={checkedItem}
+                          onPress={() => pressItem(item)}
+                          containerStyle={styles.checkBox_containerStyle}
+                          checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
+                          uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
+                        />
+                      </TouchableOpacity>
+                    )
+                  }}
+                  keyExtractor={item => item.id}
+                  getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
+                  initialNumToRender={15}
+                />
               </View> : <EmptyArea withSearch />
             }
           </View>
@@ -283,7 +302,6 @@ const styles = StyleSheet.create({
   scrollArea: {
     borderWidth: 1, 
     borderColor: '#E3E3E3', 
-    borderRadius: 8, 
     maxHeight: 300
   },
   scrollItem: {

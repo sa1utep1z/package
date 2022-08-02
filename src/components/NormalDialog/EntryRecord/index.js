@@ -1,6 +1,7 @@
 import React, {useState, useImperativeHandle, forwardRef} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import { Text } from '@rneui/themed';
+import moment from 'moment';
 
 const fakeList = [
   {qiye: '富士康-ACKN', rDate: '2022/05/02', lDate: '2022/09/23', days: '100'},
@@ -30,14 +31,18 @@ const EntryRecord = ({
         </View>
       </View>
       {entryList.map((item, index) => {
-        return (
-          <View style={styles.bottomArea} key={index}>
-            <Text style={styles.bottomArea_text}>{item.qiye}</Text>
-            <Text style={styles.bottomArea_text}>{item.rDate}</Text>
-            <Text style={styles.bottomArea_text}>{item.lDate}</Text>
-            <Text style={styles.bottomArea_text}>{item.days}</Text>
-          </View>
-        )
+        if(index < 3){
+          const enterDate = item.enterDate ? moment(item.enterDate).format('YYYY-MM-DD') : '无';
+          const resignDate = item.resignDate ? moment(item.resignDate).format('YYYY-MM-DD') : '无';
+          return (
+            <View style={styles.bottomArea} key={index}>
+              <Text style={styles.bottomArea_text}>{item.enterCompanyName}</Text>
+              <Text style={styles.bottomArea_text}>{enterDate}</Text>
+              <Text style={styles.bottomArea_text}>{resignDate}</Text>
+              <Text style={styles.bottomArea_text}>{item.stayDays || '无'}</Text>
+            </View>
+          )
+        }
       })}
     </View>
   )
