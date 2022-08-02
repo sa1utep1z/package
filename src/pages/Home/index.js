@@ -84,7 +84,8 @@ const Home = (props) => {
       return;
     }
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
-      companyName: item.companyName
+      companyName: item.companyName,
+      orderId: item.orderId
     });
   };
 

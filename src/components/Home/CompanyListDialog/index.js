@@ -21,8 +21,10 @@ const CompanyListDialog = (props, ref) => {
   }, []);
 
   const gotoDetail = (item) => {
+    console.log('打印item的值：', item);
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
-      companyName: item.title
+      companyName: item.companyName,
+      orderId: item.orderId
     });
   };
 
@@ -49,7 +51,7 @@ const CompanyListDialog = (props, ref) => {
             return (
               <View style={[styles.listItem, isLastIndex && styles.noBorder]} key={item.orderId}>
                 <Text style={[styles.item, styles.flex_1]}>{index + 1}</Text>
-                <Text style={[styles.item, styles.flex_4]}>{item.companyName}</Text>
+                <Text style={[styles.item, styles.flex_4]}>{item.orderName}</Text>
                 <TouchableOpacity style={[styles.gotoDetail, styles.flex_1]} onPress={() => gotoDetail(item)}>
                   <Text style={styles.gotoDetailPress}>进入</Text>
                 </TouchableOpacity>

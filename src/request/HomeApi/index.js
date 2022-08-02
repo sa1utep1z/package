@@ -6,6 +6,7 @@ const HomeApi = {
     return await httpRequest.post('admin/app/index/orderPage', params)
   },
   CompanyList: async (params) => await httpRequest.post('admin/app/index/company/order', params),
+  orderDetail: async (orderId) => await httpRequest.get(`admin/app/orderDetail/${orderId}`),
 }
 
 export default HomeApi;
