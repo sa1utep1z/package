@@ -27,10 +27,6 @@ const ReviewRecord = ({
     setShowList(arr);
   },[reviewList])
 
-  useMemo(()=>{
-    console.log('showList',showList);
-  },[showList])
-
   return (
     <ScrollView style={styles.totalArea}>
       {showList.map((item, index) => {

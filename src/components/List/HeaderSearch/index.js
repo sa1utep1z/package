@@ -1,54 +1,84 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { View, StyleSheet, TouchableOpacity, Animated, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 import {Formik, Field} from 'formik';
-import { Text } from '@rneui/themed';
+import { Text, SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
+import { useToast } from "react-native-toast-notifications";
 
-import { STATUS_LIST } from '../../../utils/const';
+import { STATUS_LIST, SUCCESS_CODE } from '../../../utils/const';
 import SelectItem from '../../Form/SelectItem';
+import SearchItem from '../../Form/SearchItem';
 import SearchInput from '../../SearchInput';
 import DateRangePicker from './DateRangePicker';
+import MyMembersApi from '../../../request/MyMembersApi';
+
+let restForm;
 
 const HeaderSearch = ({
   batchOperate,
+  filterFun,
+  staffSearch,
+  companySingleSelect,
+  storeSingleSelect,
   noStoreAndStaff = false,
   canFilterStatus = false,
     ...rest
   }) => {
+  const toast = useToast();
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
 
-  let DATA_enterprise = [], DATA_store = [], DATA_staff = []; 
-  for(let i = 0; i < 20; i++){
-    DATA_enterprise.push({
-      title: `企业${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    });
-    DATA_store.push({
-      title: `门店${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    });
-    DATA_staff.push({
-      title: `员工${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    });
-  }
+  const [companyList, setCompanyList] = useState([]);
+  const [storeList, setStoreList] = useState([]);
 
   useEffect(()=>{
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
+    getCompaniesList();
+    getStoreList();
   },[showSearch])
+
+  const getCompaniesList = async() => {
+    try{  
+      const res = await MyMembersApi.CompaniesList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if(res.data.length){
+        res.data.forEach((item,index) => {
+          item.title = item.label;
+          item.id = index + 1;
+        });
+        setCompanyList(res.data);
+      }
+    }catch(err){
+      console.log('err', err);
+      toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
+    }
+  };
+
+  const getStoreList = async() => {
+    try{  
+      const res = await MyMembersApi.StoreList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if(res.data.length){
+        res.data.forEach((item,index) => {
+          item.title = item.storeName;
+          item.id = index + 1;
+        });
+        setStoreList(res.data);
+      }
+    }catch(err){
+      console.log('err', err);
+      toast.show(`获取门店列表失败`, { type: 'danger' });
+    }
+  };
 
   const startingAnimation = () => {
     Animated.timing(fadeAnim, {
@@ -67,6 +97,16 @@ const HeaderSearch = ({
   };
 
   const initialValues = () => {
+    if(staffSearch){
+      return {
+        enterprise: [],
+        status: [],
+        store: [],
+        staff: '',
+        search: '',
+        dateRange: {}
+      }
+    }
     if(noStoreAndStaff){
       return {
         enterprise: [],
@@ -86,7 +126,7 @@ const HeaderSearch = ({
   };
 
   const onSubmit = values => {
-    console.log('onSubmit....', values);
+    filterFun(values);
   };
 
   const batch = batchOperate && (
@@ -99,7 +139,24 @@ const HeaderSearch = ({
     <Formik
       initialValues={initialValues()}
       onSubmit={onSubmit}>
-        {({...rest}) => {
+        {({values, ...rest}) => {
+          restForm = rest;
+          let staffList = [];
+          if(values.store.length){
+            values.store.map((item) => {
+              if(item.members.length){
+                item.members.map((member) => {
+                  staffList.push({
+                    title: member.label,
+                    id: member.value, 
+                    value: member.value
+                  })
+                })
+              }
+            })
+          }else{
+            staffList = [];
+          }
           if(!showSearch) return <></>
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
@@ -114,9 +171,10 @@ const HeaderSearch = ({
                   noBorder
                   formalLabel={false}
                   lastButton={batch}
+                  singleSelect={companySingleSelect}
                   selectAreaStyle={styles.selectAreaStyle}
                   selectAreaTextStyle={styles.fontSize}
-                  selectList={DATA_enterprise}
+                  selectList={companyList}
                   component={SelectItem}
                 />
                 {canFilterStatus && <Field
@@ -145,8 +203,9 @@ const HeaderSearch = ({
                   canSearch
                   bottomButton
                   noBorder
+                  singleSelect={storeSingleSelect}
                   formalLabel={false}
-                  selectList={DATA_store}
+                  selectList={storeList}
                   selectAreaStyle={styles.selectAreaStyle}
                   selectAreaTextStyle={styles.fontSize}
                   component={SelectItem}
@@ -160,20 +219,19 @@ const HeaderSearch = ({
                   bottomButton
                   noBorder
                   formalLabel={false}
-                  selectList={DATA_staff}
+                  selectList={staffList}
                   selectAreaStyle={styles.selectAreaStyle}
                   selectAreaTextStyle={styles.fontSize}
-                  component={SelectItem}
+                  component={staffSearch ? SearchItem : SelectItem }
                 />
               </View>}
               <Field
                 name="dateRange"
-                rest={rest}
                 component={DateRangePicker}
               />
               <Field
                 name="search"
-                placeholder='请输入姓名、身份证或手机号'
+                placeholder='请输入姓名、身份证'
                 borderRadius={8}
                 fontStyle={styles.fontSize}
                 searchInputStyle={styles.searchInputStyle}
@@ -193,7 +251,8 @@ const styles = StyleSheet.create({
   selectAreaStyle: {
     height: 30, 
     backgroundColor: '#fff', 
-    borderRadius: 8
+    borderRadius: 8,
+    paddingLeft: 10
   },
   fontSize: {
     fontSize: 14

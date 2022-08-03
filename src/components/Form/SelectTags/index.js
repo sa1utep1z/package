@@ -105,7 +105,7 @@ const SelectTags = ({
           {field.value.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', flex: 1}}>
             {field.value.map((tag, tagIndex) => {
               return (
-                <Text style={{paddingHorizontal: 5, marginRight: 5, marginBottom: 5, borderRadius: 3, backgroundColor: '#409EFF', color: '#fff'}}>{tag}</Text>
+                <Text key={tagIndex} style={{paddingHorizontal: 5, marginRight: 5, marginBottom: 5, borderRadius: 3, backgroundColor: '#409EFF', color: '#fff'}}>{tag}</Text>
               )
             })}
           </View> : 

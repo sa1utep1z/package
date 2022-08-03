@@ -262,14 +262,14 @@ export default Navigator = () => {
         name={NAVIGATION_KEYS.EDIT_RETURN_VISIT}
         component={NAVIGATION_PAGES.EDIT_RETURN_VISIT}
         options={{
-          headerTitle: '编辑回访记录',
+          headerTitle: '新增回访记录',
         }}
       />
       <Stack.Screen
         name={NAVIGATION_KEYS.JOIN_IN_SIGN_UP}
         component={NAVIGATION_PAGES.JOIN_IN_SIGN_UP}
         options={{
-          headerTitle: '会员加入报名',
+          headerTitle: '加入报名',
         }}
       />
     </>

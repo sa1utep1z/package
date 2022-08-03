@@ -11,7 +11,6 @@ import FormItem from '../../../../../components/Form/FormItem';
 import LongTextArea from '../../../../../components/Form/LongTextArea';
 import SelectDate from '../../../../../components/Form/SelectDate';
 import SelectTags from '../../../../../components/Form/SelectTags';
-import {IDCard, phone} from '../../../../../utils/validate';
 import TwoRadio from '../../../../../components/Form/TwoRadio';
 import MyMembersApi from '../../../../../request/MyMembersApi';
 import { SUCCESS_CODE } from '../../../../../utils/const';
@@ -20,10 +19,7 @@ import SelectItemInPage from '../../../../../components/Form/SelectItemInPage';
 import NAVIGATION_KEYS from '../../../../../navigator/key';
 
 const SignUpValidationSchema = Yup.object().shape({
-  memberName: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
-  // memberPhone: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号'),
-  intendSignUpDate: Yup.string().required('请选择意向报名日期'),
-  nextTimeReviewDate: Yup.string().required('请选择下次回访日期')
+  thisTimeReviewRecord: Yup.string().required('请填写本次回访记录')
 });
 
 const initialValues = {
@@ -49,15 +45,9 @@ const EditReturnView = (props) => {
   const [companyList, setCompanyList] = useState([]);
   const [otherComponent, setOtherComponent] = useState();
 
-  const onSubmit = (values) => {
-    if(params.setFormValue){
-      params.setFormValue(values, params.formList, params.historyList);
-      navigation.goBack();
-    }
-  };
-
   useEffect(()=>{
     getCompanyList();
+    setFieldValue();
   },[])
 
   const setFieldValue = () => {
@@ -85,6 +75,29 @@ const EditReturnView = (props) => {
         toast.show(`请求失败，请稍后重试。${res.msg}`, {type: 'danger'});
       }
       setCompanyList(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const onSubmit = async(values) => {
+    const {params: {formList: {poolId}}} = props.route;
+    const params = {
+      returnVisitResult: values.memberDecision ? 'HAVE_WILL' : 'NO_WILL',
+      tags: values.memberTags,
+      nextReturnVisitDate: values.nextTimeReviewDate,
+      willSignUpCompanyId: values.intendCompany.value,
+      willSignUpDate: values.intendSignUpDate,
+      content: values.thisTimeReviewRecord
+    };
+    try{
+      const res = await MyMembersApi.IncreaseReviewRecord(poolId, params);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`新增回访记录失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      toast.show('新增回访记录成功！',{type: 'success'});
+      navigation.goBack();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -183,7 +196,7 @@ const EditReturnView = (props) => {
             </ScrollView>
             <View style={styles.btnArea}>
               <Button
-                title="保 存"
+                title="新 增"
                 onPress={handleSubmit}
                 buttonStyle={styles.buttonStyle}
                 containerStyle={styles.buttonContainerStyle}

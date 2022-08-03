@@ -13,6 +13,8 @@ const CenterSelectDate = ({
   }) => {
   const dispatch = useDispatch();
 
+  const rangeDate = useSelector(state => state.RangeDateOfList);
+
   const [showYear, setShowYear] = useState(moment().year());
   const [btnType, setBtnType] = useState('');
   const [weekArr, setWeekArr] = useState([]);

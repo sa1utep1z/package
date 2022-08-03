@@ -18,7 +18,6 @@ import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
 import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 
-
 const MyMembers = () => {
   const toast = useToast();
   
@@ -28,31 +27,36 @@ const MyMembers = () => {
 
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
 
-  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
+  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0});
   const [dialogContent, setDialogContent] = useState({});
   const [showList, setShowList] = useState({
     content: []
   });
+  const [tabList, setTabList] = useState(TAB_OF_LIST.MY_MEMBERS);
 
   useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-  }, [])
+    return () => setShowList({content: []});
+  }, []);
 
-  const { isLoading, data, isError, error, refetch, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
+  const { isLoading, data, isError, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
   }
   if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
-  console.log('data', data);
+
+  useMemo(()=>{
+    console.log('searchContent', searchContent);
+  },[searchContent])
 
   useMemo(()=>{
     if(data){
-      //如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
-      if(showList.hasNext && data.data.pageNumber !== showList.pageNumber){
+      // 如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
+      if(showList?.hasNext && data.data.pageNumber !== showList.pageNumber){
         const concatList = showList.content.concat(data.data.content);
         showList.content = concatList;
         showList.pageNumber = data.data.pageNumber;
@@ -63,6 +67,48 @@ const MyMembers = () => {
       setShowList(data.data);
     }
   },[data])
+
+  useMemo(()=>{
+    if(showList.content.length){
+      tabList.map(item =>{
+        switch(item.type){
+          case 'all':
+            item.nums = showList.allNums;
+            break;
+          case 'preparing':
+            item.nums = showList.preparingNums;
+            break;
+          case 'haveWill':
+            item.nums = showList.haveWillNums;
+            break;
+          case 'noWill':
+            item.nums = showList.noWillNums;
+            break;
+          default:
+            break;
+        }
+      });
+      setTabList(tabList);
+    }
+  },[data]);
+
+  const selectIndex = (selectIndex) => {
+    switch(selectIndex){
+      case 0:
+        searchContent.returnVisitResult = '';
+        break;
+      case 1:
+        searchContent.returnVisitResult = 'PREPARING';
+        break;
+      case 2:
+        searchContent.returnVisitResult = 'HAVE_WILL';
+        break;
+      case 3:
+        searchContent.returnVisitResult = 'NO_WILL';
+        break;
+    }
+    setSearchContent({ ...searchContent });
+  };
 
   const rightTitleOnPress = (msg, data) => {
     navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
@@ -113,9 +159,11 @@ const MyMembers = () => {
   };
 
   const entryRecordOnPress = async(msg) => {
+    console.log('入职记录的msg', msg);
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.EntryRecord(poolId);
+      console.log('入职记录的res', res);
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -124,6 +172,11 @@ const MyMembers = () => {
         toast.show('暂无入职记录', {type: 'warning'});
         return;
       }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '入职记录',
+        dialogComponent: <EntryRecord entryList={res.data}/>
+      });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -133,6 +186,7 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
+      console.log('reviewRecordOnPress--> res', res)
       if(data?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -153,6 +207,24 @@ const MyMembers = () => {
     }
   };
 
+  const filter = (values) => {
+    const willSignUpCompanyId = values.enterprise.length ? values.enterprise[0].value : '';
+    const storeId = values.store.length ? values.store[0].storeId : '';
+    const memberStatus = values.status.length ? values.status[0].value.toUpperCase() : '';
+
+    setSearchContent({
+      pageSize: 20, 
+      pageNumber: 0,
+      nextReturnVisitDateStart: values.dateRange.startDate, 
+      nextReturnVisitDateEnd: values.dateRange.endDate, 
+      willSignUpCompanyId,
+      recruiterName: values.staff, 
+      nameOrIdNo: values.search, 
+      storeId,
+      memberStatus
+    });
+  };
+
   const renderItem = ({item}) => {
     const renderList = [
       { fieldName: item.userName, pressFun: () => memberDetailOnPress(item)},
@@ -170,7 +242,9 @@ const MyMembers = () => {
       { fieldName: '查看', pressFun: () => entryRecordOnPress(item)},
       { fieldName: '查看', pressFun: () => reviewRecordOnPress(item)},
       { fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'},
-      { fieldName: '加入', pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP)}
+      { fieldName: '加入', pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP, {
+        msg: item
+      })}
     ];
     
     return (
@@ -195,17 +269,33 @@ const MyMembers = () => {
     </View>
   );
 
+  const onEndReached = () => {
+    if(showList.hasNext){
+      console.log('触发了下一页');
+      setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
+    }
+  };
+
   return (
     <View style={[styles.screen, showSearch && {paddingTop: 10}]}>
-      <HeaderSearch canFilterStatus/>
+      <HeaderSearch 
+        canFilterStatus 
+        filterFun={filter} 
+        staffSearch
+        companySingleSelect
+        storeSingleSelect
+      />
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{data?.data.total}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{showList?.content.length || 0}</Text> 条数据</Text>
       </View> 
       <BottomList 
         list={showList?.content}
         renderItem={renderItem}
         listHead={listHead}
-        tabList={TAB_OF_LIST.MY_MEMBERS}
+        isLoading={isLoading}
+        nowSelectIndex={selectIndex}
+        onEndReached={onEndReached}
+        tab={tabList}
       />
       <NormalDialog 
         ref={dialogRef}
