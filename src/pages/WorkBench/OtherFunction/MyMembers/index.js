@@ -18,7 +18,6 @@ import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
 import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 
-
 const MyMembers = () => {
   const toast = useToast();
   
@@ -39,20 +38,20 @@ const MyMembers = () => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-  }, [])
-
-  useMemo(()=>{
-    console.log('data11111111111111', data);
-  }, [tabList])
+    return () => setShowList({content: []});
+  }, []);
 
   const { isLoading, data, isError, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
-  console.log('我的会员的data', data);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
   }
   if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
+
+  useMemo(()=>{
+    console.log('searchContent', searchContent);
+  },[searchContent])
 
   useMemo(()=>{
     if(data){
@@ -68,6 +67,48 @@ const MyMembers = () => {
       setShowList(data.data);
     }
   },[data])
+
+  useMemo(()=>{
+    if(showList.content.length){
+      tabList.map(item =>{
+        switch(item.type){
+          case 'all':
+            item.nums = showList.allNums;
+            break;
+          case 'preparing':
+            item.nums = showList.preparingNums;
+            break;
+          case 'haveWill':
+            item.nums = showList.haveWillNums;
+            break;
+          case 'noWill':
+            item.nums = showList.noWillNums;
+            break;
+          default:
+            break;
+        }
+      });
+      setTabList(tabList);
+    }
+  },[data]);
+
+  const selectIndex = (selectIndex) => {
+    switch(selectIndex){
+      case 0:
+        searchContent.returnVisitResult = '';
+        break;
+      case 1:
+        searchContent.returnVisitResult = 'PREPARING';
+        break;
+      case 2:
+        searchContent.returnVisitResult = 'HAVE_WILL';
+        break;
+      case 3:
+        searchContent.returnVisitResult = 'NO_WILL';
+        break;
+    }
+    setSearchContent({ ...searchContent });
+  };
 
   const rightTitleOnPress = (msg, data) => {
     navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
@@ -172,7 +213,8 @@ const MyMembers = () => {
     const memberStatus = values.status.length ? values.status[0].value.toUpperCase() : '';
 
     setSearchContent({
-      ...searchContent,
+      pageSize: 20, 
+      pageNumber: 0,
       nextReturnVisitDateStart: values.dateRange.startDate, 
       nextReturnVisitDateEnd: values.dateRange.endDate, 
       willSignUpCompanyId,
@@ -200,7 +242,9 @@ const MyMembers = () => {
       { fieldName: '查看', pressFun: () => entryRecordOnPress(item)},
       { fieldName: '查看', pressFun: () => reviewRecordOnPress(item)},
       { fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'},
-      { fieldName: '加入', pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP)}
+      { fieldName: '加入', pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP, {
+        msg: item
+      })}
     ];
     
     return (
@@ -225,11 +269,12 @@ const MyMembers = () => {
     </View>
   );
 
-  // const onEndReached = () => {
-  //   if(showList.hasNext){
-  //     setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
-  //   }
-  // };
+  const onEndReached = () => {
+    if(showList.hasNext){
+      console.log('触发了下一页');
+      setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
+    }
+  };
 
   return (
     <View style={[styles.screen, showSearch && {paddingTop: 10}]}>
@@ -241,14 +286,16 @@ const MyMembers = () => {
         storeSingleSelect
       />
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{data?.data?.total || 0}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{showList?.content.length || 0}</Text> 条数据</Text>
       </View> 
       <BottomList 
         list={showList?.content}
         renderItem={renderItem}
         listHead={listHead}
-        // onEndReached={onEndReached}
-        tabList={tabList}
+        isLoading={isLoading}
+        nowSelectIndex={selectIndex}
+        onEndReached={onEndReached}
+        tab={tabList}
       />
       <NormalDialog 
         ref={dialogRef}

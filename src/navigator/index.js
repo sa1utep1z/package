@@ -269,7 +269,7 @@ export default Navigator = () => {
         name={NAVIGATION_KEYS.JOIN_IN_SIGN_UP}
         component={NAVIGATION_PAGES.JOIN_IN_SIGN_UP}
         options={{
-          headerTitle: '会员加入报名',
+          headerTitle: '加入报名',
         }}
       />
     </>

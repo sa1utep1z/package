@@ -3,6 +3,7 @@ import {StyleSheet, View, TouchableOpacity, ScrollView, FlatList} from 'react-na
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useToast } from "react-native-toast-notifications";
+import {ErrorMessage} from 'formik';
 
 import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
@@ -25,6 +26,7 @@ const SelectItem = ({
     selectContainerStyle,
     selectAreaStyle,
     selectAreaTextStyle,
+    autoSubmit = false,
     ...rest
   }) => {
   const toast = useToast();
@@ -48,7 +50,6 @@ const SelectItem = ({
           data.isChecked = !data.isChecked;
         }
       });
-      console.log('newArr', newArr);
       setList(newArr);
       return;
     }
@@ -103,7 +104,10 @@ const SelectItem = ({
     const checkedList = list.filter(item => item.isChecked);
     setShowSelectItems(!showSelectItems);
     form.setFieldValue(field.name, checkedList);
-    form.handleSubmit();
+    //是否自动提交表单
+    if(autoSubmit){
+      form.handleSubmit();
+    }
   };
 
   const clearSelected = () => {
@@ -156,6 +160,11 @@ const SelectItem = ({
           />
         </TouchableOpacity>
         {lastButton}
+        <ErrorMessage
+          name={field.name}
+          component={Text}
+          style={{color: 'red', position: 'absolute', bottom: 0}}
+        />
       </View>
 
       <Dialog
@@ -192,7 +201,7 @@ const SelectItem = ({
                     const checkedItem = item.isChecked;
                     return (
                       <TouchableOpacity 
-                        style={[styles.scrollItem, item.id === list.length && {borderBottomWidth: 0}]} 
+                        style={[styles.scrollItem]} 
                         onPress={() => pressItem(item)}>
                         <Text>{item.title}</Text>
                         <CheckBox

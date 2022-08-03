@@ -18,9 +18,17 @@ export const FAKE_MEMBER_INFO = [
 ];
 
 export const ARRIVE_WAY = [
-  {title: '自行到厂', value: 'byHimself'},
-  {title: '门店集合', value: 'unifyAssemble'}
+  {id: 1, title: '自行到厂', value: 'byHimself'},
+  {id: 2, title: '门店集合', value: 'unifyAssemble'}
 ];
+
+//渠道来源
+export const CHANEL_SOURCE_LIST = [
+  {id: 1, title: '自主报名', value: 'SELF'},
+  {id: 2, title: '门店录入', value: 'RECRUITER'},
+  {id: 3, title: '供应商', value: 'SUPPLIER'},
+  {id: 4, title: '会员推荐', value: 'MEMBER_RECOMMEND'}
+]
 
 export const HANDLE_STATE = [
   {title: '待处理', value: 'waitToHandle'},

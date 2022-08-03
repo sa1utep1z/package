@@ -6,6 +6,8 @@ import EmptyArea from '../EmptyArea';
 const NormalDialog = ({dialogContent: {
   dialogComponent = <></>,
   dialogTitle = '',
+  leftTitle,
+  leftTitleOnPress,
   rightTitle,
   rightTitleOnPress,
   singleButton = false,
@@ -27,11 +29,15 @@ const NormalDialog = ({dialogContent: {
       overlayStyle={styles.dialogStyle}
       onBackdropPress={backOnPress || defaultBackOnPress}>
         <View style={styles.titleArea}>
-          <Text style={styles.title}>{dialogTitle || '温馨提示'}</Text>
+          {!!leftTitle && 
+            <TouchableOpacity style={styles.leftTitle} onPress={leftTitleOnPress}>
+              <Text style={styles.leftTitleText}>{leftTitle || '返回'}</Text>
+            </TouchableOpacity>}
+          <Text style={styles.title} onPress={()=>console.log('点击了标题')}>{dialogTitle || '温馨提示'}</Text>
           {!!rightTitle && 
-          <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
-            <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
-          </TouchableOpacity>}
+            <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
+              <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
+            </TouchableOpacity>}
         </View>
         {dialogComponent ? dialogComponent: <EmptyArea />}
         <View style={styles.bottomButtonArea}>
@@ -101,17 +107,26 @@ const styles = StyleSheet.create({
     color: '#409EFF'
   },
   title: {
-    textAlign: 'center', 
+    textAlign: 'center',
     fontWeight: 'bold', 
     fontSize: 20
   },
   rightTitle: {
     position: 'absolute', 
-    right: 20
+    right: 20,
+    zIndex: 999
   },
   rightTitleText: {
     color: '#409EFF'
-  }
+  },
+  leftTitle: {
+    position: 'absolute', 
+    left: 20,
+    zIndex: 999
+  },
+  leftTitleText: {
+    color: '#409EFF'
+  },
 })
 
 export default forwardRef(NormalDialog);

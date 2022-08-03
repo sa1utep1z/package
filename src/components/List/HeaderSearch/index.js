@@ -33,35 +33,6 @@ const HeaderSearch = ({
   const [companyList, setCompanyList] = useState([]);
   const [storeList, setStoreList] = useState([]);
 
-  useMemo(()=>{
-    console.log('storeList',storeList)
-  },[storeList])
-
-  let DATA_enterprise = [], DATA_store = [], DATA_staff = []; 
-  for(let i = 0; i < 20; i++){
-    DATA_enterprise.push({
-      title: `企业${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    });
-    DATA_store.push({
-      title: `门店${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    });
-    DATA_staff.push({
-      title: `员工${i+1}`,
-      name: `龙华CN${i+1}`,
-      index: i + 1,
-      id: i,
-      time: `2022-07-${i+1}`
-    });
-  }
-
   useEffect(()=>{
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
@@ -92,7 +63,6 @@ const HeaderSearch = ({
   const getStoreList = async() => {
     try{  
       const res = await MyMembersApi.StoreList();
-      console.log('获取门店列表的res',res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
         return;
@@ -156,7 +126,6 @@ const HeaderSearch = ({
   };
 
   const onSubmit = values => {
-    console.log('提交表单的values、', values)
     filterFun(values);
   };
 
@@ -258,7 +227,6 @@ const HeaderSearch = ({
               </View>}
               <Field
                 name="dateRange"
-                rest={rest}
                 component={DateRangePicker}
               />
               <Field
