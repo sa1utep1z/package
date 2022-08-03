@@ -191,3 +191,53 @@ export const STATUS_LIST = [
   {title: '预离职', value: 'prepare_job_resign', id: 8},
   {title: '离职', value: 'job_resign', id: 9}
 ]
+ 
+export const COMPANY_SHIFT = [
+  { label: '长白班', value: 'SHIFT_CATEGORY_LONG' },
+  { label: '两班倒', value: 'SHIFT_CATEGORY_TWO' },
+  { label: '三班倒', value: 'SHIFT_CATEGORY_THREE' },
+];
+export const SITSTAND = [
+  { label: '站班', value: 'STAND' },
+  { label: '坐班', value: 'SIT_DOWN' },
+  { label: '都有', value: 'ALL_HAVE' },
+];
+export const DRESS = [
+  { label: '普通工衣', value: 'DRESS_ORDINARY' },
+  { label: '无尘服', value: 'DRESS_DUST_FREE' },
+  { label: '穿自己衣服', value: 'DRESS_OWN' },
+];
+export const COMPANY_LINE = [
+  { label: '流水线', value: 'LINE_WATER' },
+  { label: '非流水线', value: 'LINE_NOT_WATER' },
+  { label: '都有', value: 'ALL_HAVE' },
+];
+export const DORMITORY = [
+  { label: '住宿免费', value: 'DORMITORY_FREE' },
+  { label: '住宿扣费', value: 'DORMITORY_NOT_FREE' },
+  { label: '无住宿', value: 'NOT_DORMITORY' },
+];
+export const COMPANY_FOOD = [
+  { label: '免费工作餐', value: 'FOOD_FREE' },
+  { label: '三餐包吃', value: 'FOOD_THREE_INCLUDE' },
+  { label: '刷卡吃饭', value: 'FOOD_SWIPE' },
+  { label: '自费吃饭', value: 'FOOD_OWN' },
+];
+export const COMPANY_PHONE = [
+  { label: '可以带', value: 'PHONE_CARRY' },
+  { label: '不能带', value: 'PHONE_NOT_CARRY' },
+];
+export const COMPANY_IDCARD = [
+  { label: '必须有磁有效', value: 'ID_CARD_MAGNETIC' },
+  { label: '临时身份证可去', value: 'ID_CARD_TEMP' },
+  { label: '无身份证可去', value: 'ID_CARD_NOT' },
+];
+export const COMPANY_ENGLISH = [
+  { label: '不会可去', value: 'ENGLISH_NOT_MUST' },
+  { label: '必须要会', value: 'ENGLISH_MUST' },
+];
+export const TATTOOSMOKE = [
+  { label: '严查', value: 'TATTOO_SMOKE_CHECK' },
+  { label: '不查', value: 'TATTOO_SMOKE_NOT_CHECK' },
+  { label: '不可外露', value: 'TATTOO_SMOKE_NOT_EXPOSED' },
+];

@@ -2,6 +2,7 @@ import React, {useState, useImperativeHandle, forwardRef} from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { WebView } from 'react-native-webview';
 
 const CompanyDetailDialog = ({
     message,
@@ -24,31 +25,26 @@ const CompanyDetailDialog = ({
           <View style={styles.itemDateArea}>
             <Text>订单日期：</Text>
             <View style={styles.itemDate}>
-              <Icon
+              {/* <Icon
                 name='calendar' 
                 type='antdesign'
                 style={styles.icon}
-              />
-              <Text style={{color: '#999999'}}>2022-04-09</Text>
+              /> */}
+              <Text style={{color: '#444444'}}>{message.recruitRange}</Text>
             </View>
           </View>
           <View style={styles.itemDateArea}>
             <Text>订单名称：</Text>
             <View style={styles.itemDate}>
-              <Icon
-                name='calendar' 
-                type='antdesign'
-                style={styles.icon}
-              />
-              <Text style={{color: '#999999'}}>2022-04-09</Text>
+              <Text style={{color: '#444444'}}>{message.orderName}</Text>
             </View>
           </View>
-          <ScrollView style={styles.message}>
-            <Text>{message}</Text>
-          </ScrollView>
+          <View style={styles.message}>
+            <WebView scalesPageToFit={false} originWhitelist={['*']} source={{ html: message.orderPolicyDetail }}></WebView>
+          </View>
         </View>
         <TouchableOpacity style={styles.bottomBtn} onPress={()=>setShowDetail(!showDetail)}>
-          <Text style={styles.btnText}>确 定</Text>
+          <Text style={styles.btnText}>确定</Text>
         </TouchableOpacity>
       </View>
     </Dialog>
@@ -72,8 +68,7 @@ const styles = StyleSheet.create({
   itemDateArea: {
     height: 30, 
     flexDirection: 'row', 
-    alignItems: 'center', 
-    paddingLeft: 20, 
+    // alignItems: 'center', 
     marginVertical: 6
   },
   itemDate: {
@@ -88,7 +83,9 @@ const styles = StyleSheet.create({
   message: {
     flex: 1, 
     marginBottom: 15,
-    marginTop: 5
+    marginTop: 5,
+    color: '#444444',
+    fontSize: 14,
   },
   bottomBtn: {
     height: 40, 
@@ -100,7 +97,8 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontSize: 20, 
-    color: '#fff'
+    color: '#fff',
+    letterSpacing: 10,
   },
   listText: {
     position: 'absolute', 

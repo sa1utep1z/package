@@ -7,19 +7,18 @@ import { useNavigation } from '@react-navigation/native';
 import HomeApi from "../../../request/HomeApi";
 import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
+import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE } from '../../../utils/const';
 
 const CompanyDetail = (props) => {
   const navigation = useNavigation();
-
+  const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
   const { route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [orderData, setOrderData] = useState({}); // 岗位详情数据
-  console.log('打印item的值：', params.companyName);
-
+  
   const getDetail = async () => {
     const res = await HomeApi.orderDetail(orderId);
     setOrderData(res.data);
-    console.log('打印item的值：', res);
   };
 
   useEffect(() => {
@@ -137,7 +136,7 @@ const CompanyDetail = (props) => {
               <Text style={styles.fontStyle}>班别</Text>
             </View>
             <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.shiftCategory}</Text>
+              <Text style={styles.fontStyle}>{getEnumValue(COMPANY_SHIFT, orderData.shiftCategory)}</Text>
             </View>
           </View>
           <View style={styles.row1Style}>
@@ -145,7 +144,7 @@ const CompanyDetail = (props) => {
               <Text style={styles.fontStyle}>着装</Text>
             </View>
             <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.dress}</Text>
+              <Text style={styles.fontStyle}>{getEnumValue(DRESS, orderData.dress)}</Text>
             </View>
           </View>
           <View style={styles.rowStyle}>
@@ -153,7 +152,7 @@ const CompanyDetail = (props) => {
               <Text style={styles.fontStyle}>站坐</Text>
             </View>
             <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.sitStand}</Text>
+              <Text style={styles.fontStyle}>{getEnumValue(SITSTAND, orderData.sitStand)}</Text>
             </View>
           </View>
         </View>
@@ -175,7 +174,7 @@ const CompanyDetail = (props) => {
               <Text style={styles.fontStyle}>身份证</Text>
             </View>
             <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.idCard}</Text>
+              <Text style={styles.fontStyle}>{getEnumValue(COMPANY_IDCARD, orderData.idCard)}</Text>
             </View>
           </View>
           <View style={styles.row1Style}>
@@ -183,7 +182,7 @@ const CompanyDetail = (props) => {
               <Text style={styles.fontStyle}>纹身烟疤</Text>
             </View>
             <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.tattooSmoke}</Text>
+              <Text style={styles.fontStyle}>{getEnumValue(TATTOOSMOKE, orderData.tattooSmoke)}</Text>
             </View>
           </View>
           <View style={styles.row1Style}>
@@ -191,7 +190,7 @@ const CompanyDetail = (props) => {
               <Text style={styles.fontStyle}>英文字母</Text>
             </View>
             <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.english}</Text>
+              <Text style={styles.fontStyle}>{getEnumValue(COMPANY_ENGLISH, orderData.english)}</Text>
             </View>
           </View>
           <View style={styles.row1Style}>

@@ -21,7 +21,7 @@ const Home = (props) => {
 
   const detailRef = useRef(null);
   const listRef = useRef(null);
-
+  const [orderMsg, setOrderMsg] = useState({}); // 订单详情
   const [searchContent, setSearchContent] = useState({ pageSize: 10, pageNumber: 0 });
   const [showList, setShowList] = useState({
     content: []
@@ -62,9 +62,6 @@ const Home = (props) => {
   //   console.log('data', data);
   // },[searchContent])
 
-
-  const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
-
   const gotoList = async(item) => {
     console.log('item', item);
     if(item.num > 1){
@@ -89,6 +86,15 @@ const Home = (props) => {
     });
   };
 
+  // 获取订单详情
+  const orderDetail = async (item) => {
+    detailRef.current.setShowDetail(true)
+    const res = await HomeApi.orderDetail(item.orderId);
+    const data = res.data;
+    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail})
+    setOrderMsg(orderData);
+  };
+
   const onEndReached = () => {
     if(showList.hasNext){
       setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
@@ -111,7 +117,7 @@ const Home = (props) => {
     return (
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
-        <TouchableOpacity style={{flex: 2}} onPress={()=>detailRef.current.setShowDetail(true)}>
+        <TouchableOpacity style={{flex: 2}} onPress={()=>orderDetail(item)}>
           <Text style={styles.itemPress}>{item.companyName}</Text>
         </TouchableOpacity>
         <Text style={styles.item_flex2}>{item.recruitRange}</Text>
@@ -143,7 +149,7 @@ const Home = (props) => {
         onEndReachedThreshold={0.01}
         onEndReached={onEndReached}
       />
-      <CompanyDetailDialog ref={detailRef} message={msg}/>
+      <CompanyDetailDialog ref={detailRef} message={orderMsg}/>
       <CompanyListDialog ref={listRef}/>
     </View>
 )};

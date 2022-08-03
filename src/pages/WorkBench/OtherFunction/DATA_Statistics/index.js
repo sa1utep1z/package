@@ -1,10 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet } from 'react-native';
+import HeaderSearch from "../../../../components/List/HeaderSearch";
+import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 
 const DATA_Statistics = () => {
   return (
     <View style={styles.screen}>
-      <Text>数据统计</Text>
+      <HeaderSearch />
+      <CenterSelectDate />
     </View>
   )
 }
@@ -12,8 +15,7 @@ const DATA_Statistics = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    paddingTop: 10,
   }
 });
 
