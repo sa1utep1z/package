@@ -3,12 +3,13 @@ import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import {Button} from '@rneui/themed';
 import {Formik, Field} from 'formik';
 import * as Yup from 'yup';
-
+import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../components/Form/FormItem';
 import TwoRadio from '../../../components/Form/TwoRadio';
 import SelectItem from '../../../components/Form/SelectItem';
 import {IDCard, phone} from '../../../utils/validate';
 import { ARRIVE_WAY } from '../../../utils/const';
+import HomeApi from "../../../request/HomeApi";
 
 const SignUpValidationSchema = Yup.object().shape({
   name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
@@ -18,7 +19,9 @@ const SignUpValidationSchema = Yup.object().shape({
 
 const SignUp = (props) => {
   const {navigation, route: {params}} = props;
+  const [orderId, setOrderId] = useState(params?.orderId); // 订单id
 
+  const toast = useToast();
   const initialValues = {
     jobName: params.jobName,
     name: '',
@@ -33,8 +36,28 @@ const SignUp = (props) => {
     tip: true
   };
 
-  const onSubmit = (values) => {
-    console.log('提交了表单哇呜',values);
+  // 提交报名表单
+  const onSubmit = async (values) => {
+    console.log('提交了表单',values);
+    // try {
+      const res = await HomeApi.SignUp(orderId, values);
+      console.log('提交表单：', res);
+      if(res.code === 0){
+        toast.show('提交成功');
+        return;
+      } else {
+        toast.show(`${res.msg}`);
+      }
+  }
+
+  const ocrFun = async () => {
+    try {
+      const res = await HomeApi.ocrReq();
+      console.log('OCR识别：',res);
+    } catch (error) {
+      console.log('OCR识别：',error);
+    }
+    
   }
 
   return (
@@ -58,6 +81,7 @@ const SignUp = (props) => {
                   title="姓名"
                   placeholder="请输入会员姓名"
                   OCR
+                  onPress= {ocrFun}
                   autoFocus
                   isRequired
                   component={FormItem}

@@ -46,7 +46,8 @@ const CompanyDetail = (props) => {
   };
 
   const signUpPress = () => navigation.navigate(NAVIGATION_KEYS.SIGN_UP, {
-    jobName: params.companyName
+    jobName: params.companyName,
+    orderId: params.orderId,
   });
 
   return (

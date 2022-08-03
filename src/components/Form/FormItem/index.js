@@ -12,6 +12,7 @@ const FormItem = ({
   inputStyle,
   inputContainerStyle,
   containerStyle,
+  onPress,
   ...rest
 }) => {
 
@@ -23,7 +24,7 @@ const FormItem = ({
   );
 
   const OCRArea = (
-    <TouchableOpacity style={styles.OCRArea}>
+    <TouchableOpacity style={styles.OCRArea} onPress={onPress}>
       <Text style={styles.OCRText}>OCR  </Text>
       <AntDesign
         name='scan1'
