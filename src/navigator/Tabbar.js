@@ -17,8 +17,8 @@ const Tabbar = () => {
         headerTitleAlign: 'center',
         tabBarActiveTintColor: '#409EFF',
         tabBarInactiveTintColor: '#666666',
-        tabBarItemStyle: {paddingVertical: 3},
-        tabBarLabelStyle: {fontSize: 12},
+        tabBarItemStyle: {height: 100, paddingBottom: 6},
+        tabBarLabelStyle: {fontSize: 25},
         header: ({navigation, options, route}) => {
           const params = {navigation, options, route};
           const title = options?.headerTitle;
@@ -42,7 +42,7 @@ const Tabbar = () => {
             tabBarIcon: ({focused}) => (
               <AntDesign
                 name='home'
-                size={26}
+                size={48}
                 color={focused ? '#409EFF' : '#666666'}
               />)
         }}/>
@@ -55,7 +55,7 @@ const Tabbar = () => {
             tabBarIcon: ({focused}) => (
               <AntDesign
                 name='appstore-o' 
-                size={26}
+                size={48}
                 color={focused ? '#409EFF' : '#666666'}
               />)
         }}/>
@@ -68,7 +68,7 @@ const Tabbar = () => {
             tabBarIcon: ({focused}) => (
               <AntDesign
                 name='message1' 
-                size={25}
+                size={48}
                 color={focused ? '#409EFF' : '#666666'}
               />)
         }}/>
@@ -81,7 +81,7 @@ const Tabbar = () => {
             tabBarIcon: ({focused}) => (
               <AntDesign
                 name='user' 
-                size={26}
+                size={48}
                 color={focused ? '#409EFF' : '#666666'}
               />)
         }}/>
@@ -90,7 +90,7 @@ const Tabbar = () => {
 
 const styles = StyleSheet.create({
   headerArea: {
-    height: 55, 
+    height: 88, 
     flexDirection: 'row', 
     justifyContent: 'center', 
     alignItems: 'center', 
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   centerAreaText: {
     textAlign: 'center', 
-    fontSize: 18, 
+    fontSize: 36, 
     color: '#000'
   }
 });

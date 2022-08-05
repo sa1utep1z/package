@@ -4,56 +4,67 @@ import { Text, Dialog } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useToast } from 'react-native-toast-notifications';
 
 import SearchInput from '../../../../components/SearchInput';
 import SelectList from '../../../../components/SelectList';
 import { deepCopy } from '../../../../utils';
+import ListApi from '../../../../request/ListApi';
+import { SUCCESS_CODE } from '../../../../utils/const';
 
 const TransferFactory = (props) => {
-  const {route: params} = props;
-  const navigation = useNavigation();
+  const {route: {params}} = props;
+  const toast = useToast();
 
-  let arr = [];
-  for(let i = 0; i < 50; i++ ){
-    arr.push({
-      title: `厂${i+1}`,
-      id: `${i+1}`,
-      index: `${i+1}`
-    })
-  }
+  const [listArr, setListArr] = useState([]);
 
   useEffect(()=>{
-    console.log('params', params);
-    if(params?.params?.pageTitle){
-      navigation.setOptions({
-        headerTitle: params?.params?.pageTitle
-      })
-    }
+    getFactoryList();
   },[])
 
-  const [listArr, setListArr] = useState(params?.params?.list || arr);
-
-  const filterFactory = (value) => {
-    let newArr = deepCopy(params?.params?.list);
-    const filterArr = newArr.filter(item => item.label.includes(value));
-    setListArr(filterArr);
-    console.log('newArr,',newArr)
+  const getFactoryList = async() => {
+    const flowId = params?.item?.flowId;
+    const par = {
+      pageNumber: 0,
+      pageSize: 20,
+      flowId
+    };
+    try{  
+      const res = await ListApi.FactoryList(par);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setListArr(res?.data?.content);
+    }catch(err){
+      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
   }
 
-  const selectList = (list) => {
-    if(params?.params?.confirm){
-      params?.params?.confirm(list);
+  const filterFactory = (value) => {
+    let newArr = deepCopy(arr);
+    const filterArr = newArr.filter(item => item.title.includes(value));
+    setListArr(filterArr);
+  }
+
+  const selectFactory = async(values) => {
+    try{
+      const res = await ListApi.FactoryList(par);
+      console.log('res', res);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  };
+  }
 
   return (
-    <View style={{flex: 1, alignItems: 'center', paddingTop: 10}}>
+    <View style={{flex: 1, alignItems: 'center', paddingTop: 32}}>
       <SearchInput 
         placeholder='请输入工厂名称'
         autoSearch={filterFactory}
         searchPress={filterFactory}
       />
-      <SelectList data={listArr} confirm={selectList} canMultiChoice={false} bottomButton />
+      <SelectList data={listArr} confirm={selectFactory} canMultiChoice={false} bottomButton />
     </View>
   )
 };

@@ -160,7 +160,7 @@ const HeaderSearch = ({
           if(!showSearch) return <></>
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
-              <View style={{flexDirection: 'row', marginBottom: 8}}>
+              <View style={{flexDirection: 'row', marginBottom: 20}}>
                 <Field
                   title="企业"
                   name="enterprise"
@@ -169,11 +169,12 @@ const HeaderSearch = ({
                   canSearch
                   bottomButton
                   noBorder
+                  autoSubmit
                   formalLabel={false}
                   lastButton={batch}
                   singleSelect={companySingleSelect}
-                  selectAreaStyle={styles.selectAreaStyle}
-                  selectAreaTextStyle={styles.fontSize}
+                  // selectAreaStyle={styles.selectAreaStyle}
+                  // selectAreaTextStyle={styles.fontSize}
                   selectList={companyList}
                   component={SelectItem}
                 />
@@ -186,16 +187,17 @@ const HeaderSearch = ({
                   bottomButton
                   singleSelect
                   noBorder
+                  autoSubmit
                   formalLabel={false}
                   lastButton={batch}
-                  selectContainerStyle={{marginLeft: 10}}
-                  selectAreaStyle={styles.selectAreaStyle}
-                  selectAreaTextStyle={styles.fontSize}
+                  selectContainerStyle={{marginLeft: 40}}
+                  // selectAreaStyle={styles.selectAreaStyle}
+                  // selectAreaTextStyle={styles.fontSize}
                   selectList={STATUS_LIST}
                   component={SelectItem}
                 />}
               </View>
-              {!noStoreAndStaff && <View style={{flexDirection: 'row', marginBottom: 8}}>
+              {!noStoreAndStaff && <View style={{flexDirection: 'row', marginBottom: 20}}>
                 <Field
                   title="门店"
                   name="store"
@@ -203,14 +205,15 @@ const HeaderSearch = ({
                   canSearch
                   bottomButton
                   noBorder
+                  autoSubmit
                   singleSelect={storeSingleSelect}
                   formalLabel={false}
                   selectList={storeList}
-                  selectAreaStyle={styles.selectAreaStyle}
-                  selectAreaTextStyle={styles.fontSize}
+                  // selectAreaStyle={styles.selectAreaStyle}
+                  // selectAreaTextStyle={styles.fontSize}
                   component={SelectItem}
                 />
-                <View style={{width: 10}}></View>
+                <View style={{width: 40}}></View>
                 <Field
                   title="员工"
                   name="staff"
@@ -218,10 +221,11 @@ const HeaderSearch = ({
                   canSearch
                   bottomButton
                   noBorder
+                  autoSubmit
                   formalLabel={false}
                   selectList={staffList}
-                  selectAreaStyle={styles.selectAreaStyle}
-                  selectAreaTextStyle={styles.fontSize}
+                  // selectAreaStyle={styles.selectAreaStyle}
+                  // selectAreaTextStyle={styles.fontSize}
                   component={staffSearch ? SearchItem : SelectItem }
                 />
               </View>}
@@ -245,8 +249,8 @@ const HeaderSearch = ({
 
 const styles = StyleSheet.create({
   topView: {
-    paddingHorizontal: 10, 
-    marginBottom: 10
+    paddingHorizontal: 32,
+    marginBottom: 30
   },
   selectAreaStyle: {
     height: 30, 
@@ -255,13 +259,13 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   fontSize: {
-    fontSize: 14
+    fontSize: 22
   },
   selectContainerStyle: {
     flex: 1 
   },
   searchInputStyle: {
-    height: 30,
+    height: 60,
     marginBottom: 0, 
     paddingHorizontal: 0
   },

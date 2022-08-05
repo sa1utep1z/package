@@ -15,6 +15,7 @@ const Mine = () => {
   const navigation = useNavigation();
 
   const [pressType, setPressType] = useState('');
+  const [dialogContent, setDialogContent] = useState({});
 
   const dialogRef = useRef(null);
   
@@ -40,10 +41,27 @@ const Mine = () => {
     dialogRef?.current.setShowDialog(true);
     switch(type){
       case 'reset': 
-        setPressType('reset');
+        setDialogContent({
+          dialogTitle: '温馨提示',
+          dialogComponent: (
+            <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 20}}>将向您绑定的手机发送验证码</Text>
+            </View>
+          ),
+          confirmText: '找回密码',
+          confirmOnPress: logout
+        })
         return;
       case 'logout':
-        setPressType('logout');
+        setDialogContent({
+          dialogTitle: '温馨提示',
+          dialogComponent: (
+            <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 20}}>确定退出当前账号？</Text>
+            </View>
+          ),
+          confirmOnPress: logout
+        })
         return;
     }
   };
@@ -59,7 +77,7 @@ const Mine = () => {
     <SafeAreaView style={styles.screen}>
       <View style={styles.topArea}>
         <Avatar
-          size={70}
+          size={128}
           rounded
           source={{uri: 'https://cdn.pixabay.com/photo/2019/11/03/20/11/portrait-4599553__340.jpg'}}
           containerStyle={styles.headContainerStyle}
@@ -78,74 +96,74 @@ const Mine = () => {
             return (
               <TouchableOpacity key={index} style={[styles.pressItem, isLastIndex && styles.noBorder]} onPress={item?.onPress}>
                 <View style={styles.leftArea}>
-                  <AntDesign name={item.iconName} size={22} color='#409EFF'/>
+                  <AntDesign name={item.iconName} size={48} color='#409EFF'/>
                   <Text style={styles.item_title}>{item.title}</Text>
                 </View>
-                <AntDesign name='right' size={16}/>
+                <AntDesign name='right' size={35}/>
               </TouchableOpacity>
             )
           })}
         </View>
       </View>
-      {/* <NormalDialog 
-        {//TODO}
+      <NormalDialog 
         ref={dialogRef} 
-        content={<View style={{height:20, borderWidth: 1}}></View>}
-        confirmButton={pressType === 'reset' && '找回密码'}
-        confirm={pressType === 'reset' ? reset : logout}
-      /> */}
+        dialogContent={dialogContent}
+      />
     </SafeAreaView>
 )};
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#EEF4F7'
   },
   topArea: {
-    height: height * 0.2, 
+    height: 230, 
     flexDirection: 'row', 
-    alignItems: 'center', 
-    paddingLeft: 30
+    alignItems: 'center',
+    paddingLeft: 32
   },
   headContainerStyle: {
     borderColor: 'grey',
     borderWidth: 1,
   },
   titleArea: {
-    marginLeft: 15
+    marginLeft: 29
   },
   title_large: {
-    fontSize: 18, 
+    fontSize: 30, 
     fontWeight: 'bold'
   },
   title_small: {
-    fontSize: 16
+    fontSize: 30,
+    fontWeight: 'normal'
   },
   bottomArea: {
-    flex: 1
+    flex: 1,
   },
   funcArea: {
+    height: 526,
     backgroundColor: '#fff', 
     marginHorizontal: 10, 
     borderRadius: 8
   },
   func_title: {
-    height: 45, 
+    height: 90, 
     textAlignVertical: 'center', 
     fontWeight: 'bold', 
-    fontSize: 16, 
-    borderBottomWidth: 1, 
-    borderBottomColor: '#CCCCCC', 
-    paddingLeft: 10
+    fontSize: 32, 
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    paddingLeft: 29
   },
   pressItem: {
-    height: 50, 
-    borderBottomWidth: 1, 
-    borderColor: '#CCCCCC', 
+    height: 107, 
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center', 
-    paddingHorizontal: 15
+    paddingHorizontal: 29
   },
   noBorder: {
     borderBottomWidth: 0
@@ -155,7 +173,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   item_title: {
-    marginLeft: 10
+    fontSize: 32,
+    marginLeft: 40
   }
 });
 

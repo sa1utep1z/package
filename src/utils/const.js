@@ -2,6 +2,8 @@ import moment from "moment";
 
 export const SUCCESS_CODE = 0;
 
+export const today = moment().format('YYYY-MM-DD');
+
 export const FAKE_MEMBER_INFO = [
   {type: 'name', title: '姓名', value: '呵呵'},
   {type: 'IDCard', title: '身份证', value: '478523694562315964'},
@@ -49,7 +51,7 @@ export const TAB_OF_LIST = {
   SIGN_UP_LIST: [
     {title: '全部',type: 'all',},
     {title: '待处理',type: 'waitToHandle',},
-    {title: '无意向',type: 'noIntention',},
+    {title: '无意愿',type: 'noIntention',},
     {title: '已报名',type: 'signedUp',}
   ],
   INTERVIEW_LIST: [
@@ -261,4 +263,9 @@ export const STATUS_LISTS = [
   {title: '在职', value: 'job_on', id: 5},
   {title: '预离职', value: 'prepare_job_resign', id: 6},
   {title: '离职', value: 'job_resign', id: 7}
-]
+];
+export const SIGN_UP_STATUS = {
+  "SIGN_UP_PENDING": '待处理',
+  "SIGN_UP_NO_INTENTION": '无意愿',
+  "SIGN_UP_INTENTION": '已报名'
+};

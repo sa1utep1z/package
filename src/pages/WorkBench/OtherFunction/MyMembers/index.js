@@ -17,6 +17,7 @@ import CompanyDetail from "../../../../components/NormalDialog/CompanyDetail";
 import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
 import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
+import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 
 const MyMembers = () => {
   const toast = useToast();
@@ -41,6 +42,11 @@ const MyMembers = () => {
     return () => setShowList({content: []});
   }, []);
 
+  useMemo(()=>{
+    console.log('searchContent',searchContent);
+    console.log('showList',showList);
+  },[searchContent])
+
   const { isLoading, data, isError, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -48,10 +54,6 @@ const MyMembers = () => {
   if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
-
-  useMemo(()=>{
-    console.log('searchContent', searchContent);
-  },[searchContent])
 
   useMemo(()=>{
     if(data){
@@ -64,6 +66,7 @@ const MyMembers = () => {
         setShowList(showList);  
         return;
       }
+      data.data.content.map(item => item.itemId = item.poolId);
       setShowList(data.data);
     }
   },[data])
@@ -121,7 +124,9 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.MemberDetail(poolId);
-      if(data?.code !== SUCCESS_CODE){
+      console.log('res', res)
+      console.log('data', data);
+      if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
       }
@@ -139,9 +144,9 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.CompanyDetail(poolId);
-      console.log('res', res)
-      if(data?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
       }
       if(!res.data.orderPolicyDetail){
@@ -164,8 +169,8 @@ const MyMembers = () => {
     try{
       const res = await MyMembersApi.EntryRecord(poolId);
       console.log('入职记录的res', res);
-      if(data?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
       }
       if(!res.data.length){
@@ -187,7 +192,7 @@ const MyMembers = () => {
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
       console.log('reviewRecordOnPress--> res', res)
-      if(data?.code !== SUCCESS_CODE){
+      if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
       }
@@ -246,12 +251,11 @@ const MyMembers = () => {
         msg: item
       })}
     ];
-    
     return (
       <View key={item.poolId} style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
           <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text style={[styles.itemText, renderItem.pressFun && {color: '#409EFF'}, renderItem.textStyle]}>{renderItem.fieldName}</Text>
+            <Text ellipsizeMode='tail' numberOfLines={2} style={[styles.itemText, renderItem.pressFun && {color: '#409EFF'}, renderItem.textStyle]}>{renderItem.fieldName}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -259,43 +263,45 @@ const MyMembers = () => {
   };
   
   const listHead = (
-    <View style={styles.listHead_title}>
-      <Text style={styles.listHead_item}>姓名</Text>
-      <Text style={styles.listHead_item}>企业</Text>
-      <Text style={styles.listHead_item}>入职记录</Text>
-      <Text style={styles.listHead_item}>回访记录</Text>
-      <Text style={styles.listHead_item}>状态</Text>
-      <Text style={styles.listHead_item}>加入报名</Text>
-    </View>
+    <>
+      <View style={styles.numberOfList}>
+        <Text style={styles.text}>共 <Text style={styles.number}>{showList?.content.length || 0}</Text> 条数据</Text>
+      </View> 
+      <View style={styles.listHead_title}>
+        <Text style={styles.listHead_item}>姓名</Text>
+        <Text style={styles.listHead_item}>企业</Text>
+        <Text style={styles.listHead_item}>入职记录</Text>
+        <Text style={styles.listHead_item}>回访记录</Text>
+        <Text style={styles.listHead_item}>状态</Text>
+        <Text style={styles.listHead_item}>加入报名</Text>
+      </View>
+    </>
   );
 
   const onEndReached = () => {
     if(showList.hasNext){
-      console.log('触发了下一页');
       setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
     }
   };
 
   return (
-    <View style={[styles.screen, showSearch && {paddingTop: 10}]}>
+    <View style={[styles.screen, showSearch && {paddingTop: 31}]}>
       <HeaderSearch 
-        canFilterStatus 
         filterFun={filter} 
+        canFilterStatus 
         staffSearch
         companySingleSelect
         storeSingleSelect
       />
-      <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{showList?.content.length || 0}</Text> 条数据</Text>
-      </View> 
+      <CenterSelectDate />
       <BottomList 
         list={showList?.content}
-        renderItem={renderItem}
-        listHead={listHead}
         isLoading={isLoading}
-        nowSelectIndex={selectIndex}
+        listHead={listHead}
+        renderItem={renderItem}
         onEndReached={onEndReached}
         tab={tabList}
+        nowSelectIndex={selectIndex}
       />
       <NormalDialog 
         ref={dialogRef}
@@ -310,22 +316,21 @@ const styles = StyleSheet.create({
     flex: 1
   },
   numberOfList: {
-    height: 20,
     alignItems: 'center', 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#fff'
   },
   text: {
     color: '#409EFF', 
-    fontSize: 12
+    fontSize: 22
   },
   number: {
     color: 'red'
   },
   listStyle: {
-    minHeight: 35, 
-    maxHeight: 35,
-    borderColor: '#e3e3e3', 
-    borderBottomWidth: 1, 
+    height: 75,
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',  
     flexDirection: 'row', 
   },
   listItem: {
@@ -335,22 +340,20 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemText: {
-    fontSize: 12,
+    fontSize: 22,
     color: '#000',
     textAlign: 'center'
   },
   listHead_title: {
-    height: 30, 
+    height: 60, 
     flexDirection: 'row', 
     backgroundColor: '#fff', 
-    borderTopWidth: 1, 
-    borderColor: '#e3e3e3'
   },
   listHead_item: {
     flex: 1, 
     textAlign: 'center', 
     textAlignVertical: 'center', 
-    fontSize: 12, 
+    fontSize: 26, 
     color: '#000'
   }
 });

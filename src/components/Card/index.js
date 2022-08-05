@@ -15,33 +15,32 @@ const Card = ({title, content}) => (
 
 const styles = StyleSheet.create({
   card: {
+    margin: 32,
     backgroundColor: '#fff',
-    margin: 10,
     borderRadius: 8
   },
   titleArea: {
-    minHeight: 45,
+    minHeight: 90,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: '#CCCCCC'
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)'
   },
   titleIcon: {
-    width: 5, 
-    height: 18,
+    width: 8, 
+    height: 30,
     backgroundColor: '#409EFF', 
     borderTopRightRadius: 5, 
     borderBottomRightRadius: 5, 
-    marginRight: 10
+    marginRight: 20
   },
   title: {
-    fontSize: 14, 
+    fontSize: 32, 
     fontWeight: 'bold',
-    color: '#000'
+    color: '#333333'
   },
   content: {
-    minHeight: 50,
-    padding: 10
+    paddingVertical: 20
   }
 });
 

@@ -34,7 +34,8 @@ const SearchItem = ({
           <AntDesign 
             name='search1' 
             color='#409EFF'
-            size={20}
+            style={{marginRight: 10}}
+            size={40}
           />
         </TouchableOpacity>
       </View>
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   title: {
-    fontSize: 14,
+    fontSize: 26,
     color: '#000',
     fontWeight: 'bold'
   },
@@ -62,20 +63,20 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
+    height: 60, 
     backgroundColor: '#fff', 
-    height: 35, 
-    borderBottomLeftRadius: 6, 
-    borderTopLeftRadius: 6, 
+    borderBottomLeftRadius: 10, 
+    borderTopLeftRadius: 10, 
     padding: 0,
-    paddingLeft: 10
+    paddingLeft: 19,
+    fontSize: 22
   },
   pressArea: {
-    width: 30, 
     backgroundColor: '#fff', 
     justifyContent: 'center', 
     alignItems: 'center', 
-    borderTopRightRadius: 6, 
-    borderBottomRightRadius: 6
+    borderTopRightRadius: 10, 
+    borderBottomRightRadius: 10
   }
 })
 

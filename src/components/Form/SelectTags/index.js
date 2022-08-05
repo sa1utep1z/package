@@ -99,7 +99,7 @@ const SelectTags = ({
     <>
       <View style={[styles.selectArea, field.value.length && {paddingTop: 5}]}>
         <View style={[styles.titleArea, labelAreaStyle]}>
-          <Text>{title}</Text>
+          <Text style={{fontSize: 32}}>{title}：</Text>
         </View>
         <TouchableOpacity style={styles.rightArea} onPress={showTag}>
           {field.value.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', flex: 1}}>
@@ -112,7 +112,7 @@ const SelectTags = ({
           <Text style={[styles.rightArea_text, !field.value.length && {color: '#CCCCCC'}]}>{`请选择${title}`}</Text>}
           <AntDesign
             name={dialogRef?.current?.showDialog ? 'up' : 'down'}
-            size={20}
+            size={30}
             color={!field.value.length ? '#CCCCCC' : 'black'}
           />
         </TouchableOpacity>
@@ -136,15 +136,13 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   selectArea: {
-    minHeight: 48, 
-    paddingHorizontal: 10, 
+    minHeight: 91, 
+    paddingHorizontal: 28, 
     flexDirection: 'row', 
-    borderBottomWidth: 1, 
-    borderColor: '#E3E3E3'
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)'
   },
   titleArea: {
-    width: 80, 
-    marginRight: 10, 
     justifyContent: 'center', 
     alignItems: 'center'
   },
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   rightArea_text: {
-    fontSize: 15
+    fontSize: 28
   }
 })
 

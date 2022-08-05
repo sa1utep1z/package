@@ -28,7 +28,7 @@ const LoginInput = ({
         rightIcon={password && <Icon
           name={seePassword ? 'eye-with-line' : 'eye'}
           type='entypo'
-          size={26}
+          size={40}
           color="#409EFF"
           onPress={seePasswordOnPress}
         />}
@@ -46,26 +46,30 @@ const LoginInput = ({
 const styles = StyleSheet.create({
   containerStyle: {
     flexDirection: 'row', 
-    alignItems: 'center',
-    marginTop: 10
+    paddingLeft: 33,
+    paddingRight: 33,
+    height: 114
   },
   labelStyle: {
-    width: 60, 
-    height: '100%', 
-    color: '#000', 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    borderBottomWidth: 2, 
-    borderColor: '#E3E3E3', 
-    paddingTop: 13
+    width: 131, 
+    fontSize: 36, 
+    paddingBottom: 24,
+    color: '#000',
+    textAlignVertical: 'bottom',
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    borderBottomWidth: 2
   },
   inputContainerStyle: {
     flex: 1, 
-    borderColor: '#E3E3E3', 
+    padding: 0,
+    alignItems: 'flex-end',
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
     borderBottomWidth: 2
   },
   inputStyle: {
-    fontSize: 15, 
+    fontSize: 30,
+    padding: 0,
+    paddingBottom: 24,
     color: '#000'
   },
   errorInput: {

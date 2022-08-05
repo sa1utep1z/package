@@ -141,11 +141,11 @@ const Login = props => {
           <Text style={styles.title}>登录</Text>
           <Text style={styles.text}>登录注册以后使用更多服务</Text>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.registerArea}
           onPress={() => navigation.navigate(NAVIGATION_KEYS.REGISTER)}>
           <Text style={styles.registerArea_text}>注册</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.centerArea}>
         <Formik
@@ -169,12 +169,15 @@ const Login = props => {
                   title="记住密码"
                   checked={remember}
                   onPress={rememberOnPress}
+                  size={40}
+                  textStyle={{fontSize: 28, textAlignVertical: 'center'}}
                   containerStyle={styles.checkBox_fieldContainerStyle}
                 />
                 <Button
-                  title="登 录"
+                  title="登录"
                   loading={loading}
                   onPress={handleSubmit}
+                  titleStyle={{fontSize: 36}}
                   buttonStyle={[
                     styles.buttonStyle,
                     loading && {backgroundColor: '#CCCCCC'},
@@ -190,11 +193,11 @@ const Login = props => {
             onPress={() =>
               navigation.navigate(NAVIGATION_KEYS.VERIFICATION_LOGIN)
             }>
-            <Text>验证码登录</Text>
+            <Text style={{fontSize: 30}}>验证码登录</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate(NAVIGATION_KEYS.FORGET_PSW)}>
-            <Text>忘记密码？</Text>
+            <Text style={{fontSize: 30}}>忘记密码？</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomArea}>
@@ -202,9 +205,10 @@ const Login = props => {
             center
             checked={radio}
             onPress={() => setRadio(!radio)}
+            size={40}
             containerStyle={styles.checkBox_containerStyle}
-            checkedIcon={<Text style={styles.checkBox_icon}>{'\ue669'}</Text>}
-            uncheckedIcon={<Text style={styles.checkBox_icon}>{'\ue68d'}</Text>}
+            checkedIcon="dot-circle-o"
+            un="circle-o"
           />
           <Toast ref={toastRef} />
           <View style={styles.bottomArea_textArea}>
@@ -237,15 +241,15 @@ const styles = StyleSheet.create({
   totalArea: {
     flex: 1,
     backgroundColor: '#f5f8fa',
+    paddingTop: 99
   },
   topArea: {
-    height: 180,
     flexDirection: 'row',
   },
   titleArea: {
     flex: 1,
     justifyContent: 'center',
-    paddingLeft: 12,
+    paddingLeft: 31
   },
   registerArea: {
     width: 60,
@@ -258,74 +262,70 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   title: {
-    width: 118,
     fontWeight: 'bold',
-    fontSize: 35,
+    fontSize: 60,
     fontFamily: 'PingFang SC',
+    marginBottom: 29
   },
   text: {
     color: '#999999',
-    fontSize: 13,
+    fontSize: 24,
     fontWeight: '600',
     paddingLeft: 2,
   },
   centerArea: {
-    flex: 1,
+    flex: 1
   },
   formArea: {
-    paddingTop: 30,
+    marginTop: 119
   },
   checkBox_fieldContainerStyle: {
     backgroundColor: 'rgba(0,0,0,0)',
     padding: 0,
+    justifyContent: 'center'
   },
   buttonStyle: {
-    height: 50,
+    height: 100,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30,
+    borderRadius: 50,
+    marginHorizontal: 32
   },
   buttonContainerStyle: {
-    marginHorizontal: 8,
-    marginTop: 40,
-    marginBottom: 10,
+    marginTop: 120,
+    marginBottom: 30
   },
   underButtonArea: {
-    height: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingHorizontal: 33
   },
   bottomArea: {
-    height: 80,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
     bottom: 0,
+    marginBottom: 68
   },
   checkBox_containerStyle: {
-    height: 20,
     margin: 0,
     padding: 0,
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0)',
   },
-  checkBox_icon: {
-    fontFamily: 'iconfont',
-    color: '#DDDDDD',
-    fontSize: 20,
-  },
   bottomArea_textArea: {
     flexDirection: 'row',
+    alignItems: 'center'
   },
   bottomArea_text: {
     color: '#DDDDDD',
+    fontSize: 24
   },
   bottomArea_btnText: {
-    fontSize: 14,
+    fontSize: 24
   },
 });
 
