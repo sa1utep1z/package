@@ -16,32 +16,24 @@ const BottomList = ({
   }) => {
   const [index, setIndex] = useState(0);
   const [showList, setShowList] = useState(list);
+  const [tabList, setTabList] = useState(tab);
 
   useMemo(()=>{
     setShowList(list);
-  },[list]);
-
-  useMemo(()=>{
+    setTabList(tab);
     nowSelectIndex && nowSelectIndex(index);
-  },[index])
+  },[list, tab, index]);
 
-  useMemo(()=>{
-    setIndex(index);
-  },[index])
-
-  console.log('tab哈哈哈哈哈哈哈', tab);
   return (
     <>
-      {tab.length && <Tab
+      <Tab
         value={index}
         onChange={setIndex}
         variant="primary"
         indicatorStyle={{backgroundColor: '#fff'}}
         containerStyle={styles.tab_containerStyle}>
-        {tab.map((tab, tabIndex) => {
+        {tabList && tabList.map((tab, tabIndex) => {
           const active = tabIndex === index;
-          const num = tab.num;
-          console.log(`tab-${tabIndex}: `, tab)
           return (
             <Tab.Item
               title={tab.title}
@@ -51,12 +43,12 @@ const BottomList = ({
               >
                 <View>
                   <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.title}</Text>
-                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{num || 0}</Text>
+                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.nums || 0}</Text>
                 </View>
             </Tab.Item>
           )
         })}
-      </Tab>}
+      </Tab>
       {/* <TabView value={index} onChange={setIndex} animationType="spring"> */}
         {/* {tabList.map((tab, index)=> (
           <TabView.Item key={index} style={styles.tabView}> */}
@@ -65,7 +57,7 @@ const BottomList = ({
               data={showList}
               style={{backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E3E3E3'}}
               renderItem={renderItem}
-              keyExtractor={(item, index) => index}
+              keyExtractor={item => item.itemId}
               getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
               refreshing={isLoading}
               onRefresh={()=>console.log('刷新')}

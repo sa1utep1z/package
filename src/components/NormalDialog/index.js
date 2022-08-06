@@ -10,17 +10,11 @@ const NormalDialog = ({ dialogContent: {
   leftTitleOnPress,
   rightTitle,
   rightTitleOnPress,
+  singleButton = false,
   confirmText,
   confirmOnPress,
-<<<<<<< HEAD
-  backOnPress,
-  bottomButton = true, //是否底部按钮，默认为是
-  singleButton = false
-}}, ref) => {
-=======
   backOnPress
 } }, ref) => {
->>>>>>> bcb6f657aac27a3ae20e258881f26c0d789541d4
   const [showDialog, setShowDialog] = useState(false);
 
   useImperativeHandle(ref, () => {
@@ -36,24 +30,6 @@ const NormalDialog = ({ dialogContent: {
       isVisible={showDialog}
       overlayStyle={styles.dialogStyle}
       onBackdropPress={backOnPress || defaultBackOnPress}>
-<<<<<<< HEAD
-        <View style={styles.titleArea}>
-          {!!leftTitle && 
-            <TouchableOpacity style={styles.leftTitle} onPress={leftTitleOnPress}>
-              <Text style={styles.leftTitleText}>{leftTitle || '返回'}</Text>
-            </TouchableOpacity>}
-          <Text style={styles.title} onPress={()=>console.log('点击了标题')}>{dialogTitle || '温馨提示'}</Text>
-          {!!rightTitle && 
-            <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
-              <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
-            </TouchableOpacity>}
-        </View>
-        {dialogComponent ? dialogComponent: <EmptyArea />}
-        {bottomButton && <View style={styles.bottomButtonArea}>
-          {singleButton ? <TouchableOpacity style={styles.singleButton}>
-            <Text style={styles.singleButtonText}>提交</Text>
-          </TouchableOpacity> : 
-=======
       <View style={styles.titleArea}>
         {!!leftTitle &&
           <TouchableOpacity style={styles.leftTitle} onPress={leftTitleOnPress}>
@@ -70,7 +46,6 @@ const NormalDialog = ({ dialogContent: {
         {singleButton ? <TouchableOpacity style={styles.singleButton}>
           <Text style={styles.singleButtonText}>提交</Text>
         </TouchableOpacity> :
->>>>>>> bcb6f657aac27a3ae20e258881f26c0d789541d4
           <>
             <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress || defaultBackOnPress}>
               <Text style={styles.leftText}>取消</Text>
@@ -79,11 +54,7 @@ const NormalDialog = ({ dialogContent: {
               <Text style={styles.rightText}>{confirmText || '确认'}</Text>
             </TouchableOpacity>
           </>}
-<<<<<<< HEAD
-        </View>}
-=======
       </View>
->>>>>>> bcb6f657aac27a3ae20e258881f26c0d789541d4
     </Dialog>
   )
 }
