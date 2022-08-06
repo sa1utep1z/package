@@ -18,13 +18,12 @@ const CenterSelectDate = ({
   const [showYear, setShowYear] = useState(moment().year());
   const [btnType, setBtnType] = useState('');
   const [weekArr, setWeekArr] = useState([]);
-  const [selectDay, setSelectDay] = useState(null);
+  const [selectDay, setSelectDay] = useState(moment());
   const [changeWeekTimes, setChangeWeekTimes] = useState(0);
   const [returnToday, setReturnToday] = useState(false);
 
   useEffect(()=>{
     getThisWeek();
-    setSelectDay(moment());
   },[])
 
   //检查切换的星期中年份是否和之前有区别，星期里某一天和原来的不同就返回并且修改显示的年份。

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginRight: 15
+    marginRight: 30
   },
   btnArea: {
     backgroundColor: '#EEEEEE',
@@ -36,12 +36,12 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   btn1: {
-    marginRight: 8
+    marginRight: 20
   },
   btnText: {
     color: '#999999',
     fontWeight: 'bold',
-    fontSize: 15
+    fontSize: 28
   },
   selectedArea: {
     backgroundColor: '#409EFF'

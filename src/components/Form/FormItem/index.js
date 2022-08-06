@@ -24,7 +24,8 @@ const FormItem = ({
   );
 
   const OCRArea = (
-    <TouchableOpacity style={styles.OCRArea} onPress={onPress}>
+    <TouchableOpacity title="request permissions" style={styles.OCRArea} onPress={onPress}>
+      {/* <Button title="request permissions" onPress={onPress} style={styles.OCRText}>OCR </Button> */}
       <Text style={styles.OCRText}>OCR  </Text>
       <AntDesign
         name='scan1'
@@ -77,7 +78,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0
   },
   errorInput: {
-    marginLeft: 110,
+    fontSize: 26,
+    textAlign: 'center',
     color: 'red'
   },
   labelArea: {
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
   },
   label: {
     textAlign: 'center',
-    fontSize: 32
+    fontSize: 28
   },
   required: {
     color: 'red', 

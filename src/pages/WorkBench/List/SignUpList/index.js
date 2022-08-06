@@ -1,9 +1,10 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Entypo from 'react-native-vector-icons/Entypo';
+import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from "react-native-toast-notifications";
+import moment from "moment";
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
@@ -16,6 +17,7 @@ import ListApi from "../../../../request/ListApi";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
+import ListChangeStatus from "../../../../components/NormalDialog/ListChangeStatus";
 
 const SignUpList = () => {
   const toast = useToast();
@@ -23,13 +25,13 @@ const SignUpList = () => {
 
   const dialogRef = useRef(null);
 
+  const rangeDate = useSelector(state => state.RangeDateOfList);
+
   const [memberInfoList, setMemberInfoList] = useState(MEMBER_INFO);
   const [dialogContent, setDialogContent] = useState({});
   const [searchContent, setSearchContent] = useState({ 
     pageSize: 20, 
-    pageNumber: 0, 
-    startDate: today, 
-    endDate: today
+    pageNumber: 0
   });
   const [showList, setShowList] = useState({
     content: []
@@ -38,11 +40,19 @@ const SignUpList = () => {
 
   useEffect(()=>{
     navigation.setOptions({
-      headerRight: () => <HeaderRightButtonOfList />,
-      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
+      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>,
+      headerRight: () => <HeaderRightButtonOfList />
     })
-    // getTypeList()
   }, [])
+
+  useMemo(()=>{
+    setSearchContent({
+      pageSize: 20, 
+      pageNumber: 0,
+      startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
+      endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
+    });
+  },[rangeDate])
 
   const getTypeList = async() => {
     const params = {
@@ -50,17 +60,21 @@ const SignUpList = () => {
       storeIds: searchContent?.storeIds || [],
       recruitIds: searchContent?.names || [],
       startDate: searchContent?.startDate || '',
-      endDate: searchContent?.endDate || ''
-      // str: searchContent?
+      endDate: searchContent?.endDate || '',
+      str: searchContent?.str || ''
     };
     try{
       const res = await ListApi.GetTypeList(params);
-      console.log('res', res);
-      if(res.data?.code !== SUCCESS_CODE){
+      console.log('获取tab下面数字的接口', res);
+      if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
       }
-      console.log('res', res);
+      for(let key in res.data){
+        const findItem = tabList.find(item => item.type === key);
+        findItem.num = res.data[key];
+      }
+      setTabList(tabList);
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -75,23 +89,16 @@ const SignUpList = () => {
   }
 
   useMemo(()=>{
-    // getTypeList();
-  },[searchContent])
-
-  useMemo(()=>{
     if(data){
-      // 如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
-      if(showList?.hasNext && data.data.pageNumber !== showList.pageNumber){
-        const concatList = showList.content.concat(data.data.content);
-        showList.content = concatList;
+      if(showList.content.length >= 20 && (data.data.pageNumber - showList.pageNumber === 1)){
+        showList.content = showList.content.concat(data.data.content);
         showList.pageNumber = data.data.pageNumber;
-        showList.hasNext = data.data.hasNext;
-        setShowList(showList);  
+        setShowList(showList);
         return;
       }
-      data.data.content.map(item => item.itemId = item.flowId);
       setShowList(data.data);
     }
+    getTypeList();
   },[data])
 
   const filter = (values) => {
@@ -111,42 +118,29 @@ const SignUpList = () => {
     });
   };
 
-  const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
-
 
   const selectIndex = (selectIndex) => {
-    console.log('selectIndex', selectIndex);
-    // switch(selectIndex){
-    //   case 0:
-    //     searchContent.returnVisitResult = '';
-    //     break;
-    //   case 1:
-    //     searchContent.returnVisitResult = 'PREPARING';
-    //     break;
-    //   case 2:
-    //     searchContent.returnVisitResult = 'HAVE_WILL';
-    //     break;
-    //   case 3:
-    //     searchContent.returnVisitResult = 'NO_WILL';
-    //     break;
-    // }
-    // setSearchContent({ ...searchContent });
-  };
-  
-  const onEndReached = () => {
-    console.log('你滑到底了！');
+    switch(selectIndex){
+      case 0:
+        searchContent.status = '';
+        break;
+      case 1:
+        searchContent.status = 'SIGN_UP_PENDING';
+        break;
+      case 2:
+        searchContent.status = 'SIGN_UP_NO_INTENTION';
+        break;
+      case 3:
+        searchContent.status = 'SIGN_UP_INTENTION';
+        break;
+    }
+    setSearchContent({ ...searchContent });
   };
 
-  const selectFactory = (item) => {
-    console.log('呵呵', item);
-  }
-
-  const transferFactory = async(item) => {
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
-      item,
-      selectFactory
-    })
-  }
+  const transferFactory = (item) => {
+    dialogRef.current.setShowDialog(false);
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item})
+  };
 
   const pressFactory = async(item) => {
     try{
@@ -167,21 +161,64 @@ const SignUpList = () => {
     }
   };
 
+  const editMemberMessage = (item) => {
+    dialogRef.current.setShowDialog(false);
+    navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER, {
+      fieldList: item
+    });
+  };
+
   const pressName = async(item) => {
     try{
       const res = await ListApi.MemberMessage(item.flowId);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
         return;
       }
+      res.data.flowId = item.flowId;
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
+        rightTitle: '编辑',
+        rightTitleOnPress: () => editMemberMessage(res.data)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const changeStatus = (item) => {
+    if(item.signUpStatus !== 'SIGN_UP_PENDING'){
+      toast.show(`状态已确定！`, {type: 'warning'});
+      return;
+    }
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: '待处理',
+      bottomButton: false,
+      dialogComponent: <ListChangeStatus dialogRef={dialogRef} item={item}/>,
+    });
+  };
+
+  const callPhone = item => {
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: '温馨提示',
+      confirmOnPress: () => {
+        Linking.openURL(`tel:${item.mobile}`)
+        dialogRef.current.setShowDialog(false);
+      },
+      dialogComponent: <Text style={{textAlign: 'center'}}>确定拨打该手机吗？</Text>
+    });
+  };
+    
+  const onEndReached = () => {
+    if(showList.content.length < 20) return;
+    if((showList.content.length >= 20) && (showList.pageNumber < showList.totalPages - 1)){
+      if(searchContent.pageNumber < (showList.totalPages - 1)){
+        setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
+      }
     }
   };
 
@@ -189,10 +226,10 @@ const SignUpList = () => {
     const renderList = [
       { fieldName: item.companyShortName, pressFun: () => pressFactory(item), textStyle: {color: '#409EFF', textAlign: 'left'}, itemStyle: {justifyContent: 'flex-start'}},
       { fieldName: item.name, pressFun: () => pressName(item)},
-      { fieldName: SIGN_UP_STATUS[item.signUpStatus], pressFun: () => console.log('点击待处理')},
+      { fieldName: SIGN_UP_STATUS[item.signUpStatus], pressFun: () => changeStatus(item)},
       { fieldName: item.mobile || '无', pressFun: () => {
         if(item.mobile){
-          console.log('点击拨打电话');
+          callPhone(item)
         }
       }, textStyle: {color: '#409EFF', fontSize: 26}}
     ];
@@ -220,11 +257,11 @@ const SignUpList = () => {
       />
       <CenterSelectDate />
       <BottomList
+        tab={tabList}
         list={showList?.content}
         isLoading={isLoading}
         renderItem={renderItem}
         onEndReached={onEndReached}
-        tab={TAB_OF_LIST.SIGN_UP_LIST}
         nowSelectIndex={selectIndex}
       />
       <NormalDialog 
@@ -237,8 +274,7 @@ const SignUpList = () => {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    paddingTop: 10
+    flex: 1
   },
   listStyle: {
     height: 80,

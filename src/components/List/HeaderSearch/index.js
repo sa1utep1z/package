@@ -15,6 +15,15 @@ import MyMembersApi from '../../../request/MyMembersApi';
 
 let restForm;
 
+const initialValues = {
+  enterprise: [],
+  status: [],
+  store: [],
+  staff: [],
+  dateRange: {},
+  search: ''
+};
+
 const HeaderSearch = ({
   batchOperate,
   filterFun,
@@ -23,6 +32,8 @@ const HeaderSearch = ({
   storeSingleSelect,
   noStoreAndStaff = false,
   canFilterStatus = false,
+  placeholder= '',
+  companyShow = true,
     ...rest
   }) => {
   const toast = useToast();
@@ -96,35 +107,6 @@ const HeaderSearch = ({
     }).start();
   };
 
-  const initialValues = () => {
-    if(staffSearch){
-      return {
-        enterprise: [],
-        status: [],
-        store: [],
-        staff: '',
-        search: '',
-        dateRange: {}
-      }
-    }
-    if(noStoreAndStaff){
-      return {
-        enterprise: [],
-        status: [],
-        search: '',
-        dateRange: {}
-      };
-    }
-    return {
-      enterprise: [],
-      status: [],
-      store: [],
-      staff: [],
-      search: '',
-      dateRange: {}
-    };
-  };
-
   const onSubmit = values => {
     filterFun(values);
   };
@@ -137,12 +119,12 @@ const HeaderSearch = ({
 
   return (
     <Formik
-      initialValues={initialValues()}
+      initialValues={initialValues}
       onSubmit={onSubmit}>
         {({values, ...rest}) => {
           restForm = rest;
           let staffList = [];
-          if(values.store.length){
+          if(values.store && values.store.length > 0){
             values.store.map((item) => {
               if(item.members.length){
                 item.members.map((member) => {
@@ -160,8 +142,9 @@ const HeaderSearch = ({
           if(!showSearch) return <></>
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
-                <Field
+              <View style={{flexDirection: 'row', marginBottom: 8}}>
+                {
+                  companyShow && <Field
                   title="企业"
                   name="enterprise"
                   placeholder={canFilterStatus ? '请选择企业' : '请点击选择企业或手动输入筛选'}
@@ -178,6 +161,7 @@ const HeaderSearch = ({
                   selectList={companyList}
                   component={SelectItem}
                 />
+                }
                 {canFilterStatus && <Field
                   title="状态"
                   name="status"
@@ -235,7 +219,7 @@ const HeaderSearch = ({
               />
               <Field
                 name="search"
-                placeholder='请输入姓名、身份证'
+                placeholder={placeholder? placeholder : '请输入姓名、身份证'}
                 borderRadius={8}
                 fontStyle={styles.fontSize}
                 searchInputStyle={styles.searchInputStyle}
@@ -250,7 +234,7 @@ const HeaderSearch = ({
 const styles = StyleSheet.create({
   topView: {
     paddingHorizontal: 32,
-    marginBottom: 30
+    marginVertical: 30
   },
   selectAreaStyle: {
     height: 30, 
@@ -259,7 +243,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   fontSize: {
-    fontSize: 22
+    fontSize: 28
   },
   selectContainerStyle: {
     flex: 1 

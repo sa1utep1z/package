@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: defaulBorderRadius
   },
   inputStyle: {
-    fontSize: 22, 
+    fontSize: 28, 
     marginLeft: 10, 
     marginRight: 0
   },

@@ -49,10 +49,10 @@ export const DEFAULT_STATUS_LIST = [
 
 export const TAB_OF_LIST = {
   SIGN_UP_LIST: [
-    {title: '全部',type: 'all',},
-    {title: '待处理',type: 'waitToHandle',},
+    {title: '全部',type: 'total',},
+    {title: '待处理',type: 'pending',},
     {title: '无意愿',type: 'noIntention',},
-    {title: '已报名',type: 'signedUp',}
+    {title: '已报名',type: 'intention',}
   ],
   INTERVIEW_LIST: [
     {title: '全部',type: 'all'},
@@ -269,3 +269,7 @@ export const SIGN_UP_STATUS = {
   "SIGN_UP_NO_INTENTION": '无意愿',
   "SIGN_UP_INTENTION": '已报名'
 };
+export const WAY_TO_GO = [
+  { label: '自行到厂', value: 'FACTORY' },
+  { label: '门店集合', value: 'STORE' },
+];

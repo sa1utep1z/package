@@ -1,20 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
-import { Text, Dialog } from '@rneui/themed';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {StyleSheet, View} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useToast } from 'react-native-toast-notifications';
 
 import SearchInput from '../../../../components/SearchInput';
 import SelectList from '../../../../components/SelectList';
-import { deepCopy } from '../../../../utils';
 import ListApi from '../../../../request/ListApi';
 import { SUCCESS_CODE } from '../../../../utils/const';
 
 const TransferFactory = (props) => {
   const {route: {params}} = props;
   const toast = useToast();
+  const navigation = useNavigation();
 
   const [listArr, setListArr] = useState([]);
 
@@ -22,11 +19,12 @@ const TransferFactory = (props) => {
     getFactoryList();
   },[])
 
-  const getFactoryList = async() => {
+  const getFactoryList = async(search = '') => {
     const flowId = params?.item?.flowId;
     const par = {
+      name: search,
       pageNumber: 0,
-      pageSize: 20,
+      pageSize: 50,
       flowId
     };
     try{  
@@ -42,29 +40,37 @@ const TransferFactory = (props) => {
     }
   }
 
-  const filterFactory = (value) => {
-    let newArr = deepCopy(arr);
-    const filterArr = newArr.filter(item => item.title.includes(value));
-    setListArr(filterArr);
-  }
+  const filterFactory = (value) => getFactoryList(value);
 
-  const selectFactory = async(values) => {
+  const selectFactory = async(select) => {
+    const flowId = params?.item?.flowId;
+    const toOrderId = select[0].value;
     try{
-      const res = await ListApi.FactoryList(par);
+      const res = await ListApi.TransferFactory(flowId, toOrderId);
       console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show(`转单成功！`, {type: 'success'});
+      navigation.goBack();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  }
+  };
 
   return (
     <View style={{flex: 1, alignItems: 'center', paddingTop: 32}}>
       <SearchInput 
         placeholder='请输入工厂名称'
-        autoSearch={filterFactory}
         searchPress={filterFactory}
       />
-      <SelectList data={listArr} confirm={selectFactory} canMultiChoice={false} bottomButton />
+      <SelectList 
+        data={listArr} 
+        confirm={selectFactory} 
+        canMultiChoice={false} 
+        bottomButton 
+      />
     </View>
   )
 };

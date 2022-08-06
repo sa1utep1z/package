@@ -8,7 +8,13 @@ const HomeApi = {
   CompanyList: async (params) => await httpRequest.post('admin/app/index/company/order', params),
   orderDetail: async (orderId) => await httpRequest.get(`admin/app/orderDetail/${orderId}`),
   SignUp: async (orderId, prams) => await httpRequest.post(`admin/app/orderDetail/${orderId}`, prams),
-  ocrReq: async () => await httpRequest.post('admin/app/ocr'),
+  ocrReq: async (prams) => await httpRequest.post('admin/app/ocr', prams, 
+{
+    headers: {
+    'Content-Type': 'multipart/form-data',
+    // 'X-Device': 'app',
+    // 'X-User-Token': Cookies.get(storageKeys.token) || '',
+}} ),
 }
 
 export default HomeApi;

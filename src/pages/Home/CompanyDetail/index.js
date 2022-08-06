@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import { StyleSheet, ScrollView, Image, View, Text } from 'react-native';
 import { Button } from '@rneui/themed';
 import { WebView } from 'react-native-webview';
@@ -9,13 +9,18 @@ import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
 import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE } from '../../../utils/const';
 
+let webHeight;
+
 const CompanyDetail = (props) => {
+  const webRef = useRef(null);
+
   const navigation = useNavigation();
   const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
   const { route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [orderData, setOrderData] = useState({}); // 岗位详情数据
-  
+  const [height, setHeight] = useState(0);
+
   const getDetail = async () => {
     const res = await HomeApi.orderDetail(orderId);
     setOrderData(res.data);
@@ -26,33 +31,17 @@ const CompanyDetail = (props) => {
       headerTitle: params.companyName,
     });
     getDetail();
+    return () => setHeight(0)
   }, [orderId])
 
-  let content;
-  for (let i = 0; i < 100; i++) {
-    content += '这里是发单详情';
-  };
-  let payContent = '这里是薪资详情';
-  for (let i = 0; i < 50; i++) {
-    payContent += '这里是薪资详情';
-  };
-  let requireContent = '这里是岗位要求';
-  for (let i = 0; i < 15; i++) {
-    requireContent += '这里是岗位要求';
-  };
-  let hireContent = '这里是招聘要求';
-  for (let i = 0; i < 20; i++) {
-    hireContent += '这里是招聘要求';
-  };
-
   const signUpPress = () => navigation.navigate(NAVIGATION_KEYS.SIGN_UP, {
-    jobName: params.companyName,
+    jobName: params.orderName,
     orderId: params.orderId,
   });
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.swiperArea}>
           <Swiper
             autoplay
@@ -102,7 +91,15 @@ const CompanyDetail = (props) => {
           </View>
           <View style={styles.contentStyle}>
             {/* <Text style={styles.fontStyle}>{orderData.orderPolicyDetail}</Text> */}
-            <WebView scalesPageToFit={false} originWhitelist={['*']} source={{ html: orderData.orderPolicyDetail }} style={styles.fontStyle}></WebView>
+            <WebView
+            // automaticallyAdjustsScrollIndicatorInsets
+            // contentInset={{top: 0, left: 0}}
+            // onNavigationStateChange={(title)=>{
+            //   if(title.title){
+            //     setHeight(title.target);
+            //   }
+            // }}
+            scrollEnabled={false} scalesPageToFit={false} originWhitelist={['*']} source={{ html: orderData.orderPolicyDetail }}></WebView>
           </View>
         </View>
         <View style={styles.boxStyle}>
@@ -341,7 +338,6 @@ const styles = StyleSheet.create({
     color: '#000'
   },
   contentStyle: {
-    // flex: 1,
     padding: 10,
     minHeight: 800,
   },

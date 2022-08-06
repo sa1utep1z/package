@@ -30,6 +30,7 @@
     "react-native-config": "^1.4.6",
     "react-native-daterange-picker": "^1.5.1",
     "react-native-gesture-handler": "^2.5.0",
+    "react-native-image-crop-picker": "^0.38.0",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-scale-view": "^1.0.1",
     "react-native-screens": "^3.13.1",
