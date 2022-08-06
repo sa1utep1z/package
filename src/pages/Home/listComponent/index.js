@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef, useMemo} from 'react';
-import {StyleSheet, View, Image, Animated} from 'react-native';
+import {StyleSheet, View, Image, Animated, } from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -89,14 +89,14 @@ export const Header = ({search, range}) => {
       </Animated.View>}
       <View style={styles.buttonArea}>
         <Button 
-          buttonStyle={[styles.btn, activeButton === 0 && styles.activeButton]} 
-          titleStyle={[activeButton === 1 && styles.activeButtonTitle]} 
+          buttonStyle={[styles.btn, {marginLeft: 75}, activeButton === 0 && styles.activeButton]} 
+          titleStyle={[{fontSize: 32}, activeButton === 1 && styles.activeButtonTitle]} 
           onPress={todayOnPress}>今日热招
         </Button>
         <View style={styles.centerLine}></View>
         <Button 
-          buttonStyle={[styles.btn, activeButton === 1 && styles.activeButton]} 
-          titleStyle={[activeButton === 0 && styles.activeButtonTitle]} 
+          buttonStyle={[styles.btn, {marginRight: 75}, activeButton === 1 && styles.activeButton]} 
+          titleStyle={[{fontSize: 32}, activeButton === 0 && styles.activeButtonTitle]} 
           onPress={tomorrowOnPress}>明日预招
         </Button>
       </View>
@@ -143,14 +143,14 @@ export const empty = () => (
 
 const styles = StyleSheet.create({
   swiperArea: {
-    height: 200
+    height: 312
   },
   swiperStyle: {
-    borderRadius: 8
+    borderRadius: 10
   },
   containerStyle: {
-    margin: 10, 
-    borderRadius: 8
+    margin: 31, 
+    borderRadius: 10
   },
   paginationStyle: {
     bottom: 0,
@@ -181,18 +181,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   buttonArea: {
-    height: 40,
+    height: 80,
     backgroundColor: '#fff',
-    borderTopRightRadius: 5,
-    borderTopLeftRadius: 5,
-    marginHorizontal: 10,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    marginHorizontal: 31,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingHorizontal: 20
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   btn: {
-    height: 25,
+    width: 193,
+    height: 50,
     borderWidth: 1,
     paddingVertical: 0,
     paddingHorizontal: 15,
@@ -208,27 +208,29 @@ const styles = StyleSheet.create({
   },
   centerLine: {
     width: 2,
-    height: 20,
+    height: 45,
     backgroundColor: '#CCCCCC'
   },
   listHeader: {
-    height: 35, 
+    height: 74, 
     backgroundColor: '#fff', 
-    marginHorizontal: 10, 
-    borderBottomWidth: 1, 
-    borderBottomColor: '#CCCCCC', 
+    marginHorizontal: 31, 
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
     alignItems: 'center'
   },
   listHeader_flex1: {
     flex: 1, 
     textAlign: 'center', 
-    fontWeight: '700'
+    fontWeight: '700',
+    fontSize: 32
   },
   listHeader_flex2: {
     flex: 2, 
     textAlign: 'center', 
-    fontWeight: '700'
+    fontWeight: '700',
+    fontSize: 32
   },
   footer:{
     height: 13, 
@@ -242,15 +244,14 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 30, 
     borderBottomRightRadius: 30, 
     backgroundColor: '#fff', 
-    marginHorizontal: 10
+    marginHorizontal: 31
   },
   footerText: {
     textAlign: 'center', 
     paddingVertical: 10, 
     color: '#999999', 
-    fontSize: 10,
-    fontWeight: '700',
-    backgroundColor: '#f2f2f2'
+    fontSize: 20,
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   emptyStyle: {
     flex: 1, 

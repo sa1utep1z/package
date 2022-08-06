@@ -23,6 +23,8 @@ const NormalDialog = ({ dialogContent: {
 
   const defaultBackOnPress = () => setShowDialog(!showDialog);
 
+  const defaultConfirmOnPress = () => setShowDialog(!showDialog);
+
   return (
     <Dialog
       isVisible={showDialog}
@@ -48,7 +50,7 @@ const NormalDialog = ({ dialogContent: {
             <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress || defaultBackOnPress}>
               <Text style={styles.leftText}>取消</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress}>
+            <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress || defaultConfirmOnPress}>
               <Text style={styles.rightText}>{confirmText || '确认'}</Text>
             </TouchableOpacity>
           </>}

@@ -25,7 +25,7 @@ export default Navigator = () => {
         <View style={styles.leftArea}>
           {headerLeft ? headerLeft : 
             <AntDesign
-              size={28}
+              size={50}
               name='left' 
               style={styles.icon}
               onPress={goBack}
@@ -322,7 +322,7 @@ export default Navigator = () => {
 
 const styles = StyleSheet.create({
   headerArea: {
-    height: 55, 
+    height: 88, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center', 
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   centerAreaText: {
     textAlign: 'center', 
-    fontSize: 18, 
+    fontSize: 36, 
     color: '#000'
   },
   rightArea: {

@@ -58,9 +58,9 @@ const EditReturnView = (props) => {
       if(index < 3){
         return (
           <View key={index} style={[styles.historyList, index === 2 && {borderBottomWidth: 0}]}>
-            <Text style={{width: 60}}>{item.lastModifiedByName}</Text>
-            <Text style={{width: 80}}>{moment(item.lastModifiedDate).format('YYYY-MM-DD')}</Text>
-            <Text style={{flex: 2}}>{item.content}</Text>
+            <Text style={styles.longTextItem}>{item.lastModifiedByName}</Text>
+            <Text style={styles.longTextItem}>{moment(item.lastModifiedDate).format('YYYY-MM-DD')}</Text>
+            <Text style={styles.longTextItem}>{item.content}</Text>
           </View>
         )
       }
@@ -111,13 +111,12 @@ const EditReturnView = (props) => {
         {({handleSubmit, values, ...rest}) => {
           restForm = rest;
           return (
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, backgroundColor: '#EEF4F7', paddingTop: 31}}>
             <ScrollView style={styles.scrollArea}>
-              <View style={[styles.cardArea, {marginTop: 10}]}>
+              <View style={[styles.cardArea]}>
                 <Field
                   name="memberTags"
                   title="会员标签"
-                  labelAreaStyle={{width: 100}}
                   component={SelectTags}
                 />
                 <Field
@@ -125,7 +124,6 @@ const EditReturnView = (props) => {
                   title="会员姓名"
                   editable={false}
                   inputStyle={{color: '#CCCCCC'}}
-                  labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
                 <Field
@@ -134,13 +132,11 @@ const EditReturnView = (props) => {
                   maxLength={11}
                   editable={false}
                   inputStyle={{color: '#CCCCCC'}}
-                  labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
                 <Field
                   name="memberDecision"
                   title="会员意愿"
-                  labelAreaStyle={{width: 100}}
                   component={TwoRadio}
                 />
                 {values.memberDecision && 
@@ -160,13 +156,13 @@ const EditReturnView = (props) => {
                         },
                         pageTitle: '选择意向报名企业'
                       })}
-                      labelAreaStyle={{width: 100}}
+  
                       component={SelectItemInPage}
                     />
                     <Field
                       name="intendSignUpDate"
                       title="意向报名日期"
-                      labelAreaStyle={{width: 100}}
+  
                       component={SelectDate}
                     />
                   </>
@@ -174,13 +170,11 @@ const EditReturnView = (props) => {
                 <Field
                   name="thisTimeReviewRecord"
                   title="本次回访记录"
-                  labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
                 <Field
                   name="nextTimeReviewDate"
                   title="下次回访日期"
-                  labelAreaStyle={{width: 100}}
                   component={SelectDate}
                 />
                 <Field
@@ -189,14 +183,13 @@ const EditReturnView = (props) => {
                   noBorder
                   disabled
                   otherComponent={otherComponent}
-                  labelAreaStyle={{width: 100}}
                   component={LongTextArea}
                 />
               </View>
             </ScrollView>
             <View style={styles.btnArea}>
               <Button
-                title="新 增"
+                title="新增"
                 onPress={handleSubmit}
                 buttonStyle={styles.buttonStyle}
                 containerStyle={styles.buttonContainerStyle}
@@ -211,22 +204,21 @@ const EditReturnView = (props) => {
 
 const styles = StyleSheet.create({
   scrollArea: {
-    flex: 1, 
-    paddingHorizontal: 10
+    flex: 1,
+    paddingHorizontal: 32
   },
   buttonStyle: {
-    height: 45,
+    height: 88,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 44
   },
   buttonContainerStyle: {
-    marginHorizontal: 8
+    marginHorizontal: 32
   },
   titleStyle: {
-    fontSize: 20,
-    fontWeight: 'bold'
+    fontSize: 35
   },
   theWayToGo: {
     color: '#000', 
@@ -236,8 +228,8 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   btnArea: {
-    height: 70, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginBottom: 20
   },
   cardArea: {
     backgroundColor: '#fff', 
@@ -247,8 +239,12 @@ const styles = StyleSheet.create({
   historyList: {
     flexDirection: 'row', 
     alignItems: 'center', 
-    borderBottomWidth: 1, 
-    borderColor: '#999999'
+    borderBottomWidth: 2, 
+    borderColor: 'rgba(0, 0, 0, .05)'
+  },
+  longTextItem: {
+    flex: 1, 
+    fontSize: 25
   }
 });
 

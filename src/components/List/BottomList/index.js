@@ -5,23 +5,23 @@ import { Tab, TabView, Text, Badge } from "@rneui/themed";
 import { listFooter, empty } from "../../../pages/Home/listComponent";
 
 const BottomList = ({
-    list,
-    tab,
+    list = [],
+    tab = [],
     renderItem,
     onEndReached,
     listHead,
-    isLoading,
-    nowSelectIndex,
+    isLoading = false,
+    nowSelectIndex = false,
     ...rest
   }) => {
   const [index, setIndex] = useState(0);
-  const [showList, setShowList] = useState([]);
-  const [tabList, setTabList] = useState([]);
+  const [showList, setShowList] = useState(list);
+  const [tabList, setTabList] = useState(tab);
 
   useMemo(()=>{
     setShowList(list);
     setTabList(tab);
-    nowSelectIndex(index);
+    nowSelectIndex && nowSelectIndex(index);
   },[list, tab, index]);
 
   return (
@@ -30,18 +30,22 @@ const BottomList = ({
         value={index}
         onChange={setIndex}
         variant="primary"
-        indicatorStyle={styles.tab_indicatorStyle}
+        indicatorStyle={{backgroundColor: '#fff'}}
         containerStyle={styles.tab_containerStyle}>
         {tabList && tabList.map((tab, tabIndex) => {
           const active = tabIndex === index;
           return (
             <Tab.Item
-              title={`${tab.title}(${tab.nums})`}
+              title={tab.title}
               key={tab.type}
-              titleStyle={[styles.tabItem_titleStyle, active && styles.tabItem_titleStyle_active]}
               buttonStyle={styles.tabItem_buttonStyle}
               containerStyle={styles.tabItem_containerStyle}
-            />
+              >
+                <View>
+                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.title}</Text>
+                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.nums || 0}</Text>
+                </View>
+            </Tab.Item>
           )
         })}
       </Tab>
@@ -53,7 +57,7 @@ const BottomList = ({
               data={showList}
               style={{backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E3E3E3'}}
               renderItem={renderItem}
-              keyExtractor={item => item.poolId}
+              keyExtractor={item => item.itemId}
               getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
               refreshing={isLoading}
               onRefresh={()=>console.log('刷新')}
@@ -71,13 +75,9 @@ const BottomList = ({
 };
 
 const styles = StyleSheet.create({
-  tab_indicatorStyle: {
-    backgroundColor: '#409EFF',
-    height: 3,
-    borderRadius: 4
-  },
   tab_containerStyle: {
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    height: 120
   },
   tabItem_titleStyle: {
     color: '#000', 
@@ -87,19 +87,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0
   },
   tabItem_containerStyle: {
-    height: 50, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#fff'
   },
   tabItem_titleStyle_active: {
     color: '#409EFF', 
     fontWeight: 'bold', 
-    fontSize: 14
   },
   tabItem_buttonStyle: {
+    height: '100%',
     backgroundColor: '#fff',
     paddingHorizontal: 0,
-    paddingVertical: 0,
-    height: 60,
+    paddingVertical: 0
   },
   tabView: {
     flex: 1, 

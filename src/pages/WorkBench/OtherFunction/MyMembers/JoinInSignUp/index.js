@@ -185,7 +185,6 @@ const JoinInSignUp = (props) => {
                   title="会员姓名"
                   editable={false}
                   inputStyle={{color: '#CCCCCC'}}
-                  labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
                 <Field
@@ -194,7 +193,6 @@ const JoinInSignUp = (props) => {
                   maxLength={11}
                   editable={false}
                   inputStyle={{color: '#CCCCCC'}}
-                  labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
                 <Field
@@ -203,7 +201,6 @@ const JoinInSignUp = (props) => {
                   maxLength={11}
                   editable={false}
                   inputStyle={{color: '#CCCCCC'}}
-                  labelAreaStyle={{width: 100}}
                   component={FormItem}
                 />
                 <Field
@@ -211,6 +208,7 @@ const JoinInSignUp = (props) => {
                   title="渠道来源"
                   noBorder
                   bottomButton
+                  inPageField
                   singleSelect
                   validate={value=>{
                     let errorMsg;
@@ -219,7 +217,6 @@ const JoinInSignUp = (props) => {
                     }
                     return errorMsg;
                   }}
-                  labelAreaStyle={{width: 100}}
                   selectList={CHANEL_SOURCE_LIST}
                   component={SelectItem}
                 />
@@ -229,6 +226,7 @@ const JoinInSignUp = (props) => {
                   noBorder
                   bottomButton
                   singleSelect
+                  inPageField
                   validate={value=>{
                     let errorMsg;
                     if(value.length === 0) {
@@ -236,7 +234,6 @@ const JoinInSignUp = (props) => {
                     }
                     return errorMsg;
                   }}
-                  labelAreaStyle={{width: 100}}
                   selectList={ARRIVE_WAY}
                   component={SelectItem}
                 />
@@ -246,6 +243,7 @@ const JoinInSignUp = (props) => {
                   noBorder
                   bottomButton
                   singleSelect
+                  inPageField
                   canSearch
                   validate={value=>{
                     let errorMsg;
@@ -254,7 +252,6 @@ const JoinInSignUp = (props) => {
                     }
                     return errorMsg;
                   }}
-                  labelAreaStyle={{width: 100}}
                   selectList={storeList}
                   component={SelectItem}
                 />
@@ -264,6 +261,7 @@ const JoinInSignUp = (props) => {
                   noBorder
                   bottomButton
                   singleSelect
+                  inPageField
                   validate={value=>{
                     let errorMsg;
                     if(value.length === 0) {
@@ -271,13 +269,12 @@ const JoinInSignUp = (props) => {
                     }
                     return errorMsg;
                   }}
-                  labelAreaStyle={{width: 100}}
                   selectList={selectStoreList}
                   component={SelectItem}
                 />
-                <View>
-                  <Text style={{paddingLeft: 15, fontSize: 13, marginTop: 5}}>筛选</Text>
-                  <View style={{borderWidth: 1, marginHorizontal: 10, borderRadius: 8, borderColor: '#CCCCCC', flexDirection: 'row'}}>
+                <View style={{paddingBottom: 20}}>
+                  <Text style={{paddingLeft: 30, fontSize: 26, marginTop: 5}}>筛选</Text>
+                  <View style={{borderWidth: 1, marginHorizontal: 20, borderRadius: 8, borderColor: '#CCCCCC', flexDirection: 'row'}}>
                     <View style={{flex: 1, borderRightWidth: 1, borderColor: '#CCCCCC'}}>
                       <Field
                         name="company"
@@ -286,14 +283,13 @@ const JoinInSignUp = (props) => {
                         bottomButton
                         singleSelect
                         canSearch
-                        labelAreaStyle={{width: 100}}
+                        inPageField
                         selectList={companyList}
                         component={SelectItem}
                       />
                       <Field
                         name="orderTime"
                         title="订单日期"
-                        labelAreaStyle={{width: 100}}
                         component={SelectDate}
                       />
                       <Field
@@ -302,12 +298,11 @@ const JoinInSignUp = (props) => {
                         bottomButton
                         singleSelect
                         canSearch
-                        labelAreaStyle={{width: 100}}
                         component={FormItem}
                       />
                     </View>
-                    <TouchableOpacity style={{width: 50, justifyContent: 'center', alignItems: 'center', margin: 5, borderRadius: 5, backgroundColor: '#409EFF'}} onPress={filter}>
-                      <Text style={{color: '#fff', fontSize: 14}}>筛选</Text>
+                    <TouchableOpacity style={{width: 80, justifyContent: 'center', alignItems: 'center', margin: 5, borderRadius: 5, backgroundColor: '#409EFF'}} onPress={filter}>
+                      <Text style={{color: '#fff', fontSize: 26}}>筛选</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -318,6 +313,7 @@ const JoinInSignUp = (props) => {
                     bottomButton
                     singleSelect
                     canSearch
+                    inPageField
                     validate={value=>{
                       let errorMsg;
                       if(value.length === 0) {
@@ -325,7 +321,7 @@ const JoinInSignUp = (props) => {
                       }
                       return errorMsg;
                     }}
-                    labelAreaStyle={{width: 100}}
+                    selectContainerStyle={{paddingHorizontal: 28}}
                     selectList={orderList}
                     component={SelectItem}
                   />
@@ -333,7 +329,7 @@ const JoinInSignUp = (props) => {
             </ScrollView>
             <View style={styles.btnArea}>
               <Button
-                title="保 存"
+                title="保存"
                 onPress={handleSubmit}
                 buttonStyle={styles.buttonStyle}
                 containerStyle={styles.buttonContainerStyle}
@@ -352,17 +348,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   buttonStyle: {
-    height: 45,
+    height: 88,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 44
   },
   buttonContainerStyle: {
     marginHorizontal: 8
   },
   titleStyle: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: 'bold'
   },
   theWayToGo: {
@@ -373,8 +369,9 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   btnArea: {
-    height: 70, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingHorizontal: 28,
+    marginBottom: 20
   },
   cardArea: {
     backgroundColor: '#fff', 

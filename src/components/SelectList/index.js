@@ -95,14 +95,15 @@ const SelectList = ({
     const isChecked = item.isChecked;
     return (
       <TouchableOpacity key={item.value} style={styles.listItem} onPress={()=>pressButton(item)}>
-        <Text>{item.label}</Text>
+        <Text style={{fontSize: 28}}>{item.label}</Text>
         <CheckBox
           center
+          size={30}
           checked={isChecked}
           onPress={()=>pressButton(item)}
           containerStyle={styles.checkBox_containerStyle}
-          checkedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue669'}</Text>}
-          uncheckedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue68d'}</Text>}
+          checkedIcon="dot-circle-o"
+          uncheckedIcon="circle-o"
         />
       </TouchableOpacity>
   )};
@@ -111,9 +112,9 @@ const SelectList = ({
     <>
       <View style={[styles.listView, listStyle]}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3, paddingVertical: 5 }}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{color: '#999999'}}>共 <Text style={{color: '#409EFF'}}>{list.length}</Text> 条数据，</Text>
-            <Text style={{color: '#999999'}}>已选择 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
+          <View style={{flexDirection: 'row', paddingLeft: 10}}>
+            <Text style={{color: '#999999', fontSize: 28}}>共 <Text style={{color: '#409EFF'}}>{list.length}</Text> 条数据，</Text>
+            <Text style={{color: '#999999', fontSize: 28}}>已选择 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
           </View>
           {!!canMultiChoice && <CheckRadio 
             checked={isSelectAll}
@@ -126,7 +127,7 @@ const SelectList = ({
           data={list}
           renderItem={renderItem}
           keyExtractor={item => item.value}
-          getItemLayout={(data, index)=>({length: 40, offset: 40 * index, index})}
+          getItemLayout={(data, index)=>({length: 90, offset: 90 * index, index})}
           initialNumToRender={15}
           ListEmptyComponent={empty}
         />
@@ -140,6 +141,7 @@ const SelectList = ({
             containerStyle={styles.buttonContainerStyle}
             titleStyle={styles.cancelButton_title}
           />
+          <View style={{width: 20}}></View>
           <Button
             title="确 认"
             onPress={confirmButton}
@@ -156,7 +158,6 @@ const SelectList = ({
 
 const styles = StyleSheet.create({
   checkBox_containerStyle: {
-    height: 20,
     margin: 0,
     padding: 0,
     justifyContent: 'center',
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
   listView: {
     flex: 1, 
     width: '100%', 
-    paddingHorizontal: 10, 
+    paddingHorizontal: 28,
     borderRadius: 8
   },
   scroll: { 
@@ -183,43 +184,41 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   listItem: {
-    height: 40, 
-    borderBottomWidth: 1, 
-    borderColor: '#E9E9E9', 
+    height: 90, 
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)', 
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
-    paddingRight: 5, 
-    paddingLeft: 15
+    paddingHorizontal: 28
   },
   buttonArea: {
     flexDirection: 'row', 
-    paddingHorizontal: 8, 
-    alignItems: 'center', 
-    marginVertical: 10
+    paddingHorizontal: 32, 
+    alignItems: 'center',
+    marginVertical: 20
   },
   cancelButton: {
     borderColor: '#409EFF',
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderRadius: 30,
-    height: 45
+    borderRadius: 44,
+    height: 88
   },
   confirmButton: {
     borderColor: 'white',
-    borderRadius: 30,
-    height: 45
+    borderRadius: 44,
+    height: 88
   },
   cancelButton_title: {
-    fontSize: 18, 
+    fontSize: 26, 
     color: '#409EFF'
   },
   confirmButton_title: {
-    fontSize: 18
+    fontSize: 26
   },
   buttonContainerStyle: {
-    flex: 1,
-    marginHorizontal: 5
+    flex: 1
   },
   clearSelected: {
     color: '#409EFF', 

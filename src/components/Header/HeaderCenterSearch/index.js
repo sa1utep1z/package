@@ -78,6 +78,7 @@ const HeaderCenterSearch = ({routeParams}) => {
           type="feather"
           name={searchState ? 'chevron-up' : 'chevron-down'}
           color={searchState ? '#000' : "#bfbfbf"}
+          size={40}
           containerStyle={styles.icon}
         />
       </View>
@@ -87,11 +88,11 @@ const HeaderCenterSearch = ({routeParams}) => {
 
 const styles = StyleSheet.create({
   centerArea: {
-    alignSelf: 'flex-end'
+    alignSelf: 'center'
   },
   title: {
     textAlign: 'center', 
-    fontSize: 18, 
+    fontSize: 36, 
     color: '#000'
   },
   iconArea: {

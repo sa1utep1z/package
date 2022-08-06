@@ -119,7 +119,7 @@ const Home = (props) => {
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
         <TouchableOpacity style={{flex: 2}} onPress={()=>orderDetail(item)}>
-          <Text style={styles.itemPress}>{item.companyName}</Text>
+          <Text numberOfLines={1} ellipsizeMode='tail' style={styles.itemPress}>{item.companyName}</Text>
         </TouchableOpacity>
         <Text style={styles.item_flex2}>{item.recruitRange}</Text>
         <TouchableOpacity style={{flex: 1}} onPress={()=>gotoList(item)}>
@@ -136,14 +136,13 @@ const Home = (props) => {
   );
 
   return(
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#EEF4F7'}}>
       <FlatList
         data={showList?.content}
         keyExtractor={item => item.orderId}
         renderItem={renderItem}
         refreshControl={refreshControl}
         ListHeaderComponent={<Header search={search} range={setRangeDate} />}
-        ListFooterComponent={homeFooter}
         ListEmptyComponent={empty}
         initialNumToRender={8}
         keyboardShouldPersistTaps='handled'
@@ -157,27 +156,30 @@ const Home = (props) => {
 
 const styles = StyleSheet.create({
   itemArea: {
-    height: 45, 
-    marginHorizontal: 10, 
-    backgroundColor: '#fff',
-    borderBottomWidth: 1, 
-    borderBottomColor: '#CCCCCC', 
+    height: 80, 
+    marginHorizontal: 31, 
+    backgroundColor: '#fff', 
+    borderBottomWidth: 2, 
+    borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
     alignItems: 'center'
   },
   item_flex1: {
     flex: 1, 
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 28
   },
   item_flex2: {
     flex: 2, 
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 25
   },
   itemPress: {
     textAlign: 'center',
     textAlignVertical: 'center',
     color: '#409EFF',
-    height: '100%'
+    height: '100%',
+    fontSize: 28
   },
   icon: {
     fontSize: 20,

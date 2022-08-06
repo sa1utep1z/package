@@ -87,7 +87,7 @@ const NewestState = () => {
   };
 
   return (
-    <View style={[styles.screen, showSearch && {paddingTop: 10}]}>
+    <View style={[styles.screen]}>
       <HeaderSearch />
       <View style={styles.numberOfList}>
         <Text style={styles.text}>共 <Text style={styles.number}>{list.length}</Text> 条数据</Text>

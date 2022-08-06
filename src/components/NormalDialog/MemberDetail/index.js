@@ -67,28 +67,21 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   topArea: {
-    width: '100%'
-  },
-  listText: {
-    position: 'absolute', 
-    right: 0, 
-    fontSize: 13, 
-    color: '#409EFF'
+    width: '100%',
+    paddingHorizontal: 20
   },
   memberItem: {
     height: 30,
     flexDirection: 'row'
   },
   memberItem_text: {
-    width: 100, 
     textAlignVertical: 'center',
     textAlign: 'right',
-    paddingRight: 10
+    paddingRight: 10,
+    letterSpacing: 2
   },
   memberItem_value: {
     flex: 1, 
-    borderBottomWidth: 1, 
-    borderColor: '#E3E3E3', 
     justifyContent: 'center', 
     marginLeft: 5, 
     paddingLeft: 3

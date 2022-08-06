@@ -65,14 +65,14 @@ const SearchInput = ({
     <AntDesign 
       name='search1' 
       color='#A9A9A9'
-      size={smallSize ? 16 : 20}
+      size={smallSize ? 25 : 31}
     />
   ),
   cancelIcon = (
     <AntDesign 
       name='left' 
       color='#A9A9A9'
-      size={smallSize ? 16 : 20}
+      size={smallSize ? 25 : 31}
       onPress={cancelIconPress}
     />
   ),
@@ -127,10 +127,10 @@ const SearchInput = ({
 
 const styles = StyleSheet.create({
   searchInput: {
-    height: 40,
+    height: 60,
     flexDirection: "row", 
-    paddingHorizontal: 10,
-    marginBottom: 10
+    paddingHorizontal: 32,
+    marginBottom: 30
   },
   containerStyle:  {
     flex: 1,
@@ -146,18 +146,17 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: defaulBorderRadius
   },
   inputStyle: {
-    fontSize: 15, 
-    marginLeft: 0, 
+    fontSize: 22, 
+    marginLeft: 10, 
     marginRight: 0
   },
   leftIconContainerStyle: {
-    width: 40
   },
   rightIconContainerStyle: {
     paddingRight: 0
   },
   rightArea: {
-    width: 68, 
+    width: 100, 
     backgroundColor: '#fff', 
     borderTopRightRadius: defaulBorderRadius, 
     borderBottomRightRadius: defaulBorderRadius, 
@@ -166,22 +165,18 @@ const styles = StyleSheet.create({
   },
   line: {
     width: 2, 
-    height: 20, 
-    backgroundColor: '#DCDCDC', 
-    marginRight: 6
+    height: 31, 
+    backgroundColor: '#DCDCDC'
   },
   btnArea: {
-    width: 40, 
     height: '100%', 
     justifyContent: 'center', 
-    alignItems: 'center'
+    alignItems: 'center',
+    marginLeft: 20
   },
   btnArea_text: {
     color: '#409EFF', 
-    fontWeight: '700'
-  },
-  smallLeftArea: {
-    width: 20
+    fontSize: 22
   },
   smallRightArea: {
     width: 55

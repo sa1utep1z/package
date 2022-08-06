@@ -134,7 +134,7 @@ const CenterSelectDate = ({
         <TouchableOpacity style={styles.bothBtn} onPress={() => changeWeek('lastWeek')}>
           <AntDesign
             name='left'
-            size={24}
+            size={40}
             color='#999999'
           />
         </TouchableOpacity>
@@ -154,7 +154,7 @@ const CenterSelectDate = ({
         <TouchableOpacity style={styles.bothBtn} onPress={() => changeWeek('nextWeek')}>
           <AntDesign
             name='right'
-            size={24}
+            size={40}
             color='#999999'
           />
         </TouchableOpacity>
@@ -165,13 +165,13 @@ const CenterSelectDate = ({
 
 const styles = StyleSheet.create({
   centerDateArea: {
-    height: 95, 
+    height: 203, 
     backgroundColor: '#fff', 
     flexDirection: 'column',
-    marginBottom: 10
+    marginBottom: 30
   },
   topArea: {
-    height: 40, 
+    height: 90, 
     flexDirection: 'row'
   },
   bothArea: {
@@ -180,15 +180,16 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   topBtn: {
-    paddingHorizontal: 12, 
+    paddingVertical: 9,
+    paddingHorizontal: 29, 
     backgroundColor: '#EEEEEE', 
-    borderRadius: 2
+    borderRadius: 5
   },
   topBtn_selected: {
     backgroundColor: '#D9ECFF'
   },
   topBtnText: {
-    fontSize: 16, 
+    fontSize: 32, 
     color: '#999999'
   },
   topBtnText_selected: {
@@ -201,11 +202,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   centerYearText: {
-    fontSize: 20, 
+    fontSize: 40, 
     color: '#409EFF'
   },
   centerYearText_selected: {
-    fontSize: 10, 
+    fontSize: 20, 
     color: '#fff', 
     backgroundColor: '#409EFF', 
     paddingHorizontal: 10, 
@@ -230,18 +231,19 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   week: {
+    fontSize: 26,
     fontWeight: 'bold', 
     color: '#666666',
     paddingBottom: 3
   },
   date: {
-    fontSize: 12
+    fontSize: 18
   },
   date_selected: {
     color: '#fff',
     backgroundColor: '#409EFF', 
-    borderRadius: 6, 
-    paddingHorizontal: 3
+    borderRadius: 6,
+    paddingHorizontal: 8
   }
 });
 

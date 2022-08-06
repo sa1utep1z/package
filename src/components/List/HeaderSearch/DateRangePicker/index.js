@@ -70,26 +70,28 @@ const PickerOfDateRange = ({
     <>
       <View style={styles.dateArea}>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>开始日期:</Text>
+          <Text style={styles.title}>开始日期：</Text>
           <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
             <AntDesign
               name='calendar' 
-              size={20}
+              size={30}
+              style={{marginHorizontal: 20}}
               color='#999999'
             />
-            <Text style={styles.font}>{moment(rangeDate.startDate).format('YYYY-MM-DD')}</Text>
+            <Text style={styles.font}>{moment(rangeDate.startDate).format('MM-DD')}</Text>
           </TouchableOpacity>
         </View> 
-        <View style={{width: 10}}></View>
+        <View style={{width: 40}}></View>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>结束日期:</Text>
+          <Text style={styles.title}>结束日期：</Text>
           <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
             <AntDesign
               name='calendar' 
-              size={20}
+              size={30}
+              style={{marginHorizontal: 20}}
               color='#999999'
             />
-            <Text style={styles.font}>{moment(rangeDate.endDate).format('YYYY-MM-DD')}</Text>
+            <Text style={styles.font}>{moment(rangeDate.endDate).format('MM-DD')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -116,10 +118,10 @@ const PickerOfDateRange = ({
 
 const styles = StyleSheet.create({
   dateArea: {
-    height: 30,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8
+    marginBottom: 20
   },
   datePicker: {
     flex: 1,
@@ -131,17 +133,17 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff', 
     flexDirection: 'row', 
-    justifyContent: 'space-around', 
     alignItems: 'center', 
-    borderRadius: 5, 
+    borderRadius: 10, 
     paddingLeft: 5,
     marginLeft: 5
   },
   font: {
-    color: '#999999'
+    color: '#999999',
+    fontSize: 28
   },
   title: {
-    fontSize: 14,
+    fontSize: 26,
     color: '#000',
     fontWeight: 'bold'
   }

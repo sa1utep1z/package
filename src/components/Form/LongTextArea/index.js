@@ -20,7 +20,7 @@ const LongTextArea = ({
   return (
     <View style={styles.totalArea}>
       <View style={[styles.titleArea, labelAreaStyle]}>
-        <Text style={styles.titleArea_text}>{title}</Text>
+        <Text style={styles.titleArea_text}>{title}：</Text>
       </View>
       <View style={styles.rightArea}>
         {otherComponent ? otherComponent : <Input
@@ -39,18 +39,17 @@ const LongTextArea = ({
 
 const styles = StyleSheet.create({
   totalArea: {
-    minHeight: 80, 
-    paddingHorizontal: 10, 
+    minHeight: 160, 
+    paddingLeft: 28,
+    paddingRight: 10,
     flexDirection: 'row'
   },
   titleArea: {
-    width: 80, 
     justifyContent: 'center', 
-    alignItems: 'center', 
-    marginRight: 10
+    alignItems: 'center'
   },
   titleArea_text: {
-    fontSize: 14
+    fontSize: 32
   },
   rightArea: {
     flex: 1, 
@@ -66,7 +65,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     padding: 0, 
-    fontSize: 14
+    fontSize: 28
   },
   errorStyle: {
     display: 'none'

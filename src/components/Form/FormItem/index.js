@@ -18,7 +18,7 @@ const FormItem = ({
 
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
-      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}</Text>
+      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}：</Text>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
     </View>
   );
@@ -60,19 +60,20 @@ const FormItem = ({
 
 const styles = StyleSheet.create({
   containerStyle: {
-    maxHeight: 48,
+    height: 91,
     flexDirection: 'row', 
     alignItems: 'center',
-    borderColor: '#E3E3E3',
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',
     paddingRight: 0,
+    paddingLeft: 28
   },
   noBorder: {
     flex: 1,
     borderBottomWidth: 0
   },
   inputStyle: {
-    fontSize: 15, 
+    fontSize: 28, 
     color: '#000',
     paddingHorizontal: 0
   },
@@ -81,15 +82,14 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   labelArea: {
-    width: 80,
     height: '100%',
     flexDirection: 'row',  
     alignItems: 'center', 
-    justifyContent: 'center', 
-    marginRight: 10
+    justifyContent: 'center'
   },
   label: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 32
   },
   required: {
     color: 'red', 

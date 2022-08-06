@@ -27,6 +27,7 @@ const SelectItem = ({
     selectAreaStyle,
     selectAreaTextStyle,
     autoSubmit = false,
+    inPageField = false, // 由于跟顶部筛选栏及表单内部公用一个选择项，所以在这里配置一个“是否在页面中表单”的配置项用来控制他们不同位置的外观表现；
     ...rest
   }) => {
   const toast = useToast();
@@ -133,19 +134,19 @@ const SelectItem = ({
   }
 
   return (
-    <View style={[styles.selectItemArea, !showLittleTitle && styles.noLittleTitle, selectContainerStyle]}>
+    <View style={[styles.selectItemArea, inPageField && styles.pageFieldStyle, selectContainerStyle]}>
       {showLittleTitle && 
         <Text style={styles.showLittleTitleText}>{title}：</Text>
       }
       {formalLabel && 
-        <View style={[styles.labelArea, !showLittleTitle && styles.labelArea_noLittle, labelAreaStyle]}>
-          <Text style={styles.label}>{title}</Text>
+        <View style={[styles.labelArea, labelAreaStyle]}>
+          <Text style={styles.label}>{title}：</Text>
           {rest.isRequired && <Text style={styles.required}>*</Text>}
         </View>
       }
       <View style={styles.rightArea}>
         <TouchableOpacity 
-          style={[styles.selectArea, !showLittleTitle && styles.selectArea_noLittle, noBorder && styles.noBorder, selectAreaStyle]}
+          style={[styles.selectArea, !inPageField && {paddingLeft: 20}, !showLittleTitle && styles.selectArea_noLittle, noBorder && styles.noBorder, selectAreaStyle]}
           onPress={touchItem}>
           <Text
             style={[styles.selectText, checkFieldValueType() && styles.noItem, selectAreaTextStyle]} 
@@ -155,7 +156,7 @@ const SelectItem = ({
           </Text>
           <AntDesign
             name={showSelectItems ? 'up' : 'down'}
-            size={20}
+            size={30}
             color={!checkFieldValueType() ? 'black' : '#E3E3E3'}
           />
         </TouchableOpacity>
@@ -176,11 +177,11 @@ const SelectItem = ({
             {/* <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
               <Text style={styles.selectAll_text}>全选</Text>
             </TouchableOpacity> */}
-            {singleSelect && !!selectedItemList.length && <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
+            {/* {singleSelect && !!selectedItemList.length && <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
               <Text style={styles.selectAll_text}>取消选择</Text>
-            </TouchableOpacity>}
+            </TouchableOpacity>} */}
           </View>
-          <View style={{paddingHorizontal: 10}}>
+          <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
             {canSearch && <SearchInput
               borderRadius = {8}
               placeholder={`请输入${title}名称`}
@@ -239,10 +240,17 @@ const styles = StyleSheet.create({
   selectItemArea: {
     flex: 1,
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    height: 60
+  },
+  pageFieldStyle: {
+    paddingHorizontal: 28, 
+    height: 90, 
+    borderBottomWidth: 2, 
+    borderColor: 'rgba(0, 0, 0, .05)'
   },
   showLittleTitleText: {
-    fontSize: 14,
+    fontSize: 26,
     color: '#000',
     fontWeight: 'bold'
   },
@@ -254,16 +262,20 @@ const styles = StyleSheet.create({
   rightArea: {
     flex: 1, 
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    height: '100%'
   },
   selectArea: {
     flex: 1,
-    height: 48, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: '#E3E3E3'
+    borderColor: '#E3E3E3',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingRight: 20,
+    height: '100%'
   },
   selectArea_noLittle: {
     paddingRight: 10
@@ -273,7 +285,7 @@ const styles = StyleSheet.create({
   },
   selectText: {
     color: 'black',
-    fontSize: 15
+    fontSize: 28
   },
   noItem: {
     color: '#999999'
@@ -378,7 +390,6 @@ const styles = StyleSheet.create({
     color: '#409EFF'
   },
   labelArea: {
-    width: 80,
     height: '100%',
     flexDirection: 'row',  
     alignItems: 'center', 
@@ -388,7 +399,8 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   label: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 32
   },
   required: {
     color: 'red', 

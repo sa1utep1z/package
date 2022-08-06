@@ -16,11 +16,7 @@ const MyMembersApi = {
   // 回访记录
   ReviewRecord: async(poolId) => await httpRequest.get(`admin/memberPool/${poolId}/returnVisit`), 
   // 新增回访记录
-  IncreaseReviewRecord: async(poolId, params) => {
-    console.log('poll', poolId);
-    console.log('params', params);
-    return await httpRequest.post(`admin/memberPool/${poolId}/returnVisit`, params);
-  }, 
+  IncreaseReviewRecord: async(poolId, params) => await httpRequest.post(`admin/memberPool/${poolId}/returnVisit`, params), 
   // 加入报名
   SignUp: async(poolId, params) => await httpRequest.post(`admin/memberPool/${poolId}/help/signUp`, params),
   // 获取订单信息

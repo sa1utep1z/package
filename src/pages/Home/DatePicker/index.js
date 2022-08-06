@@ -56,7 +56,7 @@ const DatePicker = ({
   return (
     <View style={styles.dateArea}>
       <View style={styles.datePicker}>
-        <Text>开始日期:</Text>
+        <Text style={{fontSize: 26}}>开始日期：</Text>
         <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('start')}>
           <Icon
             name='calendar' 
@@ -67,7 +67,7 @@ const DatePicker = ({
         </TouchableOpacity>
       </View>
       <View style={styles.datePicker}>
-        <Text>结束日期:</Text>
+        <Text style={{fontSize: 26}}>结束日期：</Text>
         <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('end')}>
           <Icon
             name='calendar' 
@@ -90,34 +90,34 @@ const DatePicker = ({
 
 const styles = StyleSheet.create({
   dateArea: {
-    height: 40,
+    height: 50,
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    marginBottom: 10
+    paddingHorizontal: 32,
+    marginBottom: 30
   },
   datePicker: {
     flexDirection: 'row',
     alignItems: 'center'
   },
   pickerTouchable: {
-    width: 110, 
-    height: 34, 
+    width: 202, 
+    height: 50, 
     backgroundColor: '#fff', 
     flexDirection: 'row', 
-    justifyContent: 'space-around', 
     alignItems: 'center', 
-    borderRadius: 5, 
-    paddingLeft: 5,
-    marginLeft: 5
+    justifyContent: 'center',
+    borderRadius: 6
   },
   icon: {
-    fontSize: 20,
-    color: '#999999'
+    fontSize: 30,
+    color: '#666666'
   },
   font: {
-    color: '#999999'
+    color: '#999999',
+    fontSize: 22,
+    marginLeft: 15
   }
 })
 
