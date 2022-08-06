@@ -1,63 +1,557 @@
-import React, {useRef, useEffect, useState} from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useRef, useEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-
+import { Tab, TabView } from '@rneui/themed';
+import { useQuery } from '@tanstack/react-query';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
-import BottomList from "../../../../components/List/BottomList";
-import { TAB_OF_LIST } from "../../../../utils/const";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
+import DataStatisticApi from "../../../../request/DataStatisticApi"
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import NormalDialog from "../../../../components/NormalDialog";
 
 const DATA_Statistics = () => {
   const navigation = useNavigation();
+  const [index, setIndex] = useState(0);
+  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
+  const [searchTotal, setSearchTotal] = useState({}); // 查询总数据参数
+  const [companyDetails, setCompanyDetails] = useState([]); // 企业分组数据
+  const [storeDetails, setStoreDetails] = useState([]); // 门店分组数据
+  const [supplierDetails, setSupplierDetails] = useState([]); // 供应商分组数据
+  const [recruiterDetails, setRecruiterDetails] = useState([]); // 招聘员分组数据
+  const [totalData, setTotalData] = useState([]); // 各列表总数据
+  const dialogRef = useRef(null);
+  const [dialogContent, setDialogContent] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const detailRef = useRef(null);
-  const memberDetailRef = useRef(null);
-  const signUpStateRef = useRef(null);
-  const callPhoneRef = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     navigation.setOptions({
-      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
+      headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
-  }, [])
+    return;
+  }, []);
 
-  const showFactoryDetail = () => detailRef.current.setShowDetail(true);
-  const showMemberDetail = () => memberDetailRef.current.setShowDetail(true);
-  const showSignUpDetail = () => signUpStateRef.current.setShowDetail(true);
-  const callMemberPhone = () => callPhoneRef.current.setShowCallPhone(true);
-
-  let list = [];
-  for(let i = 0; i < 30; i++){
-    list.push({
-      id: `${i}`,
-      name: `什么厂${i+1}`,
-      person: `什么名${i+1}`,
-      type: `${i%2 === 0 ? '已报名' : '未报名'}`,
-      phone: `18011111111`
-    })
+  // 获取企业总数据
+  const companyTotalData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.Company(prams)
+    if (res.code === 0) {
+      setIsLoading(true);
+      setTotalData(res.data);
+    } else {
+      setIsLoading(false)
+    }
   };
 
-  const renderItem = ({item}) => {
+  // 获取企业分组数据
+  const companyData = async (value) => {
+    try{
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.CompanyGroup(prams)
+      setCompanyDetails(res.data.content)
+      console.log('获取到的企业分组数据：', res)
+    } catch(error) {
+      console.log('获取到的企业分组数据：', error)
+    }
+  };
+
+  // 获取门店总数据
+  const storeTotalData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.Store(prams)
+    if (res.code === 0) {
+      setTotalData(res.data);
+    } else {
+      setIsLoading(false)
+    }
+  };
+  // 获取门店分组数据
+  const storeData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.StoreGroup(prams)
+    setStoreDetails(res.data.content)
+    console.log('获取到的门店分组数据：', res)
+    console.log('请求门店分组数据的参数：', prams)
+  };
+
+  // 获取供应商总数据
+  const supplierTotalData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.Supplier(prams)
+    if (res.code === 0) {
+      setTotalData(res.data);
+    } else {
+      setIsLoading(false)
+    }
+  };
+  // 获取供应商分组数据
+  const supplierData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.SupplierGroup(prams)
+    setSupplierDetails(res.data.content)
+    console.log('获取到的供应商分组数据：', res)
+    console.log('请求供应商分组数据的参数：', prams)
+  };
+
+  // 获取招聘员总数据
+  const recruiterTotalData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.Recruiter(prams)
+    if (res.code === 0) {
+      setTotalData(res.data);
+    } else {
+      setIsLoading(false)
+    }
+  };
+  // 获取招聘员分组数据
+  const recruiterData = async (value) => {
+    const prams = {
+      ...value,
+    }
+    const res = await DataStatisticApi.RecruiterGroup(prams)
+    setRecruiterDetails(res.data.content)
+    console.log('获取到的招聘员分组数据：', res)
+    console.log('请求招聘员分组数据的参数：', prams)
+  };
+
+  useEffect(() => {
+    if (index === 0) {
+      companyData(searchContent);
+      companyTotalData(searchTotal);
+    } else if (index === 1) {
+      storeTotalData(searchTotal);
+      storeData(searchContent);
+    } else if (index === 2) {
+      supplierTotalData(searchTotal);
+      supplierData(searchContent);
+    } else {
+      recruiterTotalData(searchTotal)
+      recruiterData(searchContent)
+    }
+  }, [index, searchContent, searchTotal]);
+
+  const toTalItem = (res) => {
     const renderList = [
-      { fieldName: item.name, pressFun: () => showDialog('companyDetail') },
-      { fieldName: item.person, pressFun: showMemberDetail },
-      { fieldName: item.type, pressFun: showSignUpDetail },
-      { fieldName: item.phone ,pressFun: callMemberPhone, textStyle: {color: '#409EFF'}}
+      { fieldName: res.total, textStyle: { width: 50, fontSize: 14, } },
+      { fieldName: res.signUpIntention || '0', textStyle: { width: 50 } },
+      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 45 } },
+      { fieldName: res.interviewFail || '0', textStyle: { width: 40 } },
+      { fieldName: res.interviewPass || '0', textStyle: { width: 40 } },
+      { fieldName: res.onBoardingFail || '0', textStyle: { width: 60 } },
+      { fieldName: res.onBoardingPass || '0', textStyle: { width: 60 } },
+      { fieldName: res.jobOn || '0', textStyle: { width: 50 } }
     ];
+
+    return (
+      <View style={styles.listStyle}>
+        {renderList.map((renderItem, index) => (
+          <View key={index} style={[styles.listItem, renderItem.itemStyle]} >
+            <Text style={[styles.itemText1, renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
+          </View>
+        ))}
+      </View>
+    )
+  };
+
+  const res11 = [
+    {
+      companyId: "1",
+      companyName: "富士康",
+      num: 10
+    },
+    {
+      companyId: "1",
+      companyName: "富士康KSDFH",
+      num: 10
+    },
+    {
+      companyId: "1",
+      companyName: "富士康",
+      num: 10
+    },
+    {
+      companyId: "1",
+      companyName: "富士康",
+      num: 10
+    },
+    {
+      companyId: "1",
+      companyName: "富士康KSDFH",
+      num: 10
+    },
+    {
+      companyId: "1",
+      companyName: "富士康",
+      num: 10
+    },
+  ]
+
+  const IconItem = [
+    {
+      label: 'name',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 50, alignItems: 'center' }
+    },
+    {
+      label: 'signUpIntention',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 50, alignItems: 'center' }
+    },
+    {
+      label: 'interviewNoArrive',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 45, alignItems: 'center' }
+    },
+    {
+      label: 'interviewFail',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 40, alignItems: 'center' }
+    },
+    {
+      label: 'interviewPass',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 40, alignItems: 'center' }
+    },
+    {
+      label: 'onBoardingFail',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 60, alignItems: 'center' }
+    },
+    {
+      label: 'onBoardingPass',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 60, alignItems: 'center' }
+    },
+    {
+      label: 'jobOn',
+      Icon: <AntDesign
+        name='caretdown'
+        size={20}
+        color='#409EFF'
+      />,
+      styles: { width: 50, alignItems: 'center' }
+    }
+  ]
+
+  const getData = async (prams) => {
+    if (index === 0) {
+      const res = await DataStatisticApi.SearchStoreGroup(prams)
+      console.log('打印获取的数据：', res)
+      console.log('打印获取的数据：', prams)
+    }
   }
+
+  const ModalData = (item, key, value) => {
+    const prams = {
+      // storeId: "",
+      // supplierId: "",
+      // recruiterId: " ",
+      companyId: "",
+      signUpPhaseStatus: " ",
+      interviewPhaseStatus: "",
+      onBoardingPhaseStatus: "",
+      jobPhaseStatus: ""
+    }
+    if (index === 0) {
+      prams.companyId = item.id;
+    }
+    switch (key) {
+      case 'signUpIntention':
+        prams.signUpPhaseStatus = key;
+        break;
+      case 'interviewNoArrive' || 'interviewFail' || 'interviewPass':
+        prams.interviewPhaseStatus = key;
+        break;
+      case 'onBoardingFail' || 'onBoardingPass':
+        prams.onBoardingPhaseStatus = key;
+        break;
+      case 'jobOn':
+        prams.jobPhaseStatus = key;
+        break;
+    }
+    getData(prams);
+    return (
+      <View style={[{ height: 300 }]}>
+        <View style={styles.titleBox}>
+          <Text style={styles.status}>报名人数</Text>
+          <Text style={styles.number}>{value}</Text>
+        </View>
+        <ScrollView style={{ flex: 1 }}>
+          {res11.map((item, index) => (
+            <View style={[styles.companyInfo]} >
+              <Text style={{ fontSize: 14, color: '#333333' }}>{item.companyName}</Text>
+              <Text style={{ fontSize: 14, color: '#333333' }}>{item.num}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    )
+  }
+
+  // 点击图标排序事件
+  const sortEvent = async (item) => {
+    console.log('点击选择的值：', item)
+    const prams = {
+      ...searchContent,
+      property: item,
+    }
+    companyData(prams);
+  }
+
+  const record = (item, key, value) => {
+    console.log('点击选择的值：', item, value, key)
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: item.name,
+      dialogComponent: ModalData(item, key, value)
+    });
+  }
+
+  const renderItem = ({ item }) => {
+    const renderList = [
+      { fieldName: item.name, textStyle: { width: 50, fontSize: 14, color: '#333' } },
+      { fieldName: item.signUpIntention || '0', textStyle: { width: 50 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
+      { fieldName: item.interviewNoArrive || '0', textStyle: { width: 45 }, pressFun: () => record(item, item.interviewNoArrive) },
+      { fieldName: item.interviewFail || '0', textStyle: { width: 40 }, pressFun: () => record(item, item.interviewFail) },
+      { fieldName: item.interviewPass || '0', textStyle: { width: 40 }, pressFun: () => record(item, item.interviewPass) },
+      { fieldName: item.onBoardingFail || '0', textStyle: { width: 60 }, pressFun: () => record(item, item.onBoardingFail) },
+      { fieldName: item.onBoardingPass || '0', textStyle: { width: 60 }, pressFun: () => record(item, item.onBoardingPass) },
+      { fieldName: item.jobOn || '0', textStyle: { width: 50 }, pressFun: () => record(item, item.jobOn) }
+    ];
+
+    return (
+      <View key={item.poolId} style={styles.listStyle}>
+        {renderList.map((renderItem, index) => (
+          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
+            <Text style={[styles.itemText, renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    )
+  };
+
+  const tabChange = (e) => {
+    console.log('切换打印的值：', e);
+    setIndex(e)
+  }
+
+  const filter = (values) => {
+    console.log('values', values)
+    setSearchContent({
+      pageSize: 20,
+      pageNumber: 0,
+      startDate: values.dateRange.startDate,
+      endDate: values.dateRange.endDate,
+      name: values.search,
+    });
+    setSearchTotal({
+      startDate: values.dateRange.startDate,
+      endDate: values.dateRange.endDate,
+      name: values.search,
+    })
+  }
+
+  const tabHead = () => {
+    return (
+      <>
+        <View style={styles.tabTopStyle}>
+          <View style={styles.ItemStyle}>
+            <Text style={styles.title}>招聘企业</Text>
+          </View>
+          <View style={styles.ItemStyle}>
+            <Text style={styles.title}>报名人数</Text>
+          </View>
+          <View style={styles.centerStyle}>
+            <Text style={styles.stageStyle}>面试阶段</Text>
+            <View style={styles.stageItemStyle}>
+              <Text style={styles.statuStyle}>未去</Text>
+              <Text style={styles.statuStyle}>未过</Text>
+              <Text style={[styles.statuStyle, { borderRightWidth: 0 }]}>通过</Text>
+            </View>
+          </View>
+          <View style={styles.centerStyle}>
+            <Text style={styles.stageStyle}>入职阶段</Text>
+            <View style={styles.stageItemStyle}>
+              <Text style={styles.inductionStyle}>未报到</Text>
+              <Text style={[styles.inductionStyle, { borderRightWidth: 0 }]}>入职</Text>
+            </View>
+          </View>
+          <View style={styles.ItemStyle}>
+            <Text style={styles.title}>当前在职</Text>
+          </View>
+        </View>
+        <View style={styles.Icon}>
+          {
+            IconItem.map((item) => {
+              return (
+                <TouchableOpacity style={item.styles} onPress={() => sortEvent(item.label)}>
+                  {item.Icon}
+                </TouchableOpacity>
+              )
+            })
+          }
+        </View>
+        <View style={styles.Icon}>
+          {toTalItem(totalData)}
+        </View>
+      </>
+    )
+  }
+
   return (
     <View style={styles.screen}>
-      <HeaderSearch noStoreAndStaff/>
+      <HeaderSearch filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
       <CenterSelectDate />
-      <BottomList 
-        list={list}
-        tabList={TAB_OF_LIST.SIGN_UP_LIST}
-        renderItem={renderItem}
-        showFactoryDetail={showFactoryDetail}
-        showMemberDetail={showMemberDetail}
-        showSignUpDetail={showSignUpDetail}
-        callMemberPhone={callMemberPhone}
+      <>
+        <Tab
+          value={index}
+          onChange={(e) => tabChange(e)}
+          indicatorStyle={{
+            backgroundColor: 'none',
+            height: 4,
+          }}
+          containerStyle={{ padding: 0 }}
+        // variant="primary"
+        >
+          <Tab.Item
+            title="企业"
+            titleStyle={(active) => ({
+              color: active ? "#fff" : '#000',
+              fontSize: 14,
+            })}
+            containerStyle={(active) => ({
+              backgroundColor: active ? "#409EFF" : '#fff',
+              borderRightWidth: 2,
+              borderColor: "#EEF4F7",
+            })}
+          />
+          <Tab.Item
+            title="门店"
+            titleStyle={(active) => ({
+              color: active ? "#fff" : '#000',
+              fontSize: 14,
+            })}
+            containerStyle={(active) => ({
+              backgroundColor: active ? "#409EFF" : '#fff',
+              borderRightWidth: 2,
+              borderColor: "#EEF4F7",
+            })}
+          />
+          <Tab.Item
+            title="供应商"
+            titleStyle={(active) => ({
+              color: active ? "#fff" : '#000',
+              fontSize: 14,
+            })}
+            containerStyle={(active) => ({
+              backgroundColor: active ? "#409EFF" : '#fff',
+              borderRightWidth: 2,
+              borderColor: "#EEF4F7",
+            })}
+          />
+          <Tab.Item
+            title="招聘员"
+            titleStyle={(active) => ({
+              color: active ? "#fff" : '#000',
+              fontSize: 14,
+            })}
+            containerStyle={(active) => ({
+              backgroundColor: active ? "#409EFF" : '#fff',
+              borderRightWidth: 2,
+              borderColor: "#EEF4F7",
+            })}
+          />
+        </Tab>
+        <TabView value={index} onChange={setIndex} animationType="spring">
+          <TabView.Item style={styles.tabStyle}>
+            <FlatList
+              data={companyDetails}
+              ListHeaderComponent={tabHead()}
+              isLoading={isLoading}
+              keyExtractor={(item, index) => index}
+              renderItem={(item) => renderItem(item)}
+              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+            />
+          </TabView.Item>
+          <TabView.Item style={styles.tabStyle}>
+            <FlatList
+              data={storeDetails}
+              ListHeaderComponent={tabHead()}
+              keyExtractor={(item, index) => index}
+              renderItem={(item) => renderItem(item)}
+              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+            />
+          </TabView.Item>
+          <TabView.Item style={styles.tabStyle}>
+            <FlatList
+              data={supplierDetails}
+              ListHeaderComponent={tabHead()}
+              keyExtractor={(item, index) => index}
+              renderItem={(item) => renderItem(item)}
+              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+            />
+          </TabView.Item>
+          <TabView.Item style={styles.tabStyle}>
+            <FlatList
+              data={recruiterDetails}
+              ListHeaderComponent={tabHead()}
+              keyExtractor={(item, index) => index}
+              renderItem={(item) => renderItem(item)}
+              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+            />
+          </TabView.Item>
+        </TabView>
+      </>
+      <NormalDialog
+        ref={dialogRef}
+        dialogContent={dialogContent}
       />
     </View>
   )
@@ -67,7 +561,150 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingTop: 10,
-  }
+    backgroundColor: '#EEF4F7',
+  },
+  Icon: {
+    width: '100%',
+    flex: 1,
+    flexDirection: 'row',
+  },
+  totalStyle: {
+    height: 30,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabStyle: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#f2f2f2',
+  },
+  tabTopStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    width: '100%',
+    height: 83,
+    borderWidth: 2,
+    borderColor: '#409EFF',
+    marginTop: 10,
+  },
+  ItemStyle: {
+    width: 50,
+    height: '100%',
+    borderRightWidth: 1,
+    borderColor: '#409EFF',
+    justifyContent: 'center',
+    paddingLeft: 5,
+    paddingRight: 5,
+  },
+  centerStyle: {
+    width: 120,
+    height: '100%',
+    borderRightWidth: 1,
+    borderColor: '#409EFF',
+  },
+  stageStyle: {
+    width: '100%',
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: '#409EFF',
+    lineHeight: 40,
+    textAlign: 'center',
+    color: '#000'
+  },
+  stageItemStyle: {
+    width: '100%',
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  statuStyle: {
+    height: 40,
+    width: '33%',
+    lineHeight: 40,
+    borderRightWidth: 1,
+    borderColor: '#409EFF',
+    textAlign: 'center',
+    color: '#000'
+  },
+  inductionStyle: {
+    height: 40,
+    width: '50%',
+    lineHeight: 40,
+    borderRightWidth: 1,
+    borderColor: '#409EFF',
+    textAlign: 'center',
+    color: '#000'
+  },
+  title: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#000'
+  },
+  LookMoreStyle: {
+    fontSize: 16,
+    color: '#f9f9f9'
+  },
+  listStyle: {
+    minHeight: 35,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0,0,0,0.3)',
+    flexDirection: 'row',
+  },
+  listItem: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemText: {
+    width: 50,
+    fontSize: 16,
+    color: '#409EFF',
+    textAlign: 'center'
+  },
+  itemText1: {
+    fontSize: 16,
+    color: '#333333',
+    textAlign: 'center'
+  },
+  modalStyle: {
+    width: '100%',
+    minHeight: 280,
+  },
+  titleBox: {
+    flexDirection: 'row',
+    width: '60%',
+    justifyContent: 'space-between',
+    marginLeft: 'auto',
+    paddingRight: 20
+  },
+  status: {
+    color: '#409EFF'
+  },
+  number: {
+    color: '#409EFF'
+  },
+  scrollArea: {
+    borderRadius: 8,
+    maxHeight: 300,
+    borderWidth: 1,
+    borderColor: 'red'
+  },
+  companyInfo: {
+    width: '100%',
+    minHeight: 35,
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0,0,0,0.3)',
+    paddingLeft: 15,
+    paddingRight: 20
+  },
 });
 
 export default DATA_Statistics;

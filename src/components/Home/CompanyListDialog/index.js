@@ -24,7 +24,8 @@ const CompanyListDialog = (props, ref) => {
     console.log('打印item的值：', item);
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
       companyName: item.companyName,
-      orderId: item.orderId
+      orderId: item.orderId,
+      orderName: item.orderName,
     });
   };
 

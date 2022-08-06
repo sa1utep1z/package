@@ -23,6 +23,8 @@ const HeaderSearch = ({
   storeSingleSelect,
   noStoreAndStaff = false,
   canFilterStatus = false,
+  placeholder= '',
+  companyShow = true,
     ...rest
   }) => {
   const toast = useToast();
@@ -142,7 +144,7 @@ const HeaderSearch = ({
         {({values, ...rest}) => {
           restForm = rest;
           let staffList = [];
-          if(values.store.length){
+          if(values.store && values.store.length > 0){
             values.store.map((item) => {
               if(item.members.length){
                 item.members.map((member) => {
@@ -161,7 +163,8 @@ const HeaderSearch = ({
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
               <View style={{flexDirection: 'row', marginBottom: 8}}>
-                <Field
+                {
+                  companyShow && <Field
                   title="企业"
                   name="enterprise"
                   placeholder={canFilterStatus ? '请选择企业' : '请点击选择企业或手动输入筛选'}
@@ -177,6 +180,7 @@ const HeaderSearch = ({
                   selectList={companyList}
                   component={SelectItem}
                 />
+                }
                 {canFilterStatus && <Field
                   title="状态"
                   name="status"
@@ -231,7 +235,7 @@ const HeaderSearch = ({
               />
               <Field
                 name="search"
-                placeholder='请输入姓名、身份证'
+                placeholder={placeholder? placeholder : '请输入姓名、身份证'}
                 borderRadius={8}
                 fontStyle={styles.fontSize}
                 searchInputStyle={styles.searchInputStyle}

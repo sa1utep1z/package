@@ -32,7 +32,7 @@ const BottomList = ({
         variant="primary"
         indicatorStyle={styles.tab_indicatorStyle}
         containerStyle={styles.tab_containerStyle}>
-        {tabList.map((tab, tabIndex) => {
+        {tabList && tabList.map((tab, tabIndex) => {
           const active = tabIndex === index;
           return (
             <Tab.Item

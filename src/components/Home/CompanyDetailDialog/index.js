@@ -13,7 +13,10 @@ const CompanyDetailDialog = ({
   useImperativeHandle(ref, () => {
     return { setShowDetail, showDetail };
   }, []);
-
+  const date = String(message.recruitRange).substring(5, 11);
+  const date2 = String(message.recruitRange).substring(16, 20)
+  const recruitRange = date + date2
+  console.log('截取的数据：',message)
   return (
     <Dialog
       isVisible={showDetail}
@@ -25,12 +28,7 @@ const CompanyDetailDialog = ({
           <View style={styles.itemDateArea}>
             <Text>订单日期：</Text>
             <View style={styles.itemDate}>
-              {/* <Icon
-                name='calendar' 
-                type='antdesign'
-                style={styles.icon}
-              /> */}
-              <Text style={{color: '#444444'}}>{message.recruitRange}</Text>
+              <Text style={{color: '#444444'}}>{recruitRange}</Text>
             </View>
           </View>
           <View style={styles.itemDateArea}>

@@ -82,7 +82,8 @@ const Home = (props) => {
     }
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
       companyName: item.companyName,
-      orderId: item.orderId
+      orderId: item.orderId,
+      orderName: item.orderName,
     });
   };
 
@@ -156,9 +157,9 @@ const Home = (props) => {
 
 const styles = StyleSheet.create({
   itemArea: {
-    height: 35, 
+    height: 45, 
     marginHorizontal: 10, 
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     borderBottomWidth: 1, 
     borderBottomColor: '#CCCCCC', 
     flexDirection: 'row', 
