@@ -40,7 +40,7 @@ const CompanyDetail = (props) => {
   });
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginBottom: 60 }}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.swiperArea}>
           <Swiper
@@ -81,7 +81,7 @@ const CompanyDetail = (props) => {
             </View>
           </View>
           <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>{orderData.recruitRange}</Text>
+            <Text style={{ fontSize: 26 }}>{orderData.recruitRange}</Text>
           </View>
         </View>
         <View style={styles.boxStyle}>
@@ -90,16 +90,13 @@ const CompanyDetail = (props) => {
             <Text style={styles.titlesStyle}>发单详情</Text>
           </View>
           <View style={styles.contentStyle}>
-            {/* <Text style={styles.fontStyle}>{orderData.orderPolicyDetail}</Text> */}
-            <WebView
-            // automaticallyAdjustsScrollIndicatorInsets
-            // contentInset={{top: 0, left: 0}}
-            // onNavigationStateChange={(title)=>{
-            //   if(title.title){
-            //     setHeight(title.target);
-            //   }
-            // }}
-            scrollEnabled={false} scalesPageToFit={false} originWhitelist={['*']} source={{ html: orderData.orderPolicyDetail }}></WebView>
+            <Text style={styles.fontStyle}>{String(orderData.orderPolicyDetail).replaceAll('<br/>', '\n')}</Text>
+            {/* <WebView
+              scrollEnabled={false}
+              scalesPageToFit={false}
+              originWhitelist={['*']}
+              source={{ html: orderData.orderPolicyDetail }}>
+            </WebView> */}
           </View>
         </View>
         <View style={styles.boxStyle}>
@@ -117,7 +114,7 @@ const CompanyDetail = (props) => {
           </View>
           <View style={styles.rowStyle}>
             <View style={styles.boxContent}>
-              <Text style={styles.titlesStyle}>薪资详情</Text>
+              <Text style={styles.fontStyle}>薪资详情</Text>
             </View>
             <View style={styles.boxText}>
               <Text style={styles.fontStyle}>{orderData.salaryDetail}</Text>
@@ -260,9 +257,10 @@ const styles = StyleSheet.create({
     minHeight: 100,
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginHorizontal: 10,
-    marginBottom: 10,
-    flexDirection: 'row'
+    marginHorizontal: 30,
+    marginBottom: 30,
+    flexDirection: 'row',
+    paddingRight: 15
   },
   jobBoxLeft: {
     flex: 7,
@@ -271,25 +269,25 @@ const styles = StyleSheet.create({
     paddingLeft: 15
   },
   textStyle: {
-    fontSize: 18,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#000'
   },
   salaryStyle: {
-    fontSize: 14,
+    fontSize: 30,
     color: '#999999',
     fontWeight: 'bold'
   },
   amountStyle: {
     color: '#E6A23C',
-    fontSize: 14,
+    fontSize: 30,
     fontWeight: 'bold',
     paddingLeft: 10,
   },
   tagsStyle: {
     color: '#409EFF',
     backgroundColor: '#b7dbff',
-    fontSize: 12,
+    fontSize: 22,
     paddingHorizontal: 8,
     paddingVertical: 1,
     marginRight: 10,
@@ -299,27 +297,30 @@ const styles = StyleSheet.create({
   rowStyles: {
     flexDirection: 'row',
     marginTop: 5,
+    marginBottom: 10
   },
   workStyle: {
     color: '#409EFF',
     fontWeight: 'bold',
     paddingRight: 8,
+    fontSize: 24
   },
   quotaStyle: {
     color: '#000',
     fontWeight: 'bold',
+    fontSize: 24
   },
   boxStyle: {
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginHorizontal: 10,
-    marginBottom: 10,
+    marginHorizontal: 30,
+    marginBottom: 30,
     borderWidth: 1,
     borderColor: '#409EFF'
   },
   boxTopStyle: {
-    height: 40,
+    height: 76,
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -327,28 +328,31 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     backgroundColor: '#409EFF',
-    width: 5, height: 18,
+    width: 8, height: 36,
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
     marginRight: 10
   },
   titlesStyle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 32,
     color: '#000'
   },
   contentStyle: {
     padding: 10,
     minHeight: 800,
+    fontSize: 28
   },
   boxContent: {
-    width: 100,
+    width: 150,
     backgroundColor: '#D9ECFF',
     borderRightWidth: 1,
     borderColor: '#409EFF',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomLeftRadius: 8,
+    paddingLeft: 8,
+    paddingRight: 8
   },
   boxText: {
     flex: 1,
@@ -357,7 +361,7 @@ const styles = StyleSheet.create({
     minHeight: 40
   },
   fontStyle: {
-    fontSize: 14,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#444444',
   },
@@ -406,17 +410,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   buttonStyle: {
-    height: 45,
+    height: 80,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 30,
+    marginTop: 40,
   },
   buttonContainerStyle: {
     marginHorizontal: 8
   },
   titleStyle: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: 'bold',
     letterSpacing: 10,
   }

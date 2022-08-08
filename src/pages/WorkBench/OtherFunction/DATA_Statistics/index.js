@@ -20,6 +20,8 @@ const DATA_Statistics = () => {
   const [supplierDetails, setSupplierDetails] = useState([]); // 供应商分组数据
   const [recruiterDetails, setRecruiterDetails] = useState([]); // 招聘员分组数据
   const [totalData, setTotalData] = useState([]); // 各列表总数据
+  const [groupStoreData, setGroupStoreData] = useState([]); // 搜索门店分组数据
+  const [groupCompanyData, setGroupCompanyData] = useState([]); // 搜索企业分组数据
   const dialogRef = useRef(null);
   const [dialogContent, setDialogContent] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -48,14 +50,14 @@ const DATA_Statistics = () => {
 
   // 获取企业分组数据
   const companyData = async (value) => {
-    try{
+    try {
       const prams = {
         ...value,
       }
       const res = await DataStatisticApi.CompanyGroup(prams)
       setCompanyDetails(res.data.content)
       console.log('获取到的企业分组数据：', res)
-    } catch(error) {
+    } catch (error) {
       console.log('获取到的企业分组数据：', error)
     }
   };
@@ -79,6 +81,7 @@ const DATA_Statistics = () => {
     }
     const res = await DataStatisticApi.StoreGroup(prams)
     setStoreDetails(res.data.content)
+    setCompanyDetails(res.data.content)
     console.log('获取到的门店分组数据：', res)
     console.log('请求门店分组数据的参数：', prams)
   };
@@ -102,6 +105,7 @@ const DATA_Statistics = () => {
     }
     const res = await DataStatisticApi.SupplierGroup(prams)
     setSupplierDetails(res.data.content)
+    setCompanyDetails(res.data.content)
     console.log('获取到的供应商分组数据：', res)
     console.log('请求供应商分组数据的参数：', prams)
   };
@@ -125,6 +129,7 @@ const DATA_Statistics = () => {
     }
     const res = await DataStatisticApi.RecruiterGroup(prams)
     setRecruiterDetails(res.data.content)
+    setCompanyDetails(res.data.content)
     console.log('获取到的招聘员分组数据：', res)
     console.log('请求招聘员分组数据的参数：', prams)
   };
@@ -147,14 +152,14 @@ const DATA_Statistics = () => {
 
   const toTalItem = (res) => {
     const renderList = [
-      { fieldName: res.total, textStyle: { width: 50, fontSize: 14, } },
-      { fieldName: res.signUpIntention || '0', textStyle: { width: 50 } },
-      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 45 } },
-      { fieldName: res.interviewFail || '0', textStyle: { width: 40 } },
-      { fieldName: res.interviewPass || '0', textStyle: { width: 40 } },
-      { fieldName: res.onBoardingFail || '0', textStyle: { width: 60 } },
-      { fieldName: res.onBoardingPass || '0', textStyle: { width: 60 } },
-      { fieldName: res.jobOn || '0', textStyle: { width: 50 } }
+      { fieldName: res.total, textStyle: { width: 116, fontSize: 26, } },
+      { fieldName: res.signUpIntention || '0', textStyle: { width: 116 } },
+      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 75 } },
+      { fieldName: res.interviewFail || '0', textStyle: { width: 70 } },
+      { fieldName: res.interviewPass || '0', textStyle: { width: 70 } },
+      { fieldName: res.onBoardingFail || '0', textStyle: { width: 100 } },
+      { fieldName: res.onBoardingPass || '0', textStyle: { width: 100 } },
+      { fieldName: res.jobOn || '0', textStyle: { width: 116 } }
     ];
 
     return (
@@ -206,90 +211,96 @@ const DATA_Statistics = () => {
       label: 'name',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 50, alignItems: 'center' }
+      styles: { width: 116, alignItems: 'center' }
     },
     {
       label: 'signUpIntention',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 50, alignItems: 'center' }
+      styles: { width: 116, alignItems: 'center' }
     },
     {
       label: 'interviewNoArrive',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 45, alignItems: 'center' }
+      styles: { width: 75, alignItems: 'center' }
     },
     {
       label: 'interviewFail',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 40, alignItems: 'center' }
+      styles: { width: 70, alignItems: 'center' }
     },
     {
       label: 'interviewPass',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 40, alignItems: 'center' }
+      styles: { width: 70, alignItems: 'center' }
     },
     {
       label: 'onBoardingFail',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 60, alignItems: 'center' }
+      styles: { width: 100, alignItems: 'center' }
     },
     {
       label: 'onBoardingPass',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 60, alignItems: 'center' }
+      styles: { width: 100, alignItems: 'center' }
     },
     {
       label: 'jobOn',
       Icon: <AntDesign
         name='caretdown'
-        size={20}
+        size={32}
         color='#409EFF'
       />,
-      styles: { width: 50, alignItems: 'center' }
+      styles: { width: 116, alignItems: 'center' }
     }
   ]
 
   const getData = async (prams) => {
-    if (index === 0) {
-      const res = await DataStatisticApi.SearchStoreGroup(prams)
-      console.log('打印获取的数据：', res)
-      console.log('打印获取的数据：', prams)
+    try {
+      if (index === 0) {
+        const res = await DataStatisticApi.SearchStoreGroup(prams)
+        setGroupStoreData(res.data)
+        console.log('打印获取搜索门店的数据：', res)
+        console.log('打印搜索门店请求的参数：', prams)
+      } else {
+        const res = await DataStatisticApi.SearchCompanyGroup(prams)
+        setGroupCompanyData(res.data)
+        console.log('打印获取搜索企业的数据：', res)
+        console.log('打印搜索企业请求的参数：', prams)
+      }
+    } catch (error) {
+      console.log('打印搜索请求的异常：', error)
     }
   }
 
   const ModalData = (item, key, value) => {
     const prams = {
-      // storeId: "",
-      // supplierId: "",
-      // recruiterId: " ",
-      companyId: "",
       signUpPhaseStatus: " ",
       interviewPhaseStatus: "",
       onBoardingPhaseStatus: "",
@@ -297,32 +308,53 @@ const DATA_Statistics = () => {
     }
     if (index === 0) {
       prams.companyId = item.id;
+    } else if (index === 1) {
+      prams.storeId = item.id;
+    } else if (index === 2) {
+      prams.supplierId = item.id;
+    } else {
+      prams.recruiterId = item.id;
     }
     switch (key) {
       case 'signUpIntention':
-        prams.signUpPhaseStatus = key;
+        prams.signUpPhaseStatus = 'SIGN_UP_INTENTION';
         break;
-      case 'interviewNoArrive' || 'interviewFail' || 'interviewPass':
-        prams.interviewPhaseStatus = key;
+      case 'interviewNoArrive':
+        prams.interviewPhaseStatus = 'INTERVIEW_NO_ARRIVE';
         break;
-      case 'onBoardingFail' || 'onBoardingPass':
-        prams.onBoardingPhaseStatus = key;
+      case 'interviewFail':
+        prams.interviewPhaseStatus = 'INTERVIEW_FAIL';
+        break;
+      case 'interviewPass':
+        prams.interviewPhaseStatus = 'INTERVIEW_PASS';
+        break;
+      case 'onBoardingFail':
+        prams.onBoardingPhaseStatus = 'ON_BOARDING_FAIL';
+        break;
+      case 'onBoardingPass':
+        prams.onBoardingPhaseStatus = 'ON_BOARDING_PASS';
         break;
       case 'jobOn':
-        prams.jobPhaseStatus = key;
+        prams.jobPhaseStatus = 'JOB_ON';
         break;
     }
     getData(prams);
     return (
       <View style={[{ height: 300 }]}>
         <View style={styles.titleBox}>
-          <Text style={styles.status}>报名人数</Text>
+          <Text style={styles.status}>{key === 'signUpIntention' ? '报名人数' : key === 'onBoardingFail' ? '待入职人数' : key == 'onBoardingPass' ? '待入职人数' : key == 'jobOn' ? '在离职人数' : '面试人数'}</Text>
           <Text style={styles.number}>{value}</Text>
         </View>
         <ScrollView style={{ flex: 1 }}>
-          {res11.map((item, index) => (
+          {index != 0 && groupCompanyData.length > 0 && groupCompanyData.map((item, index) => (
             <View style={[styles.companyInfo]} >
               <Text style={{ fontSize: 14, color: '#333333' }}>{item.companyName}</Text>
+              <Text style={{ fontSize: 14, color: '#333333' }}>{item.num}</Text>
+            </View>
+          ))}
+          {index === 0 && groupStoreData.length > 0 && groupStoreData.map((item, index) => (
+            <View style={[styles.companyInfo]} >
+              <Text style={{ fontSize: 14, color: '#333333' }}>{item.storeName}</Text>
               <Text style={{ fontSize: 14, color: '#333333' }}>{item.num}</Text>
             </View>
           ))}
@@ -352,14 +384,14 @@ const DATA_Statistics = () => {
 
   const renderItem = ({ item }) => {
     const renderList = [
-      { fieldName: item.name, textStyle: { width: 50, fontSize: 14, color: '#333' } },
-      { fieldName: item.signUpIntention || '0', textStyle: { width: 50 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
-      { fieldName: item.interviewNoArrive || '0', textStyle: { width: 45 }, pressFun: () => record(item, item.interviewNoArrive) },
-      { fieldName: item.interviewFail || '0', textStyle: { width: 40 }, pressFun: () => record(item, item.interviewFail) },
-      { fieldName: item.interviewPass || '0', textStyle: { width: 40 }, pressFun: () => record(item, item.interviewPass) },
-      { fieldName: item.onBoardingFail || '0', textStyle: { width: 60 }, pressFun: () => record(item, item.onBoardingFail) },
-      { fieldName: item.onBoardingPass || '0', textStyle: { width: 60 }, pressFun: () => record(item, item.onBoardingPass) },
-      { fieldName: item.jobOn || '0', textStyle: { width: 50 }, pressFun: () => record(item, item.jobOn) }
+      { fieldName: item.name, textStyle: { width: 116, fontSize: 26, color: '#333' } },
+      { fieldName: item.signUpIntention || '0', textStyle: { width: 116 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
+      { fieldName: item.interviewNoArrive || '0', textStyle: { width: 75 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
+      { fieldName: item.interviewFail || '0', textStyle: { width: 70 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
+      { fieldName: item.interviewPass || '0', textStyle: { width: 70 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass) },
+      { fieldName: item.onBoardingFail || '0', textStyle: { width: 100 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail) },
+      { fieldName: item.onBoardingPass || '0', textStyle: { width: 100 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass) },
+      { fieldName: item.jobOn || '0', textStyle: { width: 116 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'jobOn')[0], item.jobOn) }
     ];
 
     return (
@@ -445,83 +477,82 @@ const DATA_Statistics = () => {
     <View style={styles.screen}>
       <HeaderSearch filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
       <CenterSelectDate />
-      <>
-        <Tab
-          value={index}
-          onChange={(e) => tabChange(e)}
-          indicatorStyle={{
-            backgroundColor: 'none',
-            height: 4,
-          }}
-          containerStyle={{ padding: 0 }}
-        // variant="primary"
-        >
-          <Tab.Item
-            title="企业"
-            titleStyle={(active) => ({
-              color: active ? "#fff" : '#000',
-              fontSize: 14,
-            })}
-            containerStyle={(active) => ({
-              backgroundColor: active ? "#409EFF" : '#fff',
-              borderRightWidth: 2,
-              borderColor: "#EEF4F7",
-            })}
-          />
-          <Tab.Item
-            title="门店"
-            titleStyle={(active) => ({
-              color: active ? "#fff" : '#000',
-              fontSize: 14,
-            })}
-            containerStyle={(active) => ({
-              backgroundColor: active ? "#409EFF" : '#fff',
-              borderRightWidth: 2,
-              borderColor: "#EEF4F7",
-            })}
-          />
-          <Tab.Item
-            title="供应商"
-            titleStyle={(active) => ({
-              color: active ? "#fff" : '#000',
-              fontSize: 14,
-            })}
-            containerStyle={(active) => ({
-              backgroundColor: active ? "#409EFF" : '#fff',
-              borderRightWidth: 2,
-              borderColor: "#EEF4F7",
-            })}
-          />
-          <Tab.Item
-            title="招聘员"
-            titleStyle={(active) => ({
-              color: active ? "#fff" : '#000',
-              fontSize: 14,
-            })}
-            containerStyle={(active) => ({
-              backgroundColor: active ? "#409EFF" : '#fff',
-              borderRightWidth: 2,
-              borderColor: "#EEF4F7",
-            })}
-          />
-        </Tab>
-        <TabView value={index} onChange={setIndex} animationType="spring">
-          <TabView.Item style={styles.tabStyle}>
-            <FlatList
-              data={companyDetails}
-              ListHeaderComponent={tabHead()}
-              isLoading={isLoading}
-              keyExtractor={(item, index) => index}
-              renderItem={(item) => renderItem(item)}
-              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-            />
-          </TabView.Item>
-          <TabView.Item style={styles.tabStyle}>
+
+      <Tab
+        value={index}
+        onChange={(e) => tabChange(e)}
+        indicatorStyle={{
+          backgroundColor: 'none',
+          // height: 4,
+        }}
+        containerStyle={{ padding: 0 }}
+      >
+        <Tab.Item
+          title="企业"
+          titleStyle={(active) => ({
+            color: active ? "#fff" : '#000',
+            fontSize: 32,
+          })}
+          containerStyle={(active) => ({
+            backgroundColor: active ? "#409EFF" : '#fff',
+            borderRightWidth: 2,
+            borderColor: "#EEF4F7",
+          })}
+        />
+        <Tab.Item
+          title="门店"
+          titleStyle={(active) => ({
+            color: active ? "#fff" : '#000',
+            fontSize: 32,
+          })}
+          containerStyle={(active) => ({
+            backgroundColor: active ? "#409EFF" : '#fff',
+            borderRightWidth: 2,
+            borderColor: "#EEF4F7",
+          })}
+        />
+        <Tab.Item
+          title="供应商"
+          titleStyle={(active) => ({
+            color: active ? "#fff" : '#000',
+            fontSize: 32,
+          })}
+          containerStyle={(active) => ({
+            backgroundColor: active ? "#409EFF" : '#fff',
+            borderRightWidth: 2,
+            borderColor: "#EEF4F7",
+          })}
+        />
+        <Tab.Item
+          title="招聘员"
+          titleStyle={(active) => ({
+            color: active ? "#fff" : '#000',
+            fontSize: 32,
+          })}
+          containerStyle={(active) => ({
+            backgroundColor: active ? "#409EFF" : '#fff',
+            borderRightWidth: 2,
+            borderColor: "#EEF4F7",
+          })}
+        />
+      </Tab>
+      {/* <TabView value={index} onChange={setIndex} animationType="spring"> */}
+      {/* <TabView.Item style={styles.tabStyle}> */}
+      <FlatList
+        data={companyDetails}
+        ListHeaderComponent={tabHead()}
+        isLoading={isLoading}
+        keyExtractor={(item) => item.id}
+        renderItem={(item) => renderItem(item)}
+        getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+        ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+      />
+      {/* </TabView.Item> */}
+      {/* <TabView.Item style={styles.tabStyle}>
             <FlatList
               data={storeDetails}
               ListHeaderComponent={tabHead()}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(item) => item.id}
               renderItem={(item) => renderItem(item)}
               getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
               ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
@@ -531,7 +562,7 @@ const DATA_Statistics = () => {
             <FlatList
               data={supplierDetails}
               ListHeaderComponent={tabHead()}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(item) => item.id}
               renderItem={(item) => renderItem(item)}
               getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
               ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
@@ -541,14 +572,14 @@ const DATA_Statistics = () => {
             <FlatList
               data={recruiterDetails}
               ListHeaderComponent={tabHead()}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(item) => item.id}
               renderItem={(item) => renderItem(item)}
               getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
               ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
             />
-          </TabView.Item>
-        </TabView>
-      </>
+          </TabView.Item> */}
+      {/* </TabView> */}
+
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -560,7 +591,6 @@ const DATA_Statistics = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingTop: 10,
     backgroundColor: '#EEF4F7',
   },
   Icon: {
@@ -570,8 +600,8 @@ const styles = StyleSheet.create({
   },
   totalStyle: {
     height: 30,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.3)',
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -586,34 +616,35 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
     width: '100%',
-    height: 83,
-    borderWidth: 2,
+    height: 132,
+    borderWidth: 1,
     borderColor: '#409EFF',
-    marginTop: 10,
+    marginTop: 30,
   },
   ItemStyle: {
-    width: 50,
+    width: 116,
     height: '100%',
-    borderRightWidth: 1,
+    borderRightWidth: 2,
     borderColor: '#409EFF',
     justifyContent: 'center',
-    paddingLeft: 5,
-    paddingRight: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   centerStyle: {
-    width: 120,
+    width: 208,
     height: '100%',
     borderRightWidth: 1,
     borderColor: '#409EFF',
   },
   stageStyle: {
     width: '100%',
-    height: 40,
+    height: 65,
     borderBottomWidth: 1,
     borderColor: '#409EFF',
-    lineHeight: 40,
+    lineHeight: 65,
     textAlign: 'center',
-    color: '#000'
+    color: '#000',
+    fontSize: 30,
   },
   stageItemStyle: {
     width: '100%',
@@ -622,27 +653,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   statuStyle: {
-    height: 40,
+    height: 65,
     width: '33%',
-    lineHeight: 40,
+    lineHeight: 65,
     borderRightWidth: 1,
     borderColor: '#409EFF',
     textAlign: 'center',
-    color: '#000'
+    color: '#000',
+    fontSize: 30,
   },
   inductionStyle: {
-    height: 40,
+    height: 65,
     width: '50%',
-    lineHeight: 40,
+    lineHeight: 65,
     borderRightWidth: 1,
     borderColor: '#409EFF',
     textAlign: 'center',
-    color: '#000'
+    color: '#000',
+    fontSize: 30,
   },
   title: {
     textAlign: 'center',
     textAlignVertical: 'center',
-    color: '#000'
+    color: '#000',
+    fontSize: 30,
   },
   LookMoreStyle: {
     fontSize: 16,
@@ -650,23 +684,25 @@ const styles = StyleSheet.create({
   },
   listStyle: {
     minHeight: 35,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.3)',
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
   },
   listItem: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 5,
+    paddingBottom: 5
   },
   itemText: {
-    width: 50,
-    fontSize: 16,
+    width: 116,
+    fontSize: 26,
     color: '#409EFF',
     textAlign: 'center'
   },
   itemText1: {
-    fontSize: 16,
+    fontSize: 26,
     color: '#333333',
     textAlign: 'center'
   },
@@ -700,8 +736,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.3)',
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',
     paddingLeft: 15,
     paddingRight: 20
   },
