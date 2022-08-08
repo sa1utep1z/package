@@ -348,14 +348,14 @@ const DATA_Statistics = () => {
         <ScrollView style={{ flex: 1 }}>
           {index != 0 && groupCompanyData.length > 0 && groupCompanyData.map((item, index) => (
             <View style={[styles.companyInfo]} >
-              <Text style={{ fontSize: 14, color: '#333333' }}>{item.companyName}</Text>
-              <Text style={{ fontSize: 14, color: '#333333' }}>{item.num}</Text>
+              <Text style={styles.nameStyle}>{item.companyName}</Text>
+              <Text style={styles.nameStyle}>{item.num}</Text>
             </View>
           ))}
           {index === 0 && groupStoreData.length > 0 && groupStoreData.map((item, index) => (
             <View style={[styles.companyInfo]} >
-              <Text style={{ fontSize: 14, color: '#333333' }}>{item.storeName}</Text>
-              <Text style={{ fontSize: 14, color: '#333333' }}>{item.num}</Text>
+              <Text style={styles.nameStyle}>{item.storeName}</Text>
+              <Text style={styles.nameStyle}>{item.num}</Text>
             </View>
           ))}
         </ScrollView>
@@ -477,7 +477,6 @@ const DATA_Statistics = () => {
     <View style={styles.screen}>
       <HeaderSearch filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
       <CenterSelectDate />
-
       <Tab
         value={index}
         onChange={(e) => tabChange(e)}
@@ -597,6 +596,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     flexDirection: 'row',
+    backgroundColor: '#fff'
   },
   totalStyle: {
     height: 30,
@@ -620,6 +620,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#409EFF',
     marginTop: 30,
+    backgroundColor: '#fff'
   },
   ItemStyle: {
     width: 116,
@@ -687,6 +688,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
+    backgroundColor: '#fff'
   },
   listItem: {
     flexDirection: 'row',
@@ -741,6 +743,10 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 20
   },
+  nameStyle: {
+    fontSize: 14,
+    color: '#333333'
+  }
 });
 
 export default DATA_Statistics;

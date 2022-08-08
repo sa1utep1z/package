@@ -18,8 +18,8 @@ const FormItem = ({
 
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
-      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}：</Text>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
+      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}: </Text>
     </View>
   );
 
@@ -29,7 +29,7 @@ const FormItem = ({
       <Text style={styles.OCRText}>OCR  </Text>
       <AntDesign
         name='scan1'
-        size={20}
+        size={32}
         color='#409EFF'
       />
     </TouchableOpacity>
@@ -90,14 +90,15 @@ const styles = StyleSheet.create({
   },
   label: {
     textAlign: 'center',
-    fontSize: 28
+    fontSize: 32
   },
   required: {
     color: 'red', 
     textAlign: 'center', 
     textAlignVertical: 'top', 
     alignSelf: 'flex-start', 
-    marginTop: 7
+    marginTop: 25,
+    fontSize: 25
   },
   OCRArea: {
     height: '100%',
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   OCRText: {
-    fontSize: 15,
+    fontSize: 32,
     fontWeight: 'bold'
   }
 })

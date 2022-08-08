@@ -233,7 +233,7 @@ const SignUp = (props) => {
             </ScrollView>
             <View style={styles.btnArea}>
               <Button
-                title="帮 他 报 名"
+                title="帮他报名"
                 onPress={handleSubmit}
                 buttonStyle={styles.buttonStyle}
                 containerStyle={styles.buttonContainerStyle}
@@ -257,18 +257,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonStyle: {
-    height: 45,
+    height: 80,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 30,
+    marginBottom: 40
   },
   buttonContainerStyle: {
     marginHorizontal: 8
   },
   titleStyle: {
-    fontSize: 20,
-    fontWeight: 'bold'
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 10,
   },
   theWayToGo: {
     color: '#000',
@@ -280,7 +282,8 @@ const styles = StyleSheet.create({
   cardArea: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginBottom: 10
+    marginBottom: 10,
+    fontSize: 32
   }
 })
 

@@ -23,32 +23,34 @@ const Radio = ({
   }
 
   return (
-    <View style={{flexDirection: 'row', paddingHorizontal: 10, borderColor: '#E3E3E3', borderBottomWidth: 1}}>
-      <View style={[{width: 80, justifyContent: 'center', alignItems: 'center', marginRight: 5}, labelAreaStyle]}>
-        <Text>{title}</Text>
+    <View style={{flexDirection: 'row', borderColor: '#E3E3E3', borderBottomWidth: 1, height: 91, paddingLeft: 28}}>
+      <View style={[{justifyContent: 'center', alignItems: 'center', marginRight: 5}, labelAreaStyle]}>
+        <Text style={{fontSize: 32}}>{title}: </Text>
       </View>
       <View style={styles.radioArea}>
-        <TouchableOpacity style={styles.radio} onPress={pressTrue}>
+        <TouchableOpacity style={[styles.radio, {marginRight: 20}]} onPress={pressTrue}>
           <CheckBox
             center
+            size={40}
             checked={!radio}
             onPress={pressTrue}
             containerStyle={styles.checkBox_containerStyle}
-            checkedIcon={<Text style={[styles.checkBox_icon, radio && styles.falseColor]}>{'\ue669'}</Text>}
-            uncheckedIcon={<Text style={[styles.checkBox_icon, radio && styles.falseColor]}>{'\ue68d'}</Text>}
+            checkedIcon="dot-circle-o"
+            uncheckedIcon="circle-o"
           />
-          <Text>门店集合</Text>
+          <Text style={{fontSize: 28}}>门店集合</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.radio} onPress={pressFaild}>
           <CheckBox
             center
+            size={40}
             checked={radio}
             onPress={pressFaild}
             containerStyle={styles.checkBox_containerStyle}
-            checkedIcon={<Text style={[styles.checkBox_icon, !radio && styles.falseColor]}>{'\ue669'}</Text>}
-            uncheckedIcon={<Text style={[styles.checkBox_icon, !radio && styles.falseColor]}>{'\ue68d'}</Text>}
+            checkedIcon="dot-circle-o"
+            uncheckedIcon="circle-o"
           />
-          <Text>自行到厂</Text>
+          <Text style={{fontSize: 28}}>自行到场</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -57,24 +59,21 @@ const Radio = ({
 
 const styles = StyleSheet.create({
   radioArea: {
-    height: 48, 
+    flex: 1,
     flexDirection: 'row', 
-    backgroundColor: '#fff', 
-    flex: 1
+    backgroundColor: '#fff'
   },
   radio: {
-    width: 120, 
     height: '100%', 
     flexDirection: 'row', 
     alignItems: 'center'
   },
   checkBox_containerStyle: {
-    height: 20,
     margin: 0,
     padding: 0,
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0)',
-    marginRight: 5,
+    marginRight: 5
   },
   checkBox_icon: {
     fontFamily: "iconfont", 
