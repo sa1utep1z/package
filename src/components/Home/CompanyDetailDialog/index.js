@@ -16,7 +16,6 @@ const CompanyDetailDialog = ({
   const date = String(message.recruitRange).substring(5, 11);
   const date2 = String(message.recruitRange).substring(16, 20)
   const recruitRange = date + date2
-  console.log('截取的数据：',message)
   return (
     <Dialog
       isVisible={showDetail}

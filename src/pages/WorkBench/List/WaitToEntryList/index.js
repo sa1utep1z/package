@@ -90,8 +90,8 @@ const WaitToEntryList = () => {
       />
       <CenterSelectDate />
       <BottomList 
-        list={list}
-        tabList={TAB_OF_LIST.WAIT_TO_ENTRY_LIST}
+        list={[]}
+        tab={TAB_OF_LIST.WAIT_TO_ENTRY_LIST}
         renderItem={renderItem}
         showFactoryDetail={showFactoryDetail}
         showMemberDetail={showMemberDetail}

@@ -20,7 +20,7 @@ const CompanyDetail = (props) => {
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [orderData, setOrderData] = useState({}); // 岗位详情数据
   const [height, setHeight] = useState(0);
-
+  const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
   const getDetail = async () => {
     const res = await HomeApi.orderDetail(orderId);
     setOrderData(res.data);
@@ -90,7 +90,7 @@ const CompanyDetail = (props) => {
             <Text style={styles.titlesStyle}>发单详情</Text>
           </View>
           <View style={styles.contentStyle}>
-            <Text style={styles.fontStyle}>{String(orderData.orderPolicyDetail).replaceAll('<br/>', '\n')}</Text>
+            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail? orderPolicyDetail : '无'}</Text>
             {/* <WebView
               scrollEnabled={false}
               scalesPageToFit={false}
