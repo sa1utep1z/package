@@ -119,11 +119,11 @@ const Home = (props) => {
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
         <TouchableOpacity style={{flex: 2}} onPress={()=>orderDetail(item)}>
-          <Text numberOfLines={1} ellipsizeMode='tail' style={styles.itemPress}>{item.companyName}</Text>
+          <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
         </TouchableOpacity>
         <Text style={styles.item_flex2}>{item.recruitRange}</Text>
         <TouchableOpacity style={{flex: 1}} onPress={()=>gotoList(item)}>
-          <Text style={styles.itemPress}>进入</Text>
+          <Text style={[styles.itemPress, {fontSize: 28}]}>进入</Text>
         </TouchableOpacity>
       </View>
   )};
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     color: '#409EFF',
     height: '100%',
-    fontSize: 28
+    fontSize: 36
   },
   icon: {
     fontSize: 20,

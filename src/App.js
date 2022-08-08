@@ -48,7 +48,7 @@ const App = () => {
                 type === 'warning' && {backgroundColor: toastOptions.warningColor},
                 type === 'danger' && {backgroundColor: toastOptions.dangerColor}
               ]}>
-                <Text style={{fontSize: 24, color: '#fff'}}>{toastOptions.message}</Text>
+                <Text style={{fontSize: 28, color: '#fff'}}>{toastOptions.message}</Text>
               </View>
             )
           }}

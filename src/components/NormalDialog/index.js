@@ -13,7 +13,8 @@ const NormalDialog = ({ dialogContent: {
   singleButton = false,
   confirmText,
   confirmOnPress,
-  backOnPress
+  backOnPress,
+  bottomButton = true
 } }, ref) => {
   const [showDialog, setShowDialog] = useState(false);
 
@@ -42,7 +43,7 @@ const NormalDialog = ({ dialogContent: {
           </TouchableOpacity>}
       </View>
       {dialogComponent ? dialogComponent : <EmptyArea />}
-      <View style={styles.bottomButtonArea}>
+      {bottomButton && <View style={styles.bottomButtonArea}>
         {singleButton ? <TouchableOpacity style={styles.singleButton}>
           <Text style={styles.singleButtonText}>提交</Text>
         </TouchableOpacity> :
@@ -54,7 +55,7 @@ const NormalDialog = ({ dialogContent: {
               <Text style={styles.rightText}>{confirmText || '确认'}</Text>
             </TouchableOpacity>
           </>}
-      </View>
+      </View>}
     </Dialog>
   )
 }

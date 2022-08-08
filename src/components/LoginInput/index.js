@@ -32,6 +32,7 @@ const LoginInput = ({
           color="#409EFF"
           onPress={seePasswordOnPress}
         />}
+        rightIconContainerStyle={{height: '100%', paddingTop: 24}}
         {...props}
       />
       <ErrorMessage

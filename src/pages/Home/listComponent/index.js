@@ -84,7 +84,7 @@ export const Header = ({search, range}) => {
         </Swiper>
       </View>
       {showSearch && <Animated.View style={{opacity: fadeAnim}}>
-        <SearchInput searchPress={search} />
+        <SearchInput searchPress={search}/>
         <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate}/>
       </Animated.View>}
       <View style={styles.buttonArea}>

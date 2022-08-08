@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, .05)'
   },
   showLittleTitleText: {
-    fontSize: 26,
+    fontSize: 28,
     color: '#000',
     fontWeight: 'bold'
   },

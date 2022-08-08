@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   bothBtn: {
-    width: 30, 
+    width: 60, 
     justifyContent: 'center', 
     alignItems: 'center'
   },
@@ -230,13 +230,13 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   week: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold', 
     color: '#666666',
     paddingBottom: 3
   },
   date: {
-    fontSize: 18
+    fontSize: 22
   },
   date_selected: {
     color: '#fff',

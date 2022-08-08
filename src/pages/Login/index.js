@@ -208,7 +208,7 @@ const Login = props => {
             size={40}
             containerStyle={styles.checkBox_containerStyle}
             checkedIcon="dot-circle-o"
-            un="circle-o"
+            uncheckedIcon="circle-o"
           />
           <Toast ref={toastRef} />
           <View style={styles.bottomArea_textArea}>
@@ -282,7 +282,9 @@ const styles = StyleSheet.create({
   checkBox_fieldContainerStyle: {
     backgroundColor: 'rgba(0,0,0,0)',
     padding: 0,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingRight: 30,
+    paddingTop:10
   },
   buttonStyle: {
     height: 100,

@@ -7,6 +7,7 @@ import { listFooter, empty } from "../../../pages/Home/listComponent";
 const BottomList = ({
     list = [],
     tab = [],
+    tabNumberList = {},
     renderItem,
     onEndReached,
     listHead,
@@ -39,12 +40,11 @@ const BottomList = ({
               title={tab.title}
               key={tab.type}
               buttonStyle={styles.tabItem_buttonStyle}
-              containerStyle={styles.tabItem_containerStyle}
-              >
-                <View>
+              containerStyle={styles.tabItem_containerStyle}>
+                <>
                   <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.title}</Text>
-                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.nums || 0}</Text>
-                </View>
+                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>
+                </>
             </Tab.Item>
           )
         })}
@@ -57,8 +57,8 @@ const BottomList = ({
               data={showList}
               style={{backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E3E3E3'}}
               renderItem={renderItem}
-              keyExtractor={item => item.itemId}
-              getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
+              keyExtractor={(item,index) => index}
+              getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
               refreshing={isLoading}
               onRefresh={()=>console.log('刷新')}
               initialNumToRender={15}
@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0
   },
   tabItem_containerStyle: {
-    justifyContent: 'center',
     backgroundColor: '#fff'
   },
   tabItem_titleStyle_active: {
