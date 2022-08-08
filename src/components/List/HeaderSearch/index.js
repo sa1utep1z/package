@@ -142,7 +142,7 @@ const HeaderSearch = ({
           if(!showSearch) return <></>
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
-              <View style={{flexDirection: 'row', marginBottom: 8}}>
+              <View style={{flexDirection: 'row', marginBottom: 20}}>
                 {
                   companyShow && <Field
                   title="企业"
@@ -219,7 +219,7 @@ const HeaderSearch = ({
               />
               <Field
                 name="search"
-                placeholder={placeholder? placeholder : '请输入姓名、身份证'}
+                placeholder={placeholder? placeholder : '请输入姓名及身份证'}
                 borderRadius={8}
                 fontStyle={styles.fontSize}
                 searchInputStyle={styles.searchInputStyle}
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   fontSize: {
-    fontSize: 28
+    fontSize: 26
   },
   selectContainerStyle: {
     flex: 1 

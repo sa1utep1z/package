@@ -118,7 +118,7 @@ const SearchInput = ({
           smallSize && styles.smallRightArea]}>
         <View style={[styles.line, smallSize && styles.smallLine]}></View>
         <TouchableOpacity style={styles.btnArea} onPress={btnPress}>
-          <Text style={styles.btnArea_text}>搜 索</Text>
+          <Text style={styles.btnArea_text}>搜索</Text>
         </TouchableOpacity>
       </View>}
     </View>
@@ -143,10 +143,11 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff', 
     borderTopLeftRadius: defaulBorderRadius, 
-    borderBottomLeftRadius: defaulBorderRadius
+    borderBottomLeftRadius: defaulBorderRadius,
+    paddingLeft: 10
   },
   inputStyle: {
-    fontSize: 28, 
+    fontSize: 22, 
     marginLeft: 10, 
     marginRight: 0
   },
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   },
   btnArea_text: {
     color: '#409EFF', 
-    fontSize: 22
+    fontSize: 26
   },
   smallRightArea: {
     width: 55

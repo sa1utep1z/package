@@ -4,6 +4,7 @@ import { Text } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useToast } from "react-native-toast-notifications";
+import moment from 'moment';
 
 import {getYMD} from '../../../utils';
 
@@ -52,6 +53,7 @@ const DatePicker = ({
     setShowDatePicker(true);
     setDateTime(type === 'start' ? new Date(startDate) : new Date(endDate));
   };
+  console.log('moment', moment(startDate).format('MM-DD'));
 
   return (
     <View style={styles.dateArea}>
@@ -63,7 +65,7 @@ const DatePicker = ({
             type='antdesign'
             style={styles.icon}
           />
-          <Text style={styles.font}>{startDate}</Text>
+          <Text style={styles.font}>{moment(startDate).format('MM-DD')}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.datePicker}>
@@ -74,7 +76,7 @@ const DatePicker = ({
             type='antdesign'
             style={styles.icon}
           />
-          <Text style={styles.font}>{endDate}</Text>
+          <Text style={styles.font}>{moment(endDate).format('MM-DD')}</Text>
         </TouchableOpacity>
       </View>
       {showDatePicker &&
@@ -90,7 +92,7 @@ const DatePicker = ({
 
 const styles = StyleSheet.create({
   dateArea: {
-    height: 50,
+    height: 60,
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
@@ -103,12 +105,12 @@ const styles = StyleSheet.create({
   },
   pickerTouchable: {
     width: 202, 
-    height: 50, 
+    height: 60, 
     backgroundColor: '#fff', 
     flexDirection: 'row', 
     alignItems: 'center', 
-    justifyContent: 'center',
-    borderRadius: 6
+    borderRadius: 6,
+    paddingHorizontal: 30
   },
   icon: {
     fontSize: 30,
@@ -116,8 +118,10 @@ const styles = StyleSheet.create({
   },
   font: {
     color: '#999999',
-    fontSize: 22,
-    marginLeft: 15
+    fontSize: 26,
+    marginLeft: 15,
+    flex: 1,
+    textAlign: 'center'
   }
 })
 

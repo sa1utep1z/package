@@ -37,6 +37,7 @@ const SignUpList = () => {
     content: []
   });
   const [tabList, setTabList] = useState(TAB_OF_LIST.SIGN_UP_LIST);
+  const [tabNumberList, setTabNumberList] = useState({});
 
   useEffect(()=>{
     navigation.setOptions({
@@ -70,11 +71,7 @@ const SignUpList = () => {
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
       }
-      for(let key in res.data){
-        const findItem = tabList.find(item => item.type === key);
-        findItem.num = res.data[key];
-      }
-      setTabList(tabList);
+      setTabNumberList(res.data);
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -118,7 +115,6 @@ const SignUpList = () => {
     });
   };
 
-
   const selectIndex = (selectIndex) => {
     switch(selectIndex){
       case 0:
@@ -134,7 +130,7 @@ const SignUpList = () => {
         searchContent.status = 'SIGN_UP_INTENTION';
         break;
     }
-    setSearchContent({ ...searchContent });
+    setSearchContent({...searchContent, pageNumber: 0, pageSize: 20});
   };
 
   const transferFactory = (item) => {
@@ -209,7 +205,7 @@ const SignUpList = () => {
         Linking.openURL(`tel:${item.mobile}`)
         dialogRef.current.setShowDialog(false);
       },
-      dialogComponent: <Text style={{textAlign: 'center'}}>确定拨打该手机吗？</Text>
+      dialogComponent: <Text style={{textAlign: 'center', marginVertical: 20, fontSize: 18}}>确定拨打该手机吗？</Text>
     });
   };
     
@@ -231,7 +227,7 @@ const SignUpList = () => {
         if(item.mobile){
           callPhone(item)
         }
-      }, textStyle: {color: '#409EFF', fontSize: 26}}
+      }, textStyle: {color: '#409EFF', fontSize: 24}}
     ];
     return (
       <View key={item.id} style={styles.listStyle}>
@@ -242,7 +238,7 @@ const SignUpList = () => {
               renderItem.textStyle
             ]}
             numberOfLines={2}
-            ellipsizeMode="tail">{renderItem.fieldName}</Text>
+            ellipsizeMode="tail">{renderItem.fieldName || '无'}</Text>
             {/* {renderItem.fieldName === item.mobile && <Entypo name='phone' size={30} color='#409EFF'/>} */}
           </TouchableOpacity>
         ))}
@@ -258,6 +254,7 @@ const SignUpList = () => {
       <CenterSelectDate />
       <BottomList
         tab={tabList}
+        tabNumberList={tabNumberList}
         list={showList?.content}
         isLoading={isLoading}
         renderItem={renderItem}
@@ -277,7 +274,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   listStyle: {
-    height: 80,
+    minHeight: 80,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
@@ -290,7 +287,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemText: {
-    fontSize: 28,
+    fontSize: 32,
     color: '#000',
     textAlign: 'center'
   }
