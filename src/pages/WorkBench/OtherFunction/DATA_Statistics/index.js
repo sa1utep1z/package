@@ -448,7 +448,7 @@ const DATA_Statistics = () => {
 
   return (
     <View style={styles.screen}>
-      <HeaderSearch filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
+      <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
       <CenterSelectDate />
       <Tab
         value={index}

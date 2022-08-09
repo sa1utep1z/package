@@ -39,11 +39,10 @@ const CompanyListDialog = (props, ref) => {
 
   // 获取订单详情
   const orderDetail = async (item) => {
-    detailRef.current.setShowDetail(true)
+    detailRef.current.setShowDetail(true);
     const res = await HomeApi.orderDetail(item.orderId);
     const data = res.data;
-    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail})
-    console.log('orderData', orderData)
+    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail});
     setOrderMsg(orderData);
   };
 

@@ -35,6 +35,11 @@ const ListApi = {
   GetPassList: async(flowId, params) => await httpRequest.put(`admin/app/recruitFlow/onBoardin/pass/${flowId}`, params),
   // 未报到
   GetNoArrive: async(flowId, params) => await httpRequest.put(`admin/app/recruitFlow/onBoardin/fail/${flowId}`, params),
+  /**面试名单 */
+  //首页
+  InterViewList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/recruitFlow/interviewPage', params),
+  //获取面试各状态人数
+  GetInterviewTypeList: async(params) => await httpRequest.post('admin/app/recruitFlow/interview/list/num', params),
 }
 
 export default ListApi;

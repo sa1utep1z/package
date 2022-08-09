@@ -4,26 +4,39 @@ import { Button } from '@rneui/themed';
 import { WebView } from 'react-native-webview';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from '@react-navigation/native';
+import { useToast } from "react-native-toast-notifications";
+
 import HomeApi from "../../../request/HomeApi";
 import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
-import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE } from '../../../utils/const';
+import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE } from '../../../utils/const';
 
 let webHeight;
 
 const CompanyDetail = (props) => {
   const webRef = useRef(null);
+  const toast = useToast();
 
   const navigation = useNavigation();
   const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
   const { route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
-  const [orderData, setOrderData] = useState({}); // 岗位详情数据
+  const [orderData, setOrderData] = useState({
+    orderPolicyDetail: ''
+  }); // 岗位详情数据
   const [height, setHeight] = useState(0);
   const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
   const getDetail = async () => {
-    const res = await HomeApi.orderDetail(orderId);
-    setOrderData(res.data);
+    try{
+      const res = await HomeApi.orderDetail(orderId);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`请求失败，${res.msg}`, {type: 'danger'});
+        return;
+      }
+      setOrderData(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
   };
 
   useEffect(() => {
@@ -40,7 +53,7 @@ const CompanyDetail = (props) => {
   });
 
   return (
-    <View style={{ flex: 1, marginBottom: 60 }}>
+    <View style={{ flex: 1}}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.swiperArea}>
           <Swiper
@@ -90,6 +103,7 @@ const CompanyDetail = (props) => {
             <Text style={styles.titlesStyle}>发单详情</Text>
           </View>
           <View style={styles.contentStyle}>
+            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail.length ? String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text>
             <Text style={styles.fontStyle}>{orderData.orderPolicyDetail? orderPolicyDetail : '无'}</Text>
             {/* <WebView
               scrollEnabled={false}
@@ -228,7 +242,7 @@ const CompanyDetail = (props) => {
           </View>
         </View>
       </ScrollView>
-      <View style={{ height: 70, justifyContent: 'center' }}>
+      <View style={{marginVertical: 20, marginHorizontal: 20}}>
         <Button
           title="帮他报名"
           onPress={signUpPress}
@@ -243,7 +257,7 @@ const CompanyDetail = (props) => {
 
 const styles = StyleSheet.create({
   swiperArea: {
-    height: 200
+    height: 312
   },
   swiperStyle: {
     borderRadius: 8
@@ -378,7 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   containerStyle: {
-    margin: 10,
+    margin: 28,
     borderRadius: 8
   },
   paginationStyle: {
@@ -414,14 +428,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30,
-    marginTop: 40,
+    borderRadius: 50,
   },
   buttonContainerStyle: {
     marginHorizontal: 8
   },
   titleStyle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     letterSpacing: 10,
   }

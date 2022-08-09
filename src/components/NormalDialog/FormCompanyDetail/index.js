@@ -11,7 +11,7 @@ const FormCompanyDetail = ({
 
   return (
     <View style={styles.msgArea}>
-      <View style={{alignItems: 'center'}}>
+      <View style={{paddingLeft: 20, marginBottom: 20}}>
         <View style={styles.itemDateArea}>
           <Text>订单名称：</Text>
           <View style={styles.itemDate}>
@@ -26,7 +26,7 @@ const FormCompanyDetail = ({
         </View>
       </View>
       <ScrollView style={styles.message}>
-        {message ? <WebView scalesPageToFit={false} style={{height: 300}} source={{ html: message.orderPolicyDetail }}/> : <EmptyArea />}
+        {message ? <Text style={{marginHorizontal: 10}}>{message.orderPolicyDetail ? String(message.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text> : <EmptyArea />}
       </ScrollView>
     </View>
   )
@@ -37,13 +37,15 @@ const styles = StyleSheet.create({
     maxHeight: 400
   },
   itemDateArea: {
-    height: 30, 
+    minHeight: 30, 
     flexDirection: 'row', 
     alignItems: 'center'
   },
   itemDate: {
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'rgba(0,0,0,0.05)'
   },
   message: {
     paddingHorizontal: 8

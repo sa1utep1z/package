@@ -13,9 +13,11 @@ const CompanyDetailDialog = ({
   useImperativeHandle(ref, () => {
     return { setShowDetail, showDetail };
   }, []);
+
   const date = String(message.recruitRange).substring(5, 11);
   const date2 = String(message.recruitRange).substring(16, 20)
   const recruitRange = date + date2
+  
   return (
     <Dialog
       isVisible={showDetail}
@@ -36,9 +38,10 @@ const CompanyDetailDialog = ({
               <Text style={{color: '#444444'}}>{message.orderName}</Text>
             </View>
           </View>
-          <View style={styles.message}>
-            <WebView scalesPageToFit={false} originWhitelist={['*']} source={{ html: message.orderPolicyDetail }}></WebView>
-          </View>
+          <ScrollView style={styles.message}>
+            <Text style={styles.fontStyle}>{message.orderPolicyDetail ? String(message.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text>
+            {/* <WebView scalesPageToFit={false} originWhitelist={['*']} source={{ html: message.orderPolicyDetail }}></WebView> */}
+          </ScrollView>
         </View>
         <TouchableOpacity style={styles.bottomBtn} onPress={()=>setShowDetail(!showDetail)}>
           <Text style={styles.btnText}>确定</Text>
@@ -65,17 +68,16 @@ const styles = StyleSheet.create({
   itemDateArea: {
     height: 30, 
     flexDirection: 'row', 
-    // alignItems: 'center', 
-    marginVertical: 6
+    alignItems: 'center', 
+    marginBottom: 10
   },
   itemDate: {
     height: '100%',
-    borderWidth: 1, 
     flexDirection: 'row', 
     alignItems: 'center', 
-    paddingHorizontal: 10, 
-    borderRadius: 3, 
-    borderColor: '#999999'
+    paddingHorizontal: 10,
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0,0,0,.05)'
   },
   message: {
     flex: 1, 

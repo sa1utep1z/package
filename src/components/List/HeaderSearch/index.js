@@ -34,6 +34,7 @@ const HeaderSearch = ({
   canFilterStatus = false,
   placeholder= '',
   companyShow = true,
+  withoutCompanyFilter = false,
     ...rest
   }) => {
   const toast = useToast();
@@ -142,7 +143,7 @@ const HeaderSearch = ({
           if(!showSearch) return <></>
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
+              <View style={[{flexDirection: 'row', marginBottom: 20}, withoutCompanyFilter && {marginBottom: 0}]}>
                 {
                   companyShow && <Field
                   title="企业"
@@ -254,15 +255,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0
   },
   batchButton: {
-    paddingHorizontal: 10, 
-    paddingVertical: 5, 
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     backgroundColor: '#409EFF', 
-    marginLeft: 10, 
-    borderRadius: 8
+    marginLeft: 15, 
+    borderRadius: 10
   },
   btnText: {
     color: '#fff', 
-    fontSize: 14
+    fontSize: 26
   }
 })
 

@@ -132,7 +132,7 @@ export const empty = () => (
     <View style={styles.emptyStyle}>
     <AntDesign
         name='frowno'
-        size={40}
+        size={60}
         color='#999999'
         style={styles.antIcon}
       />
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   emptyText: {
-    color: '#999999'
+    color: '#999999',
+    fontSize: 28
   }
 });

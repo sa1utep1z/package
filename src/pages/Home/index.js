@@ -63,7 +63,6 @@ const Home = (props) => {
   // },[searchContent])
 
   const gotoList = async(item) => {
-    console.log('item', item);
     if(item.num > 1){
       const {current} = listRef;
       current?.setShowList(true);
@@ -85,15 +84,6 @@ const Home = (props) => {
       orderId: item.orderId,
       orderName: item.orderName,
     });
-  };
-
-  // 获取订单详情
-  const orderDetail = async (item) => {
-    detailRef.current.setShowDetail(true)
-    const res = await HomeApi.orderDetail(item.orderId);
-    const data = res.data;
-    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail})
-    setOrderMsg(orderData);
   };
 
   const onEndReached = () => {
@@ -118,7 +108,7 @@ const Home = (props) => {
     return (
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
-        <TouchableOpacity style={{flex: 2}} onPress={()=>orderDetail(item)}>
+        <TouchableOpacity style={{flex: 2}} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
         </TouchableOpacity>
         <Text style={styles.item_flex2}>{item.recruitRange}</Text>
@@ -179,7 +169,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     color: '#409EFF',
     height: '100%',
-    fontSize: 36
+    fontSize: 32
   },
   icon: {
     fontSize: 20,
