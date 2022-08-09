@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     paddingBottom: 3
   },
   date: {
-    fontSize: 22
+    fontSize: 24
   },
   date_selected: {
     color: '#fff',

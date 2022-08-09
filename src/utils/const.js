@@ -47,6 +47,12 @@ export const DEFAULT_STATUS_LIST = [
   {value: 'failedExam', title: '考试不过'}
 ];
 
+export const DEFAULT_ONBORADINGSTATUS = [
+  {value: 'unContact' ,title: '联系不上'},
+  {value: 'giveUp', title: '放弃入职'},
+  {value: 'busy', title: '临时有事'},
+];
+
 export const TAB_OF_LIST = {
   SIGN_UP_LIST: [
     {title: '全部',type: 'total',},
@@ -62,10 +68,10 @@ export const TAB_OF_LIST = {
     {title: '已通过',type: 'pass'}
   ],
   WAIT_TO_ENTRY_LIST: [
-    {title: '全部',type: 'all'},
-    {title: '待处理',type: 'waitToHandle'},
-    {title: '未报道',type: 'notReport'},
-    {title: '已入职',type: 'wasEntry'}
+    {title: '全部',type: 'total'},
+    {title: '待处理',type: 'pending'},
+    {title: '未报到',type: 'fail'},
+    {title: '已入职',type: 'pass'}
   ],
   LEAVING_LIST: [
     {title: '全部',type: 'all'},
@@ -264,10 +270,22 @@ export const STATUS_LISTS = [
   {title: '预离职', value: 'prepare_job_resign', id: 6},
   {title: '离职', value: 'job_resign', id: 7}
 ];
+// 报名状态值
 export const SIGN_UP_STATUS = {
   "SIGN_UP_PENDING": '待处理',
   "SIGN_UP_NO_INTENTION": '无意愿',
   "SIGN_UP_INTENTION": '已报名'
+};
+// 入职状态值
+export const ON_BOARDING_STATUS = {
+  "ON_BOARDING_PENDING": '待处理',
+  "ON_BOARDING_FAIL": '未报到',
+  "ON_BOARDING_PASS": '已入职'
+};
+// 在离职状态值
+export const JOB_ON_STATUS = {
+  "JOB_ON": '在职',
+  "JOB_RESIGN": '离职',
 };
 export const WAY_TO_GO = [
   { label: '自行到厂', value: 'FACTORY' },
