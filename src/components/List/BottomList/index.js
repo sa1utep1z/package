@@ -1,8 +1,10 @@
-import React, {useState, useMemo} from "react";
+import React, {useState, useMemo, useEffect} from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import { Tab, TabView, Text, Badge } from "@rneui/themed";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { listFooter, empty } from "../../../pages/Home/listComponent";
+import { setTabName } from "../../../redux/features/NowSelectTabNameInList";
 
 const BottomList = ({
     list = [],
@@ -15,9 +17,15 @@ const BottomList = ({
     nowSelectIndex = false,
     ...rest
   }) => {
+  const dispatch = useDispatch();
+
   const [index, setIndex] = useState(0);
   const [showList, setShowList] = useState(list);
   const [tabList, setTabList] = useState(tab);
+
+  useEffect(()=>{
+    return () => dispatch(setTabName(''));
+  },[])
 
   useMemo(()=>{
     setShowList(list);
@@ -25,11 +33,18 @@ const BottomList = ({
     nowSelectIndex && nowSelectIndex(index);
   },[list, tab, index]);
 
+  const selectIndex = (i) => {
+    setIndex(i);
+    const selectItem = tabList.find((item, index) => index === i);
+    const tabName = selectItem.type;
+    dispatch(setTabName(tabName));
+  };
+
   return (
     <>
       <Tab
         value={index}
-        onChange={setIndex}
+        onChange={(index) => selectIndex(index)}
         variant="primary"
         indicatorStyle={{backgroundColor: '#fff'}}
         containerStyle={styles.tab_containerStyle}>
@@ -42,8 +57,8 @@ const BottomList = ({
               buttonStyle={styles.tabItem_buttonStyle}
               containerStyle={styles.tabItem_containerStyle}>
                 <>
-                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tab.title}</Text>
-                  <Text style={[{fontSize: 32, textAlign: 'center'}, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>
+                  <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tab.title}</Text>
+                  <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>
                 </>
             </Tab.Item>
           )
@@ -55,7 +70,7 @@ const BottomList = ({
             {listHead}
             <FlatList 
               data={showList}
-              style={{backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#E3E3E3'}}
+              style={styles.flatListStyle}
               renderItem={renderItem}
               keyExtractor={(item,index) => index}
               getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
@@ -89,6 +104,9 @@ const styles = StyleSheet.create({
   tabItem_containerStyle: {
     backgroundColor: '#fff'
   },
+  tabItem_text: {
+    fontSize: 32, textAlign: 'center'
+  },
   tabItem_titleStyle_active: {
     color: '#409EFF', 
     fontWeight: 'bold', 
@@ -104,6 +122,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, 
     borderColor: '#E3E3E3', 
     backgroundColor: '#fff'
+  },
+  flatListStyle: {
+    backgroundColor: '#fff', 
+    borderTopWidth: 1, 
+    borderColor: '#E3E3E3'
   }
 });
 

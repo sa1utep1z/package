@@ -3,12 +3,11 @@ import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import { Text, Dialog, Input } from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
 
-import { DEFAULT_STATUS_LIST } from '../../../utils/const';
+import { DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST, SUCCESS_CODE } from '../../../utils/const';
 import { deepCopy } from '../../../utils';
 import ListApi from '../../../request/ListApi';
-import { SUCCESS_CODE } from '../../../utils/const';
 
-const ListChangeStatus = ({
+const StatusChangeInSignUpList = ({
   memberInfo = [],
   dialogRef,
   item
@@ -16,14 +15,14 @@ const ListChangeStatus = ({
   const toast = useToast();
   const inputRef = useRef(null);
 
-  const [statusList, setStatusList] = useState(DEFAULT_STATUS_LIST);
+  const [statusList, setStatusList] = useState(DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST);
   const [inputContent, setInputContent] = useState('');
   const [selectStatus, setSelectStatus] = useState('noThink');
   const [reasonList, setReasonList] = useState([]);
   const [showReason, setShowReason] = useState(false);
 
   useEffect(()=>{
-    setStatusList(DEFAULT_STATUS_LIST);
+    setStatusList(DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST);
     return () => setStatusList([]);
   }, [])
 
@@ -37,7 +36,7 @@ const ListChangeStatus = ({
     setInputContent('');
     const newArr = deepCopy(statusList);
     newArr.push({
-      value: `new_value_${statusList.length - (DEFAULT_STATUS_LIST.length - 1)}`,
+      value: `new_value_${statusList.length - (DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST.length - 1)}`,
       title: inputContent
     })
     setStatusList(newArr);
@@ -288,4 +287,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default ListChangeStatus;
+export default StatusChangeInSignUpList;

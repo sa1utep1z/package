@@ -27,8 +27,20 @@ const ListApi = {
   /**面试名单 */
   //首页
   InterViewList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/recruitFlow/interviewPage', params),
+  InterViewList2: async (params) =>{
+    console.log('params', params);
+    return  await httpRequest.post('admin/app/recruitFlow/interviewPage', params)
+  },
   //获取面试各状态人数
   GetInterviewTypeList: async(params) => await httpRequest.post('admin/app/recruitFlow/interview/list/num', params),
+  //面试通过
+  PassInInterview: async(flowId) => await httpRequest.put(`admin/app/recruitFlow/interview/pass/${flowId}`),
+  //未去面试
+  NoArriveInInterview: async(flowId, params) => await httpRequest.put(`admin/app/recruitFlow/interview/noArrive/${flowId}`, params),
+  //面试不通过
+  FailInInterview: async(flowId, params) => await httpRequest.put(`admin/app/recruitFlow/interview/fail/${flowId}`, params),
+  //批量操作
+  BatchOperateInInterview: async(params) => await httpRequest.put(`admin/app/recruitFlow/interview/batch`, params),
 }
 
 export default ListApi;

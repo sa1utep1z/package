@@ -11,8 +11,6 @@ import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
 import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE } from '../../../utils/const';
 
-let webHeight;
-
 const CompanyDetail = (props) => {
   const webRef = useRef(null);
   const toast = useToast();

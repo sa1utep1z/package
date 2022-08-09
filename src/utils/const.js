@@ -39,12 +39,22 @@ export const HANDLE_STATE = [
   {title: '已通过', value: 'isPassed'}
 ];
 
-export const DEFAULT_STATUS_LIST = [
+// 报名名单的初始状态列表
+export const DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST = [
   {value: 'shenjingbing' ,title: '精神异常'},
   {value: 'noIDCard', title: '无身份证'},
   {value: 'youwenshen', title: '纹身不过'},
   {value: 'giveup', title: '现场放弃'},
   {value: 'failedExam', title: '考试不过'}
+];
+
+// 面试名单的初始状态列表
+export const DEFAULT_STATUS_LIST_OF_INTERVIEW_LIST = [
+  {value: 'giveUp', title: '现场放弃'},
+  {value: 'failInMedical' ,title: '体检不过'},
+  {value: 'haveWenShen', title: '纹身不过'},
+  {value: 'failedInExam', title: '考试不过'},
+  {value: 'failInComprehensiveExam', title: '综合考试不过'}
 ];
 
 export const TAB_OF_LIST = {
@@ -264,10 +274,18 @@ export const STATUS_LISTS = [
   {title: '预离职', value: 'prepare_job_resign', id: 6},
   {title: '离职', value: 'job_resign', id: 7}
 ];
+//报名状态列表；
 export const SIGN_UP_STATUS = {
   "SIGN_UP_PENDING": '待处理',
   "SIGN_UP_NO_INTENTION": '无意愿',
   "SIGN_UP_INTENTION": '已报名'
+};
+//面试状态列表；
+export const INTERVIEW_STATUS = {
+  "INTERVIEW_PENDING": "待处理",
+  "INTERVIEW_NO_ARRIVE": "未去面试",
+  "INTERVIEW_FAIL": "未通过",
+  "INTERVIEW_PASS": "已通过"
 };
 export const WAY_TO_GO = [
   { label: '自行到厂', value: 'FACTORY' },
