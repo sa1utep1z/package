@@ -15,13 +15,10 @@ const DATA_Statistics = () => {
   const [index, setIndex] = useState(0);
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
   const [searchTotal, setSearchTotal] = useState({}); // 查询总数据参数
-  const [companyDetails, setCompanyDetails] = useState([]); // 企业分组数据
-  const [storeDetails, setStoreDetails] = useState([]); // 门店分组数据
-  const [supplierDetails, setSupplierDetails] = useState([]); // 供应商分组数据
-  const [recruiterDetails, setRecruiterDetails] = useState([]); // 招聘员分组数据
+  const [companyDetails, setCompanyDetails] = useState([]); // 各分组数据
   const [totalData, setTotalData] = useState([]); // 各列表总数据
-  const [groupStoreData, setGroupStoreData] = useState([]); // 搜索门店分组数据
-  const [groupCompanyData, setGroupCompanyData] = useState([]); // 搜索企业分组数据
+  const groupStoreData = useRef([]); // 搜索门店分组数据
+  const groupCompanyData = useRef([]); // 搜索企业分组数据
   const dialogRef = useRef(null);
   const [dialogContent, setDialogContent] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +53,6 @@ const DATA_Statistics = () => {
       }
       const res = await DataStatisticApi.CompanyGroup(prams)
       setCompanyDetails(res.data.content)
-      console.log('获取到的企业分组数据：', res)
     } catch (error) {
       console.log('获取到的企业分组数据：', error)
     }
@@ -82,8 +78,6 @@ const DATA_Statistics = () => {
     const res = await DataStatisticApi.StoreGroup(prams)
     setStoreDetails(res.data.content)
     setCompanyDetails(res.data.content)
-    console.log('获取到的门店分组数据：', res)
-    console.log('请求门店分组数据的参数：', prams)
   };
 
   // 获取供应商总数据
@@ -106,8 +100,6 @@ const DATA_Statistics = () => {
     const res = await DataStatisticApi.SupplierGroup(prams)
     setSupplierDetails(res.data.content)
     setCompanyDetails(res.data.content)
-    console.log('获取到的供应商分组数据：', res)
-    console.log('请求供应商分组数据的参数：', prams)
   };
 
   // 获取招聘员总数据
@@ -130,8 +122,6 @@ const DATA_Statistics = () => {
     const res = await DataStatisticApi.RecruiterGroup(prams)
     setRecruiterDetails(res.data.content)
     setCompanyDetails(res.data.content)
-    console.log('获取到的招聘员分组数据：', res)
-    console.log('请求招聘员分组数据的参数：', prams)
   };
 
   useEffect(() => {
@@ -172,39 +162,6 @@ const DATA_Statistics = () => {
       </View>
     )
   };
-
-  const res11 = [
-    {
-      companyId: "1",
-      companyName: "富士康",
-      num: 10
-    },
-    {
-      companyId: "1",
-      companyName: "富士康KSDFH",
-      num: 10
-    },
-    {
-      companyId: "1",
-      companyName: "富士康",
-      num: 10
-    },
-    {
-      companyId: "1",
-      companyName: "富士康",
-      num: 10
-    },
-    {
-      companyId: "1",
-      companyName: "富士康KSDFH",
-      num: 10
-    },
-    {
-      companyId: "1",
-      companyName: "富士康",
-      num: 10
-    },
-  ]
 
   const IconItem = [
     {
@@ -285,14 +242,15 @@ const DATA_Statistics = () => {
     try {
       if (index === 0) {
         const res = await DataStatisticApi.SearchStoreGroup(prams)
-        setGroupStoreData(res.data)
-        console.log('打印获取搜索门店的数据：', res)
-        console.log('打印搜索门店请求的参数：', prams)
+        console.log('asdfasdf');
+        if (res.code === 0) {
+          groupStoreData.current = res.data
+        }
       } else {
         const res = await DataStatisticApi.SearchCompanyGroup(prams)
-        setGroupCompanyData(res.data)
-        console.log('打印获取搜索企业的数据：', res)
-        console.log('打印搜索企业请求的参数：', prams)
+        if (res.code === 0) {
+          groupCompanyData.current = res.data
+        }
       }
     } catch (error) {
       console.log('打印搜索请求的异常：', error)
@@ -300,8 +258,51 @@ const DATA_Statistics = () => {
   }
 
   const ModalData = (item, key, value) => {
+    return (
+      <View style={[{ height: 300 }]}>
+        <View style={styles.titleBox}>
+          <Text style={styles.status}>{key === 'signUpIntention' ? '报名人数' : key === 'onBoardingFail' ? '待入职人数' : key == 'onBoardingPass' ? '待入职人数' : key == 'jobOn' ? '在离职人数' : '面试人数'}</Text>
+          <Text style={styles.number}>{value}</Text>
+        </View>
+        <ScrollView style={{ flex: 1 }}>
+          {index != 0 && groupCompanyData.current.length > 0 && groupCompanyData.current.map((item, index) => (
+            <View style={[styles.companyInfo]} >
+              <Text style={styles.nameStyle}>{item.companyName}</Text>
+              <Text style={styles.nameStyle}>{item.num}</Text>
+            </View>
+          ))}
+          {index === 0 && groupStoreData.current.length > 0 && groupStoreData.current.map((item, index) => (
+            <View style={[styles.companyInfo]} >
+              <Text style={styles.nameStyle}>{item.storeName}</Text>
+              <Text style={styles.nameStyle}>{item.num}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    )
+  }
+
+  // 点击图标排序事件
+  const sortEvent = async (item) => {
     const prams = {
-      signUpPhaseStatus: " ",
+      ...searchContent,
+      property: item,
+    }
+    if (index === 0) {
+      companyData(prams); 
+    } else if (index === 1) { 
+      storeData(prams);
+    } else if (index === 2) { 
+      supplierData(prams);
+    } else { 
+      recruiterData(prams)
+    }
+  }
+
+  const record = (item, key, value) => {
+    console.log('点击选择的值：', item, value, key)
+    const prams = {
+      signUpPhaseStatus: "",
       interviewPhaseStatus: "",
       onBoardingPhaseStatus: "",
       jobPhaseStatus: ""
@@ -338,48 +339,20 @@ const DATA_Statistics = () => {
         prams.jobPhaseStatus = 'JOB_ON';
         break;
     }
-    getData(prams);
-    return (
-      <View style={[{ height: 300 }]}>
-        <View style={styles.titleBox}>
-          <Text style={styles.status}>{key === 'signUpIntention' ? '报名人数' : key === 'onBoardingFail' ? '待入职人数' : key == 'onBoardingPass' ? '待入职人数' : key == 'jobOn' ? '在离职人数' : '面试人数'}</Text>
-          <Text style={styles.number}>{value}</Text>
-        </View>
-        <ScrollView style={{ flex: 1 }}>
-          {index != 0 && groupCompanyData.length > 0 && groupCompanyData.map((item, index) => (
-            <View style={[styles.companyInfo]} >
-              <Text style={styles.nameStyle}>{item.companyName}</Text>
-              <Text style={styles.nameStyle}>{item.num}</Text>
-            </View>
-          ))}
-          {index === 0 && groupStoreData.length > 0 && groupStoreData.map((item, index) => (
-            <View style={[styles.companyInfo]} >
-              <Text style={styles.nameStyle}>{item.storeName}</Text>
-              <Text style={styles.nameStyle}>{item.num}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    )
-  }
-
-  // 点击图标排序事件
-  const sortEvent = async (item) => {
-    console.log('点击选择的值：', item)
-    const prams = {
-      ...searchContent,
-      property: item,
-    }
-    companyData(prams);
-  }
-
-  const record = (item, key, value) => {
-    console.log('点击选择的值：', item, value, key)
-    dialogRef.current.setShowDialog(true);
-    setDialogContent({
-      dialogTitle: item.name,
-      dialogComponent: ModalData(item, key, value)
-    });
+    getData(prams)
+      .then((res) => {
+        dialogRef.current.setShowDialog(true);
+        setDialogContent({
+          dialogTitle: item.name,
+          bottomButton: false,
+          rghtColse: <AntDesign
+          name='closecircleo'
+          size={20}
+          onPress={()=> dialogRef.current.setShowDialog(false)}
+        />,
+          dialogComponent: ModalData(item, key, value)
+        });
+      })
   }
 
   const renderItem = ({ item }) => {
@@ -578,7 +551,6 @@ const DATA_Statistics = () => {
             />
           </TabView.Item> */}
       {/* </TabView> */}
-
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -746,7 +718,8 @@ const styles = StyleSheet.create({
   nameStyle: {
     fontSize: 14,
     color: '#333333'
-  }
+  },
+
 });
 
 export default DATA_Statistics;

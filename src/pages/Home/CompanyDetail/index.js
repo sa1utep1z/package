@@ -25,7 +25,7 @@ const CompanyDetail = (props) => {
     orderPolicyDetail: ''
   }); // 岗位详情数据
   const [height, setHeight] = useState(0);
-
+  const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
   const getDetail = async () => {
     try{
       const res = await HomeApi.orderDetail(orderId);
@@ -104,6 +104,7 @@ const CompanyDetail = (props) => {
           </View>
           <View style={styles.contentStyle}>
             <Text style={styles.fontStyle}>{orderData.orderPolicyDetail.length ? String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text>
+            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail? orderPolicyDetail : '无'}</Text>
             {/* <WebView
               scrollEnabled={false}
               scalesPageToFit={false}

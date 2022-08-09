@@ -9,6 +9,7 @@ const NormalDialog = ({ dialogContent: {
   leftTitle,
   leftTitleOnPress,
   rightTitle,
+  rghtColse,
   rightTitleOnPress,
   singleButton = false,
   confirmText,
@@ -37,6 +38,7 @@ const NormalDialog = ({ dialogContent: {
             <Text style={styles.leftTitleText}>{leftTitle || '返回'}</Text>
           </TouchableOpacity>}
         <Text style={styles.title} onPress={() => console.log('点击了标题')}>{dialogTitle || '温馨提示'}</Text>
+        <Text style={styles.icon}>{rghtColse}</Text>
         {!!rightTitle &&
           <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
             <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
   },
   titleArea: {
     marginTop: 20,
-    marginBottom: 10
+    marginBottom: 10,
   },
   bottomButtonArea: {
     flexDirection: 'row',
@@ -129,6 +131,12 @@ const styles = StyleSheet.create({
   },
   leftTitleText: {
     color: '#409EFF'
+  },
+  icon: {
+    position: 'absolute', 
+    top: 0, 
+    right: 20, 
+    color: '#000'
   },
 })
 
