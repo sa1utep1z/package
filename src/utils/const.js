@@ -48,12 +48,11 @@ export const DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST = [
   {value: 'failedExam', title: '考试不过'}
 ];
 
-<<<<<<< HEAD
 export const DEFAULT_ONBORADINGSTATUS = [
   {value: 'unContact' ,title: '联系不上'},
   {value: 'giveUp', title: '放弃入职'},
   {value: 'busy', title: '临时有事'},
-=======
+];
 // 面试名单的初始状态列表
 export const DEFAULT_STATUS_LIST_OF_INTERVIEW_LIST = [
   {value: 'giveUp', title: '现场放弃'},
@@ -61,7 +60,6 @@ export const DEFAULT_STATUS_LIST_OF_INTERVIEW_LIST = [
   {value: 'haveWenShen', title: '纹身不过'},
   {value: 'failedInExam', title: '考试不过'},
   {value: 'failInComprehensiveExam', title: '综合考试不过'}
->>>>>>> ba0a70c61489fa85409ed71ddaad0f170fcc75e6
 ];
 
 export const TAB_OF_LIST = {
