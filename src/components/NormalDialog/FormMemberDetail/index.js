@@ -19,7 +19,7 @@ const FormMemberDetail = ({
     {type: 'signUpType', title: '职位来源', value: ''}, 
     {type: 'recruitName', title: '经纪人', value: ''}, 
     {type: 'storeName', title: '归属门店', value: ''}, 
-    {type: 'status', title: '报名状态', value: ''}, 
+    {type: 'status', title: '状态', value: ''}, 
     {type: 'arrivalMode', title: '到厂方式', value: ''}, 
     {type: 'signUpTime', title: '录入时间', value: ''}, 
     // {title: '备注', value: ''}, 
@@ -34,7 +34,7 @@ const FormMemberDetail = ({
           switch(key){
             case 'signUpType':
               const chanelName = CHANEL_SOURCE_LIST.find(name => name.value === memberInfoList[key]);
-              findItem.value = chanelName.title;
+              findItem.value = chanelName?.title;
               break;
             case 'status':
               findItem.value = MEMBERS_STATUS[memberInfoList[key]];

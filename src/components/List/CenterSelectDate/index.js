@@ -9,6 +9,7 @@ import { setStartDate, setEndDate } from "../../../redux/features/RangeDateOfLis
 import { getWeekName } from "../../../utils";
 
 const CenterSelectDate = ({
+  centerDateStyle,
     ...rest
   }) => {
   const dispatch = useDispatch();
@@ -112,7 +113,7 @@ const CenterSelectDate = ({
   };
 
   return (
-    <View style={styles.centerDateArea}>
+    <View style={[styles.centerDateArea, centerDateStyle]}>
       <View style={styles.topArea}>
         <View style={styles.bothArea}>
           <TouchableOpacity style={[styles.topBtn, btnType === 'week' && styles.topBtn_selected]} onPress={recentlyWeek}>

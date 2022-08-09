@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from "react-native-toast-notifications";
@@ -126,8 +126,8 @@ const InterviewList = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data}/>,
-        rightTitle: '转厂/转单',
-        rightTitleOnPress: () => transferFactory(item)
+        // rightTitle: '转厂/转单',
+        // rightTitleOnPress: () => transferFactory(item)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -153,8 +153,8 @@ const InterviewList = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
-        rightTitle: '编辑',
-        rightTitleOnPress: () => editMemberMessage(res.data)
+        // rightTitle: '编辑',
+        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

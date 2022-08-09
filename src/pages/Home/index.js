@@ -134,6 +134,7 @@ const Home = (props) => {
         refreshControl={refreshControl}
         ListHeaderComponent={<Header search={search} range={setRangeDate} />}
         ListEmptyComponent={empty}
+        ListFooterComponent={<View style={{height: 28}}></View>}
         initialNumToRender={8}
         keyboardShouldPersistTaps='handled'
         onEndReachedThreshold={0.01}

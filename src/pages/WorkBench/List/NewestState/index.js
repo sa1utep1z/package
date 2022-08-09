@@ -7,21 +7,13 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
-import CompanyDetailDialog from "../../../../components/Home/CompanyDetailDialog";
-import MemberDetailDialog from "../../../../components/List/MemberDetailDialog";
-import NewestStateDialog from "../../../../components/List/NewestStateDialog";
-import CallPhoneDialog from "../../../../components/List/CallMemberPhoneNumber";
 import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import { MEMBER_INFO, TAB_OF_LIST } from "../../../../utils/const";
+import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 
 const NewestState = () => {
   const navigation = useNavigation();
-
-  const detailRef = useRef(null);
-  const memberDetailRef = useRef(null);
-  const NewestStateDialogRef = useRef(null);
-  const callPhoneRef = useRef(null);
 
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
 
@@ -34,20 +26,6 @@ const NewestState = () => {
     })
   }, [])
 
-  let list = [];
-  for(let i = 0; i < 30; i++){
-    list.push({
-      id: `${i}`,
-      name: `某某${i+1}`,
-      factory: `厂名哈${i+1}`,
-      card: `${i%2 === 0 ? '两卡全': i % 3 === 0 ? '缺身份证' : i%5 === 0 ? '缺银行卡': i% 7 ===0 ? '两卡不全': '缺心眼儿'} `,
-      state: `${i%2 === 0 ? '在职' : i%3 === 0 ? '离职': '未报到'}`,
-      phone: `18011111111`
-    })
-  };
-
-  const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
-
   const gotoTransferFactory = () => {
     detailRef?.current?.setShowDetail(false);
     navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY);
@@ -58,10 +36,10 @@ const NewestState = () => {
     navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER, memberInfoList);
   };
 
-  const showFactoryDetail = () => detailRef.current.setShowDetail(true);
-  const showMemberDetail = () => memberDetailRef.current.setShowDetail(true);
-  const showNewestDialog = () => NewestStateDialogRef.current.setShowDialog(true);
-  const callMemberPhone = () => callPhoneRef.current.setShowCallPhone(true);
+  const showFactoryDetail = () => console.log('你点击了1');
+  const showMemberDetail = () => console.log('你点击了2');;
+  const showNewestDialog = () => console.log('你点击了3');;
+  const callMemberPhone = () => console.log('你点击了4');;
   const gotoRecordOfWorking = () => navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING)
 
   const renderItem = ({item}) => {
@@ -75,44 +53,32 @@ const NewestState = () => {
     ];
     
     return (
-      <View key={item.id} style={styles.listStyle}>
-        {renderList.map((renderItem, index) => (
-          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text style={[styles.itemText, renderItem.textStyle]}>{renderItem.fieldName !== item.press ? renderItem.fieldName : '查看'}</Text>
-            {renderItem.fieldName === item.name && <Entypo name='phone' size={16} color='#409EFF'/>}
-          </TouchableOpacity>
-        ))}
-      </View>
+      // <View key={item.id} style={styles.listStyle}>
+      //   {renderList.map((renderItem, index) => (
+      //     <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
+      //       <Text style={[styles.itemText, renderItem.textStyle]}>{renderItem.fieldName !== item.press ? renderItem.fieldName : '查看'}</Text>
+      //       {renderItem.fieldName === item.name && <Entypo name='phone' size={16} color='#409EFF'/>}
+      //     </TouchableOpacity>
+      //   ))}
+      // </View>
+      <View style={{height: 20, borderWidth: 1}}></View>
     )
   };
 
   return (
     <View style={[styles.screen]}>
       <HeaderSearch />
+      <CenterSelectDate centerDateStyle={{marginBottom: 0}} />
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{list.length}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{[].length}</Text> 条数据</Text>
       </View> 
       <BottomList 
-        list={list}
+        list={[]}
         renderItem={renderItem}
-        tabList={TAB_OF_LIST.NEWEST_STATE}
-      />
-      <CompanyDetailDialog 
-        ref={detailRef}
-        message={msg} 
-        transferFactory={gotoTransferFactory}
-      />
-      <MemberDetailDialog 
-        ref={memberDetailRef} 
-        memberInfoList={memberInfoList} 
-        edit={gotoEditMemberInfo} 
-      />
-      <NewestStateDialog
-        ref={NewestStateDialogRef}
-      />
-      <CallPhoneDialog 
-        ref={callPhoneRef} 
-        memberInfo={memberInfoList} 
+        tab={TAB_OF_LIST.NEWEST_STATE}
+        // noNumber
+        // tabStyle={{height: 80}}
+        tabTextStyle={{fontSize: 30}}
       />
     </View>
   )
@@ -123,13 +89,13 @@ const styles = StyleSheet.create({
     flex: 1
   },
   numberOfList: {
-    height: 20,
     alignItems: 'center', 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#fff'
   },
   text: {
     color: '#409EFF', 
-    fontSize: 12
+    fontSize: 26
   },
   number: {
     color: 'red'
