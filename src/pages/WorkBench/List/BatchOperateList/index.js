@@ -1,43 +1,97 @@
-import React, {useState, useRef} from "react";
-import {StyleSheet, View} from 'react-native';
+import React, {useState, useRef, useEffect, useMemo} from "react";
+import {StyleSheet, View, Text} from 'react-native';
+import { useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+import { useToast } from "react-native-toast-notifications";
 
 import SelectList from "../../../../components/SelectList";
 import SearchInput from "../../../../components/SearchInput";
-import { deepCopy } from "../../../../utils";
 import SignUpStateDialog from "../../../../components/List/SignUpStateDialog";
-import { MEMBER_INFO } from "../../../../utils/const";
+import ListApi from "../../../../request/ListApi";
+import { SUCCESS_CODE, MEMBER_INFO } from "../../../../utils/const";
+import { deepCopy } from "../../../../utils";
+import NormalDialog from "../../../../components/NormalDialog";
+import StatusChangeInInterviewList from "../../../../components/NormalDialog/StatusChangeInInterviewList";
 
-const BatchOperateList = () => {
-  const signUpStateRef = useRef(null);
+const firstPage = {pageSize: 30, pageNumber: 0};
 
-  let arr = [];
-  for(let i = 0; i < 50; i++ ){
-    arr.push({
-      title: `厂${i+1}号`,
-      id: `${i+1}`,
-      index: `${i+1}`
-    })
+const BatchOperateList = (props) => {
+  const {route: {params}} = props;
+  const toast = useToast();
+
+  const dialogRef = useRef(null);
+  const xxxRef = useRef(null);
+  
+  const role = useSelector(state => state.roleSwitch.role);
+
+  const [listArr, setListArr] = useState([]);
+  const [searchContent, setSearchContent] = useState({...firstPage, role});
+  const [dialogContent, setDialogContent] = useState({});
+
+  useEffect(()=>{
+    switch(params.list){
+      case 'interview':
+        getInterviewList();
+        break;
+      //TODO写其他页面的批量操作
+      default:
+        break;
+    }
+  },[])
+
+  const getInterviewList = async(str = '') => {
+    searchContent.status = 'INTERVIEW_PENDING';
+    searchContent.str = str;
+    try{
+      const res = await ListApi.InterViewList2(searchContent);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`获取列表失败，${res.msg}`, {type: 'danger'});
+        return;
+      }
+      if(res?.data?.content.length){
+        res.data.content.map(item => {
+          item.label = item.name;
+          item.value = item.flowId;
+        })
+        setListArr(res.data.content);
+      }
+    }catch(err){
+      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
   }
-
-  const [listArr, setListArr] = useState(arr);
 
   const filterFactory = (value) => {
-    let newArr = deepCopy(arr);
-    const filterArr = newArr.filter(item => item.title.includes(value));
-    setListArr(filterArr);
-  }
+    switch(params.list){
+      case 'interview':
+        getInterviewList(value);
+        break;
+      //TODO写其他页面的批量操作
+      default:
+        break;
+    }
+  };
 
   const batchChangeStatus = (list) => {
-    signUpStateRef?.current.setShowDetail(true);
+    if(!list.length){
+      toast.show('请选择数据！', {type: 'warning'});
+      return;
+    }
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: `已选${list.length}条`,
+      bottomButton: false,
+      dialogComponent: <StatusChangeInInterviewList dialogRef={dialogRef} batchOperateList={list} refresh={getInterviewList} />
+    });
   };
 
   return (
-    <View style={{flex: 1, alignItems: 'center', paddingTop: 10}}>
+    <View style={{flex: 1, alignItems: 'center', paddingTop: 28}}>
       <SearchInput 
-        placeholder='请输入需要筛选的名字'
-        autoSearch={filterFactory}
+        placeholder='请输入姓名或身份证'
         searchPress={filterFactory}
-        searchInputStyle={{marginBottom: 0}}
+        fontStyle={{fontSize: 26}}
+        searchInputStyle={{marginBottom: 20}}
       />
       <SelectList 
         data={listArr} 
@@ -45,9 +99,9 @@ const BatchOperateList = () => {
         canMultiChoice 
         bottomButton
       />
-      <SignUpStateDialog 
-        ref={signUpStateRef} 
-        memberInfo={MEMBER_INFO} 
+      <NormalDialog 
+        ref={dialogRef}
+        dialogContent={dialogContent}
       />
     </View>
   )

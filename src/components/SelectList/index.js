@@ -50,35 +50,35 @@ const SelectList = ({
   },[isSelectAll])
 
   const pressButton = (item) => {
-    const newArr = deepCopy(data);
-    //目前只写了单选的逻辑，单选就是选择原始数据，选择了就设置isChecked，可以保证全局只有一个isChecked
+    //单选
     if(!canMultiChoice){
+      const newArr = deepCopy(data);
       const pressItem = newArr.find(list => list.value === item.value);
       pressItem.isChecked = !pressItem.isChecked;
       setList(newArr);
-    }
 
-    let newConfirmList = [...confirmList];
-    //单选
-    if(!canMultiChoice){
+      let newConfirmList = [...confirmList];
       newConfirmList[0] = item;
       setConfirmList(newConfirmList);
       return;
     }
+
     //多选
-    if(newConfirmList.length){
-      const selectedIndex = newConfirmList.findIndex(data => data.id === item.id);
-      if(selectedIndex > -1){
-        newConfirmList.splice(selectedIndex, 1);
-        setConfirmList(newConfirmList);
-        return;
-      }
-      newConfirmList.push(item);
+    const newArr = deepCopy(list);
+    const pressItem = newArr.find(list => list.value === item.value);
+    pressItem.isChecked = !pressItem.isChecked;
+    setList(newArr);
+
+    let newConfirmList = [...confirmList];
+    const selectedIndex = newConfirmList.findIndex(data => data.value === item.value);
+    if(selectedIndex > -1){
+      newConfirmList.splice(selectedIndex, 1);
       setConfirmList(newConfirmList);
       return;
     }
     newConfirmList.push(item);
     setConfirmList(newConfirmList);
+
   };
 
   const goBack = () => navigation.goBack();
@@ -111,10 +111,10 @@ const SelectList = ({
   return (
     <>
       <View style={[styles.listView, listStyle]}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3, paddingVertical: 5 }}>
-          <View style={{flexDirection: 'row', paddingLeft: 10}}>
-            <Text style={{color: '#999999', fontSize: 28}}>共 <Text style={{color: '#409EFF'}}>{list.length}</Text> 条数据，</Text>
-            <Text style={{color: '#999999', fontSize: 28}}>已选择 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
+        <View style={styles.topMessage}>
+          <View style={styles.message_text}>
+            <Text style={styles.top_text}>共 <Text style={{color: '#409EFF'}}>{list.length}</Text> 条数据，</Text>
+            <Text style={styles.top_text}>已选择 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
           </View>
           {!!canMultiChoice && <CheckRadio 
             checked={isSelectAll}
@@ -178,6 +178,21 @@ const styles = StyleSheet.create({
     width: '100%', 
     paddingHorizontal: 28,
     borderRadius: 8
+  },
+  topMessage: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    marginBottom: 3, 
+    paddingVertical: 5
+  },
+  message_text: {
+    flexDirection: 'row', 
+    paddingLeft: 10
+  },
+  top_text: {
+    color: '#999999', 
+    fontSize: 28
   },
   scroll: { 
     backgroundColor: '#fff', 

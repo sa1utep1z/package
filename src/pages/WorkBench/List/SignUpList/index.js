@@ -17,7 +17,7 @@ import ListApi from "../../../../request/ListApi";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
-import ListChangeStatus from "../../../../components/NormalDialog/ListChangeStatus";
+import StatusChangeInSignUpList from "../../../../components/NormalDialog/StatusChangeInSignUpList";
 
 const firstPage = {pageSize: 20, pageNumber: 0};
 
@@ -30,10 +30,10 @@ const SignUpList = () => {
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
 
-  const [dialogContent, setDialogContent] = useState({});
   const [searchContent, setSearchContent] = useState({role, ...firstPage});
   const [showList, setShowList] = useState({content: []});
   const [tabNumberList, setTabNumberList] = useState({});
+  const [dialogContent, setDialogContent] = useState({});
 
   useEffect(()=>{
     navigation.setOptions({
@@ -190,15 +190,15 @@ const SignUpList = () => {
   };
 
   const changeStatus = (item) => {
-    if(item.signUpStatus !== 'SIGN_UP_PENDING'){
-      toast.show(`状态已确定！`, {type: 'warning'});
-      return;
-    }
+    // if(item.signUpStatus !== 'SIGN_UP_PENDING'){
+    //   toast.show(`状态已确定！`, {type: 'warning'});
+    //   return;
+    // }
     dialogRef.current.setShowDialog(true);
     setDialogContent({
       dialogTitle: '待处理',
       bottomButton: false,
-      dialogComponent: <ListChangeStatus dialogRef={dialogRef} item={item}/>,
+      dialogComponent: <StatusChangeInSignUpList dialogRef={dialogRef} item={item}/>
     });
   };
 

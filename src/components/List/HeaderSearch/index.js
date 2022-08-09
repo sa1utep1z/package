@@ -38,9 +38,11 @@ const HeaderSearch = ({
     ...rest
   }) => {
   const toast = useToast();
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
+  const nowTabName = useSelector(state => state.nowSelectTabNameInList.tabName);
 
   const [companyList, setCompanyList] = useState([]);
   const [storeList, setStoreList] = useState([]);
@@ -112,7 +114,7 @@ const HeaderSearch = ({
     filterFun(values);
   };
 
-  const batch = batchOperate && (
+  const batch = nowTabName === 'pending' && batchOperate && (
     <TouchableOpacity style={styles.batchButton} onPress={batchOperate}>
       <Text style={styles.btnText}>批量处理</Text>
     </TouchableOpacity>
@@ -220,7 +222,7 @@ const HeaderSearch = ({
               />
               <Field
                 name="search"
-                placeholder={placeholder? placeholder : '请输入姓名及身份证'}
+                placeholder={placeholder? placeholder : '请输入姓名或身份证'}
                 borderRadius={8}
                 fontStyle={styles.fontSize}
                 searchInputStyle={styles.searchInputStyle}
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     backgroundColor: '#409EFF', 
-    marginLeft: 15, 
+    marginLeft: 28, 
     borderRadius: 10
   },
   btnText: {

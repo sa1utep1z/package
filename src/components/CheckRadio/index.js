@@ -18,7 +18,7 @@ const CheckRadio = ({
         checked={checked}
         onPress={onClick}
         containerStyle={styles.checkBox_containerStyle}
-        size={20}
+        size={34}
         checkedIcon={otherCheckedIcon || "dot-circle-o"}
         uncheckedIcon={otherUncheckedIcon || "circle-o"}
       />
@@ -33,15 +33,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   showAll_Text: {
-    fontSize: 13, 
+    fontSize: 28, 
     color: '#999999'
   },
   showAll_Text_selected: {
     color: '#000'
   },
   checkBox_containerStyle: {
-    width: 20, 
-    height: 25, 
     justifyContent: 'center', 
     alignItems: 'center', 
     padding: 0, 

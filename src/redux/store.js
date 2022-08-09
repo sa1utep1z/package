@@ -5,6 +5,7 @@ import userAuthorityReducer from './features/userAuthority';
 import RangeDateOfListReducer from './features/RangeDateOfList';
 import homeSearchReducer from './features/homeSearch';
 import RoleSwitchReducer from './features/RoleSwitch';
+import NowSelectTabNameInListReducer from './features/NowSelectTabNameInList';
 
 export default configureStore({
   reducer: {
@@ -12,7 +13,8 @@ export default configureStore({
     hasPermission: userAuthorityReducer,
     RangeDateOfList: RangeDateOfListReducer,
     homeSearch: homeSearchReducer,
-    roleSwitch: RoleSwitchReducer
+    roleSwitch: RoleSwitchReducer,
+    nowSelectTabNameInList: NowSelectTabNameInListReducer
   },
   
   //解决redux更新数据无法传入Moment的问题；

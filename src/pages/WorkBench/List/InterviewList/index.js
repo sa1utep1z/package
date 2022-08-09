@@ -8,12 +8,16 @@ import moment from "moment";
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
+import NormalDialog from "../../../../components/NormalDialog";
+import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
+import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
+import StatusChangeInInterviewList from "../../../../components/NormalDialog/StatusChangeInInterviewList";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
-import { SUCCESS_CODE, SIGN_UP_STATUS, TAB_OF_LIST } from "../../../../utils/const";
+import { SUCCESS_CODE, INTERVIEW_STATUS, TAB_OF_LIST } from "../../../../utils/const";
 
 const firstPage = {pageSize: 20, pageNumber: 0};
 
@@ -21,12 +25,15 @@ const InterviewList = () => {
   const toast = useToast();
   const navigation = useNavigation();
 
+  const dialogRef = useRef(null);
+
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
 
   const [searchContent, setSearchContent] = useState({role, ...firstPage});
   const [showList, setShowList] = useState({content: []});
   const [tabNumberList, setTabNumberList] = useState({});
+  const [dialogContent, setDialogContent] = useState({});
 
   useEffect(()=>{
     navigation.setOptions({
@@ -101,7 +108,84 @@ const InterviewList = () => {
     getTypeList();
   },[data])
 
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST);
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'interview'});
+
+  const transferFactory = (item) => {
+    dialogRef.current.setShowDialog(false);
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item})
+  };
+
+  const pressFactory = async(item) => {
+    try{
+      const res = await ListApi.FactoryMessage(item.flowId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '岗位信息',
+        dialogComponent: <FormCompanyDetail message={res.data}/>,
+        rightTitle: '转厂/转单',
+        rightTitleOnPress: () => transferFactory(item)
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const editMemberMessage = (item) => {
+    dialogRef.current.setShowDialog(false);
+    navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER, {
+      fieldList: item
+    });
+  };
+
+  const pressName = async(item) => {
+    try{
+      const res = await ListApi.MemberMessage(item.flowId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      res.data.flowId = item.flowId;
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '会员信息',
+        dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
+        rightTitle: '编辑',
+        rightTitleOnPress: () => editMemberMessage(res.data)
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const changeStatus = (item) => {
+    console.log('item', item);
+    if(item.interviewStatus !== 'INTERVIEW_PENDING'){
+      toast.show(`状态已确定！`, {type: 'warning'});
+      return;
+    }
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: '待处理',
+      bottomButton: false,
+      dialogComponent: <StatusChangeInInterviewList dialogRef={dialogRef} item={item}/>
+    });
+  };
+
+  const callPhone = item => {
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: '温馨提示',
+      confirmOnPress: () => {
+        Linking.openURL(`tel:${item.mobile}`)
+        dialogRef.current.setShowDialog(false);
+      },
+      dialogComponent: <Text style={{textAlign: 'center', marginVertical: 20}}>确定拨打该手机吗？</Text>
+    });
+  };
 
   const renderItem = ({item}) => {
     const renderList = [
@@ -116,7 +200,7 @@ const InterviewList = () => {
         pressFun: () => pressName(item)
       },
       { 
-        fieldName: SIGN_UP_STATUS[item.signUpStatus], 
+        fieldName: INTERVIEW_STATUS[item.interviewStatus], 
         pressFun: () => changeStatus(item)
       },
       { 
@@ -185,8 +269,8 @@ const InterviewList = () => {
   return (
     <View style={styles.screen}>
       <HeaderSearch 
-        batchOperate={batchOperate}
         filterFun={filter} 
+        batchOperate={batchOperate}
       />
       <CenterSelectDate />
       <BottomList 
@@ -195,6 +279,11 @@ const InterviewList = () => {
         tab={TAB_OF_LIST.INTERVIEW_LIST}
         tabNumberList={tabNumberList}
         nowSelectIndex={selectIndex}
+        isLoading={isLoading}
+      />
+      <NormalDialog 
+        ref={dialogRef}
+        dialogContent={dialogContent}
       />
     </View>
   )

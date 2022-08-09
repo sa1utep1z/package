@@ -323,11 +323,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   bottomArea_text: {
-    color: '#DDDDDD',
+    color: '#000',
     fontSize: 24
   },
   bottomArea_btnText: {
-    fontSize: 24
+    fontSize: 24,
+    color: '#409EFF'
   },
 });
 
