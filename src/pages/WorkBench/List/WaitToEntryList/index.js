@@ -2,7 +2,7 @@ import React, {useRef, useEffect, useState} from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
-
+import { useQuery } from '@tanstack/react-query';
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
@@ -12,9 +12,9 @@ import MemberDetailDialog from "../../../../components/List/MemberDetailDialog";
 import SignUpStateDialog from "../../../../components/List/SignUpStateDialog";
 import CallPhoneDialog from "../../../../components/List/CallMemberPhoneNumber";
 import BottomList from "../../../../components/List/BottomList";
+import ListApi from "../../../../request/ListApi";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { MEMBER_INFO } from "../../../../utils/const";
-import { TAB_OF_LIST } from "../../../../utils/const";
+import { MEMBER_INFO,SUCCESS_CODE, TAB_OF_LIST } from "../../../../utils/const";
 
 const WaitToEntryList = () => {
   const navigation = useNavigation();
@@ -23,26 +23,28 @@ const WaitToEntryList = () => {
   const memberDetailRef = useRef(null);
   const signUpStateRef = useRef(null);
   const callPhoneRef = useRef(null);
-
+  const [searchContent, setSearchContent] = useState({ 
+    pageSize: 20, 
+    pageNumber: 0
+  });
   const [memberInfoList, setMemberInfoList] = useState(MEMBER_INFO);
 
+  // 获取待入职名单数据
+  const { isLoading, data, isError, status } = useQuery(['waitList', searchContent], ListApi.GetWaitList);
+  if(isError){
+    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+  }
+  if(status === 'success' && data?.code !== SUCCESS_CODE){
+    toast.show(`${data?.msg}`, { type: 'danger' });
+  }
+  console.log('打印获取的数据：', data)
+  console.log('打印获取的参数：', searchContent)
   useEffect(()=>{
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
   }, [])
-
-  let list = [];
-  for(let i = 0; i < 30; i++){
-    list.push({
-      id: `${i}`,
-      name: `什么厂${i+1}`,
-      person: `什么名${i+1}`,
-      type: `${i%2 === 0 ? '已报名' : '未报名'}`,
-      phone: `18011111111`
-    })
-  };
 
   const msg = "这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容这里是富文本内容";
 
