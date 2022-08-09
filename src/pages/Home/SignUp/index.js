@@ -129,7 +129,7 @@ const SignUp = (props) => {
         return (
           <View style={{ flex: 1 }}>
             <ScrollView style={styles.scrollArea}>
-              <View style={[styles.cardArea, { marginTop: 10 }]}>
+              <View style={[styles.cardArea, { marginTop: 28 }]}>
                 <Field
                   name="jobName"
                   title="岗位名称"
@@ -231,15 +231,12 @@ const SignUp = (props) => {
               />
             </> */}
             </ScrollView>
-            <View style={styles.btnArea}>
-              <Button
-                title="帮他报名"
-                onPress={handleSubmit}
-                buttonStyle={styles.buttonStyle}
-                containerStyle={styles.buttonContainerStyle}
-                titleStyle={styles.titleStyle}
-              />
-            </View>
+            <Button
+              title="帮他报名"
+              onPress={handleSubmit}
+              buttonStyle={styles.buttonStyle}
+              titleStyle={styles.titleStyle}
+            />
           </View>
         )
       }}
@@ -250,22 +247,19 @@ const SignUp = (props) => {
 const styles = StyleSheet.create({
   scrollArea: {
     flex: 1,
-    paddingHorizontal: 10
+    paddingHorizontal: 28
   },
   btnArea: {
-    height: 70,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderWidth: 1
   },
   buttonStyle: {
     height: 80,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
-    borderWidth: 0,
-    borderRadius: 30,
-    marginBottom: 40
-  },
-  buttonContainerStyle: {
-    marginHorizontal: 8
+    borderRadius: 50,
+    marginBottom: 28,
+    marginHorizontal: 28
   },
   titleStyle: {
     fontSize: 32,
@@ -281,8 +275,8 @@ const styles = StyleSheet.create({
   },
   cardArea: {
     backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 10,
+    marginBottom: 28,
     fontSize: 32
   }
 })

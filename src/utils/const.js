@@ -55,11 +55,11 @@ export const TAB_OF_LIST = {
     {title: '已报名',type: 'intention',}
   ],
   INTERVIEW_LIST: [
-    {title: '全部',type: 'all'},
-    {title: '待处理',type: 'waitToHandle'},
-    {title: '未面试',type: 'notInterview'},
-    {title: '未通过',type: 'notPass'},
-    {title: '已通过',type: 'wasPass'}
+    {title: '全部',type: 'total'},
+    {title: '待处理',type: 'pending'},
+    {title: '未面试',type: 'noArrive'},
+    {title: '未通过',type: 'fail'},
+    {title: '已通过',type: 'pass'}
   ],
   WAIT_TO_ENTRY_LIST: [
     {title: '全部',type: 'all'},

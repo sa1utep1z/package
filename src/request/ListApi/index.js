@@ -22,7 +22,13 @@ const ListApi = {
   //报名-已报名
   HasIntention: async(flowId) => await httpRequest.put(`admin/app/recruitFlow/signUp/intention/${flowId}`),
   //完善报名三要素
-  CompleteInfo: async(flowId, params) => await httpRequest.put(`admin/app/recruitFlow/completeInfo/${flowId}`, params)
+  CompleteInfo: async(flowId, params) => await httpRequest.put(`admin/app/recruitFlow/completeInfo/${flowId}`, params),
+
+  /**面试名单 */
+  //首页
+  InterViewList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/recruitFlow/interviewPage', params),
+  //获取面试各状态人数
+  GetInterviewTypeList: async(params) => await httpRequest.post('admin/app/recruitFlow/interview/list/num', params),
 }
 
 export default ListApi;

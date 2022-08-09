@@ -1,27 +1,48 @@
-import React, {useState} from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { setRole } from "../../../redux/features/RoleSwitch";
 
 const HeaderRightButtonOfList = () => {
-  const hasPermission = useSelector((state) => state.hasPermission.isAdministrators);
+  const dispatch = useDispatch();
 
-  const [role, setRole] = useState('factory');
+  //权限管理
+  const hasPermission = useSelector((state) => state.hasPermission.isAdministrators);
+  //RECRUIT：招聘；RESIDENT：驻厂
+  const role = useSelector((state) => state.roleSwitch.role);
+
+  const pressButton = () => {
+    switch(role){
+      case 'RECRUIT':
+        dispatch(setRole('RESIDENT'));
+        break;
+      case 'RESIDENT':
+        dispatch(setRole('RECRUIT'));
+        break;
+    }
+  };
 
   return (
     <View style={styles.screen}>
       {hasPermission && (
         <>
-          <TouchableOpacity style={[styles.btnArea, styles.btn1, role === 'factory' && styles.selectedArea]} onPress={() => role === 'recruitment' && setRole('factory')}>
-          <Text style={[styles.btnText, role === 'factory' && styles.selected]}>驻厂</Text>
+          <TouchableOpacity 
+            style={[styles.btnArea, styles.btn1, role !== 'RESIDENT' && styles.selectedArea]} 
+            onPress={pressButton}>
+            <Text 
+              style={[styles.btnText, role !== 'RESIDENT' && styles.selected]}>驻厂</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.btnArea, role === 'recruitment' && styles.selectedArea]} onPress={() => role === 'factory' && setRole('recruitment')}>
-            <Text style={[styles.btnText, role === 'recruitment' && styles.selected]}>招聘</Text>
+          <TouchableOpacity 
+            style={[styles.btnArea, role !== 'RECRUIT' && styles.selectedArea]} 
+            onPress={pressButton}>
+            <Text style={[styles.btnText, role !== 'RECRUIT' && styles.selected]}>招聘</Text>
           </TouchableOpacity>
         </>
       )}
     </View>
   )
-}
+};
 
 const styles = StyleSheet.create({
   screen: {

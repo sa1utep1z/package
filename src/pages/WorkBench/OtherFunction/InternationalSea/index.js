@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import moment from "moment";
@@ -6,19 +6,17 @@ import { useToast } from "react-native-toast-notifications";
 
 import InternationalSeaApi from "../../../../request/InternationalSeaApi";
 import EmptyArea from "../../../../components/EmptyArea";
+import NormalDialog from "../../../../components/NormalDialog";
 import { SEAS_SOURCE_TYPE, SUCCESS_CODE } from "../../../../utils/const";
-import ReceiveDialog from "../../../../components/Sea/ReceiveDialog";
-import ToastInfoInModal from "../../../../components/ToastInfoInModal";
-import { footer } from "../../../Home/listComponent";
 
 const InternationalSea = () => {
   const toast = useToast();
 
   const dialogRef = useRef(null);
-  const toastInfoRef = useRef();
+
+  const [dialogContent, setDialogContent] = useState({});
 
   const { isLoading, data = [], isError, error, refetch } = useQuery(['internationalSea'], InternationalSeaApi.InternationalSea);
-  console.log('data', data)
   if(isError){
     toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
   }
@@ -29,22 +27,25 @@ const InternationalSea = () => {
   const receiveOnPress = async(item) => {
     try{
       const res = await InternationalSeaApi.Receive(item.poolId);
-      console.log('res', res);
-      dialogRef?.current.setShowDialog(false);
       if(res.code !== SUCCESS_CODE){
-        toastInfoRef.current.toast(`${res.msg}`, 'danger');
+        toast.show(`领取失败，${res.msg}`, { type: 'danger' });
         return;
       }
-      toastInfoRef.current.toast(`领取成功！`, 'success');
-      refetch();
+      toast.show(`领取成功`, { type: 'success' });
     }catch(err) {
       console.log('err', err);
+    }finally{
+      dialogRef?.current.setShowDialog(false);
     }
   };
 
   const receiveMember = (item) => {
     dialogRef?.current.setShowDialog(true);
-    dialogRef?.current.setDialogContent(item);
+    setDialogContent({
+      dialogTitle: '温馨提示',
+      dialogComponent: <Text style={{textAlign: 'center', marginVertical: 20}}>确定领取该会员吗？</Text>,
+      confirmOnPress: () => receiveOnPress(item)
+    });
   };
 
   const refreshControl = (
@@ -120,16 +121,17 @@ const InternationalSea = () => {
           </View>
         )
       }) : <EmptyArea />}
-      <ReceiveDialog ref={dialogRef} receive={receiveOnPress}/>
-      <ToastInfoInModal ref={toastInfoRef}/>
-      {footer()}
+      <NormalDialog 
+        ref={dialogRef}
+        dialogContent={dialogContent}
+      />
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   contentContainerStyle: {
-    paddingTop: 10
+    paddingTop: 28
   },
   screen: {
     flex: 1
@@ -137,34 +139,36 @@ const styles = StyleSheet.create({
   itemArea: {
     alignItems: 'center', 
     backgroundColor: '#fff', 
-    marginHorizontal: 10, 
-    marginBottom: 10, 
-    borderRadius: 8
+    marginHorizontal: 28, 
+    marginBottom: 28, 
+    borderRadius: 10
   },
   textArea: {
-    height: 40, 
+    minHeight: 60, 
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1, 
-    borderColor: '#CCCCCC', 
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
     width: '100%', 
-    paddingLeft: 10,
+    paddingHorizontal: 20,
     color: '#000'
   },
   titleArea: {
-    width: 80
+    minWidth: 160
   },
   text: {
-    color: '#000'
+    color: '#000',
+    fontSize: 28
   },
   pressBtn: {
     marginRight: 10, 
-    paddingHorizontal: 10, 
+    paddingHorizontal: 20, 
     paddingVertical: 2, 
-    borderRadius: 3, 
+    borderRadius: 8, 
     backgroundColor: '#409EFF'
   },
   btnText: {
+    fontSize: 28,
     color: '#fff', 
     textAlign: 'center'
   },

@@ -12,12 +12,14 @@ import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { MEMBER_INFO, TAB_OF_LIST, SUCCESS_CODE, SIGN_UP_STATUS, today } from "../../../../utils/const";
+import { TAB_OF_LIST, SUCCESS_CODE, SIGN_UP_STATUS, today } from "../../../../utils/const";
 import ListApi from "../../../../request/ListApi";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import ListChangeStatus from "../../../../components/NormalDialog/ListChangeStatus";
+
+const firstPage = {pageSize: 20, pageNumber: 0};
 
 const SignUpList = () => {
   const toast = useToast();
@@ -26,17 +28,11 @@ const SignUpList = () => {
   const dialogRef = useRef(null);
 
   const rangeDate = useSelector(state => state.RangeDateOfList);
+  const role = useSelector(state => state.roleSwitch.role);
 
-  const [memberInfoList, setMemberInfoList] = useState(MEMBER_INFO);
   const [dialogContent, setDialogContent] = useState({});
-  const [searchContent, setSearchContent] = useState({ 
-    pageSize: 20, 
-    pageNumber: 0
-  });
-  const [showList, setShowList] = useState({
-    content: []
-  });
-  const [tabList, setTabList] = useState(TAB_OF_LIST.SIGN_UP_LIST);
+  const [searchContent, setSearchContent] = useState({role, ...firstPage});
+  const [showList, setShowList] = useState({content: []});
   const [tabNumberList, setTabNumberList] = useState({});
 
   useEffect(()=>{
@@ -46,14 +42,32 @@ const SignUpList = () => {
     })
   }, [])
 
+  //修改角色时
   useMemo(()=>{
     setSearchContent({
-      pageSize: 20, 
-      pageNumber: 0,
+      ...searchContent,
+      ...firstPage,
+      role
+    });
+  },[role])
+
+  //修改时间时
+  useMemo(()=>{
+    setSearchContent({
+      ...firstPage,
+      ...searchContent,
       startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
       endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
     });
   },[rangeDate])
+
+  const { isLoading, data, isError, status } = useQuery(['signUpList', searchContent], ListApi.SignUpList);
+  if(isError){
+    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+  }
+  if(status === 'success' && data?.code !== SUCCESS_CODE){
+    toast.show(`${data?.msg}`, { type: 'danger' });
+  }
 
   const getTypeList = async() => {
     const params = {
@@ -62,11 +76,11 @@ const SignUpList = () => {
       recruitIds: searchContent?.names || [],
       startDate: searchContent?.startDate || '',
       endDate: searchContent?.endDate || '',
-      str: searchContent?.str || ''
+      str: searchContent?.str || '',
+      role
     };
     try{
       const res = await ListApi.GetTypeList(params);
-      console.log('获取tab下面数字的接口', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
@@ -75,14 +89,6 @@ const SignUpList = () => {
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  }
-
-  const { isLoading, data, isError, status } = useQuery(['myMembers', searchContent], ListApi.SignUpList);
-  if(isError){
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if(status === 'success' && data?.code !== SUCCESS_CODE){
-    toast.show(`${data?.msg}`, { type: 'danger' });
   }
 
   useMemo(()=>{
@@ -102,13 +108,12 @@ const SignUpList = () => {
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const names = values.staff.length ? values.staff.map(item => item.value) : [];
+    const str = values.search;
 
     setSearchContent({
-      pageSize: 20, 
-      pageNumber: 0,
-      startDate: values.dateRange.startDate, 
-      endDate: values.dateRange.endDate, 
-      str: values.search,
+      ...searchContent,
+      ...firstPage,
+      str,
       companyIds,
       storeIds,
       names
@@ -130,7 +135,7 @@ const SignUpList = () => {
         searchContent.status = 'SIGN_UP_INTENTION';
         break;
     }
-    setSearchContent({...searchContent, pageNumber: 0, pageSize: 20});
+    setSearchContent({...searchContent, ...firstPage});
   };
 
   const transferFactory = (item) => {
@@ -220,26 +225,40 @@ const SignUpList = () => {
 
   const renderItem = ({item}) => {
     const renderList = [
-      { fieldName: item.companyShortName, pressFun: () => pressFactory(item), textStyle: {color: '#409EFF', textAlign: 'left'}, itemStyle: {justifyContent: 'flex-start'}},
-      { fieldName: item.name, pressFun: () => pressName(item)},
-      { fieldName: SIGN_UP_STATUS[item.signUpStatus], pressFun: () => changeStatus(item)},
-      { fieldName: item.mobile || '无', pressFun: () => {
-        if(item.mobile){
-          callPhone(item)
-        }
-      }, textStyle: {color: '#409EFF', fontSize: 24}}
+      { 
+        fieldName: item.companyShortName, 
+        textStyle: {color: '#409EFF', textAlign: 'left'}, 
+        itemStyle: {justifyContent: 'flex-start'},
+        pressFun: () => pressFactory(item)
+      },
+      { 
+        fieldName: item.name, 
+        pressFun: () => pressName(item)
+      },
+      { 
+        fieldName: SIGN_UP_STATUS[item.signUpStatus], 
+        pressFun: () => changeStatus(item)
+      },
+      { 
+        fieldName: item.mobile || '无', 
+        textStyle: {color: '#409EFF', fontSize: 24},
+        pressFun: () => item.mobile && callPhone(item)
+      }
     ];
     return (
       <View key={item.id} style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
-          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text style={[
-              styles.itemText, 
-              renderItem.textStyle
-            ]}
-            numberOfLines={2}
-            ellipsizeMode="tail">{renderItem.fieldName || '无'}</Text>
-            {/* {renderItem.fieldName === item.mobile && <Entypo name='phone' size={30} color='#409EFF'/>} */}
+          <TouchableOpacity 
+            key={index} 
+            style={[styles.listItem, renderItem.itemStyle]} 
+            onPress={renderItem.pressFun}>
+            <Text 
+              style={[
+                styles.itemText, 
+                renderItem.textStyle
+              ]}
+              numberOfLines={2}
+              ellipsizeMode="tail">{renderItem.fieldName || '无'}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -248,16 +267,14 @@ const SignUpList = () => {
 
   return (
     <View style={styles.screen}>
-      <HeaderSearch 
-        filterFun={filter} 
-      />
+      <HeaderSearch filterFun={filter}/>
       <CenterSelectDate />
       <BottomList
-        tab={tabList}
-        tabNumberList={tabNumberList}
         list={showList?.content}
-        isLoading={isLoading}
         renderItem={renderItem}
+        tab={TAB_OF_LIST.SIGN_UP_LIST}
+        tabNumberList={tabNumberList}
+        isLoading={isLoading}
         onEndReached={onEndReached}
         nowSelectIndex={selectIndex}
       />
