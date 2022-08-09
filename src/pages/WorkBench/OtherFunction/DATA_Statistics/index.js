@@ -259,7 +259,7 @@ const DATA_Statistics = () => {
 
   const ModalData = (item, key, value) => {
     return (
-      <View style={[{ height: 300 }]}>
+      <View style={[{ minHeight: 200 }]}>
         <View style={styles.titleBox}>
           <Text style={styles.status}>{key === 'signUpIntention' ? '报名人数' : key === 'onBoardingFail' ? '待入职人数' : key == 'onBoardingPass' ? '待入职人数' : key == 'jobOn' ? '在离职人数' : '面试人数'}</Text>
           <Text style={styles.number}>{value}</Text>
