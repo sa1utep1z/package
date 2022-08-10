@@ -48,11 +48,22 @@ export const DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST = [
   {value: 'failedExam', title: '考试不过'}
 ];
 
+// 待入职未报到原因
 export const DEFAULT_ONBORADINGSTATUS = [
   {value: 'unContact' ,title: '联系不上'},
   {value: 'giveUp', title: '放弃入职'},
   {value: 'busy', title: '临时有事'},
 ];
+
+// 在离职原因
+export const DEFAULT_JOBSTATUS = [
+  {value: 'resignation' ,title: '辞职'},
+  {value: 'selfDissociation', title: '自离'},
+  {value: 'factoryDismissal', title: '工厂开除'},
+  {value: 'giveUp', title: '放弃入职'},
+  {value: 'worker', title: '工期满转正'},
+];
+
 // 面试名单的初始状态列表
 export const DEFAULT_STATUS_LIST_OF_INTERVIEW_LIST = [
   {value: 'giveUp', title: '现场放弃'},
@@ -83,9 +94,9 @@ export const TAB_OF_LIST = {
     {title: '已入职',type: 'pass'}
   ],
   LEAVING_LIST: [
-    {title: '全部',type: 'all'},
-    {title: '离职',type: 'leaved'},
-    {title: '在职',type: 'working'}
+    {title: '全部',type: 'total'},
+    {title: '离职',type: 'resign'},
+    {title: '在职',type: 'on'}
   ],
   NEWEST_STATE: [
     {title: '姓名',type: 'name'},

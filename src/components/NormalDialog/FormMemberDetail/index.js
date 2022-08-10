@@ -34,7 +34,7 @@ const FormMemberDetail = ({
           switch(key){
             case 'signUpType':
               const chanelName = CHANEL_SOURCE_LIST.find(name => name.value === memberInfoList[key]);
-              findItem.value = chanelName.title;
+              findItem.value = chanelName?.title;
               break;
             case 'status':
               findItem.value = MEMBERS_STATUS[memberInfoList[key]];
@@ -44,7 +44,7 @@ const FormMemberDetail = ({
               findItem.value = arriveName?.label;
               break;
             case 'signUpTime':
-              findItem.value = moment(memberInfoList[key]).format('YYYY-MM-DD');
+              findItem.value = moment(memberInfoList[key]).format('YYYY-MM-DD HH:MM:SS');
               break;
             default: 
               findItem.value = memberInfoList[key];

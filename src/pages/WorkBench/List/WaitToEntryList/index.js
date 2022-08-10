@@ -30,7 +30,7 @@ const WaitToEntryList = () => {
   const [showList, setShowList] = useState({ content: [] });
   const [tabNumberList, setTabNumberList] = useState({});
   const [dialogContent, setDialogContent] = useState({});
-  console.log('状态的汇总值：', tabNumberList)
+
   // 获取待入职名单数据
   const { isLoading, data, isError, status } = useQuery(['waitList', searchContent], ListApi.GetWaitList);
   if (isError) {
@@ -119,7 +119,8 @@ const WaitToEntryList = () => {
     });
   };
 
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST);
+  // 批量操作
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'onBoarding'});
 
   // 切换状态
   const selectIndex = (selectIndex) => {
@@ -167,8 +168,8 @@ const WaitToEntryList = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data} />,
-        rightTitle: '转厂/转单',
-        rightTitleOnPress: () => transferFactory(item)
+        // rightTitle: '转厂/转单',
+        // rightTitleOnPress: () => transferFactory(item)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -189,8 +190,8 @@ const WaitToEntryList = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} />,
-        rightTitle: '编辑',
-        rightTitleOnPress: () => editMemberMessage(res.data)
+        // rightTitle: '编辑',
+        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

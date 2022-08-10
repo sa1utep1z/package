@@ -11,7 +11,7 @@ import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButt
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
-import OnBoardingStatus from "../../../../components/NormalDialog/OnBoardingStatus";
+import JobResignStatus from "../../../../components/NormalDialog/JobResignStatus";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import BottomList from "../../../../components/List/BottomList";
@@ -163,8 +163,8 @@ const LeavingList = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data} />,
-        rightTitle: '转厂/转单',
-        rightTitleOnPress: () => transferFactory(item)
+        // rightTitle: '转厂/转单',
+        // rightTitleOnPress: () => transferFactory(item)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -184,8 +184,8 @@ const LeavingList = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} />,
-        rightTitle: '编辑',
-        rightTitleOnPress: () => editMemberMessage(res.data)
+        // rightTitle: '编辑',
+        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -201,7 +201,7 @@ const LeavingList = () => {
     setDialogContent({
       dialogTitle: '待处理',
       bottomButton: false,
-      dialogComponent: <OnBoardingStatus dialogRef={dialogRef} item={item} />,
+      dialogComponent: <JobResignStatus dialogRef={dialogRef} item={item} />,
     });
   };
 

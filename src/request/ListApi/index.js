@@ -26,6 +26,7 @@ const ListApi = {
 
   // 待入职名单
   GetWaitList: async ({ queryKey: [key, params] }) => await httpRequest.post('admin/app/recruitFlow/onBoardingPage', params),
+  GetWaitList1: async (params) => await httpRequest.post('admin/app/recruitFlow/onBoardingPage', params),
   // 待入职各状态人数
   GetWaitStatus: async (params) => await httpRequest.post('admin/app/recruitFlow/onBoarding/list/num', params),
   // 批量操作

@@ -9,9 +9,11 @@ import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch
 import DataStatisticApi from "../../../../request/DataStatisticApi"
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NormalDialog from "../../../../components/NormalDialog";
+import { useToast } from 'react-native-toast-notifications';
 
 const DATA_Statistics = () => {
   const navigation = useNavigation();
+  const toast = useToast();
   const [index, setIndex] = useState(0);
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
   const [searchTotal, setSearchTotal] = useState({}); // 查询总数据参数
@@ -33,16 +35,21 @@ const DATA_Statistics = () => {
 
   // 获取企业总数据
   const companyTotalData = async (value) => {
-    const prams = {
-      ...value,
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.Company(prams)
+      if (res.code === 0) {
+        setIsLoading(true);
+        setTotalData(res.data);
+      } else {
+        setIsLoading(false)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-    const res = await DataStatisticApi.Company(prams)
-    if (res.code === 0) {
-      setIsLoading(true);
-      setTotalData(res.data);
-    } else {
-      setIsLoading(false)
-    }
+
   };
 
   // 获取企业分组数据
@@ -52,76 +59,109 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.CompanyGroup(prams)
-      setCompanyDetails(res.data.content)
+      if (res.code === 0) {
+        setCompanyDetails(res.data.content)
+      }
     } catch (error) {
-      console.log('获取到的企业分组数据：', error)
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 
   // 获取门店总数据
   const storeTotalData = async (value) => {
-    const prams = {
-      ...value,
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.Store(prams)
+      if (res.code === 0) {
+        setTotalData(res.data);
+      } else {
+        setIsLoading(false)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-    const res = await DataStatisticApi.Store(prams)
-    if (res.code === 0) {
-      setTotalData(res.data);
-    } else {
-      setIsLoading(false)
-    }
+
   };
   // 获取门店分组数据
-  const storeData = async (value) => {
-    const prams = {
-      ...value,
+  const storeGroupData = async (value) => {
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.StoreGroup(prams)
+      console.log('门店的值：', res)
+      console.log('门店的值：', prams)
+      if (res.code === 0) {
+        setCompanyDetails(res.data.content)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印报错:', error)
     }
-    const res = await DataStatisticApi.StoreGroup(prams)
-    setStoreDetails(res.data.content)
-    setCompanyDetails(res.data.content)
   };
 
   // 获取供应商总数据
   const supplierTotalData = async (value) => {
-    const prams = {
-      ...value,
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.Supplier(prams)
+      if (res.code === 0) {
+        setTotalData(res.data);
+      } else {
+        setIsLoading(false)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-    const res = await DataStatisticApi.Supplier(prams)
-    if (res.code === 0) {
-      setTotalData(res.data);
-    } else {
-      setIsLoading(false)
-    }
+
   };
   // 获取供应商分组数据
   const supplierData = async (value) => {
-    const prams = {
-      ...value,
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.SupplierGroup(prams)
+      if (res.code === 0) {
+        setCompanyDetails(res.data.content)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-    const res = await DataStatisticApi.SupplierGroup(prams)
-    setSupplierDetails(res.data.content)
-    setCompanyDetails(res.data.content)
   };
 
   // 获取招聘员总数据
   const recruiterTotalData = async (value) => {
-    const prams = {
-      ...value,
-    }
-    const res = await DataStatisticApi.Recruiter(prams)
-    if (res.code === 0) {
-      setTotalData(res.data);
-    } else {
-      setIsLoading(false)
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.Recruiter(prams)
+      if (res.code === 0) {
+        setTotalData(res.data);
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
+
   // 获取招聘员分组数据
   const recruiterData = async (value) => {
-    const prams = {
-      ...value,
+    try {
+      const prams = {
+        ...value,
+      }
+      const res = await DataStatisticApi.RecruiterGroup(prams)
+      if (res.code === 0) {
+        setCompanyDetails(res.data.content)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-    const res = await DataStatisticApi.RecruiterGroup(prams)
-    setRecruiterDetails(res.data.content)
-    setCompanyDetails(res.data.content)
   };
 
   useEffect(() => {
@@ -130,7 +170,7 @@ const DATA_Statistics = () => {
       companyTotalData(searchTotal);
     } else if (index === 1) {
       storeTotalData(searchTotal);
-      storeData(searchContent);
+      storeGroupData(searchContent);
     } else if (index === 2) {
       supplierTotalData(searchTotal);
       supplierData(searchContent);
@@ -242,7 +282,6 @@ const DATA_Statistics = () => {
     try {
       if (index === 0) {
         const res = await DataStatisticApi.SearchStoreGroup(prams)
-        console.log('asdfasdf');
         if (res.code === 0) {
           groupStoreData.current = res.data
         }
@@ -253,7 +292,7 @@ const DATA_Statistics = () => {
         }
       }
     } catch (error) {
-      console.log('打印搜索请求的异常：', error)
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   }
 
@@ -289,18 +328,17 @@ const DATA_Statistics = () => {
       property: item,
     }
     if (index === 0) {
-      companyData(prams); 
-    } else if (index === 1) { 
-      storeData(prams);
-    } else if (index === 2) { 
+      companyData(prams);
+    } else if (index === 1) {
+      storeGroupData(prams);
+    } else if (index === 2) {
       supplierData(prams);
-    } else { 
+    } else {
       recruiterData(prams)
     }
   }
 
   const record = (item, key, value) => {
-    console.log('点击选择的值：', item, value, key)
     const prams = {
       signUpPhaseStatus: "",
       interviewPhaseStatus: "",
@@ -338,6 +376,8 @@ const DATA_Statistics = () => {
       case 'jobOn':
         prams.jobPhaseStatus = 'JOB_ON';
         break;
+      default:
+        break;
     }
     getData(prams)
       .then((res) => {
@@ -346,10 +386,10 @@ const DATA_Statistics = () => {
           dialogTitle: item.name,
           bottomButton: false,
           rghtColse: <AntDesign
-          name='closecircleo'
-          size={20}
-          onPress={()=> dialogRef.current.setShowDialog(false)}
-        />,
+            name='closecircleo'
+            size={20}
+            onPress={() => dialogRef.current.setShowDialog(false)}
+          />,
           dialogComponent: ModalData(item, key, value)
         });
       })
@@ -508,49 +548,15 @@ const DATA_Statistics = () => {
           })}
         />
       </Tab>
-      {/* <TabView value={index} onChange={setIndex} animationType="spring"> */}
-      {/* <TabView.Item style={styles.tabStyle}> */}
       <FlatList
         data={companyDetails}
         ListHeaderComponent={tabHead()}
-        isLoading={isLoading}
+        // refreshing={isLoading}
         keyExtractor={(item) => item.id}
         renderItem={(item) => renderItem(item)}
         getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
         ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
       />
-      {/* </TabView.Item> */}
-      {/* <TabView.Item style={styles.tabStyle}>
-            <FlatList
-              data={storeDetails}
-              ListHeaderComponent={tabHead()}
-              keyExtractor={(item) => item.id}
-              renderItem={(item) => renderItem(item)}
-              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-            />
-          </TabView.Item>
-          <TabView.Item style={styles.tabStyle}>
-            <FlatList
-              data={supplierDetails}
-              ListHeaderComponent={tabHead()}
-              keyExtractor={(item) => item.id}
-              renderItem={(item) => renderItem(item)}
-              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-            />
-          </TabView.Item>
-          <TabView.Item style={styles.tabStyle}>
-            <FlatList
-              data={recruiterDetails}
-              ListHeaderComponent={tabHead()}
-              keyExtractor={(item) => item.id}
-              renderItem={(item) => renderItem(item)}
-              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-              ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-            />
-          </TabView.Item> */}
-      {/* </TabView> */}
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}

@@ -4,7 +4,7 @@ import { Text, Dialog, Input } from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { DEFAULT_ONBORADINGSTATUS } from '../../../utils/const';
+import { DEFAULT_JOBSTATUS } from '../../../utils/const';
 import moment from "moment";
 import { deepCopy } from '../../../utils';
 import ListApi from '../../../request/ListApi';
@@ -13,39 +13,33 @@ import { SUCCESS_CODE } from '../../../utils/const';
 const ListChangeStatus = ({
   memberInfo = [],
   dialogRef,
-  batchOperateList = [],
-  item,
-  refresh
+  item
 }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
   const invalidVal = moment(new Date()).format('YYYY-MM-DD')
-  const [statusList, setStatusList] = useState(DEFAULT_ONBORADINGSTATUS);
+  const [statusList, setStatusList] = useState(DEFAULT_JOBSTATUS);
   const [inputContent, setInputContent] = useState('');
-  const [selectStatus, setSelectStatus] = useState('notCheckedIn');
+  const [selectStatus, setSelectStatus] = useState('resign');
   const [reasonList, setReasonList] = useState([]);
-  const [showReason, setShowReason] = useState(false);
-  const [selectDate, setSelectDate] = useState(false);
   const [dateTime, setDateTime] = useState(invalidVal);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    setStatusList(DEFAULT_ONBORADINGSTATUS);
+    setStatusList(DEFAULT_JOBSTATUS);
     return () => setStatusList([]);
   }, [])
 
-  useMemo(() => {
-    setShowReason(selectStatus === 'notCheckedIn');
-    setSelectDate(selectStatus === 'hasEmployed');
-  }, [selectStatus])
-
-  const status = memberInfo?.find(item => item.type === 'signUpState');
+  // useMemo(() => {
+  //   setShowReason(selectStatus === 'notCheckedIn');
+  //   setSelectDate(selectStatus === 'hasEmployed');
+  // }, [selectStatus])
 
   const increaseReason = () => {
     setInputContent('');
     const newArr = deepCopy(statusList);
     newArr.push({
-      value: `new_value_${statusList.length - (DEFAULT_ONBORADINGSTATUS.length - 1)}`,
+      value: `new_value_${statusList.length - (DEFAULT_JOBSTATUS.length - 1)}`,
       title: inputContent
     })
     setStatusList(newArr);
@@ -66,76 +60,23 @@ const ListChangeStatus = ({
     setReasonList(reasonList);
   };
 
-  // 选择已入职
+  // 选择离职
   const pressStatus = (status) => {
     setSelectStatus(status);
   }
 
   const dateChange = (event, selectedDate) => {
     setModalVisible(false);
-    console.log('打印日期的值：', moment(selectedDate).format('YYYY-MM-DD'))
+    console.log('打印日期的值：',  moment(selectedDate).format('YYYY-MM-DD'))
     const date = moment(selectedDate).format('YYYY-MM-DD')
     setDateTime(date)
   };
 
-  // 改变状态
   const changeStatus = () => {
-    //批量操作；
-    if(batchOperateList.length){
-      batchOperate();
-      return;
-    }
-    if (selectStatus === 'notCheckedIn') {
-      noEmployed();
-      return;
-    }
-    hasEmployed();
+    resignEvent();
   };
 
-  const getParams = () => {
-    let flows = [], reasons = [], params = {};
-    //操作项列表
-    batchOperateList.length && batchOperateList.map(item => {
-      flows.push({label: item.label, value: item.value});
-    })
-    //状态
-    switch(selectStatus){
-      case 'notCheckedIn':
-        params.status = 'ON_BOARDING_FAIL';
-        break;
-      case 'hasEmployed':
-        params.status = 'ON_BOARDING_PASS';
-        params.date = dateTime;
-        break;
-    }
-    //原因
-    if(selectStatus !== 'hasEmployed' && statusList.length){
-      reasonList.map(item => reasons.push(statusList.find(status => status.value === item).title));
-    }
-    return {...params, flows, reasons};
-  };
-
-  // 批量操作
-  const batchOperate = async () => {
-    const params = getParams();
-    try {
-      const res = await ListApi.batchAll(params);
-      if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，${res?.msg}。`, { type: 'danger' });
-        return;
-      }
-      toast.show(`成功修改${res.data.total - res.data.failTotal}条。${res.data.failTotal > 0 ? `失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}。` : ''}`, { type: 'success' });
-      refresh && refresh();
-    } catch (err) {
-      console.log('批量操作ERR', err)
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    } finally {
-      dialogRef.current.setShowDialog(false);
-    }
-  };
-
-  // 未报到
-  const noEmployed = async () => {
+  const resignEvent = async () => {
     dialogRef.current.setShowDialog(false);
     const flowId = item.flowId;
     let reasons = [];
@@ -143,32 +84,13 @@ const ListChangeStatus = ({
       reasonList.map(item => reasons.push(statusList.find(status => status.value === item).title));
     }
     const params = {
-      reasons
-    };
-    try {
-      const res = await ListApi.GetNoArrive(flowId, params);
-      console.log('res', res)
-      if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，${res?.msg}。`, { type: 'danger' });
-        return;
-      }
-      toast.show(`修改状态成功！`, { type: 'success' });
-    } catch (err) {
-      console.log('err', err);
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }
-  };
-
-  // 已入职
-  const hasEmployed = async () => {
-    dialogRef.current.setShowDialog(false);
-    const flowId = item.flowId;
-    const params = {
       date: dateTime,
+      reasons,
     }
+
     try {
-      const res = await ListApi.GetPassList(flowId, params);
-      console.log('res', res)
+      const res = await ListApi.ResignList(flowId, params);
+      console.log('res', params)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，${res?.msg}。`, { type: 'danger' });
         return;
@@ -185,18 +107,15 @@ const ListChangeStatus = ({
       <View style={styles.msgArea}>
         <View style={{ width: '100%', paddingHorizontal: 10 }}>
           <View style={styles.tagArea}>
-            <Text style={[styles.tagArea_title, { marginBottom: 15 }]}>状态选择</Text>
+            <Text style={[styles.tagArea_title, {marginBottom: 10}]}>状态选择</Text>
             <View style={styles.tags}>
-              <TouchableOpacity style={[styles.tag, selectStatus === 'notCheckedIn' && { backgroundColor: '#409EFF' }]} onPress={() => pressStatus('notCheckedIn')}>
-                <Text style={[styles.tag_text, selectStatus === 'notCheckedIn' && { color: '#fff' }]}>未报到</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.tag, selectStatus === 'hasEmployed' && { backgroundColor: '#409EFF' }]} onPress={() => pressStatus('hasEmployed')}>
-                <Text style={[styles.tag_text, selectStatus === 'hasEmployed' && { color: '#fff' }]}>已入职</Text>
+              <TouchableOpacity style={[styles.tag, selectStatus === 'resign' && { backgroundColor: '#409EFF' }]} onPress={() => pressStatus('resign')}>
+                <Text style={[styles.tag_text, selectStatus === 'resign' && { color: '#fff' }]}>离职</Text>
               </TouchableOpacity>
             </View>
           </View>
-          {showReason && <View style={styles.tagArea}>
-            <Text style={[styles.tagArea_title, { marginBottom: 15 }]}>原因选择</Text>
+          <View style={styles.tagArea}>
+            <Text style={[styles.tagArea_title, {marginBottom: 15}]}>原因选择</Text>
             <ScrollView style={{ maxHeight: 150 }}>
               <View style={styles.tags_little}>
                 {statusList.length && statusList.map((item, index) => {
@@ -227,8 +146,8 @@ const ListChangeStatus = ({
                 </TouchableOpacity>
               }
             />
-          </View>}
-          {selectDate && <View style={styles.tagArea}>
+          </View>
+          <View style={styles.tagArea}>
             <View style={styles.datePicker}>
               <Text style={styles.tagArea_title}>日期选择</Text>
               <TouchableOpacity style={styles.pickerTouchable} onPress={() => setModalVisible(true)}>
@@ -248,7 +167,6 @@ const ListChangeStatus = ({
               />
             }
           </View>
-          }
         </View>
         <View style={styles.bottomButtonArea}>
           <TouchableOpacity style={styles.bottomLeft} onPress={() => dialogRef.current.setShowDialog(false)}>
@@ -286,7 +204,7 @@ const styles = StyleSheet.create({
   },
   tags: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'center'
   },
   tags_little: {
     flexDirection: 'row',
@@ -382,16 +300,16 @@ const styles = StyleSheet.create({
     // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-
+   
   },
   pickerTouchable: {
     // flex: 1,
     width: 150,
     height: 35,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 10,
+    backgroundColor: '#fff', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderRadius: 10, 
     marginLeft: 20,
     borderWidth: 1,
     borderColor: '#E3E3E3',
