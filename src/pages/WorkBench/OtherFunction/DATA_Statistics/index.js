@@ -385,11 +385,19 @@ const DATA_Statistics = () => {
         setDialogContent({
           dialogTitle: item.name,
           bottomButton: false,
+<<<<<<< HEAD
           rghtColse: <AntDesign
             name='closecircleo'
             size={20}
             onPress={() => dialogRef.current.setShowDialog(false)}
           />,
+=======
+          rightClose: <AntDesign
+          name='closecircleo'
+          size={20}
+          onPress={()=> dialogRef.current.setShowDialog(false)}
+        />,
+>>>>>>> a5f1ddd5289af643d0f9c85f4e84ec90785defe4
           dialogComponent: ModalData(item, key, value)
         });
       })

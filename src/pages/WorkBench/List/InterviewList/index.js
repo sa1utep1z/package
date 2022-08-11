@@ -61,10 +61,6 @@ const InterviewList = () => {
     });
   },[rangeDate])
 
-  useMemo(()=>{
-    console.log('searchContent', searchContent);
-  },[searchContent])
-
   const { isLoading, data, isError, status } = useQuery(['interViewList', searchContent], ListApi.InterViewList);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -187,6 +183,43 @@ const InterviewList = () => {
     });
   };
 
+  const filter = (values) => {
+    const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
+    const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
+    const names = values.staff.length ? values.staff.map(item => item.value) : [];
+    const str = values.search;
+
+    setSearchContent({
+      ...searchContent,
+      ...firstPage,
+      str,
+      companyIds,
+      storeIds,
+      names
+    });
+  };
+
+  const selectIndex = (selectIndex) => {
+    switch(selectIndex){
+      case 0:
+        searchContent.status = '';
+        break;
+      case 1:
+        searchContent.status = 'INTERVIEW_PENDING';
+        break;
+      case 2:
+        searchContent.status = 'INTERVIEW_NO_ARRIVE';
+        break;
+      case 3:
+        searchContent.status = 'INTERVIEW_FAIL';
+        break;
+      case 4:
+        searchContent.status = 'INTERVIEW_PASS';
+        break;
+    }
+    setSearchContent({...searchContent, ...firstPage});
+  };
+
   const renderItem = ({item}) => {
     const renderList = [
       { 
@@ -227,43 +260,6 @@ const InterviewList = () => {
         ))}
       </View>
     )
-  };
-
-  const filter = (values) => {
-    const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
-    const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const names = values.staff.length ? values.staff.map(item => item.value) : [];
-    const str = values.search;
-
-    setSearchContent({
-      ...searchContent,
-      ...firstPage,
-      str,
-      companyIds,
-      storeIds,
-      names
-    });
-  };
-
-  const selectIndex = (selectIndex) => {
-    switch(selectIndex){
-      case 0:
-        searchContent.status = '';
-        break;
-      case 1:
-        searchContent.status = 'INTERVIEW_PENDING';
-        break;
-      case 2:
-        searchContent.status = 'INTERVIEW_NO_ARRIVE';
-        break;
-      case 3:
-        searchContent.status = 'INTERVIEW_FAIL';
-        break;
-      case 4:
-        searchContent.status = 'INTERVIEW_PASS';
-        break;
-    }
-    setSearchContent({...searchContent, ...firstPage});
   };
 
   return (
