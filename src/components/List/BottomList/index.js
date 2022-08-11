@@ -1,5 +1,5 @@
-import React, {useState, useMemo, useEffect} from "react";
-import { View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, { useState, useMemo, useEffect } from "react";
+import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Tab, TabView, Text, Badge } from "@rneui/themed";
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -32,11 +32,11 @@ const BottomList = ({
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
 
-  useEffect(()=>{
+  useEffect(() => {
     return () => dispatch(setTabName(''));
-  },[])
+  }, [])
 
-  useMemo(()=>{
+  useMemo(() => {
     setShowList(list);
     setTabList(tab);
   },[list, tab]);
@@ -64,7 +64,7 @@ const BottomList = ({
         value={index}
         onChange={(index) => selectIndex(index)}
         variant="primary"
-        indicatorStyle={{backgroundColor: '#fff'}}
+        indicatorStyle={{ backgroundColor: '#fff' }}
         containerStyle={[styles.tab_containerStyle, tabStyle]}>
         {tabList && tabList.map((tab, tabIndex) => {
           const active = tabIndex === index;
@@ -74,11 +74,11 @@ const BottomList = ({
               key={tab.type}
               buttonStyle={styles.tabItem_buttonStyle}
               containerStyle={styles.tabItem_containerStyle}>
-                <>
-                  <Text 
-                    style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active, tabTextStyle]}>{tab.title}</Text>
-                  {!noNumber && <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>}
-                </>
+              <>
+                <Text
+                  style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active, tabTextStyle]}>{tab.title}</Text>
+                {!noNumber && <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>}
+              </>
             </Tab.Item>
           )
         })}
@@ -115,10 +115,10 @@ const styles = StyleSheet.create({
     height: 120
   },
   tabItem_titleStyle: {
-    color: '#000', 
+    color: '#000',
     fontSize: 13,
-    width: '100%', 
-    paddingVertical: 0, 
+    width: '100%',
+    paddingVertical: 0,
     paddingHorizontal: 0
   },
   tabItem_containerStyle: {
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   tabItem_titleStyle_active: {
-    color: '#409EFF', 
-    fontWeight: 'bold', 
+    color: '#409EFF',
+    fontWeight: 'bold',
   },
   tabItem_buttonStyle: {
     height: '100%',
@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
     paddingVertical: 0
   },
   tabView: {
-    flex: 1, 
-    borderTopWidth: 1, 
-    borderColor: '#E3E3E3', 
+    flex: 1,
+    borderTopWidth: 1,
+    borderColor: '#E3E3E3',
     backgroundColor: '#fff'
   },
   flatListStyle: {
-    backgroundColor: '#fff', 
-    borderTopWidth: 1, 
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
   bottomText: {

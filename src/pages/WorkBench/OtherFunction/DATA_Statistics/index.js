@@ -419,7 +419,6 @@ const DATA_Statistics = () => {
   };
 
   const tabChange = (e) => {
-    console.log('切换打印的值：', e);
     setIndex(e)
   }
 
@@ -495,15 +494,16 @@ const DATA_Statistics = () => {
         onChange={(e) => tabChange(e)}
         indicatorStyle={{
           backgroundColor: 'none',
-          // height: 4,
+          height: 5,
         }}
         containerStyle={{ padding: 0 }}
       >
         {
-          title.map((item) => {
+          title.map((item, index) => {
             return (
               <Tab.Item
                 title={item}
+                key={index}
                 titleStyle={(active) => ({
                   color: active ? "#fff" : '#000',
                   fontSize: 32,
@@ -517,101 +517,16 @@ const DATA_Statistics = () => {
             )
           })
         }
-        {/* <Tab.Item
-          title="企业"
-          titleStyle={(active) => ({
-            color: active ? "#fff" : '#000',
-            fontSize: 32,
-          })}
-          containerStyle={(active) => ({
-            backgroundColor: active ? "#409EFF" : '#fff',
-            borderRightWidth: 2,
-            borderColor: "#EEF4F7",
-          })}
-        />
-        <Tab.Item
-          title="门店"
-          titleStyle={(active) => ({
-            color: active ? "#fff" : '#000',
-            fontSize: 32,
-          })}
-          containerStyle={(active) => ({
-            backgroundColor: active ? "#409EFF" : '#fff',
-            borderRightWidth: 2,
-            borderColor: "#EEF4F7",
-          })}
-        />
-        <Tab.Item
-          title="供应商"
-          titleStyle={(active) => ({
-            color: active ? "#fff" : '#000',
-            fontSize: 32,
-          })}
-          containerStyle={(active) => ({
-            backgroundColor: active ? "#409EFF" : '#fff',
-            borderRightWidth: 2,
-            borderColor: "#EEF4F7",
-          })}
-        />
-        <Tab.Item
-          title="招聘员"
-          titleStyle={(active) => ({
-            color: active ? "#fff" : '#000',
-            fontSize: 32,
-          })}
-          containerStyle={(active) => ({
-            backgroundColor: active ? "#409EFF" : '#fff',
-            borderRightWidth: 2,
-            borderColor: "#EEF4F7",
-          })}
-        /> */}
       </Tab>
-      <TabView value={index} onChange={setIndex} animationType="spring">
-        <TabView.Item>
-          <FlatList
-            data={companyDetails}
-            ListHeaderComponent={tabHead()}
-            // refreshing={isLoading}
-            keyExtractor={(item) => item.id}
-            renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-            ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-          />
-        </TabView.Item>
-        <TabView.Item>
-          <FlatList
-            data={companyDetails}
-            ListHeaderComponent={tabHead()}
-            // refreshing={isLoading}
-            keyExtractor={(item) => item.id}
-            renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-            ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-          />
-        </TabView.Item>
-        <TabView.Item>
-          <FlatList
-            data={companyDetails}
-            ListHeaderComponent={tabHead()}
-            // refreshing={isLoading}
-            keyExtractor={(item) => item.id}
-            renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-            ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-          />
-        </TabView.Item>
-        <TabView.Item>
-          <FlatList
-            data={companyDetails}
-            ListHeaderComponent={tabHead()}
-            // refreshing={isLoading}
-            keyExtractor={(item) => item.id}
-            renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-            ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
-          />
-        </TabView.Item>
-      </TabView>
+      <FlatList
+        data={companyDetails}
+        ListHeaderComponent={tabHead()}
+        // refreshing={isLoading}
+        keyExtractor={(item) => item.id}
+        renderItem={(item) => renderItem(item)}
+        getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+        ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+      />
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -717,7 +632,7 @@ const styles = StyleSheet.create({
     color: '#f9f9f9'
   },
   listStyle: {
-    minHeight: 65,
+    minHeight: 80,
     borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
