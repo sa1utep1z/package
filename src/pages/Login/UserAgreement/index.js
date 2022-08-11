@@ -5,12 +5,12 @@ import { Text } from "@rneui/themed";
 const UserAgreement = () => (
   <ScrollView style={styles.screen}>
     <View style={styles.paragraphArea}>
-      <Text h4 >一、特别提示</Text>
+      <Text h3 >一、特别提示</Text>
       <Text style={styles.text}>        在此特别提醒您（用户）在注册成为众鼎人力用户之前，请认真阅读本《众鼎人力用户服务协议》（以下简称“协议”），确保您充分理解本协议中各条款。请您审慎阅读并选择接受或不接受本协议。您同意并点击确认本协议条款且完成注册程序后，才能成为众鼎人力的正式注册用户，并享受众鼎人力的各类服务。您的注册、登录、使用等行为将视为对本协议的接受，并同意接受本协议各项条款的约束。若您不同意本协议，或对本协议中的条款存在任何疑问，请您立即停止众鼎人力用户注册程序，并可以选择不使用本网站服务。本协议约定众鼎人力与用户之间关于“众鼎人力”软件（以下简称“服务”）的权利义务。“用户”是指注册、登录、使用本服务的个人、单位。本协议可由众鼎人力随时更新，更新后的协议条款一旦公布即代替原来的协议条款，恕不再另行通知，用户可在本软件中查阅最新版协议条款。在修改协议条款后，如果用户不接受修改后的条款，请立即停止使用众鼎人力提供的服务，用户继续使用众鼎人力提供的服务将被视为接受修改后的协议。</Text>
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>二、账号注册</Text>
+      <Text h3>二、账号注册</Text>
       <Text style={styles.text}>1、用户在使用本服务前需要注册一个“众鼎人力”账号。“众鼎人力”账号应当使用身份证号码认证的微信号注册，请用户使用尚未与“众鼎人力”账号绑定的微信号，以及未被众鼎人力根据本协议封禁的微信号注册“众鼎人力”账号。众鼎人力可以根据用户需求或产品需要对账号注册和绑定的方式进行变更，而无须事先通知用户。</Text>
       <Text style={styles.text}>2、如果注册申请者有被众鼎人力封禁的先例或涉嫌虚假注册及滥用他人名义注册，及其他不能得到许可的理由，众鼎人力将拒绝其注册申请。</Text>
       <Text style={styles.text}>3、鉴于“众鼎人力”账号的绑定注册方式，您同意众鼎人力在注册时将允许您的手机号码及手机设备识别码等信息用于注册。</Text>
@@ -19,7 +19,7 @@ const UserAgreement = () => (
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>三、账户安全</Text>
+      <Text h3>三、账户安全</Text>
       <Text style={styles.text}>1、用户一旦注册成功，成为众鼎人力的用户，将得到一个用户名，并有权利使用自己的用户名随时进行登陆众鼎人力程序。</Text>
       <Text style={styles.text}>2、用户对用户名的安全负全部责任，同时对以其用户名进行的所有活动和事件负全责。</Text>
       <Text style={styles.text}>3、用户不得以任何形式擅自转让或授权他人使用自己的众鼎人力用户名。</Text>
@@ -28,7 +28,7 @@ const UserAgreement = () => (
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>四、用户声明与保证</Text>
+      <Text h3>四、用户声明与保证</Text>
       <Text style={styles.text}>1、用户承诺其为具有完全民事行为能力的民事主体，且具有达成交易履行其义务的能力。</Text>
       <Text style={styles.text}>2、用户有义务在注册时提供自己的真实资料，并保证诸如手机号码、姓名、所在地区等内容的有效性及安全性，保证众鼎人力工作人员可以通过上述联系方式与用户取得联系。同时，用户也有义务在相关资料实际变更时及时更新有关注册资料。</Text>
       <Text style={styles.text}>3、用户通过使用众鼎人力的过程中所制作、上载、复制、发布、传播的任何內容，包括但不限于账号头像、名称、用户说明等注册信息及认证资料，或文字、语音、图片、视频、图文等发送、回复和相关链接页面，以及其他使用账号或本服务所产生的内容，不得违反国家相关法律制度，包含但不限于如下原则: </Text>
@@ -53,7 +53,7 @@ const UserAgreement = () => (
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>五、服务内容</Text>
+      <Text h3>五、服务内容</Text>
       <Text style={styles.text}>1、众鼎人力是由深圳市众鼎人力资源有限公司提供的线上求职服务平台，用户通过众鼎人力寻找到合适的务工企业后，委托众鼎人力负责提供各类用工企业岗位需求，为用户提供招聘信息，在招聘过程中提供招聘信息详情、面试休息区、输送面试服务，入职跟踪等服务。具体服务内容由众鼎人力根据实际情况提供，包括但不限于: </Text>
       <Text style={styles.text_little}>(1)在线搜索、发布招聘信息服务；</Text>
       <Text style={styles.text_little}>(2)招聘企业详情服务；</Text>
@@ -65,7 +65,7 @@ const UserAgreement = () => (
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>六、服务的终止</Text>
+      <Text h3>六、服务的终止</Text>
       <Text style={styles.text}>1、在下列情况下众鼎人力有权终止向用户提供服务：</Text>
       <Text style={styles.text_little}>(1)在用户违反本服务协议相关规定时，众鼎人力有权终止向该用户提供服务；如该用户再一次直接或间接或以他人名义注册为用户的，一经发现，众鼎人力有权直接单方面终止向该用户提供服务；</Text>
       <Text style={styles.text_little}>(2)如众鼎人力通过用户提供的信息与用户联系时，发现用户在注册时填写的联系方式已不存在或无法接通，众鼎人力以其它联系方式通知用户更改，而用户在三个工作日内仍未能提供新的联系方式，众鼎人力有权终止向该用户提供服务；</Text>
@@ -80,27 +80,27 @@ const UserAgreement = () => (
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>七、服务的变更、中断</Text>
+      <Text h3>七、服务的变更、中断</Text>
       <Text style={styles.text}>1、鉴于网络服务的特殊性，用户需同意众鼎人力会变更、中断部分或全部的网络服务，并删除（不再保存）用户在使用过程中提交的任何资料，而无需通知用户，也无需对任何用户或任何第三方承担任何责任。</Text>
       <Text style={styles.text}>2、众鼎人力需要定期或不定期地对提供网络服务的平台进行检测或者更新，如因此类情况而造成网络服务在合理时间内的中断，众鼎人力无需为此承担任何责任。</Text>
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>八、服务条款修改</Text>
+      <Text h3>八、服务条款修改</Text>
       <Text style={styles.text}>1、众鼎人力有权随时修改本服务条款的任何内容，一旦本服务条款的任何内容发生变动，众鼎人力将会通过适当方式向用户提示修改内容。</Text>
       <Text style={styles.text}>2、如果不同意众鼎人力对本服务条款所做的修改，用户有权停止使用网络服务。</Text>
       <Text style={styles.text}>3、如果用户继续使用网络服务，则视为用户接受众鼎人力对本服务条款所做的修改。</Text>
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>九、免责与赔偿声明</Text>
+      <Text h3>九、免责与赔偿声明</Text>
       <Text style={styles.text}>1、若众鼎人力已经明示其服务提供方式发生变更并提醒用户应当注意事项，用户未按要求操作所产生的一切后果由用户自行承担。</Text>
       <Text style={styles.text}>2、用户明确同意其使用众鼎人力所存在的风险将完全由其自己承担，因其使用众鼎人力而产生的一切后果也由其自己承担。 </Text>
       <Text style={styles.text}>3、用户同意保障和维护众鼎人力及其他用户的利益，由于用户在使用众鼎人力有违法、不真实、不正当、侵犯第三方合法权益的行为，或用户违反本协议项下的任何条款而给众鼎人力及任何其他第三方造成损失，用户同意承担由此造成的损害赔偿责任。 </Text>
     </View>
 
     <View style={styles.paragraphArea}>
-      <Text h4>十、隐私声明</Text>
+      <Text h3>十、隐私声明</Text>
       <Text style={styles.text}>1、适用范围：</Text>
       <Text style={styles.text_little}>(1)在用户注册众鼎人力账户时，根据要求提供的个人注册信息；</Text>
       <Text style={styles.text_little}>(2)在用户使用众鼎人力或访问其相关网页时，众鼎人力自动接收并记录的用户浏览器上的服务器数值，包括但不限于IP地址等数据及用户要求取用的网页记录。 </Text>
@@ -118,7 +118,7 @@ const UserAgreement = () => (
     </View>
 
     <View style={[styles.paragraphArea, styles.lastParagraphArea]}>
-      <Text h4>十一、其他</Text>
+      <Text h3>十一、其他</Text>
       <Text style={styles.text}>1、众鼎人力郑重提醒用户注意本协议中免除众鼎人力来责任和和限制用户权利的条款，请用户仔细阅读，自主考虑风险。未成年人应在法定监护人的陪同下阅读本协议。</Text>
       <Text style={styles.text}>2、本协议的效力、解释及纠纷的解决，适用于中华人民共和国法律。若用户和众鼎人力之间发生任何纠纷或争议，首先应友好协商解决，协商不成的，用户同意将纠纷或争议提交众鼎人力住所地有管辖权的人民法院管辖。</Text>
       <Text style={styles.text}>3、本协议的任何条款无论因何种原因无效或不具可执行性，其余条款仍有效，对双方具有约束力。</Text>
@@ -137,15 +137,17 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   text: {
-    marginTop: 10
+    marginTop: 10,
+    fontSize: 24,
   },
   text_little: {
     marginTop: 10,
     paddingLeft: 13,
-    fontSize: 13
+    fontSize: 26
   },
   lastParagraphArea: {
-    marginBottom: 20
+    marginBottom: 30,
+    paddingLeft: 10
   }
 });
 

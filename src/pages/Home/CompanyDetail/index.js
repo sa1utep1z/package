@@ -24,6 +24,10 @@ const CompanyDetail = (props) => {
   }); // 岗位详情数据
   const [height, setHeight] = useState(0);
   const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
+  const date = String(orderData.recruitRange).substring(5, 11);
+  const date2 = String(orderData.recruitRange).substring(16, 20)
+  const recruitRange = date + date2
+  
   const getDetail = async () => {
     try{
       const res = await HomeApi.orderDetail(orderId);
@@ -92,7 +96,7 @@ const CompanyDetail = (props) => {
             </View>
           </View>
           <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: 26 }}>{orderData.recruitRange}</Text>
+            <Text style={{ fontSize: 26 }}>{recruitRange}</Text>
           </View>
         </View>
         <View style={styles.boxStyle}>
