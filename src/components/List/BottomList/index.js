@@ -15,6 +15,9 @@ const BottomList = ({
     listHead,
     isLoading = false,
     nowSelectIndex = false,
+    noNumber = false,
+    tabTextStyle,
+    tabStyle,
     ...rest
   }) => {
   const dispatch = useDispatch();
@@ -47,7 +50,7 @@ const BottomList = ({
         onChange={(index) => selectIndex(index)}
         variant="primary"
         indicatorStyle={{backgroundColor: '#fff'}}
-        containerStyle={styles.tab_containerStyle}>
+        containerStyle={[styles.tab_containerStyle, tabStyle]}>
         {tabList && tabList.map((tab, tabIndex) => {
           const active = tabIndex === index;
           return (
@@ -57,8 +60,9 @@ const BottomList = ({
               buttonStyle={styles.tabItem_buttonStyle}
               containerStyle={styles.tabItem_containerStyle}>
                 <>
-                  <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tab.title}</Text>
-                  <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>
+                  <Text 
+                    style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active, tabTextStyle]}>{tab.title}</Text>
+                  {!noNumber && <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>}
                 </>
             </Tab.Item>
           )
@@ -105,7 +109,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   tabItem_text: {
-    fontSize: 32, textAlign: 'center'
+    fontSize: 32,
+    textAlign: 'center'
   },
   tabItem_titleStyle_active: {
     color: '#409EFF', 

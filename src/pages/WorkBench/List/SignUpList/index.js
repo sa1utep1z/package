@@ -190,10 +190,10 @@ const SignUpList = () => {
   };
 
   const changeStatus = (item) => {
-    // if(item.signUpStatus !== 'SIGN_UP_PENDING'){
-    //   toast.show(`状态已确定！`, {type: 'warning'});
-    //   return;
-    // }
+    if(item.signUpStatus !== 'SIGN_UP_PENDING'){
+      toast.show(`状态已确定！`, {type: 'warning'});
+      return;
+    }
     dialogRef.current.setShowDialog(true);
     setDialogContent({
       dialogTitle: '待处理',

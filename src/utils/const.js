@@ -102,8 +102,8 @@ export const TAB_OF_LIST = {
     {title: '姓名',type: 'name'},
     {title: '企业',type: 'enterprise'},
     {title: '两卡',type: 'twoCard'},
-    {title: '状态',type: 'status'},
     {title: '打卡记录',type: 'record'},
+    {title: '状态',type: 'status'},
     {title: '来源',type: 'from'}
   ],
   MY_MEMBERS: [
