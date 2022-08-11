@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useRef, useState, useMemo} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import moment from "moment";
@@ -15,14 +15,23 @@ const InternationalSea = () => {
   const dialogRef = useRef(null);
 
   const [dialogContent, setDialogContent] = useState({});
+  const [list, setList] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
-  const { isLoading, data = [], isError, error, refetch } = useQuery(['internationalSea'], InternationalSeaApi.InternationalSea);
+  const { isLoading, data = [], isError, status, refetch } = useQuery(['internationalSea', refresh], InternationalSeaApi.InternationalSea);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
   }
-  if(data?.code !== SUCCESS_CODE){
+  if(status === 'success' && data?.code !== SUCCESS_CODE){
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
+
+  useMemo(() => {
+    if(data && data.data.length){
+      data.data.map(item => item.selected = false);
+      setList(data.data);
+    }
+  }, [data])
 
   const receiveOnPress = async(item) => {
     try{
@@ -32,8 +41,11 @@ const InternationalSea = () => {
         return;
       }
       toast.show(`领取成功`, { type: 'success' });
+      const findItem = list.find(listItem => listItem.poolId === item.poolId);
+      findItem.selected = !item.selected;
+      setList([...list]);
     }catch(err) {
-      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
     }finally{
       dialogRef?.current.setShowDialog(false);
     }
@@ -54,9 +66,11 @@ const InternationalSea = () => {
       progressBackgroundColor="rgba(0,0,0,0)"
       colors={['#409EFF', 'red', 'green', 'black']}
       progressViewOffset={50}
-      onRefresh={refetch} 
+      onRefresh={() => refetch()} 
     />
   );
+
+  console.log('data+++++', data)
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle} style={styles.screen} refreshControl={refreshControl}>
@@ -81,13 +95,13 @@ const InternationalSea = () => {
               <View style={styles.titleArea}>
                 <Text style={styles.text}>手机号：</Text>
               </View>
-              <Text style={styles.text}>{item.mobile}</Text>
+              <Text style={styles.text}>{item.mobile || '无'}</Text>
             </View>
             <View style={styles.textArea}>
               <View style={styles.titleArea}>
                 <Text style={styles.text}>身份证号：</Text>
               </View>
-              <Text style={styles.text}>{item.idNo}</Text>
+              <Text style={styles.text}>{item.idNo || '无'}</Text>
             </View>
             <View style={styles.textArea}>
               <View style={styles.titleArea}>
@@ -114,8 +128,8 @@ const InternationalSea = () => {
                 </View>
                 <Text style={styles.text}>{day}</Text>
               </View>
-              <TouchableOpacity style={styles.pressBtn} onPress={() => receiveMember(item)}>
-                <Text style={styles.btnText}>领取</Text>
+              <TouchableOpacity style={[styles.pressBtn, item.selected && {backgroundColor: '#CCCCCC'}]} onPress={() => receiveMember(item)}>
+                <Text style={styles.btnText}>{item.selected ? '已领取':'领取'}</Text>
               </TouchableOpacity>
             </View>
           </View>

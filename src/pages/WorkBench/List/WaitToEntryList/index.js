@@ -157,7 +157,7 @@ const WaitToEntryList = () => {
 
   // 查看企业详情
   const pressFactory = async (item) => {
-    console.log('查看企业详情：', item)
+    console.log('searchContent', searchContent);
     try {
       const res = await ListApi.FactoryMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
@@ -168,8 +168,8 @@ const WaitToEntryList = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data} />,
-        // rightTitle: '转厂/转单',
-        // rightTitleOnPress: () => transferFactory(item)
+        rightTitle: searchContent.status !== 'ON_BOARDING_PASS' ? '转厂/转单' : '',
+        rightTitleOnPress: () => transferFactory(item)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -293,17 +293,14 @@ const WaitToEntryList = () => {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    paddingTop: 10
+    flex: 1
   },
   listStyle: {
-    minHeight: 64,
-    // maxHeight: 64,
-    borderColor: '#e3e3e3',
-    borderBottomWidth: 1,
+    minHeight: 80,
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
-    paddingLeft: 20,
-    paddingRight: 15
+    marginHorizontal: 20
   },
   listItem: {
     flex: 1,

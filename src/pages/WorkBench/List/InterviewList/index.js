@@ -122,8 +122,8 @@ const InterviewList = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data}/>,
-        // rightTitle: '转厂/转单',
-        // rightTitleOnPress: () => transferFactory(item)
+        rightTitle: '转厂/转单',
+        rightTitleOnPress: () => transferFactory(item)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

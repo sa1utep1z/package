@@ -2,17 +2,23 @@ import React, {useState, useRef, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import { Text, Input, CheckBox } from '@rneui/themed';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useToast } from 'react-native-toast-notifications';
 import moment from 'moment';
 
-import { CHANGING_STAGE_LIST_IN_DIALOG, ALL_STATUS_IN_NEWEST_LIST } from '../../../utils/const';
+import { CHANGING_STAGE_LIST_IN_DIALOG, ALL_STATUS_IN_NEWEST_LIST, SUCCESS_CODE } from '../../../utils/const';
 import { deepCopy, getYMD } from '../../../utils';
+import ListApi from '../../../request/ListApi';
 
 const NewestStatus = ({
   message,
   dialog,
-  confirmOnPress
+  confirmOnPress,
+  batchOperateList = [],
+  dialogRef,
+  refresh
 }, ref) => {
   const scrollRef = useRef(null);
+  const toast = useToast();
 
   //输入框的内容；
   const [inputContent, setInputContent] = useState('');
@@ -149,6 +155,36 @@ const NewestStatus = ({
     setNoSelectDate(false);
   };
 
+  const batchOperate = async(params) => {
+    let flows = [];
+    batchOperateList.length && batchOperateList.map(item => {
+      flows.push({label: item.label, value: item.value});
+    });
+    params.flows = flows;
+    try{
+      const res = await ListApi.BatchOperateNewestStatus(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}。`, {type: 'danger'});
+        return;
+      }
+      refresh();
+      if(res.data.failTotal === 0){
+        toast.show(`成功修改${res.data.total}条`, {type: 'success'});
+        return;
+      }else if(res.data.total !== res.data.failTotal){
+        toast.show(`成功修改${res.data.total - res.data.failTotal}条，失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}`, {type: 'danger'});
+        return;
+      }else{
+        toast.show(`修改${res.data.total}条，失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}`, {type: 'danger'});
+        return;
+      }
+    }catch(err){
+      console.log('err', err)
+    }finally{
+      dialogRef?.current.setShowDialog(false);
+    }
+  };
+
   const confirm = () => {
     //没选阶段
     if(!selectedStage){
@@ -156,7 +192,6 @@ const NewestStatus = ({
       return;
     }
 
-    const flowId = message.flowId;
     const status = selectedStatus ? selectedStatus.value : selectedStage.value;
     const date = showDate ? moment(dateTime).format('YYYY-MM-DD') : '';
     const reasons = selectedReasonList.length ? selectedReasonList.map(reason => reason.title) : [];
@@ -179,6 +214,14 @@ const NewestStatus = ({
       reasons
     };
 
+    //批量操作；
+    if(batchOperateList.length){
+      batchOperate(params);
+      return;
+    }
+
+    //在表单中的正常操作；
+    const flowId = message.flowId;
     confirmOnPress(flowId, params);
   };
 
@@ -242,7 +285,7 @@ const NewestStatus = ({
           <TouchableOpacity 
             style={[styles.titleBox, showReasonList && styles.showTitleBox, !showReasonList && styles.noShowTitleBox]} 
             onPress={reasonOnPress}>
-            <Text ellipsizeMode='tail' numberOfLines={1} style={styles.tagArea_title}>{selectedReasonList.length ? `已选${selectedReasonList.length}项：${selectedReasonList.map(reason => reason.title).join('、')}` : '请选择原因'}</Text>
+            <Text ellipsizeMode='tail' numberOfLines={1} style={styles.tagArea_title}>{selectedReasonList.length ? `已选${selectedReasonList.length}项原因：${selectedReasonList.map(reason => reason.title).join('、')}` : '请选择原因'}</Text>
           </TouchableOpacity>}
         {showReasonList && reasonList.length && 
           <View style={styles.reasonTitleArea}>

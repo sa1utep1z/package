@@ -132,7 +132,7 @@ const EditMember = (props) => {
                 />
                 <Field
                   name="status"
-                  title="报名状态"
+                  title="状态"
                   disabled
                   component={FormItem}
                 />
