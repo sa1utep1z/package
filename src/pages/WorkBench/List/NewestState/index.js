@@ -168,7 +168,7 @@ const NewestState = () => {
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '会员信息',
-        dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
+        dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />,
         rightTitle: '编辑',
         rightTitleOnPress: () => editMemberMessage(res.data)
       });

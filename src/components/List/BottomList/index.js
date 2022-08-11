@@ -1,5 +1,5 @@
-import React, {useState, useMemo, useEffect} from "react";
-import { View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, { useState, useMemo, useEffect } from "react";
+import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Tab, TabView, Text, Badge } from "@rneui/themed";
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -7,36 +7,36 @@ import { listFooter, empty } from "../../../pages/Home/listComponent";
 import { setTabName } from "../../../redux/features/NowSelectTabNameInList";
 
 const BottomList = ({
-    list = [],
-    tab = [],
-    tabNumberList = {},
-    renderItem,
-    onEndReached,
-    listHead,
-    onRefresh, //刷新函数
-    isLoading = false, //是否加载中
-    nowSelectIndex, //选择了哪个tab栏的函数
-    hasTab = true, //是否要tab栏
-    noNumber = false, //tab栏是否要统计数字
-    tabTextStyle,
-    tabStyle,
-    ...rest
-  }) => {
+  list = [],
+  tab = [],
+  tabNumberList = {},
+  renderItem,
+  onEndReached,
+  listHead,
+  onRefresh, //刷新函数
+  isLoading = false, //是否加载中
+  nowSelectIndex, //选择了哪个tab栏的函数
+  hasTab = true, //是否要tab栏
+  noNumber = false, //tab栏是否要统计数字
+  tabTextStyle,
+  tabStyle,
+  ...rest
+}) => {
   const dispatch = useDispatch();
 
   const [index, setIndex] = useState(0);
   const [showList, setShowList] = useState(list);
   const [tabList, setTabList] = useState(tab);
 
-  useEffect(()=>{
+  useEffect(() => {
     return () => dispatch(setTabName(''));
-  },[])
+  }, [])
 
-  useMemo(()=>{
+  useMemo(() => {
     setShowList(list);
     setTabList(tab);
     nowSelectIndex && nowSelectIndex(index);
-  },[list, tab, index]);
+  }, [list, tab, index]);
 
   const selectIndex = (i) => {
     setIndex(i);
@@ -51,7 +51,7 @@ const BottomList = ({
         value={index}
         onChange={(index) => selectIndex(index)}
         variant="primary"
-        indicatorStyle={{backgroundColor: '#fff'}}
+        indicatorStyle={{ backgroundColor: '#fff' }}
         containerStyle={[styles.tab_containerStyle, tabStyle]}>
         {tabList && tabList.map((tab, tabIndex) => {
           const active = tabIndex === index;
@@ -61,36 +61,30 @@ const BottomList = ({
               key={tab.type}
               buttonStyle={styles.tabItem_buttonStyle}
               containerStyle={styles.tabItem_containerStyle}>
-                <>
-                  <Text 
-                    style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active, tabTextStyle]}>{tab.title}</Text>
-                  {!noNumber && <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>}
-                </>
+              <>
+                <Text
+                  style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active, tabTextStyle]}>{tab.title}</Text>
+                {!noNumber && <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tab.type] || 0}</Text>}
+              </>
             </Tab.Item>
           )
         })}
       </Tab>}
-      {/* <TabView value={index} onChange={setIndex} animationType="spring"> */}
-        {/* {tabList.map((tab, index)=> (
-          <TabView.Item key={index} style={styles.tabView}> */}
-            {listHead}
-            <FlatList 
-              data={showList}
-              style={styles.flatListStyle}
-              renderItem={renderItem}
-              keyExtractor={(item,index) => index}
-              getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
-              refreshing={isLoading}
-              onRefresh={onRefresh}
-              initialNumToRender={15}
-              ListFooterComponent={showList?.length && listFooter}
-              ListEmptyComponent={empty}
-              onEndReachedThreshold={0.01}
-              onEndReached={onEndReached}
-            />
-          {/* </TabView.Item>
-        ))} */}
-      {/* </TabView> */}
+      {listHead}
+      <FlatList
+        data={showList}
+        style={styles.flatListStyle}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index}
+        getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
+        refreshing={isLoading}
+        onRefresh={onRefresh}
+        initialNumToRender={15}
+        ListFooterComponent={showList?.length && listFooter}
+        ListEmptyComponent={empty}
+        onEndReachedThreshold={0.01}
+        onEndReached={onEndReached}
+      />
     </>
   )
 };
@@ -101,10 +95,10 @@ const styles = StyleSheet.create({
     height: 120
   },
   tabItem_titleStyle: {
-    color: '#000', 
+    color: '#000',
     fontSize: 13,
-    width: '100%', 
-    paddingVertical: 0, 
+    width: '100%',
+    paddingVertical: 0,
     paddingHorizontal: 0
   },
   tabItem_containerStyle: {
@@ -115,8 +109,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   tabItem_titleStyle_active: {
-    color: '#409EFF', 
-    fontWeight: 'bold', 
+    color: '#409EFF',
+    fontWeight: 'bold',
   },
   tabItem_buttonStyle: {
     height: '100%',
@@ -125,14 +119,14 @@ const styles = StyleSheet.create({
     paddingVertical: 0
   },
   tabView: {
-    flex: 1, 
-    borderTopWidth: 1, 
-    borderColor: '#E3E3E3', 
+    flex: 1,
+    borderTopWidth: 1,
+    borderColor: '#E3E3E3',
     backgroundColor: '#fff'
   },
   flatListStyle: {
-    backgroundColor: '#fff', 
-    borderTopWidth: 1, 
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
     borderColor: '#E3E3E3'
   }
 });

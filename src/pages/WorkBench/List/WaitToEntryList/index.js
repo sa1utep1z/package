@@ -251,7 +251,7 @@ const WaitToEntryList = () => {
       },
       {
         fieldName: item.mobile || '无',
-        textStyle: { color: '#409EFF', fontSize: 28 },
+        textStyle: { color: '#409EFF', fontSize: 24 },
         pressFun: () => item.mobile && callPhone(item)
       }
     ];
