@@ -27,24 +27,48 @@ const LeavingList = () => {
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
   const [searchContent, setSearchContent] = useState({ role, ...firstPage });
-  const [showList, setShowList] = useState({ content: [] });
+  const [showList, setShowList] = useState([]);
   const [tabNumberList, setTabNumberList] = useState({});
   const [dialogContent, setDialogContent] = useState({});
- 
+  const [originData, setOriginData] = useState({});
+  const [nextPage, setNextPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   // 获取在离职名单数据
-  const { isLoading, data, isError, status } = useQuery(['waitList', searchContent], ListApi.GetJobOnList);
-  if (isError) {
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if (status === 'success' && data?.code !== SUCCESS_CODE) {
-    toast.show(`${data?.msg}`, { type: 'danger' });
-  }
+  const getList = async (params) => {
+    console.log('getList --> params', params);
+    setIsLoading(true);
+    try {
+      const res = await ListApi.GetJobOnList(params);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if (nextPage) {
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList(res.data.content);
+    } catch (err) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <HeaderRightButtonOfList />,
-      headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
+      headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />,
+      headerRight: () => <HeaderRightButtonOfList />
     })
+    getList(searchContent);
+    getStatusList();
+    return () => setShowList([]);
   }, [])
 
   //修改角色时
@@ -78,8 +102,6 @@ const LeavingList = () => {
     };
     try {
       const res = await ListApi.GetJobStatus(params);
-      console.log('打印获取状态的数据：', res)
-      console.log('打印获取状态的参数：', params)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, { type: 'danger' });
         return;
@@ -90,19 +112,11 @@ const LeavingList = () => {
     }
   };
 
+  // 修改查找项
   useMemo(() => {
-    if (data) {
-      if (showList.content.length >= 20 && (data.data.pageNumber - showList.pageNumber === 1)) {
-        showList.content = showList.content.concat(data.data.content);
-        showList.pageNumber = data.data.pageNumber;
-        setShowList(showList);
-        return;
-      }
-      setShowList(data.data);
-      console.log('打印在离职名单数据：', data.data)
-    }
+    getList(searchContent);
     getStatusList();
-  }, [data])
+  }, [searchContent])
 
   // 获取搜索栏的数据
   const filter = (values) => {
@@ -137,20 +151,6 @@ const LeavingList = () => {
     setSearchContent({ ...searchContent, ...firstPage });
   };
 
-  // 跳转编辑会员信息页面
-  const editMemberMessage = (item) => {
-    dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER, {
-      fieldList: item
-    });
-  };
-
-  // 跳转转场转单页面
-  const transferFactory = (item) => {
-    dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, { item })
-  };
-
   // 查看企业详情
   const pressFactory = async (item) => {
     try {
@@ -163,8 +163,6 @@ const LeavingList = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data} />,
-        // rightTitle: '转厂/转单',
-        // rightTitleOnPress: () => transferFactory(item)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -185,8 +183,6 @@ const LeavingList = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />,
-        // rightTitle: '编辑',
-        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -218,12 +214,13 @@ const LeavingList = () => {
     });
   };
 
+  const refresh = () => setSearchContent({ ...searchContent, ...firstPage });
+
   const onEndReached = () => {
-    if (showList.content.length < 20) return;
-    if ((showList.content.length >= 20) && (showList.pageNumber < showList.totalPages - 1)) {
-      if (searchContent.pageNumber < (showList.totalPages - 1)) {
-        setSearchContent({ ...searchContent, pageNumber: searchContent.pageNumber += 1 });
-      }
+    if (originData.hasNext) {
+      const nextPage = { ...searchContent, pageNumber: searchContent.pageNumber += 1 };
+      setSearchContent(nextPage);
+      setNextPage(true);
     }
   };
 
@@ -268,11 +265,12 @@ const LeavingList = () => {
       />
       <CenterSelectDate />
       <BottomList
-        list={showList?.content}
+        list={showList}
         tab={TAB_OF_LIST.LEAVING_LIST}
         renderItem={renderItem}
         tabNumberList={tabNumberList}
         isLoading={isLoading}
+        onRefresh={refresh}
         onEndReached={onEndReached}
         nowSelectIndex={selectIndex}
       />
@@ -290,7 +288,7 @@ const styles = StyleSheet.create({
   },
   listStyle: {
     minHeight: 80,
-    borderBottomWidth: 2, 
+    borderBottomWidth: 2,
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
     marginHorizontal: 20

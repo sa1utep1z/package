@@ -25,8 +25,7 @@ const ListApi = {
   CompleteInfo: async (flowId, params) => await httpRequest.put(`admin/app/recruitFlow/completeInfo/${flowId}`, params),
 
   // 待入职名单
-  GetWaitList: async ({ queryKey: [key, params] }) => await httpRequest.post('admin/app/recruitFlow/onBoardingPage', params),
-  GetWaitList1: async (params) => await httpRequest.post('admin/app/recruitFlow/onBoardingPage', params),
+  GetWaitList: async (params) => await httpRequest.post('admin/app/recruitFlow/onBoardingPage', params),
   // 待入职各状态人数
   GetWaitStatus: async (params) => await httpRequest.post('admin/app/recruitFlow/onBoarding/list/num', params),
   // 批量操作
@@ -37,7 +36,7 @@ const ListApi = {
   GetNoArrive: async (flowId, params) => await httpRequest.put(`admin/app/recruitFlow/onBoarding/fail/${flowId}`, params),
 
   // 在离职名单
-  GetJobOnList: async ({ queryKey: [key, params] }) => await httpRequest.post('admin/app/recruitFlow/jobPage', params),
+  GetJobOnList: async (params) => await httpRequest.post('admin/app/recruitFlow/jobPage', params),
   // 在离职各状态人数
   GetJobStatus: async (params) => await httpRequest.post('admin/app/recruitFlow/job/list/num', params),
   // 离职

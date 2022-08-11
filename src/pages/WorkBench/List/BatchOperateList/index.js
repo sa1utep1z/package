@@ -93,7 +93,7 @@ const BatchOperateList = (props) => {
     searchContent.status = 'ON_BOARDING_PENDING';
     searchContent.str = str;
     try {
-      const res = await ListApi.GetWaitList1(searchContent);
+      const res = await ListApi.GetWaitList(searchContent);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`获取列表失败，${res.msg}`, { type: 'danger' });
         return;

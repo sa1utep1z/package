@@ -27,24 +27,48 @@ const WaitToEntryList = () => {
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
   const [searchContent, setSearchContent] = useState({ role, ...firstPage });
-  const [showList, setShowList] = useState({ content: [] });
+  const [showList, setShowList] = useState([]);
   const [tabNumberList, setTabNumberList] = useState({});
   const [dialogContent, setDialogContent] = useState({});
+  const [originData, setOriginData] = useState({});
+  const [nextPage, setNextPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 获取待入职名单数据
-  const { isLoading, data, isError, status } = useQuery(['waitList', searchContent], ListApi.GetWaitList);
-  if (isError) {
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if (status === 'success' && data?.code !== SUCCESS_CODE) {
-    toast.show(`${data?.msg}`, { type: 'danger' });
-  }
+  const getList = async (params) => {
+    console.log('getList --> params', params);
+    setIsLoading(true);
+    try {
+      const res = await ListApi.GetWaitList(params);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if (nextPage) {
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList(res.data.content);
+    } catch (err) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <HeaderRightButtonOfList />,
-      headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
+      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>,
+      headerRight: () => <HeaderRightButtonOfList />
     })
+    getList(searchContent);
+    getStatusList();
+    return () => setShowList([]);
   }, [])
 
   //修改角色时
@@ -89,18 +113,11 @@ const WaitToEntryList = () => {
     }
   };
 
+  // 修改查找项
   useMemo(() => {
-    if (data) {
-      if (showList.content.length >= 20 && (data.data.pageNumber - showList.pageNumber === 1)) {
-        showList.content = showList.content.concat(data.data.content);
-        showList.pageNumber = data.data.pageNumber;
-        setShowList(showList);
-        return;
-      }
-      setShowList(data.data);
-    }
+    getList(searchContent);
     getStatusList();
-  }, [data])
+  }, [searchContent])
 
   // 获取搜索栏的数据
   const filter = (values) => {
@@ -120,7 +137,7 @@ const WaitToEntryList = () => {
   };
 
   // 批量操作
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'onBoarding'});
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, { list: 'onBoarding' });
 
   // 切换状态
   const selectIndex = (selectIndex) => {
@@ -190,8 +207,6 @@ const WaitToEntryList = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} />,
-        // rightTitle: '编辑',
-        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -224,12 +239,13 @@ const WaitToEntryList = () => {
     });
   };
 
+  const refresh = () => setSearchContent({...searchContent, ...firstPage});
+
   const onEndReached = () => {
-    if (showList.content.length < 20) return;
-    if ((showList.content.length >= 20) && (showList.pageNumber < showList.totalPages - 1)) {
-      if (searchContent.pageNumber < (showList.totalPages - 1)) {
-        setSearchContent({ ...searchContent, pageNumber: searchContent.pageNumber += 1 });
-      }
+    if(originData.hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
     }
   };
 
@@ -275,13 +291,15 @@ const WaitToEntryList = () => {
       />
       <CenterSelectDate />
       <BottomList
-        list={showList?.content}
+        list={showList}
         tab={TAB_OF_LIST.WAIT_TO_ENTRY_LIST}
         renderItem={renderItem}
         tabNumberList={tabNumberList}
         isLoading={isLoading}
+        onRefresh={refresh}
         onEndReached={onEndReached}
         nowSelectIndex={selectIndex}
+        hasNext={originData?.hasNext}
       />
       <NormalDialog
         ref={dialogRef}
@@ -297,7 +315,7 @@ const styles = StyleSheet.create({
   },
   listStyle: {
     minHeight: 80,
-    borderBottomWidth: 2, 
+    borderBottomWidth: 2,
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
     marginHorizontal: 20

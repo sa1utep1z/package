@@ -70,7 +70,7 @@ const FormMemberDetail = ({
   };
 
   const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'))
-  console.log('打印数据：', newDate)
+
   return (
     <ScrollView style={styles.msgArea}>
       {
