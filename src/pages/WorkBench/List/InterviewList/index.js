@@ -31,43 +31,48 @@ const InterviewList = () => {
   const role = useSelector(state => state.roleSwitch.role);
 
   const [searchContent, setSearchContent] = useState({role, ...firstPage});
-  const [showList, setShowList] = useState({content: []});
+  const [showList, setShowList] = useState([]);
+  const [originData, setOriginData] = useState({});
   const [tabNumberList, setTabNumberList] = useState({});
   const [dialogContent, setDialogContent] = useState({});
+  const [nextPage, setNextPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=>{
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    getList(searchContent);
+    getTypeList();
+    return () => setShowList([]);
   }, [])
 
-  //修改角色时
-  useMemo(()=>{
-    setSearchContent({
-      ...searchContent,
-      ...firstPage,
-      role
-    });
-  },[role])
-
-  //修改时间时
-  useMemo(()=>{
-    setSearchContent({
-      ...firstPage,
-      ...searchContent,
-      startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
-      endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
-    });
-  },[rangeDate])
-
-  const { isLoading, data, isError, status } = useQuery(['interViewList', searchContent], ListApi.InterViewList);
-  if(isError){
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if(status === 'success' && data?.code !== SUCCESS_CODE){
-    toast.show(`${data?.msg}`, { type: 'danger' });
-  }
+  const getList = async(params) => {
+    console.log('getList --> params', params);
+    setIsLoading(true);
+    try{
+      const res = await ListApi.InterViewList(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if(nextPage){
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList(res.data.content);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      setIsLoading(false);
+    }
+  };
 
   const getTypeList = async() => {
     const params = {
@@ -91,18 +96,30 @@ const InterviewList = () => {
     }
   };
 
+  //修改角色时
   useMemo(()=>{
-    if(data){
-      if(showList.content.length >= 20 && (data.data.pageNumber - showList.pageNumber === 1)){
-        showList.content = showList.content.concat(data.data.content);
-        showList.pageNumber = data.data.pageNumber;
-        setShowList(showList);
-        return;
-      }
-      setShowList(data.data);
-    }
+    setSearchContent({
+      ...searchContent,
+      ...firstPage,
+      role
+    });
+  },[role])
+
+  //修改时间时
+  useMemo(()=>{
+    setSearchContent({
+      ...firstPage,
+      ...searchContent,
+      startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
+      endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
+    });
+  },[rangeDate])
+
+  //修改查找项时
+  useMemo(()=>{
+    getList(searchContent);
     getTypeList();
-  },[data])
+  },[searchContent])
 
   const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'interview'});
 
@@ -148,9 +165,7 @@ const InterviewList = () => {
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '会员信息',
-        dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
-        // rightTitle: '编辑',
-        // rightTitleOnPress: () => editMemberMessage(res.data)
+        dialogComponent: <FormMemberDetail memberInfoList={res.data}/>
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -220,6 +235,16 @@ const InterviewList = () => {
     setSearchContent({...searchContent, ...firstPage});
   };
 
+  const refresh = () => setSearchContent({...searchContent, ...firstPage});
+
+  const onEndReached = () => {
+    if(originData.hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
+    }
+  };
+
   const renderItem = ({item}) => {
     const renderList = [
       { 
@@ -270,12 +295,15 @@ const InterviewList = () => {
       />
       <CenterSelectDate />
       <BottomList 
-        list={showList?.content}
+        list={showList}
         renderItem={renderItem}
         tab={TAB_OF_LIST.INTERVIEW_LIST}
         tabNumberList={tabNumberList}
         nowSelectIndex={selectIndex}
+        onRefresh={refresh}
+        onEndReached={onEndReached}
         isLoading={isLoading}
+        hasNext={originData?.hasNext}
       />
       <NormalDialog 
         ref={dialogRef}

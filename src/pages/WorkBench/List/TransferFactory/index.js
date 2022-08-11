@@ -54,6 +54,7 @@ const TransferFactory = (props) => {
       }
       toast.show(`转单成功！`, {type: 'success'});
       navigation.goBack();
+      params.refresh && params.refresh();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }

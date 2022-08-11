@@ -35,13 +35,44 @@ const NewestState = () => {
 
   const [searchContent, setSearchContent] = useState({role, ...firstPage});
   const [showList, setShowList] = useState([]);
+  const [originData, setOriginData] = useState({});
   const [dialogContent, setDialogContent] = useState({});
+  const [nextPage, setNextPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getList = async(params) => {
+    console.log('getList --> params', params);
+    setIsLoading(true);
+    try{
+      const res = await ListApi.NewestList(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if(nextPage){
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList(res.data.content);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      setIsLoading(false);
+    }
+  };
 
   useEffect(()=>{
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    getList(searchContent);
+    return () => setShowList([]);
   }, [])
 
   //修改角色时
@@ -63,31 +94,10 @@ const NewestState = () => {
     });
   },[rangeDate])
 
-  const { isLoading, data, isError, status, refetch } = useQuery(['newestState', searchContent], ListApi.NewestList);
-  if(isError){
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if(status === 'success' && data?.code !== SUCCESS_CODE){
-    toast.show(`${data?.msg}`, { type: 'danger' });
-  }
-
-  useMemo(() => {
-    console.log('searchContent', searchContent);
-    console.log('data', data)
-  }, [searchContent, data])
-  
+  //修改查找项时
   useMemo(()=>{
-    if(data){
-      // if(showList.content.length >= 20 && (data.data.pageNumber - showList.pageNumber === 1)){
-      //   showList.content = showList.content.concat(data.data.content);
-      //   showList.pageNumber = data.data.pageNumber;
-      //   setShowList(showList);
-      //   return;
-      // }
-      setShowList(data.data.content);
-    }
-    // getTypeList();
-  },[data])
+    getList(searchContent);
+  },[searchContent])
 
   const gotoRecordOfWorking = () => navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING)
 
@@ -119,8 +129,6 @@ const NewestState = () => {
     });
   };
 
-  const refresh = () => setSearchContent({...searchContent, ...firstPage});
-
   const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'newestStatus'});
 
   const editMemberMessage = (item) => {
@@ -138,6 +146,7 @@ const NewestState = () => {
         return;
       }
       toast.show(`修改成功`, {type: 'success'});
+      refresh();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
@@ -179,7 +188,7 @@ const NewestState = () => {
 
   const transferFactory = (item) => {
     dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item})
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item, refresh})
   };
 
   const pressFactory = async(item) => {
@@ -218,11 +227,21 @@ const NewestState = () => {
     });
   };
 
+  const refresh = () => setSearchContent({...searchContent, ...firstPage});
+
+  const onEndReached = () => {
+    if(originData.hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
+    }
+  };
+
   const renderItem = ({item}) => {
     const status = checkStatus(item);
     const renderList = [
       { 
-        fieldName: item.name, 
+        fieldName: item.name || '无', 
         textStyle: {color: '#409EFF'},
         pressFun: () => item.mobile && callPhone(item)
       },
@@ -273,7 +292,7 @@ const NewestState = () => {
       <HeaderSearch filterFun={filter} batchOperate={batchOperate} canBatchOperate/>
       <CenterSelectDate centerDateStyle={{marginBottom: 0}} />
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{data?.data.total || 0}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total || 0}</Text> 条数据</Text>
       </View> 
       <View style={styles.list_head}>
         {NEWEST_STATE_LIST_HEAD.map(item => <Text style={styles.list_head_text}>{item.title}</Text>)}
@@ -281,10 +300,13 @@ const NewestState = () => {
       <BottomList 
         list={showList}
         renderItem={renderItem}
-        hasTab={false}
         tab={TAB_OF_LIST.NEWEST_STATE}
-        isLoading={isLoading}
         onRefresh={refresh}
+        onEndReached={onEndReached}
+        isLoading={isLoading}
+        hasNext={originData?.hasNext}
+        renderItemHeight={100}
+        hasTab={false}
         tabTextStyle={{fontSize: 30}}
       />
       <NormalDialog 

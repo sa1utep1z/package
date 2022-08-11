@@ -47,7 +47,7 @@ const BatchOperateList = (props) => {
   const getNewestList = async(str = '') => {
     searchContent.str = str;
     try {
-      const res = await ListApi.NewestList2(searchContent);
+      const res = await ListApi.NewestList(searchContent);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`获取列表失败，${res.msg}`, { type: 'danger' });
         return;
@@ -70,7 +70,7 @@ const BatchOperateList = (props) => {
     searchContent.status = 'INTERVIEW_PENDING';
     searchContent.str = str;
     try {
-      const res = await ListApi.InterViewList2(searchContent);
+      const res = await ListApi.InterViewList(searchContent);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`获取列表失败，${res.msg}`, { type: 'danger' });
         return;
