@@ -14,7 +14,7 @@ const ListApi = {
 
   /**报名名单 */
   //首页
-  SignUpList: async ({ queryKey: [key, params] }) => await httpRequest.post('admin/app/recruitFlow/signUpPage', params),
+  SignUpList: async (params) => await httpRequest.post('admin/app/recruitFlow/signUpPage', params),
   //获取报名各状态人数
   GetTypeList: async (params) => await httpRequest.post('admin/app/recruitFlow/signUp/list/num', params),
   //报名-无意愿
@@ -45,8 +45,7 @@ const ListApi = {
 
   /**面试名单 */
   //首页
-  InterViewList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/recruitFlow/interviewPage', params),
-  InterViewList2: async (params) =>await httpRequest.post('admin/app/recruitFlow/interviewPage', params),
+  InterViewList: async (params) => await httpRequest.post('admin/app/recruitFlow/interviewPage', params),
   //获取面试各状态人数
   GetInterviewTypeList: async(params) => await httpRequest.post('admin/app/recruitFlow/interview/list/num', params),
   //面试通过
@@ -59,8 +58,7 @@ const ListApi = {
   BatchOperateInInterview: async(params) => await httpRequest.put(`admin/app/recruitFlow/interview/batch`, params),
 
   /**最新状态 */
-  NewestList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/recruitFlow/statusPage', params),
-  NewestList2: async (params) =>await httpRequest.post('admin/app/recruitFlow/statusPage', params),
+  NewestList: async (params) =>await httpRequest.post('admin/app/recruitFlow/statusPage', params),
   ChangeStatusInNewestList: async(flowId,params) => await httpRequest.put(`admin/app/recruitFlow/status/${flowId}`, params),
   BatchOperateNewestStatus: async(params) => await httpRequest.put(`admin/app/recruitFlow/status/batch`, params)
 }

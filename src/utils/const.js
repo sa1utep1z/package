@@ -107,10 +107,10 @@ export const TAB_OF_LIST = {
     {title: '来源',type: 'from'}
   ],
   MY_MEMBERS: [
-    {title: '全部', type: 'all'},
-    {title: '待回访', type: 'preparing'},
-    {title: '有意愿', type: 'haveWill'},
-    {title: '无意愿', type: 'noWill'}
+    {title: '全部', type: 'allNums'},
+    {title: '待回访', type: 'preparingNums'},
+    {title: '有意愿', type: 'haveWillNums'},
+    {title: '无意愿', type: 'noWillNums'}
   ]
 };
 
