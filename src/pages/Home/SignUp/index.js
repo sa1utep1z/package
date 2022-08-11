@@ -15,12 +15,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 const SignUpValidationSchema = Yup.object().shape({
   name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
-  IDCard: Yup.string().required('请输入身份证').matches(IDCard, '请输入正确的身份证号'),
-  phone: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号')
+  // IDCard: Yup.string().required('请输入身份证').matches(IDCard, '请输入正确的身份证号'),
+  // phone: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号')
 });
 
 let restForm;
-
 const SignUp = (props) => {
   const { navigation, route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
@@ -42,15 +41,12 @@ const SignUp = (props) => {
 
   // 提交报名表单
   const onSubmit = async (values) => {
-    console.log('提交了表单', values);
     const prams = {
       ...values,
       arriveMode: values.arriveMode === true ? 'FACTORY' : 'STORE',
     }
-    console.log('提交了表单参数：', prams);
     try {
       const res = await HomeApi.SignUp(orderId, prams);
-      console.log('提交表单：', res);
       if (res.code === 0) {
         toast.show('提交成功');
         return;
@@ -121,7 +117,7 @@ const SignUp = (props) => {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={SignUpValidationSchema}
+      // validationSchema={SignUpValidationSchema}
       handleChange={(e) => console.log('e', e)}
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {
@@ -151,6 +147,13 @@ const SignUp = (props) => {
                   title="身份证"
                   placeholder="请输入会员身份证"
                   maxLength={18}
+                  validate={value=>{
+                    let errorMsg;
+                    if(!IDCard.test(value)) {
+                      errorMsg = '请输入正确的身份证号';
+                    }
+                    return errorMsg
+                  }}
                   isRequired
                   component={FormItem}
                 />
@@ -159,6 +162,13 @@ const SignUp = (props) => {
                   title="手机号"
                   placeholder="请输入会员手机号"
                   maxLength={11}
+                  validate={value=>{
+                    let errorMsg;
+                    if(!phone.test(value)) {
+                      errorMsg = '请输入正确的手机号';
+                    }
+                    return errorMsg
+                  }}
                   isRequired
                   component={FormItem}
                 />

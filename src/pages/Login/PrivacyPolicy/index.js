@@ -138,17 +138,18 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   text: {
-    marginTop: 10
+    marginTop: 10,
+    fontSize: 24
   },
   text_little: {
     marginTop: 10,
     paddingLeft: 13,
-    fontSize: 13
+    fontSize: 24
   },
   text_little_little: {
     marginTop: 5,
     paddingLeft: 25,
-    fontSize: 13
+    fontSize: 24
   },
   lastParagraphArea: {
     marginBottom: 20
