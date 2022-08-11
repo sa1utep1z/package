@@ -151,7 +151,8 @@ const styles = StyleSheet.create({
   },
   bottomText: {
     textAlign: 'center',
-    fontSize: 26
+    fontSize: 26,
+    color: '#CCCCCC'
   }
 });
 

@@ -1,14 +1,13 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from "react-native-toast-notifications";
+import moment from "moment";
 
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { TAB_OF_LIST, MEMBERS_STATUS } from "../../../../utils/const";
+import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE } from "../../../../utils/const";
 import MyMembersApi from "../../../../request/MyMembersApi";
-import { SUCCESS_CODE } from "../../../../utils/const";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import BottomList from "../../../../components/List/BottomList";
@@ -19,6 +18,8 @@ import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 
+const firstPage = {pageSize: 20, pageNumber: 0};
+
 const MyMembers = () => {
   const toast = useToast();
   
@@ -26,74 +27,72 @@ const MyMembers = () => {
 
   const dialogRef = useRef(null);
 
-  const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
+  const rangeDate = useSelector(state => state.RangeDateOfList);
 
-  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0});
+  const [searchContent, setSearchContent] = useState({...firstPage});
   const [dialogContent, setDialogContent] = useState({});
-  const [showList, setShowList] = useState({
-    content: []
-  });
-  const [tabList, setTabList] = useState(TAB_OF_LIST.MY_MEMBERS);
+  const [tabNumberList, setTabNumberList] = useState({});
+  const [originData, setOriginData] = useState({});
+  const [showList, setShowList] = useState([]);
+  const [nextPage, setNextPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    return () => setShowList({content: []});
+    getList(searchContent);
+    return () => setShowList([]);
   }, []);
 
-  useMemo(()=>{
-    console.log('searchContent',searchContent);
-    console.log('showList',showList);
-  },[searchContent])
-
-  const { isLoading, data, isError, status } = useQuery(['myMembers', searchContent], MyMembersApi.MyMemberList);
-  if(isError){
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if(status === 'success' && data?.code !== SUCCESS_CODE){
-    toast.show(`${data?.msg}`, { type: 'danger' });
-  }
-
-  useMemo(()=>{
-    if(data){
-      // 如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
-      if(showList?.hasNext && data.data.pageNumber !== showList.pageNumber){
-        const concatList = showList.content.concat(data.data.content);
-        showList.content = concatList;
-        showList.pageNumber = data.data.pageNumber;
-        showList.hasNext = data.data.hasNext;
-        setShowList(showList);  
+  const getList = async(params) => {
+    console.log('getList --> params', params);
+    setIsLoading(true);
+    try{
+      const res = await MyMembersApi.MyMemberList(params);
+      console.log('my-members-->res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      data.data.content.map(item => item.itemId = item.poolId);
-      setShowList(data.data);
-    }
-  },[data])
-
-  useMemo(()=>{
-    if(showList.content.length){
-      tabList.map(item =>{
-        switch(item.type){
-          case 'all':
-            item.nums = showList.allNums;
-            break;
-          case 'preparing':
-            item.nums = showList.preparingNums;
-            break;
-          case 'haveWill':
-            item.nums = showList.haveWillNums;
-            break;
-          case 'noWill':
-            item.nums = showList.noWillNums;
-            break;
-          default:
-            break;
-        }
+      //初始数据
+      setOriginData(res.data);
+      //设置顶部tab栏的数字
+      setTabNumberList({
+        allNums: res.data.allNums,
+        preparingNums: res.data.preparingNums,
+        haveWillNums: res.data.haveWillNums,
+        noWillNums: res.data.noWillNums
       });
-      setTabList(tabList);
+      //渲染的列表（有下一页时）
+      if(nextPage){
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList(res.data.content);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      setIsLoading(false);
     }
-  },[data]);
+  };
+
+  //修改时间时
+  useMemo(()=>{
+    setSearchContent({
+      ...firstPage,
+      ...searchContent,
+      nextReturnVisitDateStart: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
+      nextReturnVisitDateEnd: moment(rangeDate.endDate).format('YYYY-MM-DD')
+    });
+  },[rangeDate])
+
+  //修改查找项时
+  useMemo(()=>{
+    getList(searchContent);
+  },[searchContent])
 
   const selectIndex = (selectIndex) => {
     switch(selectIndex){
@@ -110,7 +109,7 @@ const MyMembers = () => {
         searchContent.returnVisitResult = 'NO_WILL';
         break;
     }
-    setSearchContent({ ...searchContent });
+    setSearchContent({ ...searchContent, ...firstPage });
   };
 
   const rightTitleOnPress = (msg, data) => {
@@ -124,8 +123,6 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.MemberDetail(poolId);
-      console.log('res', res)
-      console.log('data', data);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -218,10 +215,8 @@ const MyMembers = () => {
     const memberStatus = values.status.length ? values.status[0].value.toUpperCase() : '';
 
     setSearchContent({
-      pageSize: 20, 
-      pageNumber: 0,
-      nextReturnVisitDateStart: values.dateRange.startDate, 
-      nextReturnVisitDateEnd: values.dateRange.endDate, 
+      ...searchContent,
+      ...firstPage,
       willSignUpCompanyId,
       recruiterName: values.staff, 
       nameOrIdNo: values.search, 
@@ -232,7 +227,7 @@ const MyMembers = () => {
 
   const renderItem = ({item}) => {
     const renderList = [
-      { fieldName: item.userName, pressFun: () => memberDetailOnPress(item)},
+      { fieldName: item.userName || '无', pressFun: () => memberDetailOnPress(item)},
       { 
         fieldName: item.willSignUpCompanyName || '无', 
         textStyle: !item.willSignUpCompanyName && {color: '#000'},
@@ -255,7 +250,10 @@ const MyMembers = () => {
       <View key={item.poolId} style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
           <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text ellipsizeMode='tail' numberOfLines={2} style={[styles.itemText, renderItem.pressFun && {color: '#409EFF'}, renderItem.textStyle]}>{renderItem.fieldName}</Text>
+            <Text 
+              ellipsizeMode='tail' 
+              numberOfLines={2} 
+              style={[styles.itemText, renderItem.pressFun && {color: '#409EFF'}, renderItem.textStyle]}>{renderItem.fieldName}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -265,7 +263,7 @@ const MyMembers = () => {
   const listHead = (
     <>
       <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{showList?.content.length || 0}</Text> 条数据</Text>
+        <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total|| 0}</Text> 条数据</Text>
       </View> 
       <View style={styles.listHead_title}>
         <Text style={styles.listHead_item}>姓名</Text>
@@ -278,14 +276,18 @@ const MyMembers = () => {
     </>
   );
 
+  const refresh = () => setSearchContent({...searchContent, ...firstPage});
+
   const onEndReached = () => {
-    if(showList.hasNext){
-      setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
+    if(originData.hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
     }
   };
 
   return (
-    <View style={[styles.screen, showSearch && {paddingTop: 31}]}>
+    <View style={styles.screen}>
       <HeaderSearch 
         filterFun={filter} 
         canFilterStatus 
@@ -295,13 +297,17 @@ const MyMembers = () => {
       />
       <CenterSelectDate />
       <BottomList 
-        list={showList?.content}
+        list={showList}
         isLoading={isLoading}
         listHead={listHead}
+        tab={TAB_OF_LIST.MY_MEMBERS}
+        tabNumberList={tabNumberList}
         renderItem={renderItem}
+        onRefresh={refresh}
         onEndReached={onEndReached}
-        tab={tabList}
         nowSelectIndex={selectIndex}
+        renderItemHeight={100}
+        hasNext={originData?.hasNext}
       />
       <NormalDialog 
         ref={dialogRef}
@@ -328,7 +334,7 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   listStyle: {
-    height: 75,
+    height: 100,
     borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)',  
     flexDirection: 'row', 
@@ -340,7 +346,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemText: {
-    fontSize: 22,
+    fontSize: 28,
     color: '#000',
     textAlign: 'center'
   },

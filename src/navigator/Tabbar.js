@@ -90,7 +90,7 @@ const Tabbar = () => {
 
 const styles = StyleSheet.create({
   headerArea: {
-    height: 88, 
+    height: 100, 
     flexDirection: 'row', 
     justifyContent: 'center', 
     alignItems: 'center', 

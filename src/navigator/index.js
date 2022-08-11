@@ -322,7 +322,7 @@ export default Navigator = () => {
 
 const styles = StyleSheet.create({
   headerArea: {
-    height: 88, 
+    height: 100, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center', 

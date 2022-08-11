@@ -2,7 +2,7 @@ import httpRequest from '../httpRequest';
 
 const MyMembersApi = {
   // 我的会员首页列表
-  MyMemberList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/memberPool/list', params),
+  MyMemberList: async (params) => await httpRequest.post('admin/app/memberPool/list', params),
   // 我的会员首页获取企业详情
   CompaniesList: async() => await httpRequest.get(`common/companies/forSelect`),
   // 我的会员首页获取门店列表

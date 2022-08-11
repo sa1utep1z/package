@@ -39,7 +39,7 @@ const PersonalCard = () => {
         {({handleSubmit}) => (
           <>
             <View style={{flex: 1}}>
-              <View style={[styles.cardArea, {marginTop: 10}]}>
+              <View style={[styles.cardArea]}>
                 <Field
                   name="name"
                   title="姓名"
@@ -76,17 +76,13 @@ const PersonalCard = () => {
               </View>
             </View>
             {isEditing && (
-              <>
-                <View style={styles.btnArea}>
-                  <Button
-                    title="保 存"
-                    onPress={handleSubmit}
-                    buttonStyle={styles.buttonStyle}
-                    containerStyle={styles.buttonContainerStyle}
-                    titleStyle={styles.titleStyle}
-                  />
-                </View>
-              </>
+              <Button
+                title="保 存"
+                onPress={handleSubmit}
+                buttonStyle={styles.buttonStyle}
+                containerStyle={styles.buttonContainerStyle}
+                titleStyle={styles.titleStyle}
+              />
             )}
           </>
         )}
@@ -101,36 +97,34 @@ const styles = StyleSheet.create({
   cardArea: {
     backgroundColor: '#fff', 
     borderRadius: 8, 
-    margin: 10
-  },
-  btnArea: {
-    height: 70, 
-    justifyContent: 'center'
+    margin: 28
   },
   buttonStyle: {
-    height: 45,
+    height: 80,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 50
   },
   buttonContainerStyle: {
-    marginHorizontal: 8
+    marginHorizontal: 28,
+    marginBottom: 28
   },
   titleStyle: {
-    fontSize: 20,
+    fontSize: 34,
     fontWeight: 'bold'
   },
   headRightText: {
     color: '#409EFF', 
     marginRight: 20, 
-    fontSize: 16
+    fontSize: 32
   },
   labelAreaStyle: {
     justifyContent: 'flex-start'
   },
   inputStyle: {
-    textAlign: 'right'
+    textAlign: 'right',
+    paddingRight: 20
   }
 });
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Platform, View, Text, TextInput} from 'react-native';
 import { ToastProvider } from "react-native-toast-notifications";
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { simpleUpdate } from 'react-native-update';
@@ -17,6 +16,7 @@ moment.locale('zh-cn');
 
 const { appKey } = _updateConfig[Platform.OS];
 
+//这里是解决应用字体随设备设置字体大小而缩放的问题；
 TextInput.defaultProps = Object.assign({}, TextInput.defaultProps, {defaultProps: false});
 Text.defaultProps = Object.assign({}, Text.defaultProps, {allowFontScaling: false});
 
@@ -36,10 +36,6 @@ const App = () => {
           successColor="rgba(73,182,117, 0.95)"
           warningColor="rgba(227,212,28, 0.95)"
           dangerColor="rgba(204,0,0, 0.95)"
-          // icon={<AntDesign name='message1' size={20} color='#fff'/>}
-          successIcon={<AntDesign name='checkcircleo' size={20} color='#fff'/>}
-          warningIcon={<AntDesign name='warning' size={20} color='#fff'/>}
-          dangerIcon={<AntDesign name='exclamationcircleo' size={20} color='#fff'/>}
           renderToast={(toastOptions) => {
             const type = toastOptions.type;
             return (

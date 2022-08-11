@@ -79,7 +79,7 @@ const Mine = () => {
         <Avatar
           size={128}
           rounded
-          source={{uri: 'https://cdn.pixabay.com/photo/2019/11/03/20/11/portrait-4599553__340.jpg'}}
+          source={{uri: 'https://labor-dev.oss-cn-shenzhen.aliyuncs.com/labormgt/labor/logo.png?Expires=1660208589&OSSAccessKeyId=TMP.3Kk9KzMJzXFhMkhdE2bd7AkSVFAPrSdRxb5e44U9qhDdRCHTbaR19D2P1q3dttfy3PdFfCnaFo9ounPJFt4x2ggoB9qBaY&Signature=K9%2FpbhXu1EKVnTe7w%2Bn80WzUQwo%3D'}}
           containerStyle={styles.headContainerStyle}
           key={1}
         />
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   headContainerStyle: {
     borderColor: 'grey',
     borderWidth: 1,
+    backgroundColor: '#fff'
   },
   titleArea: {
     marginLeft: 29

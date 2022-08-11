@@ -18,7 +18,7 @@ const InternationalSea = () => {
   const [list, setList] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
-  const { isLoading, data = [], isError, status, refetch } = useQuery(['internationalSea', refresh], InternationalSeaApi.InternationalSea);
+  const { isLoading, data = {data: []}, isError, status, refetch } = useQuery(['internationalSea', refresh], InternationalSeaApi.InternationalSea);
   if(isError){
     toast.show(`出现了意料之外的问题，请联系管理员处理！`, { type: 'danger' });
   }
@@ -27,7 +27,7 @@ const InternationalSea = () => {
   }
 
   useMemo(() => {
-    if(data && data.data.length){
+    if(data && data?.data.length){
       data.data.map(item => item.selected = false);
       setList(data.data);
     }
@@ -69,8 +69,6 @@ const InternationalSea = () => {
       onRefresh={() => refetch()} 
     />
   );
-
-  console.log('data+++++', data)
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle} style={styles.screen} refreshControl={refreshControl}>
@@ -187,6 +185,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   lastItem: {
+    height: 100,
     borderBottomWidth: 0, 
     justifyContent: 'space-between'
   },
