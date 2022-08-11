@@ -121,7 +121,7 @@ const NewestState = () => {
 
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
 
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST);
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'newestStatus'});
 
   const editMemberMessage = (item) => {
     dialogRef.current.setShowDialog(false);

@@ -6,13 +6,12 @@ import { useToast } from "react-native-toast-notifications";
 
 import SelectList from "../../../../components/SelectList";
 import SearchInput from "../../../../components/SearchInput";
-import SignUpStateDialog from "../../../../components/List/SignUpStateDialog";
 import ListApi from "../../../../request/ListApi";
-import { SUCCESS_CODE, MEMBER_INFO } from "../../../../utils/const";
-import { deepCopy } from "../../../../utils";
+import { SUCCESS_CODE } from "../../../../utils/const";
 import NormalDialog from "../../../../components/NormalDialog";
 import StatusChangeInInterviewList from "../../../../components/NormalDialog/StatusChangeInInterviewList";
 import OnBoardingStatus from "../../../../components/NormalDialog/OnBoardingStatus";
+import NewestStatus from "../../../../components/NormalDialog/NewestStatus";
 
 const firstPage = { pageSize: 30, pageNumber: 0 };
 
@@ -21,7 +20,6 @@ const BatchOperateList = (props) => {
   const toast = useToast();
 
   const dialogRef = useRef(null);
-  const xxxRef = useRef(null);
 
   const role = useSelector(state => state.roleSwitch.role);
 
@@ -37,10 +35,35 @@ const BatchOperateList = (props) => {
       case 'onBoarding':
         getOnBoardingList();
         break;
+      case 'newestStatus':
+        getNewestList();
+        break;
       default:
         break;
     }
-  }, [])
+  }, []);
+
+  // 最新状态数据
+  const getNewestList = async(str = '') => {
+    searchContent.str = str;
+    try {
+      const res = await ListApi.NewestList2(searchContent);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`获取列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if (res?.data?.content.length) {
+        res.data.content.map(item => {
+          item.label = item.name;
+          item.value = item.flowId;
+        })
+        setListArr(res.data.content);
+      }
+    } catch (err) {
+      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   // 面试待处理数据
   const getInterviewList = async (str = '') => {
@@ -95,13 +118,15 @@ const BatchOperateList = (props) => {
       case 'onBoarding':
         getOnBoardingList(value)
         break;
+      case 'newestStatus':
+        getNewestList(value);
+        break;
       default:
         break;
     }
   };
 
   const batchChangeStatus = (list) => {
-    console.log('打印list:', list)
     if (!list.length) {
       toast.show('请选择数据！', { type: 'warning' });
       return;
@@ -122,10 +147,16 @@ const BatchOperateList = (props) => {
           dialogComponent: <OnBoardingStatus dialogRef={dialogRef} batchOperateList={list} refresh={getOnBoardingList} />
         });
         break;
+      case 'newestStatus':
+        setDialogContent({
+          dialogTitle: `已选${list.length}条`,
+          bottomButton: false,
+          dialogComponent: <NewestStatus dialogRef={dialogRef} batchOperateList={list} refresh={getNewestList} />
+        });
+        break;
       default:
         break;
     }
-
   };
 
   return (
@@ -141,6 +172,7 @@ const BatchOperateList = (props) => {
         confirm={batchChangeStatus}
         canMultiChoice
         bottomButton
+        showStatus={params.list === 'newestStatus'}
       />
       <NormalDialog
         ref={dialogRef}

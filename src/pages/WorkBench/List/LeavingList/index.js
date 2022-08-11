@@ -285,17 +285,14 @@ const LeavingList = () => {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    paddingTop: 10
+    flex: 1
   },
   listStyle: {
-    minHeight: 64,
-    // maxHeight: 64,
-    borderColor: '#e3e3e3',
-    borderBottomWidth: 1,
+    minHeight: 80,
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
-    paddingLeft: 20,
-    paddingRight: 15
+    marginHorizontal: 20
   },
   listItem: {
     flex: 1,

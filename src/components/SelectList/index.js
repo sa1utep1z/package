@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect } from 'react';
+import React, {useRef, useState, useEffect, useMemo } from 'react';
 import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
 import { Text, CheckBox, Button, Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { deepCopy } from '../../utils';
 import { empty } from '../../pages/Home/listComponent';
 import CheckRadio from '../CheckRadio';
-import { useMemo } from 'react';
+import { MEMBERS_STATUS } from '../../utils/const';
 
 const SelectList = ({
     data,
@@ -15,6 +15,7 @@ const SelectList = ({
     bottomButton, //是否有底部按钮
     listStyle,
     bottomButtonStyle,
+    showStatus = false, //是否展示状态
     ...rest
 }) => {
   const navigation = useNavigation();
@@ -96,6 +97,7 @@ const SelectList = ({
     return (
       <TouchableOpacity key={item.value} style={styles.listItem} onPress={()=>pressButton(item)}>
         <Text style={{fontSize: 28}}>{item.label}</Text>
+        {showStatus && <Text style={styles.status}>{MEMBERS_STATUS[item.status]}</Text>}
         <CheckBox
           center
           size={30}
@@ -238,6 +240,12 @@ const styles = StyleSheet.create({
   clearSelected: {
     color: '#409EFF', 
     paddingRight: 15
+  },
+  status: {
+    flex: 1,
+    fontSize: 28,
+    textAlign: 'right', 
+    paddingRight: 20
   }
 })
 

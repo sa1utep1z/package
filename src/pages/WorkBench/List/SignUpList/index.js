@@ -181,8 +181,8 @@ const SignUpList = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
-        rightTitle: '编辑',
-        rightTitleOnPress: () => editMemberMessage(res.data)
+        // rightTitle: '编辑',
+        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

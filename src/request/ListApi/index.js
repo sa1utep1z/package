@@ -60,7 +60,9 @@ const ListApi = {
 
   /**最新状态 */
   NewestList: async ({queryKey: [ key, params]}) => await httpRequest.post('admin/app/recruitFlow/statusPage', params),
-  ChangeStatusInNewestList: async(flowId,params) => await httpRequest.put(`admin/app/recruitFlow/status/${flowId}`, params)
+  NewestList2: async (params) =>await httpRequest.post('admin/app/recruitFlow/statusPage', params),
+  ChangeStatusInNewestList: async(flowId,params) => await httpRequest.put(`admin/app/recruitFlow/status/${flowId}`, params),
+  BatchOperateNewestStatus: async(params) => await httpRequest.put(`admin/app/recruitFlow/status/batch`, params)
 }
 
 export default ListApi;
