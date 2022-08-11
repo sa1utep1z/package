@@ -12,7 +12,7 @@ import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { TAB_OF_LIST, SUCCESS_CODE, SIGN_UP_STATUS, today } from "../../../../utils/const";
+import { TAB_OF_LIST, SUCCESS_CODE, SIGN_UP_STATUS } from "../../../../utils/const";
 import ListApi from "../../../../request/ListApi";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";

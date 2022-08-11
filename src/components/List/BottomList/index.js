@@ -13,9 +13,11 @@ const BottomList = ({
     renderItem,
     onEndReached,
     listHead,
-    isLoading = false,
-    nowSelectIndex = false,
-    noNumber = false,
+    onRefresh, //刷新函数
+    isLoading = false, //是否加载中
+    nowSelectIndex, //选择了哪个tab栏的函数
+    hasTab = true, //是否要tab栏
+    noNumber = false, //tab栏是否要统计数字
     tabTextStyle,
     tabStyle,
     ...rest
@@ -45,7 +47,7 @@ const BottomList = ({
 
   return (
     <>
-      <Tab
+      {hasTab && <Tab
         value={index}
         onChange={(index) => selectIndex(index)}
         variant="primary"
@@ -67,7 +69,7 @@ const BottomList = ({
             </Tab.Item>
           )
         })}
-      </Tab>
+      </Tab>}
       {/* <TabView value={index} onChange={setIndex} animationType="spring"> */}
         {/* {tabList.map((tab, index)=> (
           <TabView.Item key={index} style={styles.tabView}> */}
@@ -79,7 +81,7 @@ const BottomList = ({
               keyExtractor={(item,index) => index}
               getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
               refreshing={isLoading}
-              onRefresh={()=>console.log('刷新')}
+              onRefresh={onRefresh}
               initialNumToRender={15}
               ListFooterComponent={showList?.length && listFooter}
               ListEmptyComponent={empty}

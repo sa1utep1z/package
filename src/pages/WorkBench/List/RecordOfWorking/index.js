@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const RecordOfWorking = () => {
   return (
     <View style={styles.screen}>
-      <Text>员工考勤信息</Text>
+      <Text style={{fontSize: 32}}>员工考勤信息</Text>
     </View>
   )
 }

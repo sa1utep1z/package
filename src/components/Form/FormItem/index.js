@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'row',  
     alignItems: 'center', 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginRight: 10
   },
   label: {
     textAlign: 'center',

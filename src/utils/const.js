@@ -105,8 +105,8 @@ export const TAB_OF_LIST = {
 
 export const CHANGING_STAGE_LIST_IN_DIALOG = [
   {title: '报名', value: 'signUp', statusList: [
-    {title: '已报名', value: 'wasSignedUp'},
-    {title: '无意向', value: 'noThought', reasonList: [
+    {title: '已报名', value: 'SIGN_UP_INTENTION'},
+    {title: '无意向', value: 'SIGN_UP_NO_INTENTION', reasonList: [
       {title: '精神异常', value: 'jingshenbing'},
       {title: '无身份证', value: 'noIDCard'},
       {title: '大花臂', value: 'bigFlowerHand'},
@@ -115,8 +115,8 @@ export const CHANGING_STAGE_LIST_IN_DIALOG = [
     ]}
   ]},
   {title: '面试', value: 'interview', statusList: [
-    {title: '通过', value: 'pass'},
-    {title: '未通过', value: 'failed', reasonList: [
+    {title: '通过', value: 'INTERVIEW_PASS'},
+    {title: '未通过', value: 'INTERVIEW_FAIL', reasonList: [
       {title: '现场放弃', value: 'giveUp'},
       {title: '身份证过期', value: 'IDCardOutDate'},
       {title: '精神异常', value: 'jingshenbing'},
@@ -125,7 +125,7 @@ export const CHANGING_STAGE_LIST_IN_DIALOG = [
       {title: '考试不过', value: 'failInExam'},
       {title: '体检不过', value: 'failInPhysical'}
     ]},
-    {title: '未面试', value: 'notInterview', reasonList: [
+    {title: '未面试', value: 'INTERVIEW_NO_ARRIVE', reasonList: [
       {title: '现场放弃', value: 'giveUp'},
       {title: '身份证过期', value: 'IDCardOutDate'},
       {title: '精神异常', value: 'jingshenbing'},
@@ -136,20 +136,32 @@ export const CHANGING_STAGE_LIST_IN_DIALOG = [
     ]}
   ]},
   {title: '待入职', value: 'joinIn', statusList: [
-    {title: '已入职', value: 'working'},
-    {title: '未报到', value: 'notArrive', reasonList: [
+    {title: '已入职', value: 'ON_BOARDING_PASS'},
+    {title: '未报到', value: 'ON_BOARDING_FAIL', reasonList: [
       {title: '联系不上', value: 'unconnected'},
-      {title: '临时有事', value: 'haveSomething'},
-      {title: '放弃入职', value: 'giveUpJob'}
+      {title: '放弃入职', value: 'giveUpJob'},
+      {title: '临时有事', value: 'haveSomething'}
     ]}
   ]},
-  {title: '离职', value: 'leave', reasonList: [
+  {title: '离职', value: 'JOB_RESIGN', reasonList: [
     {title: '辞职', value: 'resign'},
     {title: '自离', value: 'selfLeave'},
     {title: '工期满转正', value: 'positive'},
     {title: '工厂开除', value: 'fired'},
     {title: '放弃入职', value: 'giveUp'}
   ]},
+];
+
+//这是在最新状态名单中的修改状态的枚举值
+export const ALL_STATUS_IN_NEWEST_LIST = [
+  'SIGN_UP_INTENTION',
+  'SIGN_UP_NO_INTENTION',
+  'INTERVIEW_PASS',
+  'INTERVIEW_FAIL',
+  'INTERVIEW_NO_ARRIVE',
+  'ON_BOARDING_PASS',
+  'ON_BOARDING_FAIL',
+  'JOB_RESIGN'
 ];
 
 export const SEAS_SOURCE_TYPE = {
@@ -160,19 +172,29 @@ export const SEAS_SOURCE_TYPE = {
   'SHARE': '分享裂变'
 };
 
-//我的会员-状态
+//我的会员-状态(所有状态合集)
 export const MEMBERS_STATUS = {
   'NULL': '无',
+  /**报名 */
   'SIGN_UP_PENDING': '报名待处理',
   'SIGN_UP_NO_INTENTION': '无意向',
+  'SIGN_UP_INTENTION': '已报名',
+
+  /**面试 */
+  'INTERVIEW_PENDING': '面试待处理',
+  'INTERVIEW_PASS': '已通过',
   'INTERVIEW_NO_ARRIVE': '未去面试',
   'INTERVIEW_FAIL': '未通过',
+
+  /**入职 */
+  'ON_BOARDING_PENDING': '入职待处理',
   'ON_BOARDING_FAIL': '未报到',
+  'ON_BOARDING_PASS': '已入职',
+
+  /**在离职 */
   'JOB_ON': '在职',
   'PREPARE_JOB_RESIGN': '预离职',
-  'JOB_RESIGN': '离职',
-  'INTERVIEW_PENDING': '面试待处理',
-  'ON_BOARDING_PENDING': '入职待处理'
+  'JOB_RESIGN': '离职'
 };
 
 //我的会员-会员信息
@@ -307,3 +329,12 @@ export const WAY_TO_GO = [
   { label: '自行到厂', value: 'FACTORY' },
   { label: '门店集合', value: 'STORE' },
 ];
+
+export const NEWEST_STATE_LIST_HEAD = [
+  {title: '姓名'},
+  {title: '企业'},
+  {title: '两卡'},
+  {title: '打卡记录'},
+  {title: '状态'},
+  {title: '来源'}
+]

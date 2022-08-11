@@ -25,7 +25,7 @@ const FormCompanyDetail = ({
           </View>
         </View>
       </View>
-      <ScrollView style={styles.message}>
+      <ScrollView style={styles.message} showsVerticalScrollIndicator={false}>
         {message ? <Text style={{marginHorizontal: 10}}>{message.orderPolicyDetail ? String(message.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text> : <EmptyArea />}
       </ScrollView>
     </View>

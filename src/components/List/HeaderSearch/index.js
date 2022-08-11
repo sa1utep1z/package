@@ -25,7 +25,6 @@ const initialValues = {
 };
 
 const HeaderSearch = ({
-  batchOperate,
   filterFun,
   staffSearch,
   companySingleSelect,
@@ -35,6 +34,8 @@ const HeaderSearch = ({
   placeholder= '',
   companyShow = true,
   withoutCompanyFilter = false,
+  batchOperate, // 批量操作函数
+  canBatchOperate =false, //批量操作按钮显隐（在最新状态中需要主动给，其他页面是根据tab栏来控制显隐的）；
     ...rest
   }) => {
   const toast = useToast();
@@ -111,10 +112,10 @@ const HeaderSearch = ({
   };
 
   const onSubmit = values => {
-    filterFun(values);
+    filterFun && filterFun(values);
   };
 
-  const batch = nowTabName === 'pending' && batchOperate && (
+  const batch = (nowTabName === 'pending' || canBatchOperate) && batchOperate && (
     <TouchableOpacity style={styles.batchButton} onPress={batchOperate}>
       <Text style={styles.btnText}>批量处理</Text>
     </TouchableOpacity>

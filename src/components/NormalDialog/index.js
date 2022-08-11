@@ -9,13 +9,13 @@ const NormalDialog = ({ dialogContent: {
   leftTitle,
   leftTitleOnPress,
   rightTitle,
-  rghtColse,
+  rightClose,
   rightTitleOnPress,
-  singleButton = false,
   confirmText,
   confirmOnPress,
   backOnPress,
-  bottomButton = true
+  bottomButton = true,
+  bottomButtonStyle
 } }, ref) => {
   const [showDialog, setShowDialog] = useState(false);
 
@@ -38,26 +38,23 @@ const NormalDialog = ({ dialogContent: {
             <Text style={styles.leftTitleText}>{leftTitle || '返回'}</Text>
           </TouchableOpacity>}
         <Text style={styles.title} onPress={() => console.log('点击了标题')}>{dialogTitle || '温馨提示'}</Text>
-        <Text style={styles.icon}>{rghtColse}</Text>
+        <Text style={styles.icon}>{rightClose}</Text>
         {!!rightTitle &&
           <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
             <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
           </TouchableOpacity>}
       </View>
       {dialogComponent ? dialogComponent : <EmptyArea />}
-      {bottomButton && <View style={styles.bottomButtonArea}>
-        {singleButton ? <TouchableOpacity style={styles.singleButton}>
-          <Text style={styles.singleButtonText}>提交</Text>
-        </TouchableOpacity> :
-          <>
-            <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress || defaultBackOnPress}>
-              <Text style={styles.leftText}>取消</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress || defaultConfirmOnPress}>
-              <Text style={styles.rightText}>{confirmText || '确认'}</Text>
-            </TouchableOpacity>
-          </>}
-      </View>}
+      {bottomButton && 
+        <View style={[styles.bottomButtonArea, bottomButtonStyle]}>
+          <TouchableOpacity style={styles.bottomLeft} onPress={backOnPress || defaultBackOnPress}>
+            <Text style={styles.leftText}>取消</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress || defaultConfirmOnPress}>
+            <Text style={styles.rightText}>{confirmText || '确认'}</Text>
+          </TouchableOpacity>
+        </View>
+      }
     </Dialog>
   )
 }
@@ -66,6 +63,7 @@ const styles = StyleSheet.create({
   dialogStyle: {
     padding: 0,
     borderRadius: 6,
+    width: '80%'
   },
   titleArea: {
     marginTop: 20,

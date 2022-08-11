@@ -345,7 +345,7 @@ const DATA_Statistics = () => {
         setDialogContent({
           dialogTitle: item.name,
           bottomButton: false,
-          rghtColse: <AntDesign
+          rightClose: <AntDesign
           name='closecircleo'
           size={20}
           onPress={()=> dialogRef.current.setShowDialog(false)}
