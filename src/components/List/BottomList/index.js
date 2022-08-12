@@ -64,7 +64,7 @@ const BottomList = ({
         {tabList.map((tabItem, tabIndex) => {
           const active = index === tabIndex;
           return (
-            <TouchableOpacity style={styles.tabItem} onPress={()=>selectIndex(tabIndex)}>
+            <TouchableOpacity key={tabIndex} style={styles.tabItem} onPress={()=>selectIndex(tabIndex)}>
               <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem.title}</Text>
               {!noNumber && <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tabItem.type] || 0}</Text>}
             </TouchableOpacity>
