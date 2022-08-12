@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   inputStyle: {
-    fontSize: 22, 
+    fontSize: 28, 
     marginLeft: 10, 
     marginRight: 0
   },

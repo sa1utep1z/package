@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10, 
     borderTopLeftRadius: 10, 
     padding: 0,
-    paddingLeft: 19,
-    fontSize: 22
+    paddingLeft: 20,
+    fontSize: 28
   },
   pressArea: {
     backgroundColor: '#fff', 

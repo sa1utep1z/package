@@ -1,25 +1,48 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, useWindowDimensions, Dimensions} from 'react-native';
 import { Avatar, Text } from "@rneui/themed";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useToast } from "react-native-toast-notifications";
 
 import _rem from '../../utils/rem';
 import NAVIGATION_KEYS from '../../navigator/key';
 import NormalDialog from '../../components/NormalDialog';
-import { useState } from 'react';
+import MineApi from '../../request/MineApi';
+import { SUCCESS_CODE } from '../../utils/const';
 
 const height = Dimensions.get('window').height;
 
 const Mine = () => {
   const navigation = useNavigation();
+  const toast = useToast();
 
-  const [pressType, setPressType] = useState('');
   const [dialogContent, setDialogContent] = useState({});
+  const [message, setMessage] = useState({
+    loginAccount: '',
+    storeName: '',
+    userName: ''
+  });
 
   const dialogRef = useRef(null);
-  
-  const card = '116513111';
+
+  useEffect(()=>{
+    getMessage();
+  },[])
+
+  const getMessage = async() => {
+    try{
+      const res = await MineApi.MineMessage();
+      console.log('resssssssssss', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setMessage(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   const logout = () => {
     navigation.dispatch(
@@ -79,13 +102,13 @@ const Mine = () => {
         <Avatar
           size={128}
           rounded
-          source={{uri: 'https://labor-dev.oss-cn-shenzhen.aliyuncs.com/labormgt/labor/logo.png?Expires=1660208589&OSSAccessKeyId=TMP.3Kk9KzMJzXFhMkhdE2bd7AkSVFAPrSdRxb5e44U9qhDdRCHTbaR19D2P1q3dttfy3PdFfCnaFo9ounPJFt4x2ggoB9qBaY&Signature=K9%2FpbhXu1EKVnTe7w%2Bn80WzUQwo%3D'}}
+          source={{uri: 'https://labor-dev.oss-cn-shenzhen.aliyuncs.com/labormgt/labor/logo.png?Expires=1660294723&OSSAccessKeyId=TMP.3KfBHFXzv2Ry96EksCivpUrLNMSYfkT1tebAxatwvGL4tNAJxQ3MKxSYYd5YDp2tXXdYRMfe2e7HCoUTrszH3vG6mrdT5J&Signature=3ImGcu9MVVCyD5HD8yn8wcU3W9w%3D'}}
           containerStyle={styles.headContainerStyle}
           key={1}
         />
         <View style={styles.titleArea}>
-          <Text style={styles.title_large}>哈哈哈</Text>
-          <Text style={styles.title_small}>工号：{card}</Text>
+          <Text style={styles.title_large}>{`${message.storeName} · ${message.userName}`}</Text>
+          <Text style={styles.title_small}>手机号：{message.loginAccount}</Text>
         </View>
       </View>
       <View style={styles.bottomArea}>
@@ -124,9 +147,9 @@ const styles = StyleSheet.create({
     paddingLeft: 32
   },
   headContainerStyle: {
-    borderColor: 'grey',
     borderWidth: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    borderColor: '#fff'
   },
   titleArea: {
     marginLeft: 29

@@ -8,6 +8,7 @@ import InternationalSeaApi from "../../../../request/InternationalSeaApi";
 import EmptyArea from "../../../../components/EmptyArea";
 import NormalDialog from "../../../../components/NormalDialog";
 import { SEAS_SOURCE_TYPE, SUCCESS_CODE } from "../../../../utils/const";
+import { replaceMobile } from "../../../../utils";
 
 const InternationalSea = () => {
   const toast = useToast();
@@ -81,11 +82,11 @@ const InternationalSea = () => {
               <View style={styles.titleArea}>
                 <Text style={styles.text}>姓名：</Text>
               </View>
-              <Text style={styles.text}>{item.name || '无'}</Text>
+              <Text style={styles.text}>{item.userName || '无'}</Text>
             </View>
             <View style={styles.textArea}>
               <View style={styles.titleArea}>
-                <Text style={styles.text}>微信号：</Text>
+                <Text style={styles.text}>微信昵称：</Text>
               </View>
               <Text style={styles.text}>{item.weChatName || '无'}</Text>
             </View>
@@ -93,7 +94,7 @@ const InternationalSea = () => {
               <View style={styles.titleArea}>
                 <Text style={styles.text}>手机号：</Text>
               </View>
-              <Text style={styles.text}>{item.mobile || '无'}</Text>
+              <Text style={styles.text}>{item.mobile ? replaceMobile(item.mobile) : '无'}</Text>
             </View>
             <View style={styles.textArea}>
               <View style={styles.titleArea}>

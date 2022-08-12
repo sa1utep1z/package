@@ -10,7 +10,8 @@ import ListApi from '../../../request/ListApi';
 const StatusChangeInSignUpList = ({
   memberInfo = [],
   dialogRef,
-  item
+  item,
+  refresh
   }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
@@ -68,7 +69,6 @@ const StatusChangeInSignUpList = ({
   };
 
   const noIntention = async() => {
-    dialogRef.current.setShowDialog(false);
     const flowId = item.flowId;
     let reasons = [];
     if(statusList.length){
@@ -88,11 +88,13 @@ const StatusChangeInSignUpList = ({
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      refresh && refresh();
+      dialogRef.current.setShowDialog(false);
     }
   };
 
   const hasIntention = async() => {
-    dialogRef.current.setShowDialog(false);
     const flowId = item.flowId;
     try{
       const res = await ListApi.HasIntention(flowId);
@@ -105,6 +107,9 @@ const StatusChangeInSignUpList = ({
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      refresh && refresh();
+      dialogRef.current.setShowDialog(false);
     }
   };
 

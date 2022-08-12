@@ -53,7 +53,6 @@ const DatePicker = ({
     setShowDatePicker(true);
     setDateTime(type === 'start' ? new Date(startDate) : new Date(endDate));
   };
-  console.log('moment', moment(startDate).format('MM-DD'));
 
   return (
     <View style={styles.dateArea}>

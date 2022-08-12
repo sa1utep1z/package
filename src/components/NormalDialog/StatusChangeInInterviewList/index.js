@@ -137,6 +137,7 @@ const StatusChangeInInterviewList = ({
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       dialogRef.current.setShowDialog(false);
+      refresh && refresh();
     }
   };
 
@@ -156,6 +157,7 @@ const StatusChangeInInterviewList = ({
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       dialogRef.current.setShowDialog(false);
+      refresh && refresh();
     }
   };
 
@@ -175,6 +177,7 @@ const StatusChangeInInterviewList = ({
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       dialogRef.current.setShowDialog(false);
+      refresh && refresh();
     }
   };
 

@@ -2,7 +2,6 @@ import React, {useRef, useEffect, useState, useMemo} from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
 
@@ -21,6 +20,7 @@ import StatusChangeInSignUpList from "../../../../components/NormalDialog/Status
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { replaceMobile } from "../../../../utils";
 
+let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const SignUpList = () => {
@@ -45,13 +45,15 @@ const SignUpList = () => {
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>,
       headerRight: () => <HeaderRightButtonOfList />
     })
-    if(searchContent.role && searchContent.startDate && searchContent.endDate && searchContent.status){
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
       getList(searchContent);
       getTypeList();
-    }
+    }, 0)
     return () => {
       setShowList([]);
       setOriginData({});
+      timer && clearTimeout(timer);
     }
   }, [searchContent])
 
@@ -59,6 +61,7 @@ const SignUpList = () => {
     setIsLoading(true);
     try{
       const res = await ListApi.SignUpList(params);
+      console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -157,7 +160,10 @@ const SignUpList = () => {
 
   const transferFactory = (item) => {
     dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item})
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
+      item,
+      refresh
+    })
   };
 
   const pressFactory = async(item) => {
@@ -213,7 +219,7 @@ const SignUpList = () => {
     setDialogContent({
       dialogTitle: '待处理',
       bottomButton: false,
-      dialogComponent: <StatusChangeInSignUpList dialogRef={dialogRef} item={item}/>
+      dialogComponent: <StatusChangeInSignUpList dialogRef={dialogRef} item={item} refresh={refresh}/>
     });
   };
 

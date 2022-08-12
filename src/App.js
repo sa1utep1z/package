@@ -28,7 +28,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ToastProvider 
           placement="top"
-          duration={1000}
+          duration={10000}
           animationDuration={250}
           offsetTop={100}
           animationType='zoom-in'

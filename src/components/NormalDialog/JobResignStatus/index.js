@@ -17,7 +17,7 @@ const ListChangeStatus = ({
 }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
-  const invalidVal = moment(new Date()).format('YYYY-MM-DD')
+  const invalidVal = new Date();
   const [statusList, setStatusList] = useState(DEFAULT_JOBSTATUS);
   const [inputContent, setInputContent] = useState('');
   const [selectStatus, setSelectStatus] = useState('resign');
@@ -67,9 +67,8 @@ const ListChangeStatus = ({
 
   const dateChange = (event, selectedDate) => {
     setModalVisible(false);
-    console.log('打印日期的值：',  moment(selectedDate).format('YYYY-MM-DD'))
-    const date = moment(selectedDate).format('YYYY-MM-DD')
-    setDateTime(date)
+    if(event.type !== "set") return;
+    setDateTime(selectedDate);
   };
 
   const changeStatus = () => {
@@ -84,13 +83,13 @@ const ListChangeStatus = ({
       reasonList.map(item => reasons.push(statusList.find(status => status.value === item).title));
     }
     const params = {
-      date: dateTime,
+      date: moment(dateTime).format('YYYY-MM-DD'),
       reasons,
     }
 
     try {
       const res = await ListApi.ResignList(flowId, params);
-      console.log('res', params)
+      console.log('res', res);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，${res?.msg}。`, { type: 'danger' });
         return;

@@ -22,6 +22,7 @@ import TwoCard from "../../../../components/NormalDialog/TwoCard";
 import NewestStatus from "../../../../components/NormalDialog/NewestStatus";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 
+let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const NewestState = () => {
@@ -45,11 +46,14 @@ const NewestState = () => {
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    if(searchContent.role && searchContent.startDate && searchContent.endDate){
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
       getList(searchContent);
-    }
+    }, 0)
     return () => {
       setShowList([]);
+      setOriginData({});
+      timer && clearTimeout(timer);
     }
   }, [searchContent])
 
@@ -274,7 +278,7 @@ const NewestState = () => {
       <View key={item.flowId} style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
           <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text 
+            <Text
               allowFontScaling={false}
               numberOfLines={2}
               ellipsizeMode='tail'
@@ -288,7 +292,7 @@ const NewestState = () => {
 
   return (
     <View style={[styles.screen]}>
-      <HeaderSearch filterFun={filter} batchOperate={batchOperate} canBatchOperate/>
+      <HeaderSearch filterFun={filter} batchOperate={batchOperate}/>
       <CenterSelectDate centerDateStyle={{marginBottom: 0}} />
       <View style={styles.numberOfList}>
         <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total || 0}</Text> 条数据</Text>

@@ -21,6 +21,7 @@ const initialValues = {
   store: [],
   staff: [],
   dateRange: {},
+  staffSearch: '',
   search: ''
 };
 
@@ -35,7 +36,6 @@ const HeaderSearch = ({
   companyShow = true,
   withoutCompanyFilter = false,
   batchOperate, // 批量操作函数
-  canBatchOperate =false, //批量操作按钮显隐（在最新状态中需要主动给，其他页面是根据tab栏来控制显隐的）；
     ...rest
   }) => {
   const toast = useToast();
@@ -115,7 +115,7 @@ const HeaderSearch = ({
     filterFun && filterFun(values);
   };
 
-  const batch = (nowTabName === 'pending' || canBatchOperate) && batchOperate && (
+  const batch = nowTabName === 'pending' && batchOperate && (
     <TouchableOpacity style={styles.batchButton} onPress={batchOperate}>
       <Text style={styles.btnText}>批量处理</Text>
     </TouchableOpacity>
@@ -201,7 +201,17 @@ const HeaderSearch = ({
                   component={SelectItem}
                 />
                 <View style={{width: 40}}></View>
-                <Field
+                {staffSearch ? <Field
+                  title="店员"
+                  name="staffSearch"
+                  showLittleTitle
+                  canSearch
+                  bottomButton
+                  noBorder
+                  autoSubmit
+                  formalLabel={false}
+                  component={SearchItem}
+                /> : <Field
                   title="员工"
                   name="staff"
                   showLittleTitle
@@ -211,10 +221,8 @@ const HeaderSearch = ({
                   autoSubmit
                   formalLabel={false}
                   selectList={staffList}
-                  // selectAreaStyle={styles.selectAreaStyle}
-                  // selectAreaTextStyle={styles.fontSize}
-                  component={staffSearch ? SearchItem : SelectItem }
-                />
+                  component={SelectItem }
+                />}
               </View>}
               <Field
                 name="dateRange"
@@ -224,7 +232,6 @@ const HeaderSearch = ({
                 name="search"
                 placeholder={placeholder? placeholder : '请输入姓名或身份证'}
                 borderRadius={8}
-                fontStyle={styles.fontSize}
                 searchInputStyle={styles.searchInputStyle}
                 component={SearchInput}
               />
@@ -244,9 +251,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', 
     borderRadius: 8,
     paddingLeft: 10
-  },
-  fontSize: {
-    fontSize: 26
   },
   selectContainerStyle: {
     flex: 1 

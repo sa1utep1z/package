@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import moment from "moment";
 import NormalDialog from "../../../../components/NormalDialog";
@@ -18,6 +17,9 @@ import BottomList from "../../../../components/List/BottomList";
 import ListApi from "../../../../request/ListApi";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import { SUCCESS_CODE, TAB_OF_LIST, ON_BOARDING_STATUS } from "../../../../utils/const";
+import CallPhone from "../../../../components/NormalDialog/CallPhone";
+
+let timer;
 
 const WaitToEntryList = () => {
   const navigation = useNavigation();
@@ -44,13 +46,15 @@ const WaitToEntryList = () => {
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>,
       headerRight: () => <HeaderRightButtonOfList />
     })
-    if(searchContent.role && searchContent.startDate && searchContent.endDate && searchContent.status){
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
       getList(searchContent);
       getStatusList();
-    }
+    }, 0)
     return () => {
       setShowList([]);
       setOriginData({});
+      timer && clearTimeout(timer);
     }
   }, [searchContent])
 
@@ -173,7 +177,10 @@ const WaitToEntryList = () => {
   // 跳转转场转单页面
   const transferFactory = (item) => {
     dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, { item })
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
+      item,
+      refresh
+    })
   };
 
   // 查看企业详情
@@ -227,7 +234,7 @@ const WaitToEntryList = () => {
     setDialogContent({
       dialogTitle: '待处理',
       bottomButton: false,
-      dialogComponent: <OnBoardingStatus dialogRef={dialogRef} item={item} />,
+      dialogComponent: <OnBoardingStatus dialogRef={dialogRef} item={item} refresh={refresh}/>,
     });
   };
 
@@ -239,7 +246,7 @@ const WaitToEntryList = () => {
         Linking.openURL(`tel:${item.mobile}`)
         dialogRef.current.setShowDialog(false);
       },
-      dialogComponent: <Text style={{ textAlign: 'center', marginVertical: 20, fontSize: 18 }}>确定拨打该手机吗？</Text>
+      dialogComponent: <CallPhone message={item}/>
     });
   };
 

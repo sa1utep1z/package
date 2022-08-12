@@ -1,7 +1,6 @@
 import React, {useRef, useEffect, useState, useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from 'react-redux';
 import moment from "moment";
@@ -19,7 +18,9 @@ import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
 import { SUCCESS_CODE, INTERVIEW_STATUS, TAB_OF_LIST } from "../../../../utils/const";
 import { replaceMobile } from "../../../../utils";
+import CallPhone from "../../../../components/NormalDialog/CallPhone";
 
+let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const InterviewList = () => {
@@ -44,13 +45,15 @@ const InterviewList = () => {
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    if(searchContent.role && searchContent.startDate && searchContent.endDate && searchContent.status){
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
       getList(searchContent);
       getTypeList();
-    }
+    }, 0)
     return () => {
       setShowList([]);
       setOriginData({});
+      timer && clearTimeout(timer);
     }
   }, [searchContent])
 
@@ -93,7 +96,7 @@ const InterviewList = () => {
     try{
       const res = await ListApi.GetInterviewTypeList(params);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       setTabNumberList(res.data);
@@ -125,7 +128,10 @@ const InterviewList = () => {
 
   const transferFactory = (item) => {
     dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item})
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
+      item,
+      refresh
+    })
   };
 
   const pressFactory = async(item) => {
@@ -182,7 +188,7 @@ const InterviewList = () => {
     setDialogContent({
       dialogTitle: '待处理',
       bottomButton: false,
-      dialogComponent: <StatusChangeInInterviewList dialogRef={dialogRef} item={item}/>
+      dialogComponent: <StatusChangeInInterviewList dialogRef={dialogRef} item={item} refresh={refresh}/>
     });
   };
 
@@ -194,7 +200,7 @@ const InterviewList = () => {
         Linking.openURL(`tel:${item.mobile}`)
         dialogRef.current.setShowDialog(false);
       },
-      dialogComponent: <Text style={{textAlign: 'center', marginVertical: 20}}>确定拨打该手机吗？</Text>
+      dialogComponent: <CallPhone message={item}/>
     });
   };
 

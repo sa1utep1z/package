@@ -19,7 +19,7 @@ const ListChangeStatus = ({
 }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
-  const invalidVal = moment(new Date()).format('YYYY-MM-DD')
+  const invalidVal = new Date();
   const [statusList, setStatusList] = useState(DEFAULT_ONBORADINGSTATUS);
   const [inputContent, setInputContent] = useState('');
   const [selectStatus, setSelectStatus] = useState('notCheckedIn');
@@ -73,9 +73,8 @@ const ListChangeStatus = ({
 
   const dateChange = (event, selectedDate) => {
     setModalVisible(false);
-    console.log('打印日期的值：', moment(selectedDate).format('YYYY-MM-DD'))
-    const date = moment(selectedDate).format('YYYY-MM-DD')
-    setDateTime(date)
+    if(event.type !== "set") return;
+    setDateTime(selectedDate);
   };
 
   // 改变状态
@@ -153,6 +152,7 @@ const ListChangeStatus = ({
         return;
       }
       toast.show(`修改状态成功！`, { type: 'success' });
+      refresh && refresh();
     } catch (err) {
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -164,7 +164,7 @@ const ListChangeStatus = ({
     dialogRef.current.setShowDialog(false);
     const flowId = item.flowId;
     const params = {
-      date: dateTime,
+      date: moment(dateTime).format('YYYY-MM-DD'),
     }
     try {
       const res = await ListApi.GetPassList(flowId, params);
@@ -174,6 +174,7 @@ const ListChangeStatus = ({
         return;
       }
       toast.show(`修改状态成功！`, { type: 'success' });
+      refresh && refresh();
     } catch (err) {
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

@@ -50,17 +50,17 @@ const Home = (props) => {
         showList.content = concatList;
         showList.pageNumber = data.data.pageNumber;
         showList.hasNext = data.data.hasNext;
-        setShowList(showList);  
+        setShowList(showList);
         return;
       }
       setShowList(data.data);
     }
   },[data])
 
-  // useMemo(()=>{
-  //   console.log('searchContent',searchContent);
-  //   console.log('data', data);
-  // },[searchContent])
+  useMemo(()=>{
+    console.log('searchContent',searchContent);
+    console.log('data', data);
+  },[searchContent])
 
   const gotoList = async(item) => {
     if(item.num > 1){
@@ -100,9 +100,7 @@ const Home = (props) => {
     setSearchContent({...searchContent, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate, pageNumber: 0});
   };
 
-  const refresh = () => {
-    setSearchContent({...searchContent, pageNumber: 0});
-  };
+  const refresh = () => refetch();
 
   const renderItem = ({item, index}) => {
     return (

@@ -18,6 +18,7 @@ import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 
+let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const MyMembers = () => {
@@ -41,16 +42,21 @@ const MyMembers = () => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    getList(searchContent);
-    return () => setShowList([]);
-  }, []);
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
+      getList(searchContent);
+    }, 0)
+    return () => {
+      setShowList([]);
+      timer && clearTimeout(timer);
+    };
+  }, [searchContent]);
 
   const getList = async(params) => {
     console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await MyMembersApi.MyMemberList(params);
-      console.log('my-members-->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -88,11 +94,6 @@ const MyMembers = () => {
       nextReturnVisitDateEnd: moment(rangeDate.endDate).format('YYYY-MM-DD')
     });
   },[rangeDate])
-
-  //修改查找项时
-  useMemo(()=>{
-    getList(searchContent);
-  },[searchContent])
 
   const selectIndex = (selectIndex) => {
     switch(selectIndex){
@@ -218,7 +219,7 @@ const MyMembers = () => {
       ...searchContent,
       ...firstPage,
       willSignUpCompanyId,
-      recruiterName: values.staff, 
+      recruiterName: values.staffSearch, 
       nameOrIdNo: values.search, 
       storeId,
       memberStatus

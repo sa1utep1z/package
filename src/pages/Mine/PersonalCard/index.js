@@ -3,16 +3,21 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import {Button, Text} from '@rneui/themed';
 import {Formik, Field} from 'formik';
-import FormItem from "../../../components/Form/FormItem";
+import { useToast } from "react-native-toast-notifications";
 
+import FormItem from "../../../components/Form/FormItem";
+import MineApi from "../../../request/MineApi";
+import { SUCCESS_CODE } from "../../../utils/const";
+
+let restForm;
 const initialValues = {
-  name: '波哥@众鼎日薪',
-  phone: '14569874562',
-  weChat: '14569874562',
-  store: '总部店',
+  name: '',
+  phone: '',
+  weChat: ''
 };
 
 const PersonalCard = () => {
+  const toast = useToast();
   const navigation = useNavigation();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -25,18 +30,62 @@ const PersonalCard = () => {
         </TouchableOpacity>
       )
     })
+    getMessage();
   },[isEditing])
 
+  const getMessage = async() => {
+    try{
+      const res = await MineApi.QueryOutsideCard();
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setFormValue(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const setFormValue = (data) => {
+    const values = {
+      name: data.name,
+      contractMobile: data.contractMobile || '无',
+      weChat: data.weChat || '无'
+    }
+    restForm.setValues(values);
+  };
+
   const onSubmit = (values) => {
-    console.log('提交了表单哇呜',values);
-  }
+    const params = {
+      name: values.name,
+      contractMobile: values.contractMobile === '无'? '' : values.contractMobile, 
+      weChat: values.weChat === '无' ? '' : values.weChat
+    };
+    sendMessage(params);
+  };
+
+  const sendMessage = async(params) => {
+    try{
+      const res = await MineApi.JoinOutsideCard(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show(`修改成功！`, {type: 'success'});
+      setIsEditing(false);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   return (
     <Formik
       initialValues={initialValues}
       // validationSchema={SignUpValidationSchema}
       onSubmit={onSubmit}>
-        {({handleSubmit}) => (
+        {({handleSubmit, ...rest}) => {
+          restForm = rest;
+          return (
           <>
             <View style={{flex: 1}}>
               <View style={[styles.cardArea]}>
@@ -49,7 +98,7 @@ const PersonalCard = () => {
                   component={FormItem}
                 />
                 <Field
-                  name="phone"
+                  name="contractMobile"
                   title="手机号"
                   labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
@@ -59,15 +108,6 @@ const PersonalCard = () => {
                 <Field
                   name="weChat"
                   title="微信号"
-                  labelAreaStyle={styles.labelAreaStyle}
-                  inputStyle={styles.inputStyle}
-                  editable={false}
-                  component={FormItem}
-                />
-                <Field
-                  name="store"
-                  title="门店"
-                  containerStyle={{borderBottomWidth: 0}}
                   labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
                   editable={false}
@@ -85,7 +125,7 @@ const PersonalCard = () => {
               />
             )}
           </>
-        )}
+        )}}
     </Formik>
   )
 }
