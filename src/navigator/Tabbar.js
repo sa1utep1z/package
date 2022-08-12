@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -9,12 +9,12 @@ import NAVIGATION_PAGES from '../pages/index';
 const Tab = createBottomTabNavigator();
 
 const Tabbar = () => {
-  
   return (
     <Tab.Navigator
       initialRouteName={NAVIGATION_KEYS.HOME}
       screenOptions={{
         headerTitleAlign: 'center',
+        tabBarStyle: {height: 100},
         tabBarActiveTintColor: '#409EFF',
         tabBarInactiveTintColor: '#666666',
         tabBarItemStyle: {height: 100, paddingBottom: 6},

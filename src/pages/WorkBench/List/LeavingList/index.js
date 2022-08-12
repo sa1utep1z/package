@@ -39,6 +39,21 @@ const LeavingList = () => {
     const reg = /^(\d{3})\d{4}(\d{4})$/;
     return tel.replace(reg, '$1****$2');
   };
+  
+  useEffect(() => {
+    navigation.setOptions({
+      headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />,
+      headerRight: () => <HeaderRightButtonOfList />
+    })
+    if(searchContent.role && searchContent.startDate && searchContent.endDate && searchContent.status){
+      getList(searchContent);
+      getStatusList();
+    }
+    return () => {
+      setShowList([]);
+      setOriginData({});
+    }
+  }, [searchContent])
 
   // 获取在离职名单数据
   const getList = async (params) => {
@@ -66,16 +81,6 @@ const LeavingList = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />,
-      headerRight: () => <HeaderRightButtonOfList />
-    })
-    getList(searchContent);
-    getStatusList();
-    return () => setShowList([]);
-  }, [])
 
   //修改角色时
   useMemo(() => {
@@ -118,12 +123,6 @@ const LeavingList = () => {
     }
   };
 
-  // 修改查找项
-  useMemo(() => {
-    getList(searchContent);
-    getStatusList();
-  }, [searchContent])
-
   // 获取搜索栏的数据
   const filter = (values) => {
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
@@ -145,7 +144,7 @@ const LeavingList = () => {
   const selectIndex = (selectIndex) => {
     switch (selectIndex) {
       case 0:
-        searchContent.status = '';
+        searchContent.status = 'ALL';
         break;
       case 1:
         searchContent.status = 'JOB_RESIGN';

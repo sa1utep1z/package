@@ -40,6 +40,19 @@ const NewestState = () => {
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(()=>{
+    navigation.setOptions({
+      headerRight: () => <HeaderRightButtonOfList />,
+      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
+    })
+    if(searchContent.role && searchContent.startDate && searchContent.endDate){
+      getList(searchContent);
+    }
+    return () => {
+      setShowList([]);
+    }
+  }, [searchContent])
+
   const getList = async(params) => {
     console.log('getList --> params', params);
     setIsLoading(true);
@@ -58,22 +71,13 @@ const NewestState = () => {
         return;
       }
       //无下一页（第一页）
-      setShowList(res.data.content);
+      setShowList([...res.data.content]);
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
     }
   };
-
-  useEffect(()=>{
-    navigation.setOptions({
-      headerRight: () => <HeaderRightButtonOfList />,
-      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
-    })
-    getList(searchContent);
-    return () => setShowList([]);
-  }, [])
 
   //修改角色时
   useMemo(()=>{
@@ -93,11 +97,6 @@ const NewestState = () => {
       endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
     });
   },[rangeDate])
-
-  //修改查找项时
-  useMemo(()=>{
-    getList(searchContent);
-  },[searchContent])
 
   const gotoRecordOfWorking = () => navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING)
 
@@ -354,7 +353,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10
   },
   listItem: {
-    flex: 1, 
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center', 
     alignItems: 'center'

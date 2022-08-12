@@ -1,46 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import { navigationRef } from './RootNavigation';
 import NAVIGATION_KEYS from './key'; //组件名称
 import NAVIGATION_PAGES from '../pages'; //组件列表
 import Tabbar from './Tabbar'; //进入首页后的Tab栏
+import header from './header';
 
 const Stack = createNativeStackNavigator();
 
 export default Navigator = () => {
-  const header = ({back, navigation, options, route}) => {
-    const param = {back, navigation, options, route};
-    const title = options?.headerTitle;
-    const headerRight = options?.headerRight && options?.headerRight(param);
-    const headerLeft = options?.headerLeft && options?.headerLeft(param);
-    const headerCenterArea = options?.headerCenterArea && options?.headerCenterArea(param);
-    const goBack = () => navigation.goBack();
-    
-    return (
-      <View style={styles.headerArea}>
-        <View style={styles.leftArea}>
-          {headerLeft ? headerLeft : 
-            <AntDesign
-              size={50}
-              name='left' 
-              style={styles.icon}
-              onPress={goBack}
-            />
-          }
-        </View>
-        {headerCenterArea ? headerCenterArea : <View style={styles.centerArea}>
-          <Text style={styles.centerAreaText}>{title}</Text>
-        </View>}
-        <View style={styles.rightArea}>
-          {headerRight}
-        </View>
-      </View>
-    )
-  };
 
   const login = (
     <>
@@ -300,7 +270,7 @@ export default Navigator = () => {
         initialRouteName={NAVIGATION_KEYS.LOGIN}
         screenOptions={{
           headerTitleAlign: 'center',
-          header
+          header,
         }}>
         {login}
         {home}
@@ -319,39 +289,3 @@ export default Navigator = () => {
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  headerArea: {
-    height: 100, 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    backgroundColor: '#fff'
-  },
-  leftArea: {
-    flex: 1
-  },
-  icon:{ 
-    width: 50, 
-    height: '100%',
-    textAlignVertical: 'center',
-    paddingLeft: 5
-  },
-  centerArea: {
-    height: '100%', 
-    flexDirection: 'column', 
-    alignItems: 'center', 
-    justifyContent: 'center'
-  },
-  centerAreaText: {
-    textAlign: 'center', 
-    fontSize: 36, 
-    color: '#000'
-  },
-  rightArea: {
-    flex: 1, 
-    height: '100%', 
-    justifyContent: 'center', 
-    alignItems: 'flex-end'
-  }
-});

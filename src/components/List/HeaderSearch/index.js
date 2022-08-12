@@ -143,9 +143,8 @@ const HeaderSearch = ({
           }else{
             staffList = [];
           }
-          if(!showSearch) return <></>
           return (
-            <Animated.View style={[styles.topView, {opacity: fadeAnim}]}>
+            <Animated.View style={[styles.topView, {opacity: fadeAnim}, !showSearch && {display: 'none'}]}>
               <View style={[{flexDirection: 'row', marginBottom: 20}, withoutCompanyFilter && {marginBottom: 0}]}>
                 {
                   companyShow && <Field

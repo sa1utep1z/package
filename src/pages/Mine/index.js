@@ -45,7 +45,7 @@ const Mine = () => {
           dialogTitle: '温馨提示',
           dialogComponent: (
             <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 20}}>将向您绑定的手机发送验证码</Text>
+              <Text>将向您绑定的手机发送验证码</Text>
             </View>
           ),
           confirmText: '找回密码',
@@ -57,7 +57,7 @@ const Mine = () => {
           dialogTitle: '温馨提示',
           dialogComponent: (
             <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 20}}>确定退出当前账号？</Text>
+              <Text>确定退出当前账号？</Text>
             </View>
           ),
           confirmOnPress: logout
@@ -141,11 +141,11 @@ const styles = StyleSheet.create({
   },
   bottomArea: {
     flex: 1,
+    paddingHorizontal: 32
   },
   funcArea: {
     height: 526,
     backgroundColor: '#fff', 
-    marginHorizontal: 10, 
     borderRadius: 8
   },
   func_title: {

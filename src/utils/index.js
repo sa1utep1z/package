@@ -59,11 +59,10 @@ export const getWeekName = (weekNumber) => {
 export const checkedType = target => Object.prototype.toString.call(target).slice(8, -1)
 
 /**
- *
+ * 简易深复制（可复制对象、数组
  * @param {*} target
  * @return {*} 返回复制的结果
  */
-// 简易深复制（可复制对象、数组
 export const deepCopy = target => {
     //判断拷贝的数据类型
     //初始化变量result 成为最终克隆的数据
@@ -90,3 +89,14 @@ export const deepCopy = target => {
     }
     return result
 }
+
+/**
+ * 处理手机号
+ * @param {*} text 传进来的字符串
+ * @param {*} replaceText 要修改的字符串
+ * @returns 
+ */
+export const replaceMobile = (text, replaceText = '****') => {
+  const replaceStr = text.substring(0, 3)+ replaceText + text.substring(7);
+  return replaceStr;
+};

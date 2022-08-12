@@ -1,15 +1,15 @@
 import React from 'react';
-import {Platform, View, Text, TextInput} from 'react-native';
-import { ToastProvider } from "react-native-toast-notifications";
+import {Platform, View, Text, TextInput, StatusBar} from 'react-native';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ToastProvider } from "react-native-toast-notifications";
 import { simpleUpdate } from 'react-native-update';
 import ScaleView from 'react-native-scale-view';
+import moment from 'moment';
+import "moment/locale/zh-cn";
 
 import store from './redux/store';
 import Navigator from './navigator';
-import moment from 'moment';
-import "moment/locale/zh-cn";
 import _updateConfig from '../update.json';
 
 moment.locale('zh-cn');
@@ -47,10 +47,10 @@ const App = () => {
                 <Text style={{fontSize: 28, color: '#fff'}}>{toastOptions.message}</Text>
               </View>
             )
-          }}
-        >
+          }}>
           <Provider store={store}>
             <Navigator/>
+            <StatusBar/>
           </Provider>
         </ToastProvider>
       </QueryClientProvider>
