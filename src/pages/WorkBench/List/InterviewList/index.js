@@ -18,6 +18,7 @@ import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
 import { SUCCESS_CODE, INTERVIEW_STATUS, TAB_OF_LIST } from "../../../../utils/const";
+import { replaceMobile } from "../../../../utils";
 
 const firstPage = {pageSize: 20, pageNumber: 0};
 
@@ -43,10 +44,15 @@ const InterviewList = () => {
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    getList(searchContent);
-    getTypeList();
-    return () => setShowList([]);
-  }, [])
+    if(searchContent.role && searchContent.startDate && searchContent.endDate && searchContent.status){
+      getList(searchContent);
+      getTypeList();
+    }
+    return () => {
+      setShowList([]);
+      setOriginData({});
+    }
+  }, [searchContent])
 
   const getList = async(params) => {
     console.log('getList --> params', params);
@@ -66,7 +72,7 @@ const InterviewList = () => {
         return;
       }
       //无下一页（第一页）
-      setShowList(res.data.content);
+      setShowList([...res.data.content]);
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
@@ -114,12 +120,6 @@ const InterviewList = () => {
       endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
     });
   },[rangeDate])
-
-  //修改查找项时
-  useMemo(()=>{
-    getList(searchContent);
-    getTypeList();
-  },[searchContent])
 
   const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'interview'});
 
@@ -217,7 +217,7 @@ const InterviewList = () => {
   const selectIndex = (selectIndex) => {
     switch(selectIndex){
       case 0:
-        searchContent.status = '';
+        searchContent.status = 'ALL';
         break;
       case 1:
         searchContent.status = 'INTERVIEW_PENDING';
@@ -262,7 +262,7 @@ const InterviewList = () => {
         pressFun: () => changeStatus(item)
       },
       { 
-        fieldName: item.mobile || '无', 
+        fieldName: item.mobile ? replaceMobile(item.mobile) : '无', 
         textStyle: {color: '#409EFF', fontSize: 24},
         pressFun: () => item.mobile && callPhone(item)
       }

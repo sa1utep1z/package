@@ -18,6 +18,8 @@ import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import StatusChangeInSignUpList from "../../../../components/NormalDialog/StatusChangeInSignUpList";
+import CallPhone from "../../../../components/NormalDialog/CallPhone";
+import { replaceMobile } from "../../../../utils";
 
 const firstPage = {pageSize: 20, pageNumber: 0};
 
@@ -43,13 +45,17 @@ const SignUpList = () => {
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>,
       headerRight: () => <HeaderRightButtonOfList />
     })
-    getList(searchContent);
-    getTypeList();
-    return () => setShowList([]);
-  }, [])
+    if(searchContent.role && searchContent.startDate && searchContent.endDate && searchContent.status){
+      getList(searchContent);
+      getTypeList();
+    }
+    return () => {
+      setShowList([]);
+      setOriginData({});
+    }
+  }, [searchContent])
 
   const getList = async(params) => {
-    console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await ListApi.SignUpList(params);
@@ -115,12 +121,6 @@ const SignUpList = () => {
     });
   },[rangeDate])
 
-  //修改查找项时
-  useMemo(()=>{
-    getList(searchContent);
-    getTypeList();
-  },[searchContent])
-
   const filter = (values) => {
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
@@ -140,7 +140,7 @@ const SignUpList = () => {
   const selectIndex = (selectIndex) => {
     switch(selectIndex){
       case 0:
-        searchContent.status = '';
+        searchContent.status = 'ALL';
         break;
       case 1:
         searchContent.status = 'SIGN_UP_PENDING';
@@ -225,7 +225,7 @@ const SignUpList = () => {
         Linking.openURL(`tel:${item.mobile}`)
         dialogRef.current.setShowDialog(false);
       },
-      dialogComponent: <Text style={{textAlign: 'center', marginVertical: 20, fontSize: 18}}>确定拨打该手机吗？</Text>
+      dialogComponent: <CallPhone message={item}/>
     });
   };
 
@@ -256,7 +256,7 @@ const SignUpList = () => {
         pressFun: () => changeStatus(item)
       },
       { 
-        fieldName: item.mobile || '无', 
+        fieldName: item.mobile ? replaceMobile(item.mobile) : '无', 
         textStyle: {color: '#409EFF', fontSize: 24},
         pressFun: () => item.mobile && callPhone(item)
       }
