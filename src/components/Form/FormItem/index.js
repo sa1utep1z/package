@@ -48,6 +48,8 @@ const FormItem = ({
         inputContainerStyle={[styles.noBorder, inputContainerStyle]}
         rightIcon={rest.OCR && OCRArea}
         {...rest}
+        multiline
+        numberOfLines={2}
       />
       <ErrorMessage
         name={field.name}

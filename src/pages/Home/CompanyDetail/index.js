@@ -25,7 +25,7 @@ const CompanyDetail = (props) => {
   const [height, setHeight] = useState(0);
   const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
   const date = String(orderData.recruitRange).substring(5, 11);
-  const date2 = String(orderData.recruitRange).substring(16, 20)
+  const date2 = String(orderData.recruitRange).substring(16, 21)
   const recruitRange = date + date2
   
   const getDetail = async () => {

@@ -46,6 +46,9 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.Company(prams)
+      if (res.code === 0) {
+        setTotalData(res.data);
+      }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -72,6 +75,7 @@ const DATA_Statistics = () => {
       }
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
+      console.log('打印')
     } catch (err) {
       toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
       console.log('打印异常：', err)
@@ -234,7 +238,7 @@ const DATA_Statistics = () => {
 
   const toTalItem = (res) => {
     const renderList = [
-      { fieldName: res.total, textStyle: { width: 116, fontSize: 26, } },
+      { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
       { fieldName: res.signUpIntention || '0', textStyle: { width: 116 } },
       { fieldName: res.interviewNoArrive || '0', textStyle: { width: 75 } },
       { fieldName: res.interviewFail || '0', textStyle: { width: 70 } },
@@ -503,6 +507,13 @@ const DATA_Statistics = () => {
     setLoad(false);
   };
 
+  const selectIndex = (i) => {
+    setIndex(i);
+    const selectItem = title.find((item, index) => index === i);
+    // const tabName = selectItem.type;
+    // dispatch(setTabName(tabName));
+  };
+
   const tabHead = () => {
     return (
       <>
@@ -554,7 +565,7 @@ const DATA_Statistics = () => {
     <View style={styles.screen}>
       <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
       <CenterSelectDate />
-      <Tab
+      {/* <Tab
         value={index}
         onChange={(e) => tabChange(e)}
         indicatorStyle={{
@@ -578,11 +589,21 @@ const DATA_Statistics = () => {
                   borderRightWidth: 2,
                   borderColor: "#EEF4F7",
                 })}
-              />
+              ></Tab.Item>
             )
           })
         }
-      </Tab>
+      </Tab> */}
+      <View style={styles.tab_containerStyle}>
+        {title.map((tabItem, tabIndex) => {
+          const active = index === tabIndex;
+          return (
+            <TouchableOpacity key={tabIndex} style={[styles.tabItem, active && {backgroundColor: '#409EFF'}]} onPress={() => selectIndex(tabIndex)}>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem}</Text>
+            </TouchableOpacity>
+          )
+        })}
+      </View>
       <FlatList
         data={companyDetails}
         ListHeaderComponent={tabHead()}
@@ -774,6 +795,33 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: '#CCCCCC',
     marginTop: 10
+  },
+  tab_containerStyle: {
+    height: 75, 
+    flexDirection: 'row', 
+    backgroundColor: '#fff',
+  },
+  tabItem: {
+    flex: 1, 
+    justifyContent: 'center',
+    borderRightWidth: 2,
+    borderColor: "#EEF4F7",
+    // backgroundColor: 'red'
+  },
+  tabItem_text: {
+    fontSize: 32,
+    textAlign: 'center',
+  },
+  tabItem_titleStyle_active: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  tabItem_active: {
+    flex: 1, 
+    justifyContent: 'center',
+    borderRightWidth: 2,
+    borderColor: "#EEF4F7",
+    backgroundColor: '#409EFF'
   },
 });
 

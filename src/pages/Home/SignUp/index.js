@@ -12,7 +12,7 @@ import { IDCard, phone } from '../../../utils/validate';
 import { ARRIVE_WAY, COMPANY_ENGLISH } from '../../../utils/const';
 import HomeApi from "../../../request/HomeApi";
 import ImagePicker from 'react-native-image-crop-picker';
-
+import NAVIGATION_KEYS from '../../../navigator/key';
 const SignUpValidationSchema = Yup.object().shape({
   name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
   // IDCard: Yup.string().required('请输入身份证').matches(IDCard, '请输入正确的身份证号'),
@@ -49,9 +49,23 @@ const SignUp = (props) => {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {
         toast.show('提交成功');
+        navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL)
         return;
       } else {
-        toast.show(`${res.msg}`);
+        <ToastProvider
+          renderType={{
+            custom_type: (toast) => (
+              <View style={{ padding: 15, backgroundColor: 'grey' }}>
+                <Text>{res.msg}</Text>
+              </View>
+            )
+          }}
+        />
+        // toast.show(`${res.msg}`, {
+        //   duration: 8000,
+        //   placement: 'center',
+        //   offsetTop: 800
+        // });
       }
     } catch (error) {
       toast.show('报名失败，请稍后再试');
@@ -147,9 +161,9 @@ const SignUp = (props) => {
                   title="身份证"
                   placeholder="请输入会员身份证"
                   maxLength={18}
-                  validate={value=>{
+                  validate={value => {
                     let errorMsg;
-                    if(!IDCard.test(value)) {
+                    if (!IDCard.test(value)) {
                       errorMsg = '请输入正确的身份证号';
                     }
                     return errorMsg
@@ -162,9 +176,9 @@ const SignUp = (props) => {
                   title="手机号"
                   placeholder="请输入会员手机号"
                   maxLength={11}
-                  validate={value=>{
+                  validate={value => {
                     let errorMsg;
-                    if(!phone.test(value)) {
+                    if (!phone.test(value)) {
                       errorMsg = '请输入正确的手机号';
                     }
                     return errorMsg
