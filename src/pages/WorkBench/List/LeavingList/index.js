@@ -34,6 +34,12 @@ const LeavingList = () => {
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // 手机号隐藏四位数
+  const geTel = (tel) => {
+    const reg = /^(\d{3})\d{4}(\d{4})$/;
+    return tel.replace(reg, '$1****$2');
+  };
+
   // 获取在离职名单数据
   const getList = async (params) => {
     console.log('getList --> params', params);
@@ -241,7 +247,7 @@ const LeavingList = () => {
         pressFun: () => changeStatus(item)
       },
       {
-        fieldName: item.mobile || '无',
+        fieldName: geTel(item.mobile) || '无',
         textStyle: { color: '#409EFF', fontSize: 28 },
         pressFun: () => item.mobile && callPhone(item)
       }

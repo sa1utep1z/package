@@ -10,6 +10,8 @@ import DataStatisticApi from "../../../../request/DataStatisticApi"
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from 'react-native-toast-notifications';
+import { empty } from "../../../../pages/Home/listComponent";
+import { SUCCESS_CODE } from "../../../../utils/const";
 
 const DATA_Statistics = () => {
   const navigation = useNavigation();
@@ -24,6 +26,10 @@ const DATA_Statistics = () => {
   const dialogRef = useRef(null);
   const [dialogContent, setDialogContent] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [nextPage, setNextPage] = useState(false);
+  const [originData, setOriginData] = useState({});
+  //滑动到底部的时候会有多次触发底部函数，防抖作用；
+  const [load, setLoad] = useState(true);
   const title = ['企业', '门店', '供应商', '招聘员']
 
   useEffect(() => {
@@ -40,16 +46,9 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.Company(prams)
-      if (res.code === 0) {
-        setIsLoading(true);
-        setTotalData(res.data);
-      } else {
-        setIsLoading(false)
-      }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-
   };
 
   // 获取企业分组数据
@@ -59,11 +58,25 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.CompanyGroup(prams)
-      if (res.code === 0) {
-        setCompanyDetails(res.data.content)
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
       }
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if (nextPage) {
+        setCompanyDetails([...companyDetails, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setCompanyDetails(res.data.content);
+    } catch (err) {
+      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印异常：', err)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -91,14 +104,25 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.StoreGroup(prams)
-      console.log('门店的值：', res)
-      console.log('门店的值：', prams)
-      if (res.code === 0) {
-        setCompanyDetails(res.data.content)
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
       }
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-      console.log('打印报错:', error)
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if (nextPage) {
+        setCompanyDetails([...companyDetails, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setCompanyDetails(res.data.content);
+    } catch (err) {
+      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印异常：', err)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,11 +150,25 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.SupplierGroup(prams)
-      if (res.code === 0) {
-        setCompanyDetails(res.data.content)
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
       }
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if (nextPage) {
+        setCompanyDetails([...companyDetails, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setCompanyDetails(res.data.content);
+    } catch (err) {
+      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印异常：', err)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -156,11 +194,25 @@ const DATA_Statistics = () => {
         ...value,
       }
       const res = await DataStatisticApi.RecruiterGroup(prams)
-      if (res.code === 0) {
-        setCompanyDetails(res.data.content)
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
       }
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if (nextPage) {
+        setCompanyDetails([...companyDetails, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setCompanyDetails(res.data.content);
+    } catch (err) {
+      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印异常：', err)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -438,6 +490,19 @@ const DATA_Statistics = () => {
     })
   }
 
+  // 刷新
+  const refresh = () => setSearchContent({ ...searchContent });
+
+  const onEndReached = () => {
+    if (!load) return;
+    if (originData.hasNext) {
+      const nextPage = { ...searchContent, pageNumber: searchContent.pageNumber += 1 };
+      setSearchContent(nextPage);
+      setNextPage(true);
+    }
+    setLoad(false);
+  };
+
   const tabHead = () => {
     return (
       <>
@@ -521,11 +586,17 @@ const DATA_Statistics = () => {
       <FlatList
         data={companyDetails}
         ListHeaderComponent={tabHead()}
-        // refreshing={isLoading}
+        refreshing={isLoading}
+        onRefresh={refresh}
+        onEndReached={onEndReached}
         keyExtractor={(item) => item.id}
         renderItem={(item) => renderItem(item)}
         getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-        ListEmptyComponent={() => { return (<Text style={styles.LookMoreStyle}>暂无记录</Text>) }}
+        initialNumToRender={15}
+        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
+        ListEmptyComponent={empty}
+        onEndReachedThreshold={0.01}
+        onScrollEndDrag={() => setLoad(true)}
       />
       <NormalDialog
         ref={dialogRef}
@@ -698,7 +769,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333333'
   },
-
+  bottomText: {
+    textAlign: 'center',
+    fontSize: 26,
+    color: '#CCCCCC',
+    marginTop: 10
+  },
 });
 
 export default DATA_Statistics;

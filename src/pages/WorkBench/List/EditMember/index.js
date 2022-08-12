@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, ScrollView, View} from 'react-native';
-import {Button} from '@rneui/themed';
-import {Formik, Field} from 'formik';
+import React, { useEffect } from 'react';
+import { StyleSheet, ScrollView, View } from 'react-native';
+import { Button } from '@rneui/themed';
+import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import moment from 'moment';
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from '@react-navigation/native';
 
 import FormItem from '../../../../components/Form/FormItem';
-import {IDCard, phone} from '../../../../utils/validate';
+import { IDCard, phone } from '../../../../utils/validate';
 import { CHANEL_SOURCE_LIST, MEMBERS_STATUS, WAY_TO_GO, SUCCESS_CODE } from '../../../../utils/const';
 import ListApi from '../../../../request/ListApi';
 
@@ -17,7 +17,7 @@ const SignUpValidationSchema = Yup.object().shape({
   idNo: Yup.string().required('请输入身份证').matches(IDCard, '请输入正确的身份证号'),
   mobile: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号')
 });
-
+const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
 let restForm, initialValues = {
   name: '',
   idNo: '',
@@ -32,49 +32,56 @@ let restForm, initialValues = {
 };
 
 const EditMember = (props) => {
-  const {route: {params}} = props;
+  const { route: { params } } = props;
   const toast = useToast();
   const navigation = useNavigation();
 
-  useEffect(()=>{
-    for(let key in params.fieldList){
-      switch(key){
+  useEffect(() => {
+    for (let key in params.fieldList) {
+      switch (key) {
         case 'signUpType':
-          initialValues[key] = CHANEL_SOURCE_LIST.find(name => name.value === params.fieldList[key]).title;
+          initialValues[key] = CHANEL_SOURCE_LIST.find(name => name.value === params.fieldList[key])?.title;
           break;
         case 'status':
           initialValues[key] = MEMBERS_STATUS[params.fieldList[key]];
           break;
         case 'arrivalMode':
-          initialValues[key] = WAY_TO_GO.find(name => name.value === params.fieldList[key]).label;
+          initialValues[key] = WAY_TO_GO.find(name => name.value === params.fieldList[key])?.label;
+          // initialValues[key] = getEnumValue(WAY_TO_GO, params.fieldList[key]);
           break;
         case 'signUpTime':
-          initialValues[key] = moment(params.fieldList[key]).format('YYYY-MM-DD');
+          initialValues[key] = moment(params.fieldList[key])?.format('YYYY-MM-DD');
           break;
-        default: 
+        case 'jobDate':
+          initialValues[key] = params.fieldList[key] ? moment(params.fieldList[key]).format('YYYY-MM-DD') : '';
+          break;
+        case 'resignDate':
+          initialValues[key] = params.fieldList[key] ? moment(params.fieldList[key]).format('YYYY-MM-DD') : '';
+          break;
+        default:
           initialValues[key] = params.fieldList[key];
           break;
       }
     }
     restForm.setValues(initialValues);
   }, [])
-  
-  const onSubmit = async(values) => {
+
+  const onSubmit = async (values) => {
     const flowId = params.fieldList.flowId;
     const par = {
       name: values.name,
       mobile: values.mobile,
       idNo: values.idNo
     };
-    try{
+    try {
       const res = await ListApi.CompleteInfo(flowId, par);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, { type: 'danger' });
         return;
       }
-      toast.show(`修改成功`, {type: 'success'});
+      toast.show(`修改成功`, { type: 'success' });
       navigation.goBack();
-    }catch(err){
+    } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
@@ -84,10 +91,10 @@ const EditMember = (props) => {
       initialValues={initialValues}
       validationSchema={SignUpValidationSchema}
       onSubmit={onSubmit}>
-        {({handleSubmit, ...rest}) => {
-          restForm = rest;
-          return (
-          <View style={{flex: 1}}>
+      {({ handleSubmit, ...rest }) => {
+        restForm = rest;
+        return (
+          <View style={{ flex: 1 }}>
             <ScrollView style={styles.scrollArea}>
               <View style={styles.cardArea}>
                 <Field
@@ -137,7 +144,7 @@ const EditMember = (props) => {
                   component={FormItem}
                 />
                 <Field
-                  name="arrivalMode" 
+                  name="arrivalMode"
                   title="到厂方式"
                   disabled
                   component={FormItem}
@@ -145,6 +152,18 @@ const EditMember = (props) => {
                 <Field
                   name="signUpTime"
                   title="录入时间"
+                  disabled
+                  component={FormItem}
+                />
+                <Field
+                  name="jobDate"
+                  title="入职日期"
+                  disabled
+                  component={FormItem}
+                />
+                <Field
+                  name="resignDate"
+                  title="离职日期"
                   disabled
                   component={FormItem}
                 />
@@ -160,7 +179,8 @@ const EditMember = (props) => {
               />
             </View>
           </View>
-        )}}
+        )
+      }}
     </Formik>
   )
 };
@@ -184,14 +204,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   theWayToGo: {
-    color: '#000', 
-    fontSize: 15, 
-    fontWeight: 'bold', 
+    color: '#000',
+    fontSize: 15,
+    fontWeight: 'bold',
     marginLeft: 10,
     marginBottom: 10
   },
   cardArea: {
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 10,
     marginHorizontal: 32,
