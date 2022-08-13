@@ -40,13 +40,12 @@ const LongTextArea = ({
 const styles = StyleSheet.create({
   totalArea: {
     minHeight: 160, 
-    paddingLeft: 28,
-    paddingRight: 10,
-    flexDirection: 'row'
+    paddingHorizontal: 28,
+    paddingBottom: 10
   },
   titleArea: {
-    justifyContent: 'center', 
-    alignItems: 'center'
+    justifyContent: 'center',
+    height: 80
   },
   titleArea_text: {
     fontSize: 32
@@ -56,7 +55,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: '#CCCCCC', 
     borderRadius: 8, 
-    marginVertical: 10,
     padding: 5
   },
   inputContainerStyle: {

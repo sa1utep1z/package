@@ -12,7 +12,8 @@ const StatusChangeInInterviewList = ({
   dialogRef,
   item,
   batchOperateList = [],
-  refresh
+  refresh,
+  navigation
   }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
@@ -112,13 +113,13 @@ const StatusChangeInInterviewList = ({
     try{
       const res = await ListApi.BatchOperateInInterview(params);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}。`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      toast.show(`成功修改${res.data.total - res.data.failTotal}条。${res.data.failTotal > 0 ? `失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}。` : ''}`, {type: 'success'});
+      toast.show(`成功修改${res.data.total - res.data.failTotal}条。${res.data.failTotal > 0 ? `失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}` : ''}`, {type: 'success'});
       refresh && refresh();
+      navigation && navigation.goBack();
     }catch(err){
-      console.log('批量操作ERR', err)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       dialogRef.current.setShowDialog(false);
@@ -129,15 +130,15 @@ const StatusChangeInInterviewList = ({
     try{
       const res = await ListApi.PassInInterview(flowId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}。`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show(`修改成功！`, {type: 'success'});
+      refresh && refresh();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       dialogRef.current.setShowDialog(false);
-      refresh && refresh();
     }
   };
 
@@ -149,15 +150,15 @@ const StatusChangeInInterviewList = ({
     try{
       const res = await ListApi.FailInInterview(flowId, {reasons});
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}。`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show(`修改成功！`, {type: 'success'});
+      refresh && refresh();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       dialogRef.current.setShowDialog(false);
-      refresh && refresh();
     }
   };
 
@@ -169,7 +170,7 @@ const StatusChangeInInterviewList = ({
     try{
       const res = await ListApi.NoArriveInInterview(flowId, {reasons});
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}。`, {type: 'danger'});
+        toast.show(`请求失败，${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show(`修改成功！`, {type: 'success'});

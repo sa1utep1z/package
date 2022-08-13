@@ -263,9 +263,9 @@ const MyMembers = () => {
   
   const listHead = (
     <>
-      <View style={styles.numberOfList}>
+      {/* <View style={styles.numberOfList}>
         <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total|| 0}</Text> 条数据</Text>
-      </View> 
+      </View>  */}
       <View style={styles.listHead_title}>
         <Text style={styles.listHead_item}>姓名</Text>
         <Text style={styles.listHead_item}>企业</Text>
@@ -296,7 +296,6 @@ const MyMembers = () => {
         companySingleSelect
         storeSingleSelect
       />
-      <CenterSelectDate />
       <BottomList 
         list={showList}
         isLoading={isLoading}

@@ -60,6 +60,7 @@ const SignUpList = () => {
   const getList = async(params) => {
     setIsLoading(true);
     try{
+      console.log('getList --> params', params)
       const res = await ListApi.SignUpList(params);
       console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
@@ -94,9 +95,11 @@ const SignUpList = () => {
       role
     };
     try{
+      console.log('getTypeList --> params', params)
       const res = await ListApi.GetTypeList(params);
+      console.log('getTypeList --> res', res);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       setTabNumberList(res.data);
@@ -170,7 +173,11 @@ const SignUpList = () => {
     try{
       const res = await ListApi.FactoryMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -195,8 +202,9 @@ const SignUpList = () => {
   const pressName = async(item) => {
     try{
       const res = await ListApi.MemberMessage(item.flowId);
+      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       res.data.flowId = item.flowId;
@@ -249,8 +257,7 @@ const SignUpList = () => {
     const renderList = [
       { 
         fieldName: item.companyShortName, 
-        textStyle: {color: '#409EFF', textAlign: 'left'}, 
-        itemStyle: {justifyContent: 'flex-start'},
+        textStyle: { color: '#409EFF', textAlign: 'center' },
         pressFun: () => pressFactory(item)
       },
       { 

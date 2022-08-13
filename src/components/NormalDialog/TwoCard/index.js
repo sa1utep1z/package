@@ -12,7 +12,7 @@ const TwoCard = ({message}) => {
         <Text style={styles.title}>身份证：</Text>
         <Text style={styles.content}>{message.idNo || '无'}</Text>
       </View>
-      <View style={styles.itemArea}>
+      <View style={[styles.itemArea, {marginBottom: 20}]}>
         <Text style={styles.title}>银行卡：</Text>
         <Text style={styles.content}>{message.backAccount || '无'}</Text>
       </View>

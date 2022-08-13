@@ -46,29 +46,26 @@ const SearchItem = ({
 const styles = StyleSheet.create({
   totalArea: {
     flex: 1, 
-    width: 20, 
-    height: 20, 
-    height: '100%',
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    height: 60
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     color: '#000',
     fontWeight: 'bold'
   },
   searchArea: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    backgroundColor: '#fff', 
+    borderRadius: 10,
+    paddingLeft: 20
   },
   inputStyle: {
     flex: 1,
     height: 60, 
-    backgroundColor: '#fff', 
-    borderBottomLeftRadius: 10, 
-    borderTopLeftRadius: 10, 
     padding: 0,
-    paddingLeft: 20,
     fontSize: 28
   },
   pressArea: {

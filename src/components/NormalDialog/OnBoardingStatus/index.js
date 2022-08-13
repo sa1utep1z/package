@@ -15,7 +15,8 @@ const ListChangeStatus = ({
   dialogRef,
   batchOperateList = [],
   item,
-  refresh
+  refresh,
+  navigation
 }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
@@ -125,6 +126,7 @@ const ListChangeStatus = ({
       }
       toast.show(`成功修改${res.data.total - res.data.failTotal}条。${res.data.failTotal > 0 ? `失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}。` : ''}`, { type: 'success' });
       refresh && refresh();
+      navigation && navigation.goBack();
     } catch (err) {
       console.log('批量操作ERR', err)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

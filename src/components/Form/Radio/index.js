@@ -23,8 +23,8 @@ const Radio = ({
   }
 
   return (
-    <View style={{flexDirection: 'row', borderColor: '#E3E3E3', borderBottomWidth: 1, height: 91, paddingLeft: 28}}>
-      <View style={[{justifyContent: 'center', alignItems: 'center', marginRight: 5}, labelAreaStyle]}>
+    <View style={styles.selectItemArea}>
+      <View style={[styles.titleArea, labelAreaStyle]}>
         <Text style={{fontSize: 32}}>{title}: </Text>
       </View>
       <View style={styles.radioArea}>
@@ -38,7 +38,7 @@ const Radio = ({
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
           />
-          <Text style={{fontSize: 28}}>门店集合</Text>
+          <Text style={{fontSize: 32}}>门店集合</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.radio} onPress={pressFaild}>
           <CheckBox
@@ -50,7 +50,7 @@ const Radio = ({
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
           />
-          <Text style={{fontSize: 28}}>自行到场</Text>
+          <Text style={{fontSize: 32}}>自行到场</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -58,6 +58,18 @@ const Radio = ({
 }
 
 const styles = StyleSheet.create({
+  selectItemArea: {
+    height: 91, 
+    paddingLeft: 28,
+    flexDirection: 'row', 
+    borderBottomColor: 'rgba(0,0,0,.05)', 
+    borderBottomWidth: 2
+  },
+  titleArea: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginRight: 5
+  },
   radioArea: {
     flex: 1,
     flexDirection: 'row', 
@@ -71,7 +83,8 @@ const styles = StyleSheet.create({
   checkBox_containerStyle: {
     margin: 0,
     padding: 0,
-    justifyContent: 'center',
+    textAlignVertical: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0)',
     marginRight: 5
   },

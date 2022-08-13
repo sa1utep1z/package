@@ -81,6 +81,7 @@ const SearchInput = ({
       name='closecircle' 
       color='#A9A9A9' 
       size={smallSize ? 25 : 31}
+      style={{marginRight: 10}}
       onPress={clearIconPress}
     />
   );
@@ -100,9 +101,7 @@ const SearchInput = ({
         clearIcon={clearIcon}
         containerStyle={styles.containerStyle}
         inputStyle={[styles.inputStyle, fontStyle]}
-        onEndEditing={(params)=>{
-          console.log('params', params)
-        }}
+        onEndEditing={(params)=>console.log('params', params)}
         inputContainerStyle={[
           styles.inputContainerStyle, 
           borderRadius && {borderTopLeftRadius: borderRadius, borderBottomLeftRadius: borderRadius},

@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const roleSwitch = createSlice({
   name: 'roleSwitch',
   initialState: {
-    role: 'RESIDENT'
+    role: 'RECRUIT'
   },
   reducers: {
     setRole: (state, {payload}) => {

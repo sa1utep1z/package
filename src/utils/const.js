@@ -185,7 +185,7 @@ export const SEAS_SOURCE_TYPE = {
 
 //我的会员-状态(所有状态合集)
 export const MEMBERS_STATUS = {
-  'NULL': '无',
+  'NONE': '无',
   /**报名 */
   'SIGN_UP_PENDING': '报名待处理',
   'SIGN_UP_NO_INTENTION': '无意向',

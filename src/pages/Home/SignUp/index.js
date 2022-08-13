@@ -48,7 +48,7 @@ const SignUp = (props) => {
     try {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {
-        toast.show('提交成功');
+        toast.show('提交成功', {type: 'success'});
         navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL)
         return;
       } else {

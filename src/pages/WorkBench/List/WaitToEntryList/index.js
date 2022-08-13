@@ -118,7 +118,7 @@ const WaitToEntryList = () => {
       const res = await ListApi.GetWaitStatus(params);
       console.log('打印获取状态的数据：', res)
       if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, { type: 'danger' });
+        toast.show(`${res.data?.msg}`, { type: 'danger' });
         return;
       }
       setTabNumberList(res.data);
@@ -145,7 +145,13 @@ const WaitToEntryList = () => {
   };
 
   // 批量操作
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, { list: 'onBoarding' });
+  const batchOperate = () => {
+    navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, { 
+      list: 'onBoarding',
+      searchParams: searchContent,
+      refresh
+    })
+  };
 
   // 切换状态
   const selectIndex = (selectIndex) => {
@@ -185,11 +191,14 @@ const WaitToEntryList = () => {
 
   // 查看企业详情
   const pressFactory = async (item) => {
-    console.log('searchContent', searchContent);
     try {
       const res = await ListApi.FactoryMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, { type: 'danger' });
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -209,7 +218,7 @@ const WaitToEntryList = () => {
     try {
       const res = await ListApi.MemberMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, { type: 'danger' });
+        toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
       res.data.flowId = item.flowId;
@@ -264,8 +273,7 @@ const WaitToEntryList = () => {
     const renderList = [
       {
         fieldName: item.companyShortName,
-        textStyle: { color: '#409EFF', textAlign: 'left' },
-        itemStyle: { justifyContent: 'flex-start' },
+        textStyle: { color: '#409EFF', textAlign: 'center' },
         pressFun: () => pressFactory(item)
       },
       {

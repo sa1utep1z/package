@@ -23,7 +23,7 @@ const TwoRadio = ({
   }
 
   return (
-    <View style={{flexDirection: 'row', borderColor: '#E3E3E3', borderBottomWidth: 1, height: 91, paddingLeft: 28}}>
+    <View style={{flexDirection: 'row', borderColor: 'rgba(0, 0, 0, .05)', borderBottomWidth: 2, height: 91, paddingLeft: 28}}>
       <View style={[{justifyContent: 'center', alignItems: 'center', marginRight: 5}, labelAreaStyle]}>
         <Text style={{fontSize: 32}}>{title}: </Text>
       </View>

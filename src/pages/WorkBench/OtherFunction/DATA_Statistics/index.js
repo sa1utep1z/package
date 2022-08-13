@@ -60,7 +60,9 @@ const DATA_Statistics = () => {
       const prams = {
         ...value,
       }
+      console.log('companyData -> prams', prams);
       const res = await DataStatisticApi.CompanyGroup(prams)
+      console.log('companyData --> res', res);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
@@ -335,14 +337,17 @@ const DATA_Statistics = () => {
   ]
 
   const getData = async (prams) => {
+    console.log('prams', prams);
     try {
       if (index === 0) {
         const res = await DataStatisticApi.SearchStoreGroup(prams)
+        console.log('res1', res);
         if (res.code === 0) {
           groupStoreData.current = res.data
         }
       } else {
         const res = await DataStatisticApi.SearchCompanyGroup(prams)
+        console.log('res2', res);
         if (res.code === 0) {
           groupCompanyData.current = res.data
         }
@@ -437,6 +442,7 @@ const DATA_Statistics = () => {
     }
     getData(prams)
       .then((res) => {
+        console.log('res', res);
         dialogRef.current.setShowDialog(true);
         setDialogContent({
           dialogTitle: item.name,

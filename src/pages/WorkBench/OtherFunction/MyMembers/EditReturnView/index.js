@@ -244,7 +244,8 @@ const styles = StyleSheet.create({
   },
   longTextItem: {
     flex: 1, 
-    fontSize: 25
+    fontSize: 28,
+    minHeight: 60
   }
 });
 

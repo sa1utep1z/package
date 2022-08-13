@@ -13,7 +13,8 @@ import { SUCCESS_CODE } from '../../../utils/const';
 const ListChangeStatus = ({
   memberInfo = [],
   dialogRef,
-  item
+  item,
+  refresh
 }, ref) => {
   const toast = useToast();
   const inputRef = useRef(null);
@@ -95,6 +96,7 @@ const ListChangeStatus = ({
         return;
       }
       toast.show(`修改状态成功！`, { type: 'success' });
+      refresh && refresh();
     } catch (err) {
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

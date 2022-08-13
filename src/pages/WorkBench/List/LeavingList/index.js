@@ -165,7 +165,11 @@ const LeavingList = () => {
     try {
       const res = await ListApi.FactoryMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, { type: 'danger' });
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -183,7 +187,7 @@ const LeavingList = () => {
     try {
       const res = await ListApi.MemberMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, { type: 'danger' });
+        toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
       res.data.flowId = item.flowId;
@@ -207,7 +211,7 @@ const LeavingList = () => {
     setDialogContent({
       dialogTitle: '待处理',
       bottomButton: false,
-      dialogComponent: <JobResignStatus dialogRef={dialogRef} item={item} />,
+      dialogComponent: <JobResignStatus dialogRef={dialogRef} item={item} refresh={refresh}/>,
     });
   };
 
@@ -237,8 +241,7 @@ const LeavingList = () => {
     const renderList = [
       {
         fieldName: item.companyShortName,
-        textStyle: { color: '#409EFF', textAlign: 'left' },
-        itemStyle: { justifyContent: 'flex-start' },
+        textStyle: { color: '#409EFF', textAlign: 'center' },
         pressFun: () => pressFactory(item)
       },
       {

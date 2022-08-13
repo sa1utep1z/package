@@ -28,15 +28,15 @@ const HeaderRightButtonOfList = () => {
       {hasPermission && (
         <>
           <TouchableOpacity 
-            style={[styles.btnArea, styles.btn1, role !== 'RESIDENT' && styles.selectedArea]} 
+            style={[styles.btnArea, styles.btn1, role === 'RESIDENT' && styles.selectedArea]} 
             onPress={pressButton}>
             <Text 
-              style={[styles.btnText, role !== 'RESIDENT' && styles.selected]}>驻厂</Text>
+              style={[styles.btnText, role === 'RESIDENT' && styles.selected]}>驻厂</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={[styles.btnArea, role !== 'RECRUIT' && styles.selectedArea]} 
+            style={[styles.btnArea, role === 'RECRUIT' && styles.selectedArea]} 
             onPress={pressButton}>
-            <Text style={[styles.btnText, role !== 'RECRUIT' && styles.selected]}>招聘</Text>
+            <Text style={[styles.btnText, role === 'RECRUIT' && styles.selected]}>招聘</Text>
           </TouchableOpacity>
         </>
       )}

@@ -3,9 +3,9 @@ import { View, StyleSheet, TouchableOpacity, Text, Linking} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
@@ -149,7 +149,7 @@ const NewestState = () => {
         return;
       }
       toast.show(`修改成功`, {type: 'success'});
-      refresh();
+      refresh && refresh();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
@@ -173,7 +173,7 @@ const NewestState = () => {
     try{
       const res = await ListApi.MemberMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       res.data.flowId = item.flowId;
@@ -191,14 +191,21 @@ const NewestState = () => {
 
   const transferFactory = (item) => {
     dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {item, refresh})
+    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
+      item, 
+      refresh
+    });
   };
 
   const pressFactory = async(item) => {
     try{
       const res = await ListApi.FactoryMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}`, {type: 'danger'});
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -216,6 +223,12 @@ const NewestState = () => {
   const showTwoCard = item => {
     dialogRef.current.setShowDialog(true);
     setDialogContent({
+      bottomButton: false,
+      rightClose: <AntDesign
+        name='closecircleo'
+        size={20}
+        onPress={() => dialogRef.current.setShowDialog(false)}
+      />,
       dialogTitle: '会员信息',
       dialogComponent: <TwoCard message={item}/>
     });
@@ -226,7 +239,7 @@ const NewestState = () => {
     setDialogContent({
       dialogTitle: '状态修改',
       bottomButton: false,
-      dialogComponent: <NewestStatus message={item} dialog={dialogRef} confirmOnPress={changeStatusFunc}/>
+      dialogComponent: <NewestStatus message={item} dialog={dialogRef} confirmOnPress={changeStatusFunc} refresh={refresh}/>
     });
   };
 
@@ -245,7 +258,8 @@ const NewestState = () => {
     const renderList = [
       { 
         fieldName: item.name || '无', 
-        textStyle: {color: '#409EFF'},
+        textStyle: { color: '#409EFF', textAlign: 'center' },
+        itemStyle: { flexDirection: 'column' },
         pressFun: () => item.mobile && callPhone(item)
       },
       { 
@@ -283,7 +297,7 @@ const NewestState = () => {
               numberOfLines={2}
               ellipsizeMode='tail'
               style={[styles.itemText, renderItem.textStyle]}>{renderItem.fieldName !== 'press' ? renderItem.fieldName : '查看'}</Text>
-            {renderItem.fieldName === item.name && <Entypo name='phone' size={32} color='#409EFF'/>}
+            {renderItem.fieldName === item.name && <Entypo name='phone' size={28} color='#409EFF'/>}
           </TouchableOpacity>
         ))}
       </View>
@@ -360,7 +374,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center', 
-    alignItems: 'center'
+    alignItems: 'center',
   },
   itemText: {
     fontSize: 30,

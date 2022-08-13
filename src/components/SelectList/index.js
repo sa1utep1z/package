@@ -15,7 +15,6 @@ const SelectList = ({
     bottomButton, //是否有底部按钮
     listStyle,
     bottomButtonStyle,
-    showStatus = false, //是否展示状态
     ...rest
 }) => {
   const navigation = useNavigation();
@@ -97,7 +96,6 @@ const SelectList = ({
     return (
       <TouchableOpacity key={item.value} style={styles.listItem} onPress={()=>pressButton(item)}>
         <Text style={{fontSize: 28}}>{item.label}</Text>
-        {showStatus && <Text style={styles.status}>{MEMBERS_STATUS[item.status]}</Text>}
         <CheckBox
           center
           size={30}

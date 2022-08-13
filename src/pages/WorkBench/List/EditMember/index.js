@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import { Button } from '@rneui/themed';
 import { Formik, Field } from 'formik';
@@ -8,9 +8,14 @@ import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from '@react-navigation/native';
 
 import FormItem from '../../../../components/Form/FormItem';
+import SelectItem from '../../../../components/Form/SelectItem';
 import { IDCard, phone } from '../../../../utils/validate';
 import { CHANEL_SOURCE_LIST, MEMBERS_STATUS, WAY_TO_GO, SUCCESS_CODE } from '../../../../utils/const';
 import ListApi from '../../../../request/ListApi';
+import Radio from '../../../../components/Form/Radio';
+import ChangeStatus from '../../../../components/Form/ChangeStatus';
+import MyMembersApi from '../../../../request/MyMembersApi';
+import { checkedType } from '../../../../utils';
 
 const SignUpValidationSchema = Yup.object().shape({
   name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
@@ -24,11 +29,13 @@ let restForm, initialValues = {
   mobile: '',
   orderName: '',
   signUpType: '',
-  recruitName: '',
-  storeName: '',
+  storeName: [],
+  recruitName: [],
   status: '',
   arrivalMode: '',
-  signUpTime: ''
+  signUpTime: '',
+  jobDate: '',
+  resignDate: ''
 };
 
 const EditMember = (props) => {
@@ -36,14 +43,17 @@ const EditMember = (props) => {
   const toast = useToast();
   const navigation = useNavigation();
 
+  const [storeList, setStoreList] = useState([]);
+
   useEffect(() => {
+    console.log('params.fieldList', params.fieldList);
     for (let key in params.fieldList) {
       switch (key) {
         case 'signUpType':
           initialValues[key] = CHANEL_SOURCE_LIST.find(name => name.value === params.fieldList[key])?.title;
           break;
         case 'status':
-          initialValues[key] = MEMBERS_STATUS[params.fieldList[key]];
+          initialValues[key] =params.fieldList[key];
           break;
         case 'arrivalMode':
           initialValues[key] = WAY_TO_GO.find(name => name.value === params.fieldList[key])?.label;
@@ -64,7 +74,29 @@ const EditMember = (props) => {
       }
     }
     restForm.setValues(initialValues);
+    getStoreList();
   }, [])
+
+  const getStoreList = async() => {
+    try{  
+      const res = await MyMembersApi.StoreList();
+      console.log('res', res);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if(res.data.length){
+        res.data.forEach((item,index) => {
+          item.title = item.storeName;
+          item.id = index + 1;
+        });
+        setStoreList(res.data);
+      }
+    }catch(err){
+      console.log('err', err);
+      toast.show(`获取门店列表失败`, { type: 'danger' });
+    }
+  };
 
   const onSubmit = async (values) => {
     const flowId = params.fieldList.flowId;
@@ -91,8 +123,15 @@ const EditMember = (props) => {
       initialValues={initialValues}
       validationSchema={SignUpValidationSchema}
       onSubmit={onSubmit}>
-      {({ handleSubmit, ...rest }) => {
+      {({ handleSubmit, values, ...rest }) => {
         restForm = rest;
+        const selectStoreList = checkedType(values.storeName) === 'Array' ? values.storeName.length ? values.storeName[0].members : [] : [];
+        if(selectStoreList.length){
+          selectStoreList.map((item, index) => {
+            item.title = item.label;
+            item.id = index + 1;
+          })
+        }
         return (
           <View style={{ flex: 1 }}>
             <ScrollView style={styles.scrollArea}>
@@ -105,11 +144,13 @@ const EditMember = (props) => {
                 <Field
                   name="idNo"
                   title="身份证"
+                  disabled
                   component={FormItem}
                 />
                 <Field
                   name="mobile"
                   title="手机号"
+                  disabled
                   maxLength={11}
                   component={FormItem}
                 />
@@ -122,32 +163,61 @@ const EditMember = (props) => {
                 <Field
                   name="signUpType"
                   title="职位来源"
-                  disabled
-                  component={FormItem}
-                />
-                <Field
-                  name="recruitName"
-                  title="经纪人"
-                  disabled
-                  component={FormItem}
+                  noBorder
+                  bottomButton
+                  inPageField
+                  singleSelect
+                  validate={value=>{
+                    let errorMsg;
+                    if(value.length === 0) {
+                      errorMsg = '请选择渠道来源';
+                    }
+                    return errorMsg;
+                  }}
+                  selectList={CHANEL_SOURCE_LIST}
+                  component={SelectItem}
                 />
                 <Field
                   name="storeName"
                   title="归属门店"
-                  disabled
-                  component={FormItem}
+                  noBorder
+                  singleSelect
+                  bottomButton
+                  inPageField
+                  canSearch
+                  validate={value=>{
+                    let errorMsg;
+                    if(value.length === 0) {
+                      errorMsg = '请选择所属门店';
+                    }
+                    return errorMsg;
+                  }}
+                  selectList={storeList}
+                  component={SelectItem}
                 />
                 <Field
-                  name="status"
-                  title="状态"
-                  disabled
-                  component={FormItem}
+                  name="recruitName"
+                  title="经纪人"
+                  noBorder
+                  canSearch
+                  bottomButton
+                  singleSelect
+                  inPageField
+                  validate={value=>{
+                    let errorMsg;
+                    if(value.length === 0) {
+                      errorMsg = '请选择归属招聘员';
+                    }
+                    return errorMsg;
+                  }}
+                  selectList={selectStoreList}
+                  component={SelectItem}
                 />
                 <Field
                   name="arrivalMode"
-                  title="到厂方式"
-                  disabled
-                  component={FormItem}
+                  title="到场方式"
+                  placeholder="到场方式"
+                  component={Radio}
                 />
                 <Field
                   name="signUpTime"
@@ -156,17 +226,23 @@ const EditMember = (props) => {
                   component={FormItem}
                 />
                 <Field
+                  name="status"
+                  title="状态"
+                  fieldList={params.fieldList}
+                  component={ChangeStatus}
+                />
+                {values.jobDate && <Field
                   name="jobDate"
                   title="入职日期"
                   disabled
                   component={FormItem}
-                />
-                <Field
+                />}
+                {values.resignDate && <Field
                   name="resignDate"
                   title="离职日期"
                   disabled
                   component={FormItem}
-                />
+                />}
               </View>
             </ScrollView>
             <View style={styles.btnArea}>

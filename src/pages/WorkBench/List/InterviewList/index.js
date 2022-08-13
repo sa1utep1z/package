@@ -124,7 +124,13 @@ const InterviewList = () => {
     });
   },[rangeDate])
 
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {list: 'interview'});
+  const batchOperate = () => {
+    navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {
+      list: 'interview',
+      searchParams: searchContent,
+      refresh
+    })
+  };
 
   const transferFactory = (item) => {
     dialogRef.current.setShowDialog(false);
@@ -138,7 +144,11 @@ const InterviewList = () => {
     try{
       const res = await ListApi.FactoryMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}`, {type: 'danger'});
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -164,7 +174,7 @@ const InterviewList = () => {
     try{
       const res = await ListApi.MemberMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       res.data.flowId = item.flowId;
@@ -255,8 +265,7 @@ const InterviewList = () => {
     const renderList = [
       { 
         fieldName: item.companyShortName, 
-        textStyle: {color: '#409EFF', textAlign: 'left'}, 
-        itemStyle: {justifyContent: 'flex-start'},
+        textStyle: { color: '#409EFF', textAlign: 'center' },
         pressFun: () => pressFactory(item)
       },
       { 

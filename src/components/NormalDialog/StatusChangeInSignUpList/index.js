@@ -81,15 +81,15 @@ const StatusChangeInSignUpList = ({
       const res = await ListApi.NoIntention(flowId, params);
       console.log('res', res)
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}。`, {type: 'danger'});
+        toast.show(`${res?.msg}。`, {type: 'danger'});
         return;
       }
       toast.show(`修改状态成功！`, {type: 'success'});
+      refresh && refresh();
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
-      refresh && refresh();
       dialogRef.current.setShowDialog(false);
     }
   };
@@ -98,17 +98,16 @@ const StatusChangeInSignUpList = ({
     const flowId = item.flowId;
     try{
       const res = await ListApi.HasIntention(flowId);
-      console.log('res', res)
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res?.msg}。`, {type: 'danger'});
+        toast.show(`${res?.msg}。`, {type: 'danger'});
         return;
       }
       toast.show(`修改状态成功！`, {type: 'success'});
+      refresh && refresh();
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
-      refresh && refresh();
       dialogRef.current.setShowDialog(false);
     }
   };

@@ -167,7 +167,7 @@ const NewestStatus = ({
         toast.show(`${res?.msg}。`, {type: 'danger'});
         return;
       }
-      refresh();
+      refresh && refresh();
       if(res.data.failTotal === 0){
         toast.show(`成功修改${res.data.total}条`, {type: 'success'});
         return;

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {StyleSheet, View, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -25,7 +25,7 @@ const MemberDetail = ({
         case 'sourceType': 
           list.push({type: key, title: MEMBER_INFO_KEY[key], value: SEAS_SOURCE_TYPE[memberInfoList[key]]});
           break;
-        case 'registerDate': 
+        case 'registerDate':
           list.push({type: key, title: MEMBER_INFO_KEY[key], value: moment(memberInfoList[key]).format('YYYY-MM-DD')});
           break;
         default: 
@@ -33,6 +33,9 @@ const MemberDetail = ({
           break;
       }
     }
+    const bornMonthIndex = list.findIndex(item => item.type === 'bornMonth');
+    list[bornMonthIndex] = {type: 'born', title: '生日', value: `${memberInfoList.bornMonth}月${memberInfoList.bornDay}日`}
+    list.splice(list.findIndex(item => item.type === "bornDay"), 1);
     setShowList(list);
   },[memberInfoList]);
 
@@ -71,14 +74,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   memberItem: {
-    height: 30,
+    minHeight: 30,
     flexDirection: 'row'
   },
   memberItem_text: {
     textAlignVertical: 'center',
     textAlign: 'right',
-    paddingRight: 10,
-    letterSpacing: 2
+    marginRight: 5
   },
   memberItem_value: {
     flex: 1, 

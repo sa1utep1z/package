@@ -135,6 +135,7 @@ const JoinInSignUp = (props) => {
     }
     try{  
       const res = await MyMembersApi.getOrderMessage(params);
+      console.log('筛选的res', res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取订单信息失败，${res.msg}`, { type: 'danger' });
         return;

@@ -159,8 +159,6 @@ const HeaderSearch = ({
                   formalLabel={false}
                   lastButton={batch}
                   singleSelect={companySingleSelect}
-                  // selectAreaStyle={styles.selectAreaStyle}
-                  // selectAreaTextStyle={styles.fontSize}
                   selectList={companyList}
                   component={SelectItem}
                 />
@@ -178,8 +176,6 @@ const HeaderSearch = ({
                   formalLabel={false}
                   lastButton={batch}
                   selectContainerStyle={{marginLeft: 40}}
-                  // selectAreaStyle={styles.selectAreaStyle}
-                  // selectAreaTextStyle={styles.fontSize}
                   selectList={STATUS_LIST}
                   component={SelectItem}
                 />}
@@ -196,8 +192,6 @@ const HeaderSearch = ({
                   singleSelect={storeSingleSelect}
                   formalLabel={false}
                   selectList={storeList}
-                  // selectAreaStyle={styles.selectAreaStyle}
-                  // selectAreaTextStyle={styles.fontSize}
                   component={SelectItem}
                 />
                 <View style={{width: 40}}></View>

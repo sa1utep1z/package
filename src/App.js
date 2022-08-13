@@ -28,7 +28,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ToastProvider 
           placement="top"
-          duration={10000}
+          duration={3000}
           animationDuration={250}
           offsetTop={100}
           animationType='zoom-in'
@@ -57,4 +57,4 @@ const App = () => {
     </ScaleView>
 )};
 
-export default simpleUpdate(App, { appKey });
+export default App;

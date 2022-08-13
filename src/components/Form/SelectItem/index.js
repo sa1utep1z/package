@@ -77,9 +77,15 @@ const SelectItem = ({
 
   const itemName = () => {
     if(bottomButton){
-      return field.value.length && field.value.length !== 0 && field.value.map(item => item.title).join('、');
+      const type = checkedType(field.value);
+      switch(type){
+        case 'Array':
+          return field.value.length && field.value.length !== 0 && field.value.map(item => item.title).join('、');
+        case 'String':
+          return field.value;
+      }
     }
-    return list.find(item => item.id === field.value.id)?.title;
+    return list.find(item => item.id === field.value.id)?.title || field.value;
   };
 
   const checkFieldValueType = () => {
@@ -194,33 +200,32 @@ const SelectItem = ({
               searchInputStyle={styles.searchInputStyle}
             />}
             {list.length ? 
-              <View style={{borderBottomWidth: 1, borderColor: '#E3E3E3', marginBottom: 10}}>
-                <FlatList 
-                  data={list}
-                  style={[styles.scrollArea, canSearch && styles.canSearchWithScrollView]}
-                  renderItem={({item})=>{
-                    const checkedItem = item.isChecked;
-                    return (
-                      <TouchableOpacity 
-                        style={[styles.scrollItem]} 
-                        onPress={() => pressItem(item)}>
-                        <Text>{item.title}</Text>
-                        <CheckBox
-                          center
-                          checked={checkedItem}
-                          onPress={() => pressItem(item)}
-                          containerStyle={styles.checkBox_containerStyle}
-                          checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
-                          uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
-                        />
-                      </TouchableOpacity>
-                    )
-                  }}
-                  keyExtractor={item => item.id}
-                  getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
-                  initialNumToRender={15}
-                />
-              </View> : <EmptyArea withSearch />
+              <FlatList 
+                data={list}
+                style={[styles.scrollArea, canSearch && styles.canSearchWithScrollView]}
+                renderItem={({item, index})=>{
+                  const checkedItem = item.isChecked;
+                  const isLastIndex = index === list.length - 1;
+                  return (
+                    <TouchableOpacity 
+                      style={[styles.scrollItem, isLastIndex && {borderBottomWidth: 0}]} 
+                      onPress={() => pressItem(item)}>
+                      <Text>{item.title}</Text>
+                      <CheckBox
+                        center
+                        checked={checkedItem}
+                        onPress={() => pressItem(item)}
+                        containerStyle={styles.checkBox_containerStyle}
+                        checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
+                        uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
+                      />
+                    </TouchableOpacity>
+                  )
+                }}
+                keyExtractor={item => item.id}
+                getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
+                initialNumToRender={15}
+              /> : <EmptyArea withSearch />
             }
           </View>
           {bottomButton && <View style={styles.bottomButtonArea}>
@@ -285,7 +290,7 @@ const styles = StyleSheet.create({
   },
   selectText: {
     color: 'black',
-    fontSize: 28
+    fontSize: 32
   },
   noItem: {
     color: '#999999'
@@ -323,7 +328,8 @@ const styles = StyleSheet.create({
   scrollArea: {
     borderWidth: 1, 
     borderColor: '#E3E3E3', 
-    maxHeight: 300
+    maxHeight: 300,
+    borderRadius: 8
   },
   scrollItem: {
     height: 35, 
