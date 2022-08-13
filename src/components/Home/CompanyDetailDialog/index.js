@@ -15,7 +15,7 @@ const CompanyDetailDialog = ({
   }, []);
 
   const date = String(message.recruitRange).substring(5, 11);
-  const date2 = String(message.recruitRange).substring(16, 20)
+  const date2 = String(message.recruitRange).substring(16, 21)
   const recruitRange = date + date2
   
   return (

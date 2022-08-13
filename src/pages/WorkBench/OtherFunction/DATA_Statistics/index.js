@@ -31,12 +31,20 @@ const DATA_Statistics = () => {
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
   const title = ['企业', '门店', '供应商', '招聘员']
-
+  let timer;
   useEffect(() => {
     navigation.setOptions({
       headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
-    return;
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
+      // getList(searchContent);
+    }, 0)
+    return () => {
+      setCompanyDetails([]);
+      setOriginData({});
+      timer && clearTimeout(timer);
+    }
   }, []);
 
   // 获取企业总数据
@@ -48,6 +56,8 @@ const DATA_Statistics = () => {
       const res = await DataStatisticApi.Company(prams)
       if (res.code === 0) {
         setTotalData(res.data);
+        console.log('打印企业参数：', prams)
+        console.log('打印企业总数：', res.data)
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -65,6 +75,7 @@ const DATA_Statistics = () => {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
+      console.log('打印企业分组数据11：', res.data)
       //初始数据
       setOriginData(res.data);
       //渲染的列表（有下一页时）
@@ -75,7 +86,6 @@ const DATA_Statistics = () => {
       }
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
-      console.log('打印')
     } catch (err) {
       toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
       console.log('打印异常：', err)
@@ -93,8 +103,8 @@ const DATA_Statistics = () => {
       const res = await DataStatisticApi.Store(prams)
       if (res.code === 0) {
         setTotalData(res.data);
-      } else {
-        setIsLoading(false)
+        console.log('打印门店参数：', prams)
+        console.log('打印门店总数：', res.data)
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -112,6 +122,7 @@ const DATA_Statistics = () => {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
+      console.log('打印门店总数11：', res.data)
       //初始数据
       setOriginData(res.data);
       //渲染的列表（有下一页时）
@@ -139,8 +150,8 @@ const DATA_Statistics = () => {
       const res = await DataStatisticApi.Supplier(prams)
       if (res.code === 0) {
         setTotalData(res.data);
-      } else {
-        setIsLoading(false)
+        console.log('打印供应商参数：', prams)
+        console.log('打印供应商总数：', res.data)
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -185,6 +196,8 @@ const DATA_Statistics = () => {
       const res = await DataStatisticApi.Recruiter(prams)
       if (res.code === 0) {
         setTotalData(res.data);
+        console.log('打印招聘员参数：', prams)
+        console.log('打印招聘员总数：', res.data)
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -224,6 +237,7 @@ const DATA_Statistics = () => {
     if (index === 0) {
       companyData(searchContent);
       companyTotalData(searchTotal);
+      console.log('参数：', searchTotal)
     } else if (index === 1) {
       storeTotalData(searchTotal);
       storeGroupData(searchContent);
@@ -335,16 +349,19 @@ const DATA_Statistics = () => {
   ]
 
   const getData = async (prams) => {
+    console.log('打印获取门店或企业的详细数据的请求参数：', prams)
     try {
       if (index === 0) {
         const res = await DataStatisticApi.SearchStoreGroup(prams)
         if (res.code === 0) {
           groupStoreData.current = res.data
+          console.log('打印获取门店的详细数据：', res)
         }
       } else {
         const res = await DataStatisticApi.SearchCompanyGroup(prams)
         if (res.code === 0) {
           groupCompanyData.current = res.data
+          console.log('打印获取企业的详细数据：', res)
         }
       }
     } catch (error) {
@@ -399,7 +416,9 @@ const DATA_Statistics = () => {
       signUpPhaseStatus: "",
       interviewPhaseStatus: "",
       onBoardingPhaseStatus: "",
-      jobPhaseStatus: ""
+      jobPhaseStatus: "",
+      startDate: searchContent?.startDate,
+      endDate: searchContent?.endDate,
     }
     if (index === 0) {
       prams.companyId = item.id;
@@ -479,7 +498,7 @@ const DATA_Statistics = () => {
   }
 
   const filter = (values) => {
-    console.log('values', values)
+    console.log('顶部搜索栏参数：', values)
     setSearchContent({
       pageSize: 20,
       pageNumber: 0,
@@ -729,8 +748,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
     backgroundColor: '#fff',
-    // borderWidth: 1,
-    // borderColor: 'red'
   },
   listItem: {
     flexDirection: 'row',
@@ -815,13 +832,6 @@ const styles = StyleSheet.create({
   tabItem_titleStyle_active: {
     color: '#fff',
     fontWeight: 'bold',
-  },
-  tabItem_active: {
-    flex: 1, 
-    justifyContent: 'center',
-    borderRightWidth: 2,
-    borderColor: "#EEF4F7",
-    backgroundColor: '#409EFF'
   },
 });
 

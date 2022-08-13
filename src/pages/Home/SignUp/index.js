@@ -13,17 +13,13 @@ import { ARRIVE_WAY, COMPANY_ENGLISH } from '../../../utils/const';
 import HomeApi from "../../../request/HomeApi";
 import ImagePicker from 'react-native-image-crop-picker';
 import NAVIGATION_KEYS from '../../../navigator/key';
-const SignUpValidationSchema = Yup.object().shape({
-  name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
-  // IDCard: Yup.string().required('请输入身份证').matches(IDCard, '请输入正确的身份证号'),
-  // phone: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号')
-});
+
 
 let restForm;
 const SignUp = (props) => {
   const { navigation, route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
-
+  console.log('路由跳转的订单id：',params.orderId)
   const toast = useToast();
   const initialValues = {
     jobName: params.jobName,
@@ -34,41 +30,34 @@ const SignUp = (props) => {
     address: '',
     authority: '',
     timeLimit: '',
-    arriveMode: 'FACTORY',
+    arrivalMode: 'STORE',
     remark: '',
     tip: true
   };
 
   // 提交报名表单
   const onSubmit = async (values) => {
+    console.log('提交是否成功：', values)
     const prams = {
       ...values,
-      arriveMode: values.arriveMode === true ? 'FACTORY' : 'STORE',
+      arrivalMode: values.arrivalMode === true ? 'STORE' : 'FACTORY',
     }
     try {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {
         toast.show('提交成功');
-        navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL)
+        navigation && navigation.goBack();
+        console.log('提交是否成功：', prams, orderId)
         return;
       } else {
-        <ToastProvider
-          renderType={{
-            custom_type: (toast) => (
-              <View style={{ padding: 15, backgroundColor: 'grey' }}>
-                <Text>{res.msg}</Text>
-              </View>
-            )
-          }}
-        />
-        // toast.show(`${res.msg}`, {
-        //   duration: 8000,
-        //   placement: 'center',
-        //   offsetTop: 800
-        // });
+        toast.show(`${res.msg}`, {
+          duration: 10000,
+          placement: 'center',
+        });
       }
     } catch (error) {
       toast.show('报名失败，请稍后再试');
+      console.log('打印异常：', error)
     }
   }
 
@@ -97,7 +86,7 @@ const SignUp = (props) => {
         restForm.setValues(prams)
       }
     } else {
-      toast.show('识别失败，重新识别一次')
+      toast.show('识别失败，请重新识别一次')
     }
   }
 
@@ -223,7 +212,7 @@ const SignUp = (props) => {
                 {/* <Text style={styles.theWayToGo}>到场方式</Text> */}
                 <View style={styles.cardArea}>
                   <Field
-                    name="arriveMode"
+                    name="arrivalMode"
                     title="到场方式"
                     placeholder="到场方式"
                     noBorder
@@ -232,8 +221,7 @@ const SignUp = (props) => {
                   />
                 </View>
               </>
-              <>
-                {/* <Text style={styles.theWayToGo}>是否需提供住宿</Text> */}
+              {/* <>
                 <View style={styles.cardArea}>
                   <Field
                     name="tip"
@@ -244,16 +232,7 @@ const SignUp = (props) => {
                     component={TwoRadio}
                   />
                 </View>
-              </>
-              {/* <>
-              <Text style={styles.theWayToGo}>是否住宿</Text>
-              <Field
-                name="tip"
-                placeholder="请输入备注"
-                noBorder
-                component={TwoRadio}
-              />
-            </> */}
+              </> */}
             </ScrollView>
             <Button
               title="帮他报名"
