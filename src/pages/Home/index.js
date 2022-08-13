@@ -63,8 +63,8 @@ const Home = (props) => {
   },[searchContent])
 
   const gotoList = async(item) => {
+    const {current} = listRef;
     if(item.num > 1){
-      const {current} = listRef;
       current?.setShowList(true);
       const params = {
         companyId: item?.companyId,
@@ -78,6 +78,8 @@ const Home = (props) => {
       };
       current?.setList(newList); 
       return;
+    } else {
+      current?.setShowList(false);
     }
     navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
       companyName: item.companyName,

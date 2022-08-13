@@ -27,7 +27,7 @@ const CompanyDetail = (props) => {
   const date = String(orderData.recruitRange).substring(5, 11);
   const date2 = String(orderData.recruitRange).substring(16, 21)
   const recruitRange = date + date2
-  
+
   const getDetail = async () => {
     try{
       const res = await HomeApi.orderDetail(orderId);
@@ -36,6 +36,7 @@ const CompanyDetail = (props) => {
         return;
       }
       setOrderData(res.data);
+      console.log('打印详情：', res)
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -53,7 +54,7 @@ const CompanyDetail = (props) => {
     jobName: params.orderName,
     orderId: params.orderId,
   });
-
+  console.log('路由跳转的参数：',params)
   return (
     <View style={{ flex: 1}}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
@@ -81,8 +82,11 @@ const CompanyDetail = (props) => {
               <Text style={styles.amountStyle}>{orderData.salary}</Text>
             </View>
             <View style={styles.rowStyles}>
-              <Text style={styles.tagsStyle}>底薪高</Text>
-              <Text style={styles.tagsStyle}>福利好</Text>
+              {
+                orderData.tags?.map((item) => (
+                  <Text style={styles.tagsStyle}>{item}</Text>
+                ))
+              }
             </View>
             <View style={styles.rowStyles}>
               <Text style={styles.workStyle}>正式工</Text>
