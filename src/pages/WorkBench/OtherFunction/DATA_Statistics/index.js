@@ -31,27 +31,31 @@ const DATA_Statistics = () => {
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
   const title = ['企业', '门店', '供应商', '招聘员']
-  let timer;
+  // let timer;
   useEffect(() => {
     navigation.setOptions({
       headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
-    timer && clearTimeout(timer);
-    timer = setTimeout(()=>{
-      // getList(searchContent);
-    }, 0)
-    return () => {
-      setCompanyDetails([]);
-      setOriginData({});
-      timer && clearTimeout(timer);
-    }
+    // timer && clearTimeout(timer);
+    // timer = setTimeout(()=>{
+    //   companyData(searchContent);
+    //   companyTotalData(searchTotal);
+    // }, 0)
+    // return () => {
+    //   setCompanyDetails([]);
+    //   setOriginData({});
+    //   timer && clearTimeout(timer);
+    // }
   }, []);
 
   // 获取企业总数据
   const companyTotalData = async (value) => {
+    console.log('打印企业参数1111：', value)
     try {
       const prams = {
-        ...value,
+        startDate: value.startDate,
+        endDate: value.endDate,
+        name: value.search,
       }
       const res = await DataStatisticApi.Company(prams)
       if (res.code === 0) {
@@ -61,6 +65,7 @@ const DATA_Statistics = () => {
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印异常：', error)
     }
   };
 
@@ -234,21 +239,22 @@ const DATA_Statistics = () => {
   };
 
   useEffect(() => {
+
     if (index === 0) {
       companyData(searchContent);
-      companyTotalData(searchTotal);
-      console.log('参数：', searchTotal)
+      companyTotalData(searchContent);
+      console.log('参数：', searchContent)
     } else if (index === 1) {
-      storeTotalData(searchTotal);
+      storeTotalData(searchContent);
       storeGroupData(searchContent);
     } else if (index === 2) {
-      supplierTotalData(searchTotal);
+      supplierTotalData(searchContent);
       supplierData(searchContent);
     } else {
-      recruiterTotalData(searchTotal)
+      recruiterTotalData(searchContent)
       recruiterData(searchContent)
     }
-  }, [index, searchContent, searchTotal]);
+  }, [index, searchContent]);
 
   const toTalItem = (res) => {
     const renderList = [
@@ -506,11 +512,11 @@ const DATA_Statistics = () => {
       endDate: values.dateRange.endDate,
       name: values.search,
     });
-    setSearchTotal({
-      startDate: values.dateRange.startDate,
-      endDate: values.dateRange.endDate,
-      name: values.search,
-    })
+    // setSearchTotal({
+    //   startDate: values.dateRange.startDate,
+    //   endDate: values.dateRange.endDate,
+    //   name: values.search,
+    // })
   }
 
   // 刷新
@@ -617,7 +623,7 @@ const DATA_Statistics = () => {
         {title.map((tabItem, tabIndex) => {
           const active = index === tabIndex;
           return (
-            <TouchableOpacity key={tabIndex} style={[styles.tabItem, active && {backgroundColor: '#409EFF'}]} onPress={() => selectIndex(tabIndex)}>
+            <TouchableOpacity key={tabIndex} style={[styles.tabItem, active && { backgroundColor: '#409EFF' }]} onPress={() => selectIndex(tabIndex)}>
               <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem}</Text>
             </TouchableOpacity>
           )
@@ -814,12 +820,12 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   tab_containerStyle: {
-    height: 75, 
-    flexDirection: 'row', 
+    height: 75,
+    flexDirection: 'row',
     backgroundColor: '#fff',
   },
   tabItem: {
-    flex: 1, 
+    flex: 1,
     justifyContent: 'center',
     borderRightWidth: 2,
     borderColor: "#EEF4F7",
