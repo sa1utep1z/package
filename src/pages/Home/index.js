@@ -31,7 +31,11 @@ const Home = (props) => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    return () => setSearchContent({pageSize: 10, pageNumber: 0});
+    return () => {
+      setSearchContent({pageSize: 10, pageNumber: 0});
+      console.log('listRef+++++++++++++++++', listRef);
+      listRef?.current?.setShowList(false);
+    };
   }, [])
 
   const { isLoading, data, isError, error, refetch, status } = useQuery(['homePage', searchContent], HomeApi.HomePage);
@@ -63,29 +67,34 @@ const Home = (props) => {
   },[searchContent])
 
   const gotoList = async(item) => {
-    const {current} = listRef;
-    if(item.num > 1){
-      current?.setShowList(true);
-      const params = {
-        companyId: item?.companyId,
-        recruitStart: searchContent?.recruitStart,
-        recruitEnd: searchContent?.recruitEnd
+    try {
+      const {current} = listRef;
+      if(item.num > 1){
+        current?.setShowList(true);
+        const params = {
+          companyId: item?.companyId,
+          recruitStart: searchContent?.recruitStart,
+          recruitEnd: searchContent?.recruitEnd
+        }
+        const res = await HomeApi.CompanyList(params);
+        const newList = {
+          companyName: item.companyName,
+          list: res.data
+        };
+        current?.setList(newList);
+        console.log('是否执行打印异常：', newList)
+        return;
       }
-      const res = await HomeApi.CompanyList(params);
-      const newList = {
+      navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
         companyName: item.companyName,
-        list: res.data
-      };
-      current?.setList(newList); 
-      return;
-    } else {
+        orderId: item.orderId,
+        orderName: item.orderName,
+      });
+    } catch (error) {
       current?.setShowList(false);
+      console.log('是否执行打印异常：', error)
     }
-    navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
-      companyName: item.companyName,
-      orderId: item.orderId,
-      orderName: item.orderName,
-    });
+   
   };
 
   const onEndReached = () => {

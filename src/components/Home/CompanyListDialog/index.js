@@ -35,6 +35,7 @@ const CompanyListDialog = (props, ref) => {
       orderId: item.orderId,
       orderName: item.orderName,
     });
+    setShowList(false)
   };
 
   // 获取订单详情

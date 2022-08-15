@@ -19,7 +19,6 @@ let restForm;
 const SignUp = (props) => {
   const { navigation, route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
-  console.log('路由跳转的订单id：',params.orderId)
   const toast = useToast();
   const initialValues = {
     jobName: params.jobName,
@@ -30,7 +29,7 @@ const SignUp = (props) => {
     address: '',
     authority: '',
     timeLimit: '',
-    arrivalMode: 'STORE',
+    arrivalMode: 'FACTORY',
     remark: '',
     tip: true
   };
@@ -40,12 +39,12 @@ const SignUp = (props) => {
     console.log('提交是否成功：', values)
     const prams = {
       ...values,
-      arrivalMode: values.arrivalMode === true ? 'STORE' : 'FACTORY',
+      arrivalMode: values.arrivalMode === true ? 'FACTORY' : 'STORE',
     }
     try {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {
-        toast.show('提交成功', {type: 'success'});
+        toast.show('提交成功', { type: 'success' });
         navigation && navigation.goBack();
         return;
       } else {
@@ -62,31 +61,37 @@ const SignUp = (props) => {
 
   // 上传图片
   const uploadImage = async (fileName, localFilePath) => {
+
     const data = new FormData();
     const file = {
       uri: localFilePath, type: 'multipart/form-data', name: fileName,
     };
     data.append('file', file);
-    const res = await HomeApi.ocrReq(data)
-    const newData = res.data;
-    const formData = restForm.values;
-    if (res.code == 0) {
-      toast.show('识别成功')
-      if (newData.timeLimit || newData.authority) {
-        restForm.setValues({ ...restForm.values, jobName: params.jobName, timeLimit: newData.timeLimit, authority: newData.authority })
-      } else {
-        const prams = {
-          ...res.data,
-          timeLimit: formData.timeLimit ? formData.timeLimit : '',
-          authority: formData.authority ? formData.authority : '',
-          mobile: formData.mobile ? formData.mobile : '',
-          jobName: params.jobName,
+    try {
+      const res = await HomeApi.ocrReq(data)
+      const newData = res.data;
+      const formData = restForm.values;
+      if (res.code == 0) {
+        toast.show('识别成功')
+        if (newData.timeLimit || newData.authority) {
+          restForm.setValues({ ...restForm.values, jobName: params.jobName, timeLimit: newData.timeLimit, authority: newData.authority })
+        } else {
+          const prams = {
+            ...res.data,
+            timeLimit: formData.timeLimit ? formData.timeLimit : '',
+            authority: formData.authority ? formData.authority : '',
+            mobile: formData.mobile ? formData.mobile : '',
+            jobName: params.jobName,
+          }
+          restForm.setValues(prams)
         }
-        restForm.setValues(prams)
+      } else {
+        toast.show('识别失败，请重新识别一次')
       }
-    } else {
-      toast.show('识别失败，请重新识别一次')
+    } catch (error) {
+      toast.show('识别失败，出现异常请联系管理员处理')
     }
+
   }
 
   //调用相机拍照

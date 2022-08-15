@@ -49,7 +49,7 @@ const FormItem = ({
         rightIcon={rest.OCR && OCRArea}
         {...rest}
         multiline
-        numberOfLines={2}
+        numberOfLines={3}
       />
       <ErrorMessage
         name={field.name}
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0
   },
   inputStyle: {
-    fontSize: 32, 
+    fontSize: 36, 
     color: '#000',
     paddingHorizontal: 0
   },
