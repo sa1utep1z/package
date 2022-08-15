@@ -41,21 +41,29 @@ const NewestState = () => {
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+  }, [])
+
+  useEffect(()=>{
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList(searchContent);
     }, 0)
-    return () => {
-      setShowList([]);
-      setOriginData({});
-      timer && clearTimeout(timer);
-    }
+    return () => timer && clearTimeout(timer);
   }, [searchContent])
+
+  //修改角色时
+  useMemo(()=>{
+    setSearchContent({
+      ...searchContent,
+      ...firstPage,
+      role
+    });
+  },[role])
 
   const getList = async(params) => {
     console.log('getList --> params', params);
@@ -83,25 +91,6 @@ const NewestState = () => {
     }
   };
 
-  //修改角色时
-  useMemo(()=>{
-    setSearchContent({
-      ...searchContent,
-      ...firstPage,
-      role
-    });
-  },[role])
-
-  //修改时间时
-  useMemo(()=>{
-    setSearchContent({
-      ...firstPage,
-      ...searchContent,
-      startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
-      endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
-    });
-  },[rangeDate])
-
   const gotoRecordOfWorking = () => navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING)
 
   const checkStatus = (message) => {
@@ -117,6 +106,8 @@ const NewestState = () => {
   };
 
   const filter = (values) => {
+    const startDate = values.dateRange.startDate;
+    const endDate = values.dateRange.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const names = values.staff.length ? values.staff.map(item => item.value) : [];
@@ -125,6 +116,8 @@ const NewestState = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
+      startDate,
+      endDate,
       str,
       companyIds,
       storeIds,

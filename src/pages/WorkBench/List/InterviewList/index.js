@@ -40,28 +40,36 @@ const InterviewList = () => {
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+  }, [])
+
+  useEffect(()=>{
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList(searchContent);
       getTypeList();
     }, 0)
-    return () => {
-      setShowList([]);
-      setOriginData({});
-      timer && clearTimeout(timer);
-    }
+    return () => timer && clearTimeout(timer);
   }, [searchContent])
 
+  //修改角色时
+  useMemo(()=>{
+    setSearchContent({
+      ...searchContent,
+      ...firstPage,
+      role
+    });
+  },[role])
+
   const getList = async(params) => {
-    console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await ListApi.InterViewList(params);
+      console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -104,25 +112,6 @@ const InterviewList = () => {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
-
-  //修改角色时
-  useMemo(()=>{
-    setSearchContent({
-      ...searchContent,
-      ...firstPage,
-      role
-    });
-  },[role])
-
-  //修改时间时
-  useMemo(()=>{
-    setSearchContent({
-      ...firstPage,
-      ...searchContent,
-      startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
-      endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
-    });
-  },[rangeDate])
 
   const batchOperate = () => {
     navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {
@@ -189,7 +178,6 @@ const InterviewList = () => {
   };
 
   const changeStatus = (item) => {
-    console.log('item', item);
     if(item.interviewStatus !== 'INTERVIEW_PENDING'){
       toast.show(`状态已确定！`, {type: 'warning'});
       return;
@@ -215,6 +203,8 @@ const InterviewList = () => {
   };
 
   const filter = (values) => {
+    const startDate = values.dateRange.startDate;
+    const endDate = values.dateRange.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const names = values.staff.length ? values.staff.map(item => item.value) : [];
@@ -223,6 +213,8 @@ const InterviewList = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
+      startDate,
+      endDate,
       str,
       companyIds,
       storeIds,

@@ -12,6 +12,7 @@ import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOf
 const PickerOfDateRange = ({
     field, 
     form, 
+    clearTimer = true, //时间组件默认支持清空
     ...rest
   }) => {
   const toast = useToast();
@@ -26,23 +27,34 @@ const PickerOfDateRange = ({
 
   //外部通过其他组件传进来的时间范围一旦发生改变，就主动修改组件内部的起始/结束日期。
   useMemo(()=>{
-    if(rangeDate.startDate && rangeDate.endDate){
-      form.setFieldValue(field.name, {
-        startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
-        endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
-      });
-      form.handleSubmit();
-    }
+    form.setFieldValue(field.name, {
+      startDate: rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '', 
+      endDate: rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : ''
+    });
+    form.handleSubmit();
   }, [rangeDate])
 
   const showDate = (type) => {
     setType(type);
     setModalVisible(!modalVisible);
-    setDateTime(type === 'start' ? new Date(rangeDate.startDate) : new Date(rangeDate.endDate));
+    const startDate = rangeDate.startDate ? new Date(rangeDate.startDate) : new Date();
+    const endDate = rangeDate.endDate ? new Date(rangeDate.endDate) : new Date();
+    setDateTime(type === 'start' ? startDate : endDate);
   };
 
   const dateChange = (event, selectedDate) => {
     setModalVisible(false);
+    //清空
+    if(event.type === 'neutralButtonPressed'){
+      if(type === 'start'){
+        dispatch(setStartDate(''));
+        return;
+      }
+      if(type === 'end'){
+        dispatch(setEndDate(''));
+        return;
+      }
+    }
     if (event.type !== 'set') return;
     const currentDate = selectedDate || dateTime;
     const currentDateText = getYMD(currentDate);
@@ -78,7 +90,7 @@ const PickerOfDateRange = ({
               style={{marginHorizontal: 20}}
               color='#999999'
             />
-            <Text style={styles.font}>{moment(rangeDate.startDate).format('MM-DD')}</Text>
+            <Text style={styles.font}>{rangeDate.startDate ? moment(rangeDate.startDate).format('MM-DD') : '无'}</Text>
           </TouchableOpacity>
         </View> 
         <View style={{width: 40}}></View>
@@ -91,13 +103,14 @@ const PickerOfDateRange = ({
               style={{marginHorizontal: 20}}
               color='#999999'
             />
-            <Text style={styles.font}>{moment(rangeDate.endDate).format('MM-DD')}</Text>
+            <Text style={styles.font}>{rangeDate.endDate ? moment(rangeDate.endDate).format('MM-DD') : '无'}</Text>
           </TouchableOpacity>
         </View>
       </View>
       {modalVisible && <DateTimePicker 
         value={dateTime} 
         onChange={dateChange} 
+        neutralButtonLabel={clearTimer ? '清除' : ''}
         // minimumDate={new Date()}
       />}
       {/* <DateRangePicker

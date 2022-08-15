@@ -63,6 +63,14 @@ const FormMemberDetail = ({
         }
       }
     }
+    //门店录入,删除供应商;供应商,删除经纪人;
+    if(memberInfoList.signUpType === 'RECRUITER'){
+      const supplierIndex = showList.findIndex(item => item.type === 'supplier');
+      showList.splice(supplierIndex, 1);
+    }else if(memberInfoList.signUpType === 'SUPPLIER'){
+      const recruiterIndex = showList.findIndex(item => item.type === 'recruitName');
+      showList.splice(recruiterIndex, 1);
+    }
     setShowList(showList);
   }, [memberInfoList])
 

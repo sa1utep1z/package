@@ -50,7 +50,7 @@ const Radio = ({
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
           />
-          <Text style={{fontSize: 32}}>自行到场</Text>
+          <Text style={{fontSize: 32}}>自行到厂</Text>
         </TouchableOpacity>
       </View>
     </View>

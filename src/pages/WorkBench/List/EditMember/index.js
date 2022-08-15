@@ -178,24 +178,6 @@ const EditMember = (props) => {
                   component={SelectItem}
                 />
                 <Field
-                  name="storeName"
-                  title="归属门店"
-                  noBorder
-                  singleSelect
-                  bottomButton
-                  inPageField
-                  canSearch
-                  validate={value=>{
-                    let errorMsg;
-                    if(value.length === 0) {
-                      errorMsg = '请选择所属门店';
-                    }
-                    return errorMsg;
-                  }}
-                  selectList={storeList}
-                  component={SelectItem}
-                />
-                <Field
                   name="recruitName"
                   title="经纪人"
                   noBorder
@@ -211,6 +193,24 @@ const EditMember = (props) => {
                     return errorMsg;
                   }}
                   selectList={selectStoreList}
+                  component={SelectItem}
+                />
+                <Field
+                  name="storeName"
+                  title="归属门店"
+                  noBorder
+                  singleSelect
+                  bottomButton
+                  inPageField
+                  canSearch
+                  validate={value=>{
+                    let errorMsg;
+                    if(value.length === 0) {
+                      errorMsg = '请选择所属门店';
+                    }
+                    return errorMsg;
+                  }}
+                  selectList={storeList}
                   component={SelectItem}
                 />
                 <Field

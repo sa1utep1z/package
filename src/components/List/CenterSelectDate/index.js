@@ -10,11 +10,13 @@ import { getWeekName } from "../../../utils";
 
 const CenterSelectDate = ({
   centerDateStyle,
-    ...rest
+  ...rest
   }) => {
   const dispatch = useDispatch();
 
   const rangeDate = useSelector(state => state.RangeDateOfList);
+  const startDate = rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '';
+  const endDate = rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : '';
 
   const [showYear, setShowYear] = useState(moment().year());
   const [btnType, setBtnType] = useState('');
@@ -25,7 +27,42 @@ const CenterSelectDate = ({
 
   useEffect(()=>{
     getThisWeek();
+    return () => {
+      dispatch(setStartDate(moment()));
+      dispatch(setEndDate(moment()));
+    }
   },[])
+
+  //检查是否选中的日期是近一月/近一周;
+  const checkIfWeekOrMonth = () => {
+    const before30Day = moment(endDate).subtract(30, 'days').format('YYYY-MM-DD');
+    const before7Day = moment(endDate).subtract(7, 'days').format('YYYY-MM-DD');
+    const today = moment().format('YYYY-MM-DD');
+    if(startDate === before30Day && endDate === today){
+      setBtnType('month');
+    }else if (startDate === before7Day && endDate === today){
+      setBtnType('week');
+    }else{
+      setBtnType('');
+    }
+  };
+
+  useMemo(() => {
+    if (startDate !== endDate){
+      checkIfWeekOrMonth();
+      setSelectDay(null);
+      setReturnToday(true);
+      return;
+    } else if (startDate === endDate){
+      if(!startDate && !endDate){
+        setReturnToday(true);
+        return;
+      }
+      setSelectDay(rangeDate.startDate);
+      setReturnToday(false);
+      return;
+    }
+  }, [rangeDate])
 
   //检查切换的星期中年份是否和之前有区别，星期里某一天和原来的不同就返回并且修改显示的年份。
   useMemo(()=>{
@@ -37,23 +74,6 @@ const CenterSelectDate = ({
       }
     });
   },[weekArr])
-
-  //选择日期切换时显示按钮
-  useMemo(()=>{
-    //修改redux内部时间范围；
-    if(selectDay){
-      dispatch(setStartDate(selectDay));
-      dispatch(setEndDate(selectDay));
-    }
-
-    //修改是否显示【切换今天】的按钮；
-    if(moment().isSame(selectDay, 'day')) {
-      setReturnToday(false);
-      return;
-    }
-    setReturnToday(true);
-  },[selectDay])
-
 
   const getThisWeek = () => {
     let arr = [];
@@ -89,6 +109,8 @@ const CenterSelectDate = ({
     setSelectDay(moment());
     getThisWeek();
     setBtnType('');
+    dispatch(setStartDate(moment()));
+    dispatch(setEndDate(moment()));
   };
 
   const recentlyWeek = () => {
@@ -108,8 +130,8 @@ const CenterSelectDate = ({
   const dayPress = day => {
     setSelectDay(day);
     setBtnType('');
-    dispatch(setStartDate(selectDay));
-    dispatch(setEndDate(selectDay));
+    dispatch(setStartDate(day));
+    dispatch(setEndDate(day));
   };
 
   return (

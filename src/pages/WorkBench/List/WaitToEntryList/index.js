@@ -41,22 +41,31 @@ const WaitToEntryList = () => {
     const reg = /^(\d{3})\d{4}(\d{4})$/;
     return tel.replace(reg, '$1****$2');
   };
+
   useEffect(() => {
     navigation.setOptions({
-      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>,
-      headerRight: () => <HeaderRightButtonOfList />
+      headerRight: () => <HeaderRightButtonOfList />,
+      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+  }, [])
+
+  useEffect(() => {
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList(searchContent);
       getStatusList();
     }, 0)
-    return () => {
-      setShowList([]);
-      setOriginData({});
-      timer && clearTimeout(timer);
-    }
+    return () => timer && clearTimeout(timer);
   }, [searchContent])
+  
+  //修改角色时
+  useMemo(() => {
+    setSearchContent({
+      ...searchContent,
+      ...firstPage,
+      role
+    });
+  }, [role])
 
   // 获取待入职名单数据
   const getList = async (params) => {
@@ -85,25 +94,6 @@ const WaitToEntryList = () => {
     }
   };
 
-  //修改角色时
-  useMemo(() => {
-    setSearchContent({
-      ...searchContent,
-      ...firstPage,
-      role
-    });
-  }, [role])
-
-  //修改时间时
-  useMemo(() => {
-    setSearchContent({
-      ...firstPage,
-      ...searchContent,
-      startDate: moment(rangeDate.startDate).format('YYYY-MM-DD'),
-      endDate: moment(rangeDate.endDate).format('YYYY-MM-DD')
-    });
-  }, [rangeDate])
-
   const getStatusList = async () => {
     const params = {
       companyIds: searchContent?.companyIds || [],
@@ -129,6 +119,8 @@ const WaitToEntryList = () => {
 
   // 获取搜索栏的数据
   const filter = (values) => {
+    const startDate = values.dateRange.startDate;
+    const endDate = values.dateRange.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const names = values.staff.length ? values.staff.map(item => item.value) : [];
@@ -137,6 +129,8 @@ const WaitToEntryList = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
+      startDate,
+      endDate,
       str,
       companyIds,
       storeIds,

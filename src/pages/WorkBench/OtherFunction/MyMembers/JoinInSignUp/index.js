@@ -180,7 +180,7 @@ const JoinInSignUp = (props) => {
           return (
           <View style={{flex: 1}}>
             <ScrollView style={styles.scrollArea}>
-              <View style={[styles.cardArea, {marginTop: 10}]}>
+              <View style={[styles.cardArea, {marginTop: 28}]}>
                 <Field
                   name="memberName"
                   title="会员姓名"
@@ -346,7 +346,7 @@ const JoinInSignUp = (props) => {
 const styles = StyleSheet.create({
   scrollArea: {
     flex: 1, 
-    paddingHorizontal: 10
+    paddingHorizontal: 28
   },
   buttonStyle: {
     height: 88,

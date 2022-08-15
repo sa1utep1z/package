@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 import {Formik, Field} from 'formik';
-import { Text, SearchBar } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native';
+import { Text } from '@rneui/themed';
 import { useToast } from "react-native-toast-notifications";
 
 import { STATUS_LIST, SUCCESS_CODE } from '../../../utils/const';
@@ -158,6 +157,7 @@ const HeaderSearch = ({
                   autoSubmit
                   formalLabel={false}
                   lastButton={batch}
+                  selectAreaTextStyle={{fontSize: 28}}
                   singleSelect={companySingleSelect}
                   selectList={companyList}
                   component={SelectItem}
@@ -175,6 +175,7 @@ const HeaderSearch = ({
                   autoSubmit
                   formalLabel={false}
                   lastButton={batch}
+                  selectAreaTextStyle={{fontSize: 28}}
                   selectContainerStyle={{marginLeft: 40}}
                   selectList={STATUS_LIST}
                   component={SelectItem}
@@ -189,6 +190,7 @@ const HeaderSearch = ({
                   bottomButton
                   noBorder
                   autoSubmit
+                  selectAreaTextStyle={{fontSize: 28}}
                   singleSelect={storeSingleSelect}
                   formalLabel={false}
                   selectList={storeList}
@@ -213,9 +215,10 @@ const HeaderSearch = ({
                   bottomButton
                   noBorder
                   autoSubmit
+                  selectAreaTextStyle={{fontSize: 28}}
                   formalLabel={false}
                   selectList={staffList}
-                  component={SelectItem }
+                  component={SelectItem}
                 />}
               </View>}
               <Field

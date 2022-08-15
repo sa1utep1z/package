@@ -1,7 +1,7 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
 import { View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
 
@@ -16,19 +16,19 @@ import CompanyDetail from "../../../../components/NormalDialog/CompanyDetail";
 import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
 import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
-import CenterSelectDate from "../../../../components/List/CenterSelectDate";
+import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const MyMembers = () => {
   const toast = useToast();
-  
+  const dispatch = useDispatch();
+
   const navigation = useNavigation();
 
   const dialogRef = useRef(null);
-
-  const rangeDate = useSelector(state => state.RangeDateOfList);
 
   const [searchContent, setSearchContent] = useState({...firstPage});
   const [dialogContent, setDialogContent] = useState({});
@@ -38,19 +38,27 @@ const MyMembers = () => {
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    clearRangeDate();
+    dispatch(openListSearch());
+  }, [])
+
+  useEffect(()=>{
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList(searchContent);
     }, 0)
-    return () => {
-      setShowList([]);
-      timer && clearTimeout(timer);
-    };
+    return () => timer && clearTimeout(timer);
   }, [searchContent]);
+
+  //每次进入页面的时候都清空顶部时间筛选值
+  const clearRangeDate = () => {
+    dispatch(setStartDate(''));
+    dispatch(setEndDate(''));
+  };
 
   const getList = async(params) => {
     console.log('getList --> params', params);
@@ -84,16 +92,6 @@ const MyMembers = () => {
       setIsLoading(false);
     }
   };
-
-  //修改时间时
-  useMemo(()=>{
-    setSearchContent({
-      ...firstPage,
-      ...searchContent,
-      nextReturnVisitDateStart: moment(rangeDate.startDate).format('YYYY-MM-DD'), 
-      nextReturnVisitDateEnd: moment(rangeDate.endDate).format('YYYY-MM-DD')
-    });
-  },[rangeDate])
 
   const selectIndex = (selectIndex) => {
     switch(selectIndex){
@@ -142,7 +140,6 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.CompanyDetail(poolId);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
@@ -162,11 +159,9 @@ const MyMembers = () => {
   };
 
   const entryRecordOnPress = async(msg) => {
-    console.log('入职记录的msg', msg);
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.EntryRecord(poolId);
-      console.log('入职记录的res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
         return;
@@ -189,7 +184,6 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
-      console.log('reviewRecordOnPress--> res', res)
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -214,6 +208,8 @@ const MyMembers = () => {
     const willSignUpCompanyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].storeId : '';
     const memberStatus = values.status.length ? values.status[0].value.toUpperCase() : '';
+    const nextReturnVisitDateStart = values.dateRange.startDate;
+    const nextReturnVisitDateEnd = values.dateRange.endDate;
 
     setSearchContent({
       ...searchContent,
@@ -221,6 +217,8 @@ const MyMembers = () => {
       willSignUpCompanyId,
       recruiterName: values.staffSearch, 
       nameOrIdNo: values.search, 
+      nextReturnVisitDateStart,
+      nextReturnVisitDateEnd,
       storeId,
       memberStatus
     });
