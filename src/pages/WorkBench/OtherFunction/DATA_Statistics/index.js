@@ -39,7 +39,6 @@ const DATA_Statistics = () => {
     // timer && clearTimeout(timer);
     // timer = setTimeout(()=>{
     //   companyData(searchContent);
-    //   companyTotalData(searchTotal);
     // }, 0)
     // return () => {
     //   setCompanyDetails([]);
@@ -164,6 +163,7 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取到的供应商数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -223,8 +223,7 @@ const DATA_Statistics = () => {
   };
 
   useEffect(() => {
-
-    if (index === 0) {
+    if (index === 0 && searchContent.startDate) {
       companyData(searchContent);
       companyTotalData(searchContent);
     } else if (index === 1) {
@@ -239,6 +238,7 @@ const DATA_Statistics = () => {
     }
   }, [index, searchContent]);
 
+ 
   const toTalItem = (res) => {
     const renderList = [
       { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
@@ -479,9 +479,6 @@ const DATA_Statistics = () => {
     )
   };
 
-  const tabChange = (e) => {
-    setIndex(e)
-  }
 
   const filter = (values) => {
     setSearchContent({
@@ -491,11 +488,7 @@ const DATA_Statistics = () => {
       endDate: values.dateRange.endDate,
       name: values.search,
     });
-    // setSearchTotal({
-    //   startDate: values.dateRange.startDate,
-    //   endDate: values.dateRange.endDate,
-    //   name: values.search,
-    // })
+    console.log('打印值：', values)
   }
 
   // 刷新
@@ -513,9 +506,6 @@ const DATA_Statistics = () => {
 
   const selectIndex = (i) => {
     setIndex(i);
-    const selectItem = title.find((item, index) => index === i);
-    // const tabName = selectItem.type;
-    // dispatch(setTabName(tabName));
   };
 
   const tabHead = () => {
@@ -569,35 +559,6 @@ const DATA_Statistics = () => {
     <View style={styles.screen}>
       <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
       <CenterSelectDate />
-      {/* <Tab
-        value={index}
-        onChange={(e) => tabChange(e)}
-        indicatorStyle={{
-          backgroundColor: 'none',
-          height: 5,
-        }}
-        containerStyle={{ padding: 0 }}
-      >
-        {
-          title.map((item, index) => {
-            return (
-              <Tab.Item
-                title={item}
-                key={index}
-                titleStyle={(active) => ({
-                  color: active ? "#fff" : '#000',
-                  fontSize: 32,
-                })}
-                containerStyle={(active) => ({
-                  backgroundColor: active ? "#409EFF" : '#fff',
-                  borderRightWidth: 2,
-                  borderColor: "#EEF4F7",
-                })}
-              ></Tab.Item>
-            )
-          })
-        }
-      </Tab> */}
       <View style={styles.tab_containerStyle}>
         {title.map((tabItem, tabIndex) => {
           const active = index === tabIndex;

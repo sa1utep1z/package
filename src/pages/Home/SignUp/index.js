@@ -7,6 +7,7 @@ import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../components/Form/FormItem';
 import TwoRadio from '../../../components/Form/TwoRadio';
 import Radio from '../../../components/Form/Radio';
+import SignUpDate from '../signUpDate';
 import SelectItem from '../../../components/Form/SelectItem';
 import { IDCard, phone } from '../../../utils/validate';
 import { ARRIVE_WAY, COMPANY_ENGLISH } from '../../../utils/const';
@@ -19,8 +20,12 @@ let restForm;
 const SignUp = (props) => {
   const { navigation, route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
+  const time = '23:59:00'
+  const startDate = new Date(`${params.startDate} ${time}`); // 开始日期
+  const endDate = new Date(`${params.endDate} ${time}`); // 结束日期
   const toast = useToast();
   const initialValues = {
+    orderDate: new Date(),
     jobName: params.jobName,
     name: '',
     idNo: '',
@@ -40,6 +45,7 @@ const SignUp = (props) => {
     const prams = {
       ...values,
       arrivalMode: values.arrivalMode === true ? 'FACTORY' : 'STORE',
+      // orderDate: values.orderDate ? moment(values.orderDate).format('YYYY-MM-DD') : '',
     }
     try {
       const res = await HomeApi.SignUp(orderId, prams);
@@ -134,6 +140,14 @@ const SignUp = (props) => {
             <ScrollView style={styles.scrollArea}>
               <View style={[styles.cardArea, { marginTop: 28 }]}>
                 <Field
+                  name="orderDate"
+                  title="订单日期"
+                  disabled
+                  startDate={startDate}
+                  endDate={endDate}
+                  component={SignUpDate}
+                />
+                <Field
                   name="jobName"
                   title="岗位名称"
                   disabled
@@ -146,7 +160,7 @@ const SignUp = (props) => {
                   OCR
                   onPress={openPermission}
                   autoFocus
-                  isRequired
+                  // isRequired
                   component={FormItem}
                 />
                 <Field
@@ -154,14 +168,14 @@ const SignUp = (props) => {
                   title="身份证"
                   placeholder="请输入会员身份证"
                   maxLength={18}
-                  validate={value => {
-                    let errorMsg;
-                    if (!IDCard.test(value)) {
-                      errorMsg = '请输入正确的身份证号';
-                    }
-                    return errorMsg
-                  }}
-                  isRequired
+                  // validate={value => {
+                  //   let errorMsg;
+                  //   if (!IDCard.test(value)) {
+                  //     errorMsg = '请输入正确的身份证号';
+                  //   }
+                  //   return errorMsg
+                  // }}
+                  // isRequired
                   component={FormItem}
                 />
                 <Field
@@ -169,14 +183,14 @@ const SignUp = (props) => {
                   title="手机号"
                   placeholder="请输入会员手机号"
                   maxLength={11}
-                  validate={value => {
-                    let errorMsg;
-                    if (!phone.test(value)) {
-                      errorMsg = '请输入正确的手机号';
-                    }
-                    return errorMsg
-                  }}
-                  isRequired
+                  // validate={value => {
+                  //   let errorMsg;
+                  //   if (!phone.test(value)) {
+                  //     errorMsg = '请输入正确的手机号';
+                  //   }
+                  //   return errorMsg
+                  // }}
+                  // isRequired
                   component={FormItem}
                 />
                 <Field

@@ -22,12 +22,14 @@ const CompanyDetail = (props) => {
   const [orderData, setOrderData] = useState({
     orderPolicyDetail: ''
   }); // 岗位详情数据
-  const [height, setHeight] = useState(0);
   const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
   const date = String(orderData.recruitRange).substring(5, 11);
-  const date2 = String(orderData.recruitRange).substring(16, 21)
-  const recruitRange = date + date2
-
+  const date2 = String(orderData.recruitRange).substring(16, 21);
+  const recruitRange = date + date2;
+  const startTime = String(orderData.recruitRange).substring(0, 10); //开始日期
+  const endTime = String(orderData.recruitRange).substring(11, 21);// 结束日期
+  console.log('打印详情：', new Date("2016/09/16"))
+  console.log('打印详情：', String(orderData.recruitRange).substring(11, 21))
   const getDetail = async () => {
     try{
       const res = await HomeApi.orderDetail(orderId);
@@ -47,12 +49,13 @@ const CompanyDetail = (props) => {
       headerTitle: params.companyName,
     });
     getDetail();
-    return () => setHeight(0)
   }, [orderId])
 
   const signUpPress = () => navigation.navigate(NAVIGATION_KEYS.SIGN_UP, {
     jobName: params.orderName,
     orderId: params.orderId,
+    startDate: startTime,
+    endDate: endTime
   });
   console.log('路由跳转的参数：',params)
   return (
