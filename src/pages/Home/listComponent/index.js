@@ -70,6 +70,7 @@ export const Header = ({search, range}) => {
       <View style={styles.swiperArea}>
         <Swiper 
           autoplay 
+          autoplayTimeout={4}
           style={styles.swiperStyle} 
           containerStyle={styles.containerStyle} 
           paginationStyle={styles.paginationStyle} 
@@ -77,9 +78,6 @@ export const Header = ({search, range}) => {
           <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg.png')}/>
           <View style={styles.slide2}>
             <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg2.jpg')}/>
-          </View>
-          <View style={styles.slide3}>
-            <Text style={styles.text}>你好</Text>
           </View>
         </Swiper>
       </View>
@@ -102,9 +100,8 @@ export const Header = ({search, range}) => {
       </View>
       <View style={styles.listHeader}>
         <Text style={styles.listHeader_flex1}>序号</Text>
-        <Text style={styles.listHeader_flex2}>企业名称</Text>
+        <Text style={[styles.listHeader_flex2]}>企业名称</Text>
         <Text style={styles.listHeader_flex2}>招聘时段</Text>
-        <Text style={styles.listHeader_flex1}>列表</Text>
       </View>
     </>
   )

@@ -8,12 +8,9 @@ import { useToast } from "react-native-toast-notifications";
 
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
-import LongTextArea from '../../../../../components/Form/LongTextArea';
 import SelectDate from '../../../../../components/Form/SelectDate';
-import SelectTags from '../../../../../components/Form/SelectTags';
-import {IDCard, phone} from '../../../../../utils/validate';
-import TwoRadio from '../../../../../components/Form/TwoRadio';
 import MyMembersApi from '../../../../../request/MyMembersApi';
+import SelectTags from '../../../../../components/Form/SelectTags';
 import { SUCCESS_CODE, ARRIVE_WAY, CHANEL_SOURCE_LIST } from '../../../../../utils/const';
 
 let restForm;
@@ -26,12 +23,13 @@ const initialValues = {
   memberName: '',
   memberPhone: '',
   memberIdCard: '',
-  from: [],
-  way: [],
+  from: '门店录入',
+  way: [{id: 2, title: '门店集合', value: 'unifyAssemble'}],
   store: [],
   staff: [],
   orderId: [],
   company: [],
+  memberTags: [],
   orderName: '',
   orderTime: '',
 };
@@ -45,19 +43,25 @@ const JoinInSignUp = (props) => {
   const [companyList, setCompanyList] = useState([]);
   const [orderList, setOrderList] = useState([]);
 
+  useEffect(()=>{
+    setFieldValue();
+    getStoreList();
+    getCompaniesList();
+    console.log('props.params', props.route.params);
+  },[])
+
   const onSubmit = async(values) => {
-    console.log('values', values) 
     if(!values.orderId.length){
       toast.show('请选择订单编号！', {type: 'danger'});
     }
     const params = {
       userName: msg.userName,
       mobile: msg.mobile,
-      signUpType: values.from[0].value,
       arrivalMode: values.way[0].value,
       orderId: values.orderId[0].orderId,
       storeId: values.store[0].storeId,
-      recruiterId: values.staff[0].value
+      recruiterId: values.staff[0].value,
+      signUpType: 'RECRUITER' // 默认渠道来源为门店录入；
     };
     try{  
       const res = await MyMembersApi.CompaniesList(msg.poolId, params);
@@ -68,20 +72,9 @@ const JoinInSignUp = (props) => {
       toast.show(`加入报名成功！`, { type: 'success' });
       navigation.goBack();
     }catch(err){
-      console.log('err', err);
       toast.show(`加入报名失败，请稍后重试`, { type: 'danger' });
     }
   };
-
-  useMemo(()=>{
-    console.log('orderList',orderList);
-  },[orderList])
-
-  useEffect(()=>{
-    setFieldValue();
-    getStoreList();
-    getCompaniesList();
-  },[])
   
   const getCompaniesList = async() => {
     try{  
@@ -127,10 +120,13 @@ const JoinInSignUp = (props) => {
   const filter = async() => {
     const companyId =restForm.values.company.length ? restForm.values.company[0].value : '';
     const orderDate = restForm.values.orderTime;
-    const orderName = restForm.values.orderName;
-    const params = {companyId, orderDate, orderName};
-    if(!companyId.length && !orderName.length && !orderDate.length){
-      toast.show('请先填入筛选项！', {type: 'warning'});
+    const params = {companyId, orderDate};
+    if(!companyId.length){
+      toast.show('请选择意向报名企业', {type: 'warning'});
+      return;
+    }
+    if(!orderDate.length){
+      toast.show('请选择订单日期', {type: 'warning'});
       return;
     }
     try{  
@@ -158,8 +154,8 @@ const JoinInSignUp = (props) => {
     if(msg){
       restForm.setFieldValue('memberName', msg.userName);
       restForm.setFieldValue('memberPhone', msg.mobile);
-      //TODO这里字段还要修改（身份证的还没给）
-      restForm.setFieldValue('memberIdCard', '233333333333333333');
+      restForm.setFieldValue('memberIdCard', msg.idNo);
+      restForm.setFieldValue('memberTags', msg.tags);
     }
   };
 
@@ -178,135 +174,124 @@ const JoinInSignUp = (props) => {
             })
           }
           return (
-          <View style={{flex: 1}}>
-            <ScrollView style={styles.scrollArea}>
-              <View style={[styles.cardArea, {marginTop: 28}]}>
-                <Field
-                  name="memberName"
-                  title="会员姓名"
-                  editable={false}
-                  inputStyle={{color: '#CCCCCC'}}
-                  component={FormItem}
-                />
-                <Field
-                  name="memberPhone"
-                  title="会员手机号"
-                  maxLength={11}
-                  editable={false}
-                  inputStyle={{color: '#CCCCCC'}}
-                  component={FormItem}
-                />
-                <Field
-                  name="memberIdCard"
-                  title="身份证号"
-                  maxLength={11}
-                  editable={false}
-                  inputStyle={{color: '#CCCCCC'}}
-                  component={FormItem}
-                />
-                <Field
-                  name="from"
-                  title="渠道来源"
-                  noBorder
-                  bottomButton
-                  inPageField
-                  singleSelect
-                  validate={value=>{
-                    let errorMsg;
-                    if(value.length === 0) {
-                      errorMsg = '请选择渠道来源';
-                    }
-                    return errorMsg;
-                  }}
-                  selectList={CHANEL_SOURCE_LIST}
-                  component={SelectItem}
-                />
-                <Field
-                  name="way"
-                  title="到厂方式"
-                  noBorder
-                  bottomButton
-                  singleSelect
-                  inPageField
-                  validate={value=>{
-                    let errorMsg;
-                    if(value.length === 0) {
-                      errorMsg = '请选择到厂方式';
-                    }
-                    return errorMsg;
-                  }}
-                  selectList={ARRIVE_WAY}
-                  component={SelectItem}
-                />
-                <Field
-                  name="store"
-                  title="所属门店"
-                  noBorder
-                  bottomButton
-                  singleSelect
-                  inPageField
-                  canSearch
-                  validate={value=>{
-                    let errorMsg;
-                    if(value.length === 0) {
-                      errorMsg = '请选择所属门店';
-                    }
-                    return errorMsg;
-                  }}
-                  selectList={storeList}
-                  component={SelectItem}
-                />
-                <Field
-                  name="staff"
-                  title="归属招聘员"
-                  noBorder
-                  bottomButton
-                  singleSelect
-                  inPageField
-                  validate={value=>{
-                    let errorMsg;
-                    if(value.length === 0) {
-                      errorMsg = '请选择归属招聘员';
-                    }
-                    return errorMsg;
-                  }}
-                  selectList={selectStoreList}
-                  component={SelectItem}
-                />
-                <View style={{paddingBottom: 20}}>
-                  <Text style={{paddingLeft: 30, fontSize: 26, marginTop: 5}}>筛选</Text>
-                  <View style={{borderWidth: 1, marginHorizontal: 20, borderRadius: 8, borderColor: '#CCCCCC', flexDirection: 'row'}}>
-                    <View style={{flex: 1, borderRightWidth: 1, borderColor: '#CCCCCC'}}>
-                      <Field
-                        name="company"
-                        title="意向报名企业"
-                        noBorder
-                        bottomButton
-                        singleSelect
-                        canSearch
-                        inPageField
-                        selectList={companyList}
-                        component={SelectItem}
-                      />
-                      <Field
-                        name="orderTime"
-                        title="订单日期"
-                        component={SelectDate}
-                      />
-                      <Field
-                        name="orderName"
-                        title="订单名称"
-                        bottomButton
-                        singleSelect
-                        canSearch
-                        component={FormItem}
-                      />
+            <View style={{flex: 1}}>
+              <ScrollView style={styles.scrollArea}>
+                <View style={[styles.cardArea, {marginTop: 28}]}>
+                  <Field
+                    name="memberTags"
+                    title="会员标签"
+                    onlyShow
+                    component={SelectTags}
+                  />
+                  <Field
+                    name="memberName"
+                    title="会员姓名"
+                    editable={false}
+                    inputStyle={{color: '#CCCCCC'}}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="memberPhone"
+                    title="会员手机号"
+                    maxLength={11}
+                    editable={false}
+                    inputStyle={{color: '#CCCCCC'}}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="memberIdCard"
+                    title="身份证号"
+                    editable={false}
+                    inputStyle={{color: '#CCCCCC'}}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="from"
+                    title="渠道来源"
+                    editable={false}
+                    inputStyle={{color: '#CCCCCC'}}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="way"
+                    title="到厂方式"
+                    noBorder
+                    bottomButton
+                    singleSelect
+                    inPageField
+                    validate={value=>{
+                      let errorMsg;
+                      if(value.length === 0) {
+                        errorMsg = '请选择到厂方式';
+                      }
+                      return errorMsg;
+                    }}
+                    selectList={ARRIVE_WAY}
+                    component={SelectItem}
+                  />
+                  <Field
+                    name="store"
+                    title="所属门店"
+                    noBorder
+                    bottomButton
+                    singleSelect
+                    inPageField
+                    canSearch
+                    validate={value=>{
+                      let errorMsg;
+                      if(value.length === 0) {
+                        errorMsg = '请选择所属门店';
+                      }
+                      return errorMsg;
+                    }}
+                    selectList={storeList}
+                    component={SelectItem}
+                  />
+                  <Field
+                    name="staff"
+                    title="归属招聘员"
+                    noBorder
+                    bottomButton
+                    singleSelect
+                    inPageField
+                    validate={value=>{
+                      let errorMsg;
+                      if(value.length === 0) {
+                        errorMsg = '请选择归属招聘员';
+                      }
+                      return errorMsg;
+                    }}
+                    selectList={selectStoreList}
+                    component={SelectItem}
+                  />
+                  <View style={{paddingBottom: 20}}>
+                    <Text style={{paddingLeft: 30, fontSize: 26, marginVertical: 5}}>筛选</Text>
+                    <View style={{borderWidth: 1, marginHorizontal: 20, borderRadius: 8, borderColor: '#CCCCCC', flexDirection: 'row'}}>
+                      <View style={{flex: 1, borderRightWidth: 1, borderColor: '#CCCCCC'}}>
+                        <Field
+                          name="company"
+                          title="意向报名企业"
+                          noBorder
+                          bottomButton
+                          singleSelect
+                          canSearch
+                          inPageField
+                          selectContainerStyle={{paddingHorizontal: 10}}
+                          selectList={companyList}
+                          component={SelectItem}
+                        />
+                        <Field
+                          name="orderTime"
+                          title="订单日期"
+                          selectContainerStyle={{paddingHorizontal: 10, borderBottomWidth: 0}}
+                          component={SelectDate}
+                        />
+                      </View>
+                      <TouchableOpacity style={{width: 80, justifyContent: 'center', alignItems: 'center', margin: 5, borderRadius: 6, backgroundColor: '#409EFF'}} onPress={filter}>
+                        <Text style={{color: '#fff', fontSize: 26}}>筛选</Text>
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={{width: 80, justifyContent: 'center', alignItems: 'center', margin: 5, borderRadius: 5, backgroundColor: '#409EFF'}} onPress={filter}>
-                      <Text style={{color: '#fff', fontSize: 26}}>筛选</Text>
-                    </TouchableOpacity>
                   </View>
-                </View>
                   <Field
                     name="orderId"
                     title="订单编号"
@@ -326,18 +311,31 @@ const JoinInSignUp = (props) => {
                     selectList={orderList}
                     component={SelectItem}
                   />
+                  {rest.values.orderId.length ? <>
+                    <Field
+                      name="orderName"
+                      title="订单名称"
+                      editable={false}
+                      formValue={rest.values.orderId.length ? rest.values.orderId[0].name : ''}
+                      component={FormItem}
+                    />
+                    <View style={{padding: 28}}>
+                      <Text style={{fontSize: 32, color: '#333333', marginBottom: 20}}>订单详情：</Text>
+                      <Text style={{fontSize: 32, color: '#333333', borderWidth: 1, padding: 20, borderRadius: 10, borderColor: '#999999'}}>{String(rest.values.orderId[0].orderPolicyDetail).replace(/<br\/>/g,"\n")}</Text>
+                    </View>
+                  </> : <></>}
+                </View>
+              </ScrollView>
+              <View style={styles.btnArea}>
+                <Button
+                  title="保存"
+                  onPress={handleSubmit}
+                  buttonStyle={styles.buttonStyle}
+                  containerStyle={styles.buttonContainerStyle}
+                  titleStyle={styles.titleStyle}
+                />
               </View>
-            </ScrollView>
-            <View style={styles.btnArea}>
-              <Button
-                title="保存"
-                onPress={handleSubmit}
-                buttonStyle={styles.buttonStyle}
-                containerStyle={styles.buttonContainerStyle}
-                titleStyle={styles.titleStyle}
-              />
             </View>
-          </View>
         )}}
     </Formik>
   )

@@ -64,6 +64,7 @@ const CompanyDetail = (props) => {
         <View style={styles.swiperArea}>
           <Swiper
             autoplay
+            autoplayTimeout={4}
             style={styles.swiperStyle}
             containerStyle={styles.containerStyle}
             paginationStyle={styles.paginationStyle}
@@ -71,9 +72,6 @@ const CompanyDetail = (props) => {
             <Image style={styles.imageStyle} source={require('../../../assets/images/homeImg.png')} />
             <View style={styles.slide2}>
               <Image style={styles.imageStyle} source={require('../../../assets/images/homeImg2.jpg')} />
-            </View>
-            <View style={styles.slide3}>
-              <Text style={styles.text}>你好</Text>
             </View>
           </Swiper>
         </View>

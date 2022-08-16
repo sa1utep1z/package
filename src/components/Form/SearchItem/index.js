@@ -10,6 +10,7 @@ const SearchItem = ({
   title,
   placeholder,
   pressStyle,
+  fontStyle,
   ...rest
 }) => {
 
@@ -28,7 +29,7 @@ const SearchItem = ({
           placeholder={placeholder || `请输入${title}`}
           value={search}
           onChangeText={text => setSearch(text)}
-          style={styles.inputStyle}
+          style={[styles.inputStyle, fontStyle]}
         />
         <TouchableOpacity style={styles.pressArea} onPress={searchOnPress}>
           <AntDesign 

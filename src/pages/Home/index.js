@@ -12,7 +12,6 @@ import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
 import { useMemo } from "react";
-import { deepCopy } from "../../utils";
 
 const Home = (props) => {
   const {navigation} = props;
@@ -22,18 +21,19 @@ const Home = (props) => {
   const detailRef = useRef(null);
   const listRef = useRef(null);
   const [orderMsg, setOrderMsg] = useState({}); // 订单详情
-  const [searchContent, setSearchContent] = useState({ pageSize: 10, pageNumber: 0 });
+  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
   const [showList, setShowList] = useState({
     content: []
   });
+
+  console.log('searchContent', searchContent);
 
   useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
     return () => {
-      setSearchContent({pageSize: 10, pageNumber: 0});
-      console.log('listRef+++++++++++++++++', listRef);
+      setSearchContent({pageSize: 20, pageNumber: 0});
       listRef?.current?.setShowList(false);
     };
   }, [])
@@ -60,11 +60,6 @@ const Home = (props) => {
       setShowList(data.data);
     }
   },[data])
-
-  useMemo(()=>{
-    console.log('searchContent',searchContent);
-    console.log('data', data);
-  },[searchContent])
 
   const gotoList = async(item) => {
     try {
@@ -94,7 +89,6 @@ const Home = (props) => {
       current?.setShowList(false);
       console.log('是否执行打印异常：', error)
     }
-   
   };
 
   const onEndReached = () => {
@@ -117,13 +111,10 @@ const Home = (props) => {
     return (
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
-        <TouchableOpacity style={{flex: 2}} onPress={()=>gotoList(item)}>
+        <TouchableOpacity style={{flex: 2, alignItems: 'center'}} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
         </TouchableOpacity>
         <Text style={styles.item_flex2}>{item.recruitRange}</Text>
-        <TouchableOpacity style={{flex: 1}} onPress={()=>gotoList(item)}>
-          <Text style={[styles.itemPress, {fontSize: 28}]}>进入</Text>
-        </TouchableOpacity>
       </View>
   )};
 
@@ -175,10 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 25
   },
   itemPress: {
-    textAlign: 'center',
-    textAlignVertical: 'center',
     color: '#409EFF',
-    height: '100%',
     fontSize: 32
   },
   icon: {

@@ -81,6 +81,7 @@ const BottomList = ({
         refreshing={isLoading}
         onRefresh={onRefresh}
         initialNumToRender={15}
+        removeClippedSubviews
         ListFooterComponent={<Text style={styles.bottomText}>{hasNext ? '加载中...' : '没有更多数据'}</Text>}
         ListEmptyComponent={empty}
         onEndReachedThreshold={0.01}

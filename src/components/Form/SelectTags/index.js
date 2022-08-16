@@ -1,5 +1,5 @@
 //这是会员标签的组件，目前只有一个应用场景，就还没有剥离出去，如果以后有相同使用场景，就把他请求接口写在外边。
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useMemo} from 'react';
 import {StyleSheet, View, TouchableOpacity, ActivityIndicator, ScrollView} from 'react-native';
 import {Text, Input} from '@rneui/themed';
 import {ErrorMessage} from 'formik';
@@ -11,13 +11,13 @@ import NormalDialog from '../../NormalDialog';
 import MyMembersApi from '../../../request/MyMembersApi';
 import { SUCCESS_CODE } from '../../../utils/const';
 import { deepCopy } from '../../../utils';
-import { useMemo } from 'react';
 import EmptyArea from '../../EmptyArea';
 
 const SelectTags = ({
   field, 
   form, 
   title,
+  onlyShow = false, //是否仅作展示
   labelAreaStyle,
   labelStyle,
   inputStyle,
@@ -33,10 +33,15 @@ const SelectTags = ({
   const [selectTags, setSelectTags] = useState([]);
 
   useMemo(()=>{
-    field.value.length && setSelectTags(field.value);
-  },[field.value])
+    if(field.value.length){
+      setSelectTags(field.value);
+    }
+  }, [tagList])
 
   const showTag = async() => {
+    if(onlyShow){
+      return;
+    }
     dialogRef?.current.setShowDialog(true);
     setLoading(true);
     try{
@@ -69,7 +74,7 @@ const SelectTags = ({
   const dialogContent = {
     contentText: '',
     dialogTitle: '选择会员标签',
-    rightTitle: selectTags.length > 1 && '取消全选',
+    rightTitle: selectTags.length > 1 && '取消选择',
     confirmOnPress: () => {
       dialogRef?.current.setShowDialog(false);
       form.setFieldValue(field.name, selectTags);
@@ -97,7 +102,7 @@ const SelectTags = ({
 
   return (
     <>
-      <View style={[styles.selectArea, field.value.length && {paddingTop: 5}]}>
+      <View style={[styles.selectArea, field.value.length && {paddingTop: 20, paddingBottom: 10}]}>
         <View style={[styles.titleArea, labelAreaStyle]}>
           <Text style={{fontSize: 32}}>{title}：</Text>
         </View>
@@ -105,15 +110,15 @@ const SelectTags = ({
           {field.value.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', flex: 1}}>
             {field.value.map((tag, tagIndex) => {
               return (
-                <Text key={tagIndex} style={{paddingHorizontal: 5, marginRight: 5, marginBottom: 5, borderRadius: 3, backgroundColor: '#409EFF', color: '#fff'}}>{tag}</Text>
+                <Text key={tagIndex} style={styles.tagItem}>{tag}</Text>
               )
             })}
           </View> : 
-          <Text style={[styles.rightArea_text, !field.value.length && {color: '#CCCCCC'}]}>{`请选择${title}`}</Text>}
+          <Text style={[styles.rightArea_text, !field.value.length && {color: '#999999'}]}>{`请选择${title}`}</Text>}
           <AntDesign
             name={dialogRef?.current?.showDialog ? 'up' : 'down'}
             size={30}
-            color={!field.value.length ? '#CCCCCC' : 'black'}
+            color={!field.value.length ? '#CCCCCC' : onlyShow ? '#CCCCCC' : 'black'}
           />
         </TouchableOpacity>
       </View>
@@ -153,6 +158,15 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   rightArea_text: {
+    fontSize: 32
+  },
+  tagItem: {
+    paddingHorizontal: 10, 
+    marginRight: 10, 
+    marginBottom: 10, 
+    borderRadius: 8, 
+    backgroundColor: '#409EFF',
+    color: '#fff', 
     fontSize: 28
   }
 })

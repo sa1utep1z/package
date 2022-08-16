@@ -20,7 +20,7 @@ const MemberDetail = ({
           list.push({type: key, title: MEMBER_INFO_KEY[key], value: GENDER[memberInfoList[key]]});
           break;
         case 'age': 
-          list.push({type: key, title: MEMBER_INFO_KEY[key], value: `${memberInfoList[key]}岁`});
+          list.push({type: key, title: MEMBER_INFO_KEY[key], value: `${memberInfoList[key] ? `${memberInfoList[key]}岁` : `无`}`});
           break;
         case 'sourceType': 
           list.push({type: key, title: MEMBER_INFO_KEY[key], value: SEAS_SOURCE_TYPE[memberInfoList[key]]});
@@ -34,7 +34,7 @@ const MemberDetail = ({
       }
     }
     const bornMonthIndex = list.findIndex(item => item.type === 'bornMonth');
-    list[bornMonthIndex] = {type: 'born', title: '生日', value: `${memberInfoList.bornMonth}月${memberInfoList.bornDay}日`}
+    list[bornMonthIndex] = {type: 'born', title: '生日', value: `${(memberInfoList.bornMonth && memberInfoList.bornDay) ? `${memberInfoList.bornMonth}月${memberInfoList.bornDay}日`: `无`} `}
     list.splice(list.findIndex(item => item.type === "bornDay"), 1);
     setShowList(list);
   },[memberInfoList]);
@@ -50,10 +50,13 @@ const MemberDetail = ({
           return (
             <View key={index} style={styles.memberItem}>
               <Text style={styles.memberItem_text}>{item.title}:</Text>
-              {item.type === 'mobile' ? <TouchableOpacity style={[styles.memberItem_value, {flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}]} onPress={()=>callPhone(item)}>
+              {item.type === 'mobile' ? 
+                item.value ? 
+                  <TouchableOpacity style={[styles.memberItem_value, {flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}]} onPress={()=>callPhone(item)}>
                 <Text style={{color: '#409EFF'}}>{item.value}</Text>
                 <Entypo name='phone' size={16} color='#409EFF'/>
-              </TouchableOpacity> : <View style={styles.memberItem_value}>
+              </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> : 
+              <View style={styles.memberItem_value}>
                 <Text>{item.value || '无'}</Text>
               </View>}
             </View>

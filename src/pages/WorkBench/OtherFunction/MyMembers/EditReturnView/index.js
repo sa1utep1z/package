@@ -31,19 +31,16 @@ const initialValues = {
   intendSignUpDate: '',
   thisTimeReviewRecord: '',
   nextTimeReviewDate: '',
-  recordHistory: ''
 };
 
 let restForm;
 
 const EditReturnView = (props) => {
-  const toast = useToast();
-
-  const navigation = useNavigation();
   const {route: {params}} = props;
+  const toast = useToast();
+  const navigation = useNavigation();
 
   const [companyList, setCompanyList] = useState([]);
-  const [otherComponent, setOtherComponent] = useState();
 
   useEffect(()=>{
     getCompanyList();
@@ -51,21 +48,10 @@ const EditReturnView = (props) => {
   },[])
 
   const setFieldValue = () => {
-    const {formList: {userName, mobile}, historyList} = params;
+    const {formList: {userName, mobile, tags}} = params;
     restForm.setFieldValue('memberName', userName);
     restForm.setFieldValue('memberPhone', mobile);
-    const otherComponent = historyList.map((item, index)=> {
-      if(index < 3){
-        return (
-          <View key={index} style={[styles.historyList, index === 2 && {borderBottomWidth: 0}]}>
-            <Text style={styles.longTextItem}>{item.lastModifiedByName}</Text>
-            <Text style={styles.longTextItem}>{moment(item.lastModifiedDate).format('YYYY-MM-DD')}</Text>
-            <Text style={styles.longTextItem}>{item.content}</Text>
-          </View>
-        )
-      }
-    })
-    setOtherComponent(otherComponent);
+    restForm.setFieldValue('memberTags', tags);
   };
 
   const getCompanyList = async() => {
@@ -98,6 +84,7 @@ const EditReturnView = (props) => {
       }
       toast.show('新增回访记录成功！',{type: 'success'});
       navigation.goBack();
+      props?.route?.params?.refresh && props.route.params.refresh();
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -156,7 +143,6 @@ const EditReturnView = (props) => {
                         },
                         pageTitle: '选择意向报名企业'
                       })}
-  
                       component={SelectItemInPage}
                     />
                     <Field
@@ -177,25 +163,42 @@ const EditReturnView = (props) => {
                   title="下次回访日期"
                   component={SelectDate}
                 />
-                <Field
-                  name="recordHistory"
-                  title="历史回访记录"
-                  noBorder
-                  disabled
-                  otherComponent={otherComponent}
-                  component={LongTextArea}
-                />
+                {params.historyList.length > 0 ? 
+                  <>
+                    <View style={{height: 91, paddingHorizontal: 28, justifyContent: 'center'}}>
+                      <Text style={{fontSize: 32, color: '#333333'}}>历史回访记录</Text>
+                    </View>
+                    <View style={styles.bottomList}>
+                      <View style={styles.recordTitle_head}>
+                        <Text style={styles.recordTitle_item}>回访人</Text>
+                        <Text style={[styles.recordTitle_item, {width: 220}]}>回访日期</Text>
+                        <Text style={{paddingLeft: 10, fontSize: 28, color: '#333333'}}>回访详情</Text>
+                      </View>
+                      {params.historyList.map((renderItem, renderIndex)=>{
+                        if(renderIndex < 3){
+                          return (
+                            <View key={renderIndex} style={[styles.bottomListItem, renderIndex%2 === 0 && {backgroundColor: '#ecf5ff'}]}>
+                              <Text style={styles.recordItem}>{renderItem.lastModifiedByName}</Text>
+                              <Text style={[styles.recordItem, {width: 220}]}>{moment(renderItem.lastModifiedDate).format('YY/MM/DD HH:mm')}</Text>
+                              <Text style={{paddingLeft: 10, fontSize: 28, color: '#333333', flex: 1, paddingVertical: 10}}>{renderItem.content}</Text>
+                            </View>
+                          )
+                        }
+                      })}
+                    </View>
+                  </> : <View style={{height: 91, alignItems: 'center', paddingHorizontal: 28, flexDirection: 'row' }}>
+                  <Text style={{fontSize: 32, color: '#333333'}}>历史回访记录：</Text>
+                  <Text style={{fontSize: 32, color: '#333333'}}>暂无历史回访记录</Text>
+                </View>}
               </View>
             </ScrollView>
-            <View style={styles.btnArea}>
-              <Button
-                title="新增"
-                onPress={handleSubmit}
-                buttonStyle={styles.buttonStyle}
-                containerStyle={styles.buttonContainerStyle}
-                titleStyle={styles.titleStyle}
-              />
-            </View>
+            <Button
+              title="新增"
+              onPress={handleSubmit}
+              buttonStyle={styles.buttonStyle}
+              containerStyle={styles.buttonContainerStyle}
+              titleStyle={styles.titleStyle}
+            />
           </View>
         )}}
     </Formik>
@@ -207,10 +210,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 32
   },
-  btnArea: {
-    justifyContent: 'center',
-    marginBottom: 20
-  },
   buttonStyle: {
     height: 88,
     backgroundColor: '#409EFF',
@@ -219,7 +218,8 @@ const styles = StyleSheet.create({
     borderRadius: 44
   },
   buttonContainerStyle: {
-    marginHorizontal: 32
+    marginHorizontal: 32,
+    marginVertical: 20
   },
   titleStyle: {
     fontSize: 35
@@ -246,7 +246,48 @@ const styles = StyleSheet.create({
     flex: 1, 
     fontSize: 28,
     minHeight: 60
-  }
+  },
+  recordTitle_head: {
+    height: 60, 
+    flexDirection: 'row', 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#409EFF', 
+    alignItems: 'center'
+  },
+  recordTitle_item: {
+    width: 120,
+    height: '100%', 
+    borderRightWidth: 1, 
+    borderRightColor: '#409EFF', 
+    textAlignVertical: 'center', 
+    paddingLeft: 4,
+    fontSize: 28,
+    color: '#333333'
+  },
+  recordItem: {
+    height: '100%', 
+    width: 120, 
+    borderRightWidth: 1, 
+    borderRightColor: '#409EFF', 
+    textAlignVertical: 'center', 
+    paddingLeft: 4,
+    fontSize: 28,
+    color: '#333333'
+  },
+  bottomList: {
+    borderWidth: 1,
+    marginHorizontal: 20,
+    borderColor: '#409EFF',
+    borderBottomWidth: 0,
+    marginBottom: 20
+  },
+  bottomListItem: {
+    minHeight: 60,
+    flexDirection: 'row', 
+    alignItems: 'center',
+    borderBottomWidth: 1, 
+    borderBottomColor: '#409EFF'
+  },
 });
 
 export default EditReturnView;

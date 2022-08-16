@@ -114,14 +114,24 @@ const MyMembers = () => {
   const rightTitleOnPress = (msg, data) => {
     navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
       formList: msg,
-      historyList: data
+      historyList: data,
+      refresh
     });
+    dialogRef.current.setShowDialog(false);
+  };
+
+  const rightTitleOnMemberDetail = (msg) => {
+    console.log('msg', msg);
+    navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT);
+    dialogRef.current.setShowDialog(false);
   };
 
   const memberDetailOnPress = async(msg) => {
+    console.log('msg', msg);
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.MemberDetail(poolId);
+      console.log('res', res)
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -129,7 +139,10 @@ const MyMembers = () => {
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '会员信息',
-        dialogComponent: <MemberDetail memberInfoList={res.data}/>
+        dialogComponent: <MemberDetail memberInfoList={res.data}/>,
+        // rightTitle: '编辑',
+        // rightTitleOnPress: () => rightTitleOnMemberDetail(msg)
+
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -141,17 +154,17 @@ const MyMembers = () => {
     try{
       const res = await MyMembersApi.CompanyDetail(poolId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       if(!res.data.orderPolicyDetail){
-        toast.show('暂无订单详情', {type: 'warning'});
+        toast.show('无订单详情', {type: 'warning'});
         return;
       }
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '企业详情',
-        dialogComponent: <CompanyDetail msg={msg} message={res.data.orderPolicyDetail}/>
+        dialogComponent: <CompanyDetail msg={res.data} message={res.data.orderPolicyDetail}/>
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -163,7 +176,7 @@ const MyMembers = () => {
     try{
       const res = await MyMembersApi.EntryRecord(poolId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       if(!res.data.length){
@@ -185,11 +198,7 @@ const MyMembers = () => {
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
-        return;
-      }
-      if(!res.data.length){
-        toast.show('暂无回访记录', {type: 'warning'});
+        toast.show(`${data?.msg}`, {type: 'danger'});
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -222,6 +231,32 @@ const MyMembers = () => {
       storeId,
       memberStatus
     });
+  };
+
+  const listHead = (
+    <>
+      {/* <View style={styles.numberOfList}>
+        <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total|| 0}</Text> 条数据</Text>
+      </View>  */}
+      <View style={styles.listHead_title}>
+        <Text style={styles.listHead_item}>姓名</Text>
+        <Text style={styles.listHead_item}>企业</Text>
+        <Text style={styles.listHead_item}>入职记录</Text>
+        <Text style={styles.listHead_item}>回访记录</Text>
+        <Text style={styles.listHead_item}>状态</Text>
+        <Text style={styles.listHead_item}>加入报名</Text>
+      </View>
+    </>
+  );
+
+  const refresh = () => setSearchContent({...searchContent, ...firstPage});
+
+  const onEndReached = () => {
+    if(originData.hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
+    }
   };
 
   const renderItem = ({item}) => {
@@ -258,32 +293,9 @@ const MyMembers = () => {
       </View>
     )
   };
-  
-  const listHead = (
-    <>
-      {/* <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total|| 0}</Text> 条数据</Text>
-      </View>  */}
-      <View style={styles.listHead_title}>
-        <Text style={styles.listHead_item}>姓名</Text>
-        <Text style={styles.listHead_item}>企业</Text>
-        <Text style={styles.listHead_item}>入职记录</Text>
-        <Text style={styles.listHead_item}>回访记录</Text>
-        <Text style={styles.listHead_item}>状态</Text>
-        <Text style={styles.listHead_item}>加入报名</Text>
-      </View>
-    </>
-  );
 
-  const refresh = () => setSearchContent({...searchContent, ...firstPage});
-
-  const onEndReached = () => {
-    if(originData.hasNext){
-      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
-      setSearchContent(nextPage);
-      setNextPage(true);
-    }
-  };
+  //优化加载速度；
+  const memoizedValue = useMemo(() => renderItem, [showList]);
 
   return (
     <View style={styles.screen}>
@@ -300,7 +312,7 @@ const MyMembers = () => {
         listHead={listHead}
         tab={TAB_OF_LIST.MY_MEMBERS}
         tabNumberList={tabNumberList}
-        renderItem={renderItem}
+        renderItem={memoizedValue}
         onRefresh={refresh}
         onEndReached={onEndReached}
         nowSelectIndex={selectIndex}

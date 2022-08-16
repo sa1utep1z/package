@@ -102,7 +102,7 @@ const Mine = () => {
         <Avatar
           size={128}
           rounded
-          source={{uri: 'https://labor-dev.oss-cn-shenzhen.aliyuncs.com/labormgt/labor/logo.png?Expires=1660294723&OSSAccessKeyId=TMP.3KfBHFXzv2Ry96EksCivpUrLNMSYfkT1tebAxatwvGL4tNAJxQ3MKxSYYd5YDp2tXXdYRMfe2e7HCoUTrszH3vG6mrdT5J&Signature=3ImGcu9MVVCyD5HD8yn8wcU3W9w%3D'}}
+          source={require('../../assets/images/logo.png')}
           containerStyle={styles.headContainerStyle}
           key={1}
         />

@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     textAlign: 'center', 
     textAlignVertical: 'center', 
-    fontSize: 30, 
+    fontSize: 26, 
     color: '#000'
   },
   listStyle: {

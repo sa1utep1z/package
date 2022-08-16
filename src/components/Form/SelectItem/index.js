@@ -28,6 +28,7 @@ const SelectItem = ({
     selectAreaTextStyle,
     autoSubmit = false,
     inPageField = false, // 由于跟顶部筛选栏及表单内部公用一个选择项，所以在这里配置一个“是否在页面中表单”的配置项用来控制他们不同位置的外观表现；
+    otherPressFunc,
     ...rest
   }) => {
   const toast = useToast();
@@ -37,6 +38,11 @@ const SelectItem = ({
   const [selectedItemList, setSelectedItemList] = useState([]);
 
   useMemo(()=>{
+    if(field.value.length){
+      selectList.map(item => item.value = item.value === field.value[0].value);
+      setList(selectList);
+      return;
+    }
     setList(selectList);
   },[selectList])
 
@@ -48,7 +54,9 @@ const SelectItem = ({
       const newArr = deepCopy(selectList);
       newArr.map(data => {
         if(data.id === item.id){
-          data.isChecked = !data.isChecked;
+          data.isChecked = true;
+        }else{
+          data.isChecked = false
         }
       });
       setList(newArr);
@@ -129,51 +137,45 @@ const SelectItem = ({
     form.setFieldValue(field.name, []);
   };
 
-  const touchItem = () => {
-    if(field.name === 'staff'){
-      if(!form.values.store.length){
-        toast.show(`请先选择门店！`, { type: 'danger' });
-        return;
-      }
-    }
-    setShowSelectItems(!showSelectItems);
-  }
+  const touchItem = () => setShowSelectItems(!showSelectItems);
 
   return (
-    <View style={[styles.selectItemArea, inPageField && styles.pageFieldStyle, selectContainerStyle]}>
-      {showLittleTitle && 
-        <Text style={styles.showLittleTitleText}>{title}：</Text>
-      }
-      {formalLabel && 
-        <View style={[styles.labelArea, labelAreaStyle]}>
-          <Text style={styles.label}>{title}：</Text>
-          {rest.isRequired && <Text style={styles.required}>*</Text>}
+    <>
+      <View style={[styles.selectItemArea, inPageField && styles.pageFieldStyle, selectContainerStyle]}>
+        {showLittleTitle && 
+          <Text style={styles.showLittleTitleText}>{title}：</Text>
+        }
+        {formalLabel && 
+          <View style={[styles.labelArea, labelAreaStyle]}>
+            <Text style={styles.label}>{title}：</Text>
+            {rest.isRequired && <Text style={styles.required}>*</Text>}
+          </View>
+        }
+        <View style={styles.rightArea}>
+          <TouchableOpacity 
+            style={[styles.selectArea, !inPageField && {paddingLeft: 20}, !showLittleTitle && styles.selectArea_noLittle, noBorder && styles.noBorder, selectAreaStyle]}
+            onPress={touchItem}>
+            <Text
+              style={[styles.selectText, checkFieldValueType() && styles.noItem, selectAreaTextStyle]} 
+              ellipsizeMode="tail" 
+              numberOfLines={1}>
+              {itemName() || placeholder || `请选择${title}`}
+            </Text>
+            <AntDesign
+              name={showSelectItems ? 'up' : 'down'}
+              size={30}
+              color={!checkFieldValueType() ? 'black' : '#E3E3E3'}
+            />
+          </TouchableOpacity>
+          {lastButton}
         </View>
-      }
-      <View style={styles.rightArea}>
-        <TouchableOpacity 
-          style={[styles.selectArea, !inPageField && {paddingLeft: 20}, !showLittleTitle && styles.selectArea_noLittle, noBorder && styles.noBorder, selectAreaStyle]}
-          onPress={touchItem}>
-          <Text
-            style={[styles.selectText, checkFieldValueType() && styles.noItem, selectAreaTextStyle]} 
-            ellipsizeMode="tail" 
-            numberOfLines={1}>
-            {itemName() || placeholder || `请选择${title}`}
-          </Text>
-          <AntDesign
-            name={showSelectItems ? 'up' : 'down'}
-            size={30}
-            color={!checkFieldValueType() ? 'black' : '#E3E3E3'}
-          />
-        </TouchableOpacity>
-        {lastButton}
-        <ErrorMessage
-          name={field.name}
-          component={Text}
-          style={{color: 'red', position: 'absolute', bottom: 0}}
-        />
       </View>
-
+      <ErrorMessage
+        name={field.name}
+        component={Text}
+        style={{color: 'red', fontSize: 22, textAlign: 'center'}}
+      />
+        
       <Dialog
         isVisible={showSelectItems}
         overlayStyle={styles.overlayStyle}
@@ -237,7 +239,7 @@ const SelectItem = ({
             </TouchableOpacity>
           </View>}
       </Dialog>
-    </View>
+    </>
   )
 }
 
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
   },
   pageFieldStyle: {
     paddingHorizontal: 28, 
-    height: 90, 
+    height: 91, 
     borderBottomWidth: 2, 
     borderColor: 'rgba(0, 0, 0, .05)'
   },

@@ -1,33 +1,31 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
-import { Text, Dialog } from '@rneui/themed';
-import { WebView } from 'react-native-webview';
-import EmptyArea from '../../EmptyArea';
+import { Text } from '@rneui/themed';
+import moment from 'moment';
 
 const CompanyDetail = ({
-    message,
+    message = '',
     msg
   }) => {
-    console.log('msg',msg) ;
 
   return (
     <View style={styles.msgArea}>
-      <View style={{alignItems: 'center'}}>
+      <View style={{paddingLeft: 20, marginBottom: 20}}>
         <View style={styles.itemDateArea}>
           <Text>订单名称：</Text>
           <View style={styles.itemDate}>
-            <Text style={{color: '#999999', borderBottomWidth: 1, borderColor: '#999999'}}>{msg.willSignUpCompanyName}</Text>
+            <Text>{msg.orderName || '无'}</Text>
           </View>
         </View>
         <View style={styles.itemDateArea}>
           <Text>订单日期：</Text>
           <View style={styles.itemDate}>
-            <Text style={{color: '#999999', borderBottomWidth: 1, borderColor: '#999999'}}>2022-04-09</Text>
+            <Text>{msg?.orderDate ? moment(msg.orderDate).format('YYYY-MM-DD') : '无'}</Text>
           </View>
         </View>
       </View>
       <ScrollView style={styles.message}>
-        {message ? <WebView scalesPageToFit={false} style={{height: 300}} source={{ html: message }}/> : <EmptyArea />}
+        <Text style={styles.fontStyle}>{message.length ? String(message).replace(/<br\/>/g,"\n") : '无'}</Text>
       </ScrollView>
     </View>
   )
@@ -38,16 +36,18 @@ const styles = StyleSheet.create({
     maxHeight: 400
   },
   itemDateArea: {
-    height: 30, 
+    minHeight: 30, 
     flexDirection: 'row', 
     alignItems: 'center'
   },
   itemDate: {
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'rgba(0,0,0,0.05)'
   },
   message: {
-    paddingHorizontal: 8
+    paddingHorizontal: 20
   }
 })
 

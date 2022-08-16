@@ -27,22 +27,24 @@ const DatePicker = ({
 
   const dateChange = (event, selectedDate) => {
     setShowDatePicker(false);
+    if(event.type === 'neutralButtonPressed'){
+      if(type === 'start'){
+        setRangeDate({...rangeDate, startDate: ''});
+        return;
+      }
+      if(type === 'end'){
+        setRangeDate({...rangeDate, endDate: ''});
+        return;
+      }
+    }
     if (event.type !== 'set') return;
     const currentDate = selectedDate || dateTime;
     const currentDateText = getYMD(currentDate);
     if(type === 'start'){
-      if(currentDateText > endDate){
-        toast.show(`开始日期不可晚于结束日期！`, { type: 'danger' });
-        return;
-      }
       setStartDate(currentDateText);
       setRangeDate({...rangeDate, startDate: currentDateText});
     }
     if(type === 'end'){
-      if(currentDateText < startDate){
-        toast.show(`结束日期不可早于开始日期！`, { type: 'danger' });
-        return;
-      }
       setEndDate(currentDateText);
       setRangeDate({...rangeDate, endDate: currentDateText});
     }
@@ -51,7 +53,9 @@ const DatePicker = ({
   const datePickerPress = (type) => {
     setType(type);
     setShowDatePicker(true);
-    setDateTime(type === 'start' ? new Date(startDate) : new Date(endDate));
+    const startDate = rangeDate.startDate ? new Date(rangeDate.startDate) : new Date();
+    const endDate = rangeDate.endDate ? new Date(rangeDate.endDate) : new Date();
+    setDateTime(type === 'start' ? startDate : endDate);
   };
 
   return (
@@ -64,7 +68,7 @@ const DatePicker = ({
             type='antdesign'
             style={styles.icon}
           />
-          <Text style={styles.font}>{moment(startDate).format('MM-DD')}</Text>
+          <Text style={styles.font}>{startDate ? moment(startDate).format('MM-DD'):'无'}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.datePicker}>
@@ -75,13 +79,14 @@ const DatePicker = ({
             type='antdesign'
             style={styles.icon}
           />
-          <Text style={styles.font}>{moment(endDate).format('MM-DD')}</Text>
+          <Text style={styles.font}>{endDate ? moment(endDate).format('MM-DD'):'无'}</Text>
         </TouchableOpacity>
       </View>
       {showDatePicker &&
         <DateTimePicker 
           value={dateTime} 
           onChange={dateChange} 
+          neutralButtonLabel='清除'
           // minimumDate={new Date()}
         />
       }

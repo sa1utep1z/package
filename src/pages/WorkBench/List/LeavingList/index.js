@@ -263,6 +263,15 @@ const LeavingList = () => {
     )
   };
 
+  const listHead = (
+    <View style={styles.tabArea}>
+      <Text style={styles.tab}>企业</Text>
+      <Text style={styles.tab}>姓名</Text>
+      <Text style={styles.tab}>状态</Text>
+      <Text style={styles.tab}>联系方式</Text>
+    </View>   
+  );
+
   return (
     <View style={styles.screen}>
       <HeaderSearch
@@ -275,6 +284,7 @@ const LeavingList = () => {
         renderItem={renderItem}
         tabNumberList={tabNumberList}
         isLoading={isLoading}
+        listHead={listHead}
         onRefresh={refresh}
         onEndReached={onEndReached}
         nowSelectIndex={selectIndex}
@@ -307,6 +317,17 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 28,
     color: '#333'
+  },
+  tabArea: {
+    height: 60,
+    backgroundColor: '#fff', 
+    flexDirection: 'row'
+  },
+  tab: {
+    flex: 1, 
+    textAlign: 'center', 
+    fontSize: 30, 
+    color: '#333333'
   }
 });
 

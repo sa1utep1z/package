@@ -287,6 +287,15 @@ const SignUpList = () => {
     )
   };
 
+  const listHead = (
+    <View style={styles.tabArea}>
+      <Text style={styles.tab}>企业</Text>
+      <Text style={styles.tab}>姓名</Text>
+      <Text style={styles.tab}>状态</Text>
+      <Text style={styles.tab}>联系方式</Text>
+    </View>   
+  );
+
   return (
     <View style={styles.screen}>
       <HeaderSearch filterFun={filter}/>
@@ -296,6 +305,7 @@ const SignUpList = () => {
         renderItem={renderItem}
         tab={TAB_OF_LIST.SIGN_UP_LIST}
         tabNumberList={tabNumberList}
+        listHead={listHead}
         isLoading={isLoading}
         onRefresh={refresh}
         onEndReached={onEndReached}
@@ -331,6 +341,17 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: '#000',
     textAlign: 'center'
+  },
+  tabArea: {
+    height: 60,
+    backgroundColor: '#fff', 
+    flexDirection: 'row'
+  },
+  tab: {
+    flex: 1, 
+    textAlign: 'center', 
+    fontSize: 30, 
+    color: '#333333'
   }
 });
 

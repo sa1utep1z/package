@@ -11,10 +11,7 @@ const SelectDate = ({
   form, 
   title,
   labelAreaStyle,
-  labelStyle,
-  inputStyle,
-  inputContainerStyle,
-  containerStyle,
+  selectContainerStyle,
   ...rest
 }) => {
   const [dateTime, setDateTime] = useState(field.value.length ? new Date(field.value) : new Date());
@@ -31,12 +28,12 @@ const SelectDate = ({
 
   return (
     <>
-      <View style={styles.selectArea}>
+      <View style={[styles.selectArea, selectContainerStyle]}>
         <View style={[styles.titleArea, labelAreaStyle]}>
           <Text style={{fontSize: 32}}>{title}：</Text>
         </View>
         <TouchableOpacity style={styles.rightArea} onPress={showDate}>
-          <Text style={[styles.rightArea_text, !field.value.length && {color: '#CCCCCC'}]}>{field.value ? field.value : `请选择${title}`}</Text>
+          <Text style={[styles.rightArea_text, !field.value.length && {color: '#999999'}]}>{field.value ? field.value : `请选择${title}`}</Text>
           <AntDesign
             name={showDatePicker ? 'up' : 'down'}
             size={30}
@@ -83,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   rightArea_text: {
-    fontSize: 28
+    fontSize: 32
   }
 })
 

@@ -16,6 +16,14 @@ const TransferFactory = (props) => {
   const [listArr, setListArr] = useState([]);
 
   useEffect(()=>{
+    //如果是从其他页面传进来企业列表，那就无需自己获取企业列表；
+    if(params.pageTitle){
+      navigation.setOptions({
+        headerTitle: params.pageTitle
+      })
+      setListArr(params.list);
+      return;
+    }
     getFactoryList();
   },[])
 
@@ -30,7 +38,7 @@ const TransferFactory = (props) => {
     try{  
       const res = await ListApi.FactoryList(par);
       if(res?.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res?.msg}`, {type: 'danger'});
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       setListArr(res?.data?.content);
@@ -43,6 +51,10 @@ const TransferFactory = (props) => {
   const filterFactory = (value) => getFactoryList(value);
 
   const selectFactory = async(select) => {
+    if(params.confirm){
+      params.confirm(select);
+      return;
+    }
     const flowId = params?.item?.flowId;
     const toOrderId = select[0].value;
     try{

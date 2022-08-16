@@ -13,6 +13,7 @@ const FormItem = ({
   inputContainerStyle,
   containerStyle,
   onPress,
+  formValue, //主动传值进去。做展示用。
   ...rest
 }) => {
 
@@ -38,10 +39,10 @@ const FormItem = ({
   return (
     <>
       <Input
-        value={field.value}
+        value={field.value || formValue}
         label={label}
         placeholder={rest.placeholder || `请输入${rest.title}`}
-        placeholderTextColor="#CCCCCC"
+        placeholderTextColor="#999999"
         onChangeText={form.handleChange(field.name)}
         containerStyle={[styles.containerStyle, rest?.noBorder && styles.noBorder, containerStyle]}
         inputStyle={[styles.inputStyle, inputStyle]}
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0
   },
   inputStyle: {
-    fontSize: 36, 
+    fontSize: 32, 
     color: '#000',
     paddingHorizontal: 0
   },

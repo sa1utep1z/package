@@ -2,11 +2,12 @@ import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 
 const TwoCard = ({message}) => {
+  console.log('message', message);
   return (
     <View style={styles.totalArea}>
       <View style={styles.itemArea}>
         <Text style={styles.title}>姓名：</Text>
-        <Text style={styles.content}>{message.name}</Text>
+        <Text style={styles.content}>{message.name || '无'}</Text>
       </View>
       <View style={styles.itemArea}>
         <Text style={styles.title}>身份证：</Text>

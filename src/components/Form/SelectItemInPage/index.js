@@ -33,7 +33,7 @@ const SelectItemInPage = ({
           <Text style={{fontSize: 32}}>{title}：</Text>
         </View>
         <TouchableOpacity style={styles.rightArea} onPress={pageOnPress}>
-          <Text style={[styles.rightArea_text, !field.value && {color: '#CCCCCC'}]}>{field.value ? field.value.label : `请选择${title}`}</Text>
+          <Text style={[styles.rightArea_text, !field.value && {color: '#999999'}]}>{field.value ? field.value.label : `请选择${title}`}</Text>
           <AntDesign
             name={'down'}
             size={30}
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   rightArea_text: {
-    fontSize: 28
+    fontSize: 32
   }
 })
 
