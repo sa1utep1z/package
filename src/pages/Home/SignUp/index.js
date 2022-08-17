@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, PermissionsAndroid, Platform, Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Modal, PermissionsAndroid, Platform, Alert, TouchableHighlight } from 'react-native';
 import { Button } from '@rneui/themed';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -20,6 +20,7 @@ let restForm;
 const SignUp = (props) => {
   const { navigation, route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
+  const [modalVisible, setModalVisible] = useState(false); // 图库选择、拍照弹框
   const time = '23:59:00'
   const startDate = new Date(`${params.startDate} ${time}`); // 开始日期
   const endDate = new Date(`${params.endDate} ${time}`); // 结束日期
@@ -38,6 +39,11 @@ const SignUp = (props) => {
     remark: '',
     tip: true
   };
+
+  // 打开OCR弹框选择
+  const openSelect = () => {
+    setModalVisible(true);
+  }
 
   // 提交报名表单
   const onSubmit = async (values) => {
@@ -100,6 +106,21 @@ const SignUp = (props) => {
 
   }
 
+  //从图库选择图片
+  const openPick = async () => {
+    const pickerImage = await ImagePicker.openPicker({
+      cropperChooseText: '确定',
+      cropperCancelText: '取消',
+      width: 300,
+      height: 400,
+      cropping: true
+    })
+    setModalVisible(false);
+    const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
+    uploadImage(fileName, pickerImage.path);
+    console.log('图库选择照片：', pickerImage);
+  }
+
   //调用相机拍照
   const openCamera = async () => {
     const cameraImage = await ImagePicker.openCamera({
@@ -125,6 +146,7 @@ const SignUp = (props) => {
       }
     }
     openCamera();
+    setModalVisible(false);
   }
 
   return (
@@ -158,9 +180,9 @@ const SignUp = (props) => {
                   title="姓名"
                   placeholder="请输入会员姓名"
                   OCR
-                  onPress={openPermission}
+                  onPress={openSelect}
                   autoFocus
-                  // isRequired
+                  isRequired
                   component={FormItem}
                 />
                 <Field
@@ -168,14 +190,14 @@ const SignUp = (props) => {
                   title="身份证"
                   placeholder="请输入会员身份证"
                   maxLength={18}
-                  // validate={value => {
-                  //   let errorMsg;
-                  //   if (!IDCard.test(value)) {
-                  //     errorMsg = '请输入正确的身份证号';
-                  //   }
-                  //   return errorMsg
-                  // }}
-                  // isRequired
+                  validate={value => {
+                    let errorMsg;
+                    if (!IDCard.test(value)) {
+                      errorMsg = '请输入正确的身份证号';
+                    }
+                    return errorMsg
+                  }}
+                  isRequired
                   component={FormItem}
                 />
                 <Field
@@ -183,14 +205,14 @@ const SignUp = (props) => {
                   title="手机号"
                   placeholder="请输入会员手机号"
                   maxLength={11}
-                  // validate={value => {
-                  //   let errorMsg;
-                  //   if (!phone.test(value)) {
-                  //     errorMsg = '请输入正确的手机号';
-                  //   }
-                  //   return errorMsg
-                  // }}
-                  // isRequired
+                  validate={value => {
+                    let errorMsg;
+                    if (!phone.test(value)) {
+                      errorMsg = '请输入正确的手机号';
+                    }
+                    return errorMsg
+                  }}
+                  isRequired
                   component={FormItem}
                 />
                 <Field
@@ -214,7 +236,7 @@ const SignUp = (props) => {
                     title="签发机关"
                     placeholder="请输入签发机关"
                     OCR
-                    onPress={openPermission}
+                    onPress={openSelect}
                     component={FormItem}
                   />
                   <Field
@@ -258,6 +280,32 @@ const SignUp = (props) => {
               buttonStyle={styles.buttonStyle}
               titleStyle={styles.titleStyle}
             />
+            <View style={styles.centeredView}>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  Alert.alert("Modal has been closed.");
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <View style={styles.modalView}>
+                  <TouchableHighlight
+                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                    onPress={openPermission}
+                  >
+                    <Text style={styles.textStyle}>手机拍摄</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                    onPress={openPick}
+                  >
+                    <Text style={styles.textStyle}>从相册选择</Text>
+                  </TouchableHighlight>
+                </View>
+              </Modal>
+            </View>
           </View>
         )
       }}
@@ -299,7 +347,51 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 28,
     fontSize: 32
-  }
+  },
+  // centeredView: {
+  //   width: '100%',
+  //   // height: '100%',
+  //   position: 'relative',
+  //   left:0,
+  //   top:0,
+  //   backgroundColor: '#fff',
+  //   opacity: 0.3,
+  //   borderWidth: 1,
+  // },
+  modalView: {
+    margin: 20,
+    marginTop: 150,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    // borderWidth: 1,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  openButton: {
+    width: 300,
+    // backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginBottom: 15
+  },
 })
 
 export default SignUp;

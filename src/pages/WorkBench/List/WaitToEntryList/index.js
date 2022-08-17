@@ -39,7 +39,7 @@ const WaitToEntryList = () => {
   // 手机号隐藏四位数
   const geTel = (tel) => {
     const reg = /^(\d{3})\d{4}(\d{4})$/;
-    return tel.replace(reg, '$1****$2');
+    return tel?.replace(reg, '$1****$2');
   };
 
   useEffect(() => {

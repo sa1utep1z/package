@@ -238,7 +238,7 @@ const DATA_Statistics = () => {
     }
   }, [index, searchContent]);
 
- 
+
   const toTalItem = (res) => {
     const renderList = [
       { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
@@ -569,6 +569,8 @@ const DATA_Statistics = () => {
           )
         })}
       </View>
+      {/* <ScrollView alwaysBounceHorizontal={true}> */}
+      {/* <View style={styles.scrollTab}> */}
       <FlatList
         data={companyDetails}
         ListHeaderComponent={tabHead()}
@@ -584,6 +586,8 @@ const DATA_Statistics = () => {
         onEndReachedThreshold={0.01}
         onScrollEndDrag={() => setLoad(true)}
       />
+      {/* </View> */}
+      {/* </ScrollView> */}
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -625,7 +629,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#409EFF',
     marginTop: 30,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    display: 'flex',
+    flexWrap: 'nowrap',
+    overflow: 'scroll'
   },
   ItemStyle: {
     width: 116,
@@ -779,6 +786,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  scrollTab: {
+    width: '100%',
+    overflowX: 'scroll'
+  }
 });
 
 export default DATA_Statistics;
