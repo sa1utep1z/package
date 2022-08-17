@@ -12,7 +12,7 @@ import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { MEMBER_INFO, TAB_OF_LIST, SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD } from "../../../../utils/const";
+import { MEMBER_INFO, TAB_OF_LIST, SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD, CHANEL_SOURCE_LIST } from "../../../../utils/const";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import ListApi from "../../../../request/ListApi";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
@@ -70,6 +70,7 @@ const NewestState = () => {
     setIsLoading(true);
     try{
       const res = await ListApi.NewestList(params);
+      console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -272,6 +273,7 @@ const NewestState = () => {
       },
       { 
         fieldName: MEMBERS_STATUS[item.status], 
+        textStyle: {fontSize: 26},
         pressFun: () => changeStatus(item)
       },
       { 
@@ -309,8 +311,8 @@ const NewestState = () => {
       </View>
       <BottomList 
         list={showList}
-        renderItem={renderItem}
         tab={TAB_OF_LIST.NEWEST_STATE}
+        renderItem={renderItem}
         onRefresh={refresh}
         onEndReached={onEndReached}
         isLoading={isLoading}

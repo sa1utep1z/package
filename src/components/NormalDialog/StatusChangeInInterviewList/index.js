@@ -187,16 +187,16 @@ const StatusChangeInInterviewList = ({
       <View style={styles.msgArea}>
         <View style={{width: '100%', paddingHorizontal: 10}}>
           <View style={[styles.tagArea, {paddingBottom: 0}]}>
-            <Text style={styles.tagArea_title}>状态选择</Text>
+            <Text style={styles.tagArea_title}>面试状态选择</Text>
             <View style={styles.tags}>
               <TouchableOpacity style={[styles.tag, selectStatus === 'noArrive' && {backgroundColor: '#409EFF'}]} onPress={()=>pressStatus('noArrive')}>
-                <Text style={[styles.tag_text, selectStatus === 'noArrive' && {color: '#fff'}]}>未去面试</Text>
+                <Text style={[styles.tag_text, selectStatus === 'noArrive' && {color: '#fff'}]}>未面试</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.tag, selectStatus === 'fail' && {backgroundColor: '#409EFF'}]} onPress={()=>pressStatus('fail')}>
-                <Text style={[styles.tag_text, selectStatus === 'fail' && {color: '#fff'}]}>面试未通过</Text>
+                <Text style={[styles.tag_text, selectStatus === 'fail' && {color: '#fff'}]}>未通过</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.tag, selectStatus === 'pass' && {backgroundColor: '#409EFF'}]} onPress={()=>pressStatus('pass')}>
-                <Text style={[styles.tag_text, selectStatus === 'pass' && {color: '#fff'}]}>面试通过</Text>
+                <Text style={[styles.tag_text, selectStatus === 'pass' && {color: '#fff'}]}>已通过</Text>
               </TouchableOpacity>
             </View>
           </View>

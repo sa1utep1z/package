@@ -15,7 +15,7 @@ import ListApi from '../../../../request/ListApi';
 import Radio from '../../../../components/Form/Radio';
 import ChangeStatus from '../../../../components/Form/ChangeStatus';
 import MyMembersApi from '../../../../request/MyMembersApi';
-import { checkedType } from '../../../../utils';
+import { checkedType, deepCopy } from '../../../../utils';
 
 const SignUpValidationSchema = Yup.object().shape({
   name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
@@ -28,7 +28,7 @@ let restForm, initialValues = {
   idNo: '',
   mobile: '',
   orderName: '',
-  signUpType: '',
+  signUpType: [],
   storeName: [],
   recruitName: [],
   status: '',
@@ -46,18 +46,16 @@ const EditMember = (props) => {
   const [storeList, setStoreList] = useState([]);
 
   useEffect(() => {
-    console.log('params.fieldList', params.fieldList);
     for (let key in params.fieldList) {
       switch (key) {
         case 'signUpType':
-          initialValues[key] = CHANEL_SOURCE_LIST.find(name => name.value === params.fieldList[key])?.title;
+          initialValues[key][0] = CHANEL_SOURCE_LIST.find(name => name.value === params.fieldList[key]);
           break;
         case 'status':
           initialValues[key] =params.fieldList[key];
           break;
         case 'arrivalMode':
           initialValues[key] = WAY_TO_GO.find(name => name.value === params.fieldList[key])?.label;
-          // initialValues[key] = getEnumValue(WAY_TO_GO, params.fieldList[key]);
           break;
         case 'signUpTime':
           initialValues[key] = moment(params.fieldList[key])?.format('YYYY-MM-DD');
@@ -80,7 +78,6 @@ const EditMember = (props) => {
   const getStoreList = async() => {
     try{  
       const res = await MyMembersApi.StoreList();
-      console.log('res', res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
         return;
@@ -89,12 +86,16 @@ const EditMember = (props) => {
         res.data.forEach((item,index) => {
           item.title = item.storeName;
           item.id = index + 1;
+          item.value = item.storeId;
         });
         setStoreList(res.data);
+        const storeName = [res.data.find(store => store.storeId === params.fieldList.storeId)];
+        const recruitName = [storeName[0].members.find(recruit => recruit.value === params.fieldList.recruitId)];
+        restForm.setFieldValue('storeName', storeName);
+        restForm.setFieldValue('recruitName', recruitName);
       }
     }catch(err){
-      console.log('err', err);
-      toast.show(`获取门店列表失败`, { type: 'danger' });
+      toast.show(`获取门店列表失败，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 
@@ -178,24 +179,6 @@ const EditMember = (props) => {
                   component={SelectItem}
                 />
                 <Field
-                  name="recruitName"
-                  title="经纪人"
-                  noBorder
-                  canSearch
-                  bottomButton
-                  singleSelect
-                  inPageField
-                  validate={value=>{
-                    let errorMsg;
-                    if(value.length === 0) {
-                      errorMsg = '请选择归属招聘员';
-                    }
-                    return errorMsg;
-                  }}
-                  selectList={selectStoreList}
-                  component={SelectItem}
-                />
-                <Field
                   name="storeName"
                   title="归属门店"
                   noBorder
@@ -211,6 +194,24 @@ const EditMember = (props) => {
                     return errorMsg;
                   }}
                   selectList={storeList}
+                  component={SelectItem}
+                />
+                <Field
+                  name="recruitName"
+                  title="经纪人"
+                  noBorder
+                  canSearch
+                  bottomButton
+                  singleSelect
+                  inPageField
+                  validate={value=>{
+                    let errorMsg;
+                    if(value.length === 0) {
+                      errorMsg = '请选择归属招聘员';
+                    }
+                    return errorMsg;
+                  }}
+                  selectList={selectStoreList}
                   component={SelectItem}
                 />
                 <Field

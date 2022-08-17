@@ -78,7 +78,7 @@ const FormMemberDetail = ({
     Linking.openURL(`tel:${item.value}`);
   };
 
-  const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'))
+  const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'));
 
   return (
     <ScrollView style={styles.msgArea}>
@@ -88,10 +88,12 @@ const FormMemberDetail = ({
             return (
               <View key={index} style={styles.memberItem}>
                 <Text style={styles.memberItem_text}>{item.title}：</Text>
-                {item.type === 'mobile' ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
+                {item.type === 'mobile' ? 
+                item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF' }}>{item.value}</Text>
                   <Entypo name='phone' size={16} color='#409EFF' />
-                </TouchableOpacity> : <View style={styles.memberItem_value}>
+                </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> : 
+                <View style={styles.memberItem_value}>
                   <Text>{item.value || '无'}</Text>
                 </View>}
               </View>
@@ -105,10 +107,12 @@ const FormMemberDetail = ({
             return (
               <View key={index} style={styles.memberItem}>
                 <Text style={styles.memberItem_text}>{item.title}：</Text>
-                {item.type === 'mobile' ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
+                {item.type === 'mobile' ? 
+                item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF' }}>{item.value}</Text>
-                  <Entypo name='phone' size={16} color='#409EFF' />
-                </TouchableOpacity> : <View style={styles.memberItem_value}>
+                  <Entypo name='phone' size={16} color='#409EFF' /> 
+                </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> : 
+                <View style={styles.memberItem_value}>
                   <Text>{item.value || '无'}</Text>
                 </View>}
               </View>

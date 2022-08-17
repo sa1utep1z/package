@@ -38,13 +38,15 @@ const SelectItem = ({
   const [selectedItemList, setSelectedItemList] = useState([]);
 
   useMemo(()=>{
-    if(field.value.length){
-      selectList.map(item => item.value = item.value === field.value[0].value);
-      setList(selectList);
-      return;
-    }
     setList(selectList);
   },[selectList])
+
+  useMemo(()=>{
+    if(field.value && field.value.length){
+      selectList.map(item => item.isChecked = item.value === field.value[0].value);
+      setList(selectList);
+    }
+  },[showSelectItems])
 
   const pressItem = (item) => {
     // 单选
@@ -84,7 +86,7 @@ const SelectItem = ({
   };
 
   const itemName = () => {
-    if(bottomButton){
+    // if(bottomButton){
       const type = checkedType(field.value);
       switch(type){
         case 'Array':
@@ -92,8 +94,9 @@ const SelectItem = ({
         case 'String':
           return field.value;
       }
-    }
-    return list.find(item => item.id === field.value.id)?.title || field.value;
+    // }
+    // return list.find(item => item.id === field.value.id)?.title || field.value;
+    // return ''
   };
 
   const checkFieldValueType = () => {

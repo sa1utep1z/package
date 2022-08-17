@@ -141,6 +141,13 @@ export default Navigator = () => {
           headerTitle: '员工考勤信息',
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.COMPLETE_MEMBER}
+        component={NAVIGATION_PAGES.COMPLETE_MEMBER}
+        options={{
+          headerTitle: '完善会员信息',
+        }}
+      />
     </>
   )
 
@@ -233,6 +240,13 @@ export default Navigator = () => {
         component={NAVIGATION_PAGES.EDIT_RETURN_VISIT}
         options={{
           headerTitle: '新增回访记录',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.EDIT_MEMBER_DETAIL}
+        component={NAVIGATION_PAGES.EDIT_MEMBER_DETAIL}
+        options={{
+          headerTitle: '编辑会员信息',
         }}
       />
       <Stack.Screen

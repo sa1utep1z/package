@@ -24,6 +24,7 @@ const NAVIGATION_PAGES_LIST = {
   EDIT_MEMBER: require('./WorkBench/List/EditMember'),
   BATCH_OPERATE_LIST: require('./WorkBench/List/BatchOperateList'),
   RECORD_OF_WORKING: require('./WorkBench/List/RecordOfWorking'),
+  COMPLETE_MEMBER: require('./WorkBench/List/CompleteMember'),
 
   //工作台（其他功能）
   AGREEMENT_MANAGEMENT: require('./WorkBench/OtherFunction/AgreementManagement'),
@@ -40,6 +41,7 @@ const NAVIGATION_PAGES_LIST = {
 
   //我的会员
   EDIT_RETURN_VISIT: require('./WorkBench/OtherFunction/MyMembers/EditReturnView'),
+  EDIT_MEMBER_DETAIL: require('./WorkBench/OtherFunction/MyMembers/EditMemberDetail'),
   JOIN_IN_SIGN_UP: require('./WorkBench/OtherFunction/MyMembers/JoinInSignUp'),
   
   //工具栏

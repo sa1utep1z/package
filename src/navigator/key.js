@@ -19,9 +19,10 @@ const NAVIGATION_KEYS = {
   WAIT_TO_ENTRY_LIST: 'wait_to_entry_list',
   NEWEST_STATE: 'newest_state',
   TRANSFER_FACTORY: 'transfer_factory',
-  EDIT_MEMBER: 'edit_member',
-  BATCH_OPERATE_LIST: 'batch_operate_list',
+  EDIT_MEMBER: 'edit_member', //编辑会员信息（最新状态）
+  BATCH_OPERATE_LIST: 'batch_operate_list', 
   RECORD_OF_WORKING: 'record_of_working',
+  COMPLETE_MEMBER: 'complete_member', //完善报名三要素
 
   //工作台(其他功能)
   AGREEMENT_MANAGEMENT: 'agreement_management',
@@ -38,6 +39,7 @@ const NAVIGATION_KEYS = {
 
   //我的会员
   EDIT_RETURN_VISIT: 'edit_return_visit',
+  EDIT_MEMBER_DETAIL: 'edit_member_detail',
   JOIN_IN_SIGN_UP: 'join_in_sign_up',
 
   //工具栏

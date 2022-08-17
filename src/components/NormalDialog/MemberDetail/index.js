@@ -2,10 +2,11 @@ import React, {useState, useEffect, useMemo} from 'react';
 import {StyleSheet, View, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
+import moment from 'moment';
 
 import { MEMBER_INFO_KEY, FAKE_MEMBER_INFO, GENDER, SEAS_SOURCE_TYPE } from '../../../utils/const'; 
-import moment from 'moment';
 import EmptyArea from '../../EmptyArea';
+import { moveArray } from '../../../utils';
 
 const MemberDetail = ({
   memberInfoList = FAKE_MEMBER_INFO

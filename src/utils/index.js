@@ -100,3 +100,16 @@ export const replaceMobile = (text, replaceText = '****') => {
   const replaceStr = text.substring(0, 3)+ replaceText + text.substring(7);
   return replaceStr;
 };
+
+/**
+ * 移动数组中某个对象的位置
+ * @param {*} arr 原数组
+ * @param {*} a 某个对象当前位置
+ * @param {*} b 某个对象要移动的位置
+ * @returns 修改后的数组
+ */
+export const moveArray = (arr, a, b) => {
+  let arr_temp = [].concat(arr);
+  arr_temp.splice(b, 0, arr_temp.splice(a, 1)[0]);
+  return arr_temp;
+};

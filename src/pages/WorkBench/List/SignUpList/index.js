@@ -186,13 +186,16 @@ const SignUpList = () => {
   };
 
   const editMemberMessage = (item) => {
+    console.log('item', item);
     dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER, {
-      fieldList: item
+    navigation.navigate(NAVIGATION_KEYS.COMPLETE_MEMBER, {
+      item,
+      refresh
     });
   };
 
   const pressName = async(item) => {
+    let hasAllMessage = true;
     try{
       const res = await ListApi.MemberMessage(item.flowId);
       console.log('res', res);
@@ -202,9 +205,14 @@ const SignUpList = () => {
       }
       res.data.flowId = item.flowId;
       dialogRef.current.setShowDialog(true);
+      if(!res.data.idNo || !res.data.mobile || !res.data.name){
+        hasAllMessage = false;
+      }
       setDialogContent({
         dialogTitle: '会员信息',
-        dialogComponent: <FormMemberDetail memberInfoList={res.data}/>
+        dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
+        rightTitle: !hasAllMessage && searchContent.status === 'SIGN_UP_PENDING' ? '完善信息' : '',
+        rightTitleOnPress: () => editMemberMessage(item)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

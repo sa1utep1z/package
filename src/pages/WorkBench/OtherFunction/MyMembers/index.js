@@ -120,18 +120,19 @@ const MyMembers = () => {
     dialogRef.current.setShowDialog(false);
   };
 
-  const rightTitleOnMemberDetail = (msg) => {
-    console.log('msg', msg);
-    navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT);
+  const rightTitleOnMemberDetail = (msg, poolId) => {
+    navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER_DETAIL,{
+      msg,
+      poolId,
+      refresh
+    });
     dialogRef.current.setShowDialog(false);
   };
 
   const memberDetailOnPress = async(msg) => {
-    console.log('msg', msg);
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.MemberDetail(poolId);
-      console.log('res', res)
       if(res?.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${data?.msg}`, {type: 'danger'});
         return;
@@ -140,9 +141,8 @@ const MyMembers = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <MemberDetail memberInfoList={res.data}/>,
-        // rightTitle: '编辑',
-        // rightTitleOnPress: () => rightTitleOnMemberDetail(msg)
-
+        rightTitle: '编辑',
+        rightTitleOnPress: () => rightTitleOnMemberDetail(res.data, poolId)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -283,7 +283,11 @@ const MyMembers = () => {
     return (
       <View key={item.poolId} style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
-          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
+          <TouchableOpacity 
+            key={index}
+            activeOpacity={renderItem.pressFun ? 0.2 : 1}
+            style={[styles.listItem, renderItem.itemStyle]} 
+            onPress={renderItem.pressFun}>
             <Text 
               ellipsizeMode='tail' 
               numberOfLines={2} 

@@ -106,7 +106,7 @@ const SelectTags = ({
         <View style={[styles.titleArea, labelAreaStyle]}>
           <Text style={{fontSize: 32}}>{title}：</Text>
         </View>
-        <TouchableOpacity style={styles.rightArea} onPress={showTag}>
+        <TouchableOpacity activeOpacity={!onlyShow ? 0.2 : 1} style={styles.rightArea} onPress={showTag}>
           {field.value.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', flex: 1}}>
             {field.value.map((tag, tagIndex) => {
               return (
@@ -115,11 +115,11 @@ const SelectTags = ({
             })}
           </View> : 
           <Text style={[styles.rightArea_text, !field.value.length && {color: '#999999'}]}>{`请选择${title}`}</Text>}
-          <AntDesign
+          {!onlyShow && <AntDesign
             name={dialogRef?.current?.showDialog ? 'up' : 'down'}
             size={30}
             color={!field.value.length ? '#CCCCCC' : onlyShow ? '#CCCCCC' : 'black'}
-          />
+          />}
         </TouchableOpacity>
       </View>
       <NormalDialog 
