@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Text, Input} from '@rneui/themed';
 import {ErrorMessage} from 'formik';
@@ -13,10 +13,13 @@ const FormItem = ({
   inputContainerStyle,
   containerStyle,
   onPress,
+  maxLength,
   formValue, //主动传值进去。做展示用。
   ...rest
 }) => {
 
+  // const [lines, setLines] = useState(1);
+  // setLines(numberLines);
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
@@ -50,7 +53,7 @@ const FormItem = ({
         rightIcon={rest.OCR && OCRArea}
         {...rest}
         multiline
-        numberOfLines={3}
+        maxLength={maxLength}
       />
       <ErrorMessage
         name={field.name}
@@ -63,7 +66,7 @@ const FormItem = ({
 
 const styles = StyleSheet.create({
   containerStyle: {
-    height: 91,
+    minHeight: 91,
     flexDirection: 'row', 
     alignItems: 'center',
     borderBottomWidth: 2,

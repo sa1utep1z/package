@@ -241,13 +241,13 @@ const DATA_Statistics = () => {
 
   const toTalItem = (res) => {
     const renderList = [
-      { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
-      { fieldName: res.signUpIntention || '0', textStyle: { width: 116 } },
-      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 75 } },
-      { fieldName: res.interviewFail || '0', textStyle: { width: 70 } },
-      { fieldName: res.interviewPass || '0', textStyle: { width: 70 } },
-      { fieldName: res.onBoardingFail || '0', textStyle: { width: 100 } },
-      { fieldName: res.onBoardingPass || '0', textStyle: { width: 100 } },
+      { fieldName: res.total || '0', textStyle: { width: 100, fontSize: 26, } },
+      { fieldName: res.signUpIntention || '0', textStyle: { width: 98 } },
+      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 83 } },
+      { fieldName: res.interviewFail || '0', textStyle: { width: 84 } },
+      { fieldName: res.interviewPass || '0', textStyle: { width: 87 } },
+      { fieldName: res.onBoardingFail || '0', textStyle: { width: 91 } },
+      { fieldName: res.onBoardingPass || '0', textStyle: { width: 93 } },
       { fieldName: res.jobOn || '0', textStyle: { width: 116 } }
     ];
 
@@ -270,7 +270,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 116, alignItems: 'center' }
+      styles: { width: 102, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'signUpIntention',
@@ -279,7 +279,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 116, alignItems: 'center' }
+      styles: { width: 100, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'interviewNoArrive',
@@ -288,7 +288,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 75, alignItems: 'center' }
+      styles: { width: 84, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'interviewFail',
@@ -297,7 +297,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 70, alignItems: 'center' }
+      styles: { width: 87, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'interviewPass',
@@ -306,7 +306,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 70, alignItems: 'center' }
+      styles: { width: 88, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'onBoardingFail',
@@ -315,7 +315,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 100, alignItems: 'center' }
+      styles: { width: 94, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'onBoardingPass',
@@ -324,7 +324,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 100, alignItems: 'center' }
+      styles: { width: 95, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'jobOn',
@@ -333,7 +333,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 116, alignItems: 'center' }
+      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     }
   ]
 
@@ -458,13 +458,13 @@ const DATA_Statistics = () => {
 
   const renderItem = ({ item }) => {
     const renderList = [
-      { fieldName: item.name, textStyle: { width: 116, fontSize: 26, color: '#333' } },
-      { fieldName: item.signUpIntention || '0', textStyle: { width: 116 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
-      { fieldName: item.interviewNoArrive || '0', textStyle: { width: 75 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
-      { fieldName: item.interviewFail || '0', textStyle: { width: 70 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
-      { fieldName: item.interviewPass || '0', textStyle: { width: 70 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass) },
-      { fieldName: item.onBoardingFail || '0', textStyle: { width: 100 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail) },
-      { fieldName: item.onBoardingPass || '0', textStyle: { width: 100 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass) },
+      { fieldName: item.name, textStyle: { width: 100, fontSize: 26, color: '#333' } },
+      { fieldName: item.signUpIntention || '0', textStyle: { width: 98 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
+      { fieldName: item.interviewNoArrive || '0', textStyle: { width: 83 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
+      { fieldName: item.interviewFail || '0', textStyle: { width: 84 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
+      { fieldName: item.interviewPass || '0', textStyle: { width: 87 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass) },
+      { fieldName: item.onBoardingFail || '0', textStyle: { width: 91 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail) },
+      { fieldName: item.onBoardingPass || '0', textStyle: { width: 93 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass) },
       { fieldName: item.jobOn || '0', textStyle: { width: 116 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'jobOn')[0], item.jobOn) }
     ];
 
@@ -518,7 +518,7 @@ const DATA_Statistics = () => {
           <View style={styles.ItemStyle}>
             <Text style={styles.title}>报名人数</Text>
           </View>
-          <View style={styles.centerStyle}>
+          <View style={[styles.centerStyle, {width: 260}]}>
             <Text style={styles.stageStyle}>面试阶段</Text>
             <View style={styles.stageItemStyle}>
               <Text style={styles.statuStyle}>未去</Text>
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     overflow: 'scroll'
   },
   ItemStyle: {
-    width: 116,
+    width: 100,
     height: '100%',
     borderRightWidth: 2,
     borderColor: '#409EFF',
@@ -644,9 +644,9 @@ const styles = StyleSheet.create({
     paddingRight: 15,
   },
   centerStyle: {
-    width: 208,
+    width: 190,
     height: '100%',
-    borderRightWidth: 1,
+    borderRightWidth: 2,
     borderColor: '#409EFF',
   },
   stageStyle: {
@@ -669,7 +669,7 @@ const styles = StyleSheet.create({
     height: 65,
     width: '33%',
     lineHeight: 65,
-    borderRightWidth: 1,
+    borderRightWidth: 2,
     borderColor: '#409EFF',
     textAlign: 'center',
     color: '#000',
@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
     height: 65,
     width: '50%',
     lineHeight: 65,
-    borderRightWidth: 1,
+    borderRightWidth: 2,
     borderColor: '#409EFF',
     textAlign: 'center',
     color: '#000',
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
   listStyle: {
     minHeight: 80,
     borderBottomWidth: 2,
-    borderColor: 'rgba(0, 0, 0, .05)',
+    borderColor: '#409EFF',
     flexDirection: 'row',
     backgroundColor: '#fff',
   },
@@ -708,6 +708,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 5,
     paddingBottom: 5,
+    borderRightWidth: 2,
+    borderColor: '#409EFF',
   },
   itemText: {
     width: 116,

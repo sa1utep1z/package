@@ -5,15 +5,13 @@ import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../components/Form/FormItem';
-import TwoRadio from '../../../components/Form/TwoRadio';
 import Radio from '../../../components/Form/Radio';
 import SignUpDate from '../signUpDate';
-import SelectItem from '../../../components/Form/SelectItem';
 import { IDCard, phone } from '../../../utils/validate';
-import { ARRIVE_WAY, COMPANY_ENGLISH } from '../../../utils/const';
 import HomeApi from "../../../request/HomeApi";
 import ImagePicker from 'react-native-image-crop-picker';
-import NAVIGATION_KEYS from '../../../navigator/key';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+// import * as ImagePicker from 'react-native-image-picker';
 
 
 let restForm;
@@ -45,6 +43,10 @@ const SignUp = (props) => {
     setModalVisible(true);
   }
 
+  const clearIconPress = () => {
+    setModalVisible(false);
+  }
+
   // 提交报名表单
   const onSubmit = async (values) => {
     console.log('提交是否成功：', values)
@@ -70,6 +72,37 @@ const SignUp = (props) => {
       console.log('打印异常：', error)
     }
   }
+
+  //图片选择器参数设置
+  const options = {
+    title: '请选择',
+    cancelButtonTitle: '取消',
+    takePhotoButtonTitle: '拍照',
+    chooseFromLibraryButtonTitle: '从相册选择',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+
+  //选择照片按钮点击
+  // const choosePic = () => {
+  //   ImagePicker(options, (response) => {
+  //     console.log('Response = ', response);
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       Alert.alert('自定义按钮:' + response.customButton)
+  //     } else {
+  //       const source = { uri: response.uri };
+  //       Alert.alert(JSON.stringify(source))
+  //       console.log("source:" + JSON.stringify(source))
+  //     }
+  //   });
+  // }
+
 
   // 上传图片
   const uploadImage = async (fileName, localFilePath) => {
@@ -173,6 +206,7 @@ const SignUp = (props) => {
                   name="jobName"
                   title="岗位名称"
                   disabled
+                  inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
                 <Field
@@ -182,7 +216,9 @@ const SignUp = (props) => {
                   OCR
                   onPress={openSelect}
                   autoFocus
+                  inputStyle={{ fontSize: 28 }}
                   isRequired
+                  maxLength={5}
                   component={FormItem}
                 />
                 <Field
@@ -198,6 +234,7 @@ const SignUp = (props) => {
                     return errorMsg
                   }}
                   isRequired
+                  inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
                 <Field
@@ -213,12 +250,14 @@ const SignUp = (props) => {
                     return errorMsg
                   }}
                   isRequired
+                  inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
                 <Field
                   name="nation"
                   title="民族"
                   placeholder="请输入会员民族"
+                  inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
                 <Field
@@ -226,6 +265,7 @@ const SignUp = (props) => {
                   title="户籍地址"
                   placeholder="请输入会员户籍地址"
                   noBorder
+                  inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
               </View>
@@ -236,6 +276,7 @@ const SignUp = (props) => {
                     title="签发机关"
                     placeholder="请输入签发机关"
                     OCR
+                    inputStyle={{ fontSize: 28 }}
                     onPress={openSelect}
                     component={FormItem}
                   />
@@ -244,6 +285,7 @@ const SignUp = (props) => {
                     title="有效期限"
                     placeholder="请输入有效期限"
                     noBorder
+                    inputStyle={{ fontSize: 28 }}
                     component={FormItem}
                   />
                 </View>
@@ -291,6 +333,14 @@ const SignUp = (props) => {
                 }}
               >
                 <View style={styles.modalView}>
+                  <Text style={styles.imageTitle}>请选择图片来源</Text>
+                  <AntDesign
+                    name='closecircle'
+                    color='#A9A9A9'
+                    size={25}
+                    style={styles.close}
+                    onPress={clearIconPress}
+                  />
                   <TouchableHighlight
                     style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                     onPress={openPermission}
@@ -348,22 +398,18 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     fontSize: 32
   },
-  // centeredView: {
-  //   width: '100%',
-  //   // height: '100%',
-  //   position: 'relative',
-  //   left:0,
-  //   top:0,
-  //   backgroundColor: '#fff',
-  //   opacity: 0.3,
-  //   borderWidth: 1,
-  // },
+  close: {
+    position: 'absolute',
+    top: 15,
+    right: 30,
+  },
   modalView: {
     margin: 20,
     marginTop: 150,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
+    paddingTop: 15,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -374,6 +420,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     // borderWidth: 1,
+  },
+  imageTitle: {
+    fontSize: 18,
+    // color: '#2196F3'
   },
   textStyle: {
     color: "white",
@@ -390,7 +440,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    marginBottom: 15
+    // marginBottom: 15,
+    marginTop: 25
   },
 })
 

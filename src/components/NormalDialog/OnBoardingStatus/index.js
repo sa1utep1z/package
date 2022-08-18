@@ -105,7 +105,7 @@ const ListChangeStatus = ({
         break;
       case 'hasEmployed':
         params.status = 'ON_BOARDING_PASS';
-        params.date = dateTime;
+        params.date = moment(dateTime).format('YYYY-MM-DD');
         break;
     }
     //原因
@@ -126,6 +126,7 @@ const ListChangeStatus = ({
       }
       toast.show(`成功修改${res.data.total - res.data.failTotal}条。${res.data.failTotal > 0 ? `失败${res.data.failTotal}条，分别是${res.data.failItem.length && res.data.failItem.join('、')}。` : ''}`, { type: 'success' });
       refresh && refresh();
+      console.log('打印参数：', params)
       navigation && navigation.goBack();
     } catch (err) {
       console.log('批量操作ERR', err)
