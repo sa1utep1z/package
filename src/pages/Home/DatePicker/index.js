@@ -3,6 +3,7 @@ import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import { Text } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useToast } from "react-native-toast-notifications";
 import moment from 'moment';
 
@@ -58,29 +59,59 @@ const DatePicker = ({
     setDateTime(type === 'start' ? startDate : endDate);
   };
 
+  const clearStart = () => {
+    if(rangeDate.startDate){
+      setRangeDate({...rangeDate, startDate: ''});
+    }
+  };
+
+  const clearEnd = () => {
+    if(rangeDate.endDate){
+      setRangeDate({...rangeDate, endDate: ''});
+    }
+  };
+
   return (
     <View style={styles.dateArea}>
       <View style={styles.datePicker}>
         <Text style={{fontSize: 26}}>开始日期：</Text>
-        <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('start')}>
-          <Icon
-            name='calendar' 
-            type='antdesign'
-            style={styles.icon}
-          />
-          <Text style={styles.font}>{startDate ? moment(startDate).format('MM-DD'):'无'}</Text>
-        </TouchableOpacity>
+        <View style={styles.totalArea}>
+          <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('start')}>
+            <AntDesign
+              name='calendar' 
+              size={30}
+              color={startDate ? '#333333' : '#999999'}
+            />
+            <Text style={[styles.font, !startDate && {color: '#999999'}]}>{startDate ? moment(startDate).format('MM-DD'):'无'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.iconArea, !startDate && {opacity: 0}]} onPress={clearStart}>
+            <AntDesign
+              name='closecircle' 
+              size={30}
+              color='#999999'
+            />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.datePicker}>
         <Text style={{fontSize: 26}}>结束日期：</Text>
-        <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('end')}>
-          <Icon
-            name='calendar' 
-            type='antdesign'
-            style={styles.icon}
-          />
-          <Text style={styles.font}>{endDate ? moment(endDate).format('MM-DD'):'无'}</Text>
-        </TouchableOpacity>
+        <View style={styles.totalArea}>
+          <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('end')}>
+            <AntDesign
+              name='calendar' 
+              size={30}
+              color={endDate ? '#333333' : '#999999'}
+            />
+            <Text style={[styles.font, !endDate && {color: '#999999'}]}>{endDate ? moment(endDate).format('MM-DD'):'无'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.iconArea, !endDate && {opacity: 0}]} onPress={clearEnd}>
+            <AntDesign
+              name='closecircle' 
+              size={30}
+              color='#999999'
+            />
+          </TouchableOpacity>
+      </View>
       </View>
       {showDatePicker &&
         <DateTimePicker 
@@ -108,24 +139,34 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   pickerTouchable: {
-    width: 202, 
-    height: 60, 
-    backgroundColor: '#fff', 
+    flex: 1,
     flexDirection: 'row', 
-    alignItems: 'center', 
-    borderRadius: 6,
-    paddingHorizontal: 30
+    alignItems: 'center'
   },
   icon: {
     fontSize: 30,
     color: '#666666'
   },
   font: {
-    color: '#999999',
-    fontSize: 26,
-    marginLeft: 15,
     flex: 1,
+    color: '#333333',
+    fontSize: 26,
     textAlign: 'center'
+  },
+  totalArea: {
+    width: 202, 
+    height: 60, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: '#fff', 
+    borderRadius: 10, 
+    paddingLeft: 20
+  },
+  iconArea: {
+    height: '100%', 
+    paddingHorizontal: 10, 
+    alignItems: 'center', 
+    justifyContent: 'center'
   }
 })
 

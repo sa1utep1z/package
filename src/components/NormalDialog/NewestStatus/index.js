@@ -59,7 +59,20 @@ const NewestStatus = ({
     setShowDate(false);
     setNoSelectStatus(false);
     setNoSelectDate(false);
+    //打开组件时先把状态值赋回去；
+    checkStatus();
   },[])
+
+  const checkStatus = () => {
+    if(message){
+      const itemStatus = message.status;
+      const findItem = CHANGING_STAGE_LIST_IN_DIALOG.find(status => status.value === itemStatus);
+      if(findItem){
+        selectedStageOnPress(findItem);
+        setShowStage(false);
+      }
+    }
+  }
 
   //标题栏的开关；
   const stageOnPress = () => setShowStage(!showStage);

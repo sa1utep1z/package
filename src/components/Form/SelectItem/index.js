@@ -19,7 +19,7 @@ const SelectItem = ({
     formalLabel = true, //一般表单label默认显示，除非有意关掉
     lastButton, //selectItem一行是否添加元素
     title,
-    singleSelect,
+    singleSelect = false, //单选
     placeholder,
     noBorder,
     labelAreaStyle,
@@ -37,15 +37,21 @@ const SelectItem = ({
   const [showSelectItems, setShowSelectItems] = useState(false);
   const [selectedItemList, setSelectedItemList] = useState([]);
 
-  useMemo(()=>{
-    setList(selectList);
-  },[selectList])
+  // useMemo(()=>{
+  //   setList(selectList);
+  // },[selectList])
 
   useMemo(()=>{
-    if(field.value && field.value.length){
+    //单选？设置为filed表单内数组第一个元素；
+    if(field.value && field.value.length && singleSelect){
       selectList.map(item => item.isChecked = item.value === field.value[0].value);
       setList(selectList);
+      return;
     }
+    //默认多选，那就需要根据表单传的id回来找并且打勾；
+    const fieldValueList = field.value.map(item => item.value);
+    selectList.map(item => item.isChecked = fieldValueList.includes(item.value));
+    setList(selectList);
   },[showSelectItems])
 
   const pressItem = (item) => {
@@ -140,6 +146,13 @@ const SelectItem = ({
     form.setFieldValue(field.name, []);
   };
 
+  const clearFieldValue = () => {
+    form.setFieldValue(field.name, []);
+    if(autoSubmit){
+      form.handleSubmit();
+    }
+  };
+
   const touchItem = () => setShowSelectItems(!showSelectItems);
 
   return (
@@ -164,12 +177,22 @@ const SelectItem = ({
               numberOfLines={1}>
               {itemName() || placeholder || `请选择${title}`}
             </Text>
-            <AntDesign
-              name={showSelectItems ? 'up' : 'down'}
-              size={30}
-              color={!checkFieldValueType() ? 'black' : '#E3E3E3'}
-            />
+            {checkedType(field.value) === 'Array' && !field.value.length && 
+              <AntDesign
+                name={showSelectItems ? 'up' : 'down'}
+                size={30}
+                style={{paddingHorizontal: 10}}
+                color={!checkFieldValueType() ? 'black' : '#E3E3E3'}
+              />}
           </TouchableOpacity>
+          {checkedType(field.value) === 'Array' && !!field.value.length && 
+            <TouchableOpacity onPress={clearFieldValue} style={{height: '100%', paddingHorizontal: 10, justifyContent: 'center'}}>
+              <AntDesign
+                name='closecircle' 
+                size={30}
+                color='#999999'
+              />
+            </TouchableOpacity>}
           {lastButton}
         </View>
       </View>
@@ -185,12 +208,6 @@ const SelectItem = ({
         onBackdropPress={()=> setShowSelectItems(!showSelectItems)}>
           <View style={styles.dialogTitleArea}>
             <Text style={styles.dialogTitle}>请选择{title}</Text>
-            {/* <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
-              <Text style={styles.selectAll_text}>全选</Text>
-            </TouchableOpacity> */}
-            {/* {singleSelect && !!selectedItemList.length && <TouchableOpacity style={styles.selectAll} onPress={clearSelected}>
-              <Text style={styles.selectAll_text}>取消选择</Text>
-            </TouchableOpacity>} */}
           </View>
           <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
             {canSearch && <SearchInput
@@ -264,28 +281,21 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold'
   },
-  noLittleTitle: {
-    borderBottomWidth: 1,
-    borderColor: '#E3E3E3', 
-    paddingLeft: 10
-  },
   rightArea: {
     flex: 1, 
     flexDirection: 'row', 
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 10
   },
   selectArea: {
     flex: 1,
+    height: '100%',
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: '#E3E3E3',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingRight: 20,
-    height: '100%'
+    borderBottomWidth: 1
   },
   selectArea_noLittle: {
     paddingRight: 10
@@ -294,6 +304,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0
   },
   selectText: {
+    flex: 1,
     color: 'black',
     fontSize: 32
   },
@@ -366,11 +377,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 0, 
     borderTopRightRadius: 0
   },
-  bottomButtonWithScrollView: {
-    borderBottomRightRadius: 0, 
-    borderBottomLeftRadius: 0, 
-    borderBottomWidth: 0
-  },
   bottomButtonArea: {
     flexDirection: 'row', 
     height: 45
@@ -405,9 +411,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',  
     alignItems: 'center', 
     justifyContent: 'center'
-  },
-  labelArea_noLittle: {
-    marginRight: 10
   },
   label: {
     textAlign: 'center',

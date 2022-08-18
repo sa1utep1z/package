@@ -21,6 +21,7 @@ const CompanyDetailDialog = ({
   return (
     <Dialog
       isVisible={showDetail}
+      overlayStyle={styles.dialogStyle}
       onBackdropPress={()=> setShowDetail(!showDetail)}>
       <View style={styles.msgArea}>
         <Text style={styles.title}>岗位信息</Text>
@@ -38,9 +39,8 @@ const CompanyDetailDialog = ({
               <Text style={{color: '#444444'}}>{message.orderName}</Text>
             </View>
           </View>
-          <ScrollView style={styles.message}>
+          <ScrollView style={styles.message} showsVerticalScrollIndicator={false}>
             <Text style={styles.fontStyle}>{message.orderPolicyDetail ? String(message.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text>
-            {/* <WebView scalesPageToFit={false} originWhitelist={['*']} source={{ html: message.orderPolicyDetail }}></WebView> */}
           </ScrollView>
         </View>
         <TouchableOpacity style={styles.bottomBtn} onPress={()=>setShowDetail(!showDetail)}>
@@ -52,6 +52,11 @@ const CompanyDetailDialog = ({
 };
 
 const styles = StyleSheet.create({
+  dialogStyle: {
+    padding: 20,
+    borderRadius: 6,
+    width: '80%'
+  },
   msgArea: {
     height: 450, 
     alignItems: 'center'

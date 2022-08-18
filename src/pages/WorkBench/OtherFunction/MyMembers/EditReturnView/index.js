@@ -110,6 +110,7 @@ const EditReturnView = (props) => {
                   name="memberName"
                   title="会员姓名"
                   editable={false}
+                  placeholder="无"
                   inputStyle={{color: '#CCCCCC'}}
                   component={FormItem}
                 />
@@ -118,6 +119,7 @@ const EditReturnView = (props) => {
                   title="会员手机号"
                   maxLength={11}
                   editable={false}
+                  placeholder="无"
                   inputStyle={{color: '#CCCCCC'}}
                   component={FormItem}
                 />

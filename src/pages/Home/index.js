@@ -22,16 +22,16 @@ const Home = (props) => {
   const listRef = useRef(null);
   const [orderMsg, setOrderMsg] = useState({}); // 订单详情
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
+  const [bannerList, setBannerList] = useState([]);
   const [showList, setShowList] = useState({
     content: []
   });
-
-  console.log('searchContent', searchContent);
 
   useEffect(()=>{
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    getBannerList();
     return () => {
       setSearchContent({pageSize: 20, pageNumber: 0});
       listRef?.current?.setShowList(false);
@@ -61,6 +61,19 @@ const Home = (props) => {
     }
   },[data])
 
+  const getBannerList = async() => {
+    try{
+      const res = await HomeApi.GetBannerList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setBannerList(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, {type: 'danger'});
+    }
+  };
+
   const gotoList = async(item) => {
     try {
       const {current} = listRef;
@@ -72,22 +85,26 @@ const Home = (props) => {
           recruitEnd: searchContent?.recruitEnd
         }
         const res = await HomeApi.CompanyList(params);
+        if(res.code !== SUCCESS_CODE){
+          toast.show(`${res?.msg}`, { type: 'danger' });
+          return;
+        }
+        const filterList = res.data.filter(data => data.recruitRange === item.recruitRange);
         const newList = {
           companyName: item.companyName,
-          list: res.data
+          list: filterList
         };
         current?.setList(newList);
-        console.log('是否执行打印异常：', newList)
         return;
       }
       navigation.navigate(NAVIGATION_KEYS.COMPANY_DETAIL, {
         companyName: item.companyName,
         orderId: item.orderId,
         orderName: item.orderName,
+        bannerList
       });
     } catch (error) {
       current?.setShowList(false);
-      console.log('是否执行打印异常：', error)
     }
   };
 
@@ -132,7 +149,7 @@ const Home = (props) => {
         keyExtractor={item => item.orderId}
         renderItem={renderItem}
         refreshControl={refreshControl}
-        ListHeaderComponent={<Header search={search} range={setRangeDate} />}
+        ListHeaderComponent={<Header search={search} range={setRangeDate} bannerList={bannerList}/>}
         ListEmptyComponent={empty}
         ListFooterComponent={<View style={{height: 28}}></View>}
         initialNumToRender={8}

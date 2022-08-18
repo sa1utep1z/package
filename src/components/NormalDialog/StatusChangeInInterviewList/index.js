@@ -192,9 +192,11 @@ const StatusChangeInInterviewList = ({
               <TouchableOpacity style={[styles.tag, selectStatus === 'noArrive' && {backgroundColor: '#409EFF'}]} onPress={()=>pressStatus('noArrive')}>
                 <Text style={[styles.tag_text, selectStatus === 'noArrive' && {color: '#fff'}]}>未面试</Text>
               </TouchableOpacity>
+              <View style={{width: 10}}></View>
               <TouchableOpacity style={[styles.tag, selectStatus === 'fail' && {backgroundColor: '#409EFF'}]} onPress={()=>pressStatus('fail')}>
                 <Text style={[styles.tag_text, selectStatus === 'fail' && {color: '#fff'}]}>未通过</Text>
               </TouchableOpacity>
+              <View style={{width: 10}}></View>
               <TouchableOpacity style={[styles.tag, selectStatus === 'pass' && {backgroundColor: '#409EFF'}]} onPress={()=>pressStatus('pass')}>
                 <Text style={[styles.tag_text, selectStatus === 'pass' && {color: '#fff'}]}>已通过</Text>
               </TouchableOpacity>
@@ -270,14 +272,14 @@ const styles = StyleSheet.create({
   },
   tags: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap'
+    justifyContent: 'space-between'
   },
   tags_little: {
     flexDirection: 'row',
     flexWrap: 'wrap'
   },
   tag: {
+    flex: 1,
     height: 26, 
     backgroundColor: '#EEEEEE', 
     borderRadius: 3, 
@@ -286,7 +288,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   tag_text: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 13,
     fontSize: 15, 
     color: '#999999'
   },

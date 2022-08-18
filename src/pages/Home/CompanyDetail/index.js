@@ -12,6 +12,7 @@ import NAVIGATION_KEYS from '../../../navigator/key';
 import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE } from '../../../utils/const';
 
 const CompanyDetail = (props) => {
+  const {route: {params: {bannerList = []}}} = props;
   const webRef = useRef(null);
   const toast = useToast();
 
@@ -28,8 +29,7 @@ const CompanyDetail = (props) => {
   const recruitRange = date + date2;
   const startTime = String(orderData.recruitRange).substring(0, 10); //开始日期
   const endTime = String(orderData.recruitRange).substring(11, 21);// 结束日期
-  console.log('打印详情：', new Date("2016/09/16"))
-  console.log('打印详情：', String(orderData.recruitRange).substring(11, 21))
+
   const getDetail = async () => {
     try{
       const res = await HomeApi.orderDetail(orderId);
@@ -38,7 +38,6 @@ const CompanyDetail = (props) => {
         return;
       }
       setOrderData(res.data);
-      console.log('打印详情：', res)
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -57,7 +56,7 @@ const CompanyDetail = (props) => {
     startDate: startTime,
     endDate: endTime
   });
-  console.log('路由跳转的参数：',params)
+
   return (
     <View style={{ flex: 1}}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
@@ -68,11 +67,18 @@ const CompanyDetail = (props) => {
             style={styles.swiperStyle}
             containerStyle={styles.containerStyle}
             paginationStyle={styles.paginationStyle}
+            defaultSource={require('../../../assets/images/loading.gif')}
             activeDotColor='#409EFF'>
-            <Image style={styles.imageStyle} source={require('../../../assets/images/homeImg.png')} />
-            <View style={styles.slide2}>
-              <Image style={styles.imageStyle} source={require('../../../assets/images/homeImg2.jpg')} />
-            </View>
+            {bannerList.length ? bannerList.map((image, index) => 
+              <Image 
+                loadingindicatorsource={require('../../../assets/images/homeImg.png')} 
+                key={index} 
+                style={{width: '100%', height: '100%', borderRadius: 8}} 
+                source={{uri: `${image.coverImage.url}`}}/>)
+              : <>
+                <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg.png')}/>
+                <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg2.jpg')}/>
+              </>}
           </Swiper>
         </View>
         <View style={styles.jobBoxStyle}>
@@ -405,25 +411,6 @@ const styles = StyleSheet.create({
   paginationStyle: {
     bottom: 0,
     marginBottom: 5
-  },
-  slide1: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#9DD6EB'
-  },
-  slide2: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#97CAE5'
-  },
-  slide3: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#92BBD9',
-    borderRadius: 8
   },
   text: {
     color: '#fff',

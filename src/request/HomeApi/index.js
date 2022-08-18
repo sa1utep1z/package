@@ -5,6 +5,7 @@ const HomeApi = {
   CompanyList: async (params) => await httpRequest.post('admin/app/index/company/order', params),
   orderDetail: async (orderId) => await httpRequest.get(`admin/app/orderDetail/${orderId}`),
   SignUp: async (orderId, prams) => await httpRequest.post(`admin/app/orderDetail/${orderId}`, prams),
+  GetBannerList: async () => await httpRequest.get(`admin/app/banner/list`),
   ocrReq: async (prams) => await httpRequest.post('admin/app/ocr', prams,
     {
       headers: {

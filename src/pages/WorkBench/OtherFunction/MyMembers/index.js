@@ -93,24 +93,6 @@ const MyMembers = () => {
     }
   };
 
-  const selectIndex = (selectIndex) => {
-    switch(selectIndex){
-      case 0:
-        searchContent.returnVisitResult = '';
-        break;
-      case 1:
-        searchContent.returnVisitResult = 'PREPARING';
-        break;
-      case 2:
-        searchContent.returnVisitResult = 'HAVE_WILL';
-        break;
-      case 3:
-        searchContent.returnVisitResult = 'NO_WILL';
-        break;
-    }
-    setSearchContent({ ...searchContent, ...firstPage });
-  };
-
   const rightTitleOnPress = (msg, data) => {
     navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
       formList: msg,
@@ -127,6 +109,12 @@ const MyMembers = () => {
       refresh
     });
     dialogRef.current.setShowDialog(false);
+  };
+
+  const joinInSignUpOnPress = (msg) => {
+    navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP, {
+      msg
+    })
   };
 
   const memberDetailOnPress = async(msg) => {
@@ -212,7 +200,7 @@ const MyMembers = () => {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
-
+  
   const filter = (values) => {
     const willSignUpCompanyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].storeId : '';
@@ -231,6 +219,24 @@ const MyMembers = () => {
       storeId,
       memberStatus
     });
+  };
+
+  const selectIndex = (selectIndex) => {
+    switch(selectIndex){
+      case 0:
+        searchContent.returnVisitResult = '';
+        break;
+      case 1:
+        searchContent.returnVisitResult = 'PREPARING';
+        break;
+      case 2:
+        searchContent.returnVisitResult = 'HAVE_WILL';
+        break;
+      case 3:
+        searchContent.returnVisitResult = 'NO_WILL';
+        break;
+    }
+    setSearchContent({ ...searchContent, ...firstPage });
   };
 
   const listHead = (
@@ -276,9 +282,7 @@ const MyMembers = () => {
       { fieldName: '查看', pressFun: () => entryRecordOnPress(item)},
       { fieldName: '查看', pressFun: () => reviewRecordOnPress(item)},
       { fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'},
-      { fieldName: '加入', pressFun: () => navigation.navigate(NAVIGATION_KEYS.JOIN_IN_SIGN_UP, {
-        msg: item
-      })}
+      { fieldName: '加入', pressFun: () => joinInSignUpOnPress(item)}
     ];
     return (
       <View key={item.poolId} style={styles.listStyle}>

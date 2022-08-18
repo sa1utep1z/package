@@ -47,7 +47,6 @@ const JoinInSignUp = (props) => {
     setFieldValue();
     getStoreList();
     getCompaniesList();
-    console.log('props.params', props.route.params);
   },[])
 
   const onSubmit = async(values) => {
@@ -107,9 +106,16 @@ const JoinInSignUp = (props) => {
         res.data.forEach((item,index) => {
           item.title = item.storeName;
           item.id = index + 1;
+          item.value = item.storeId;
         });
-        console.log('获取到的门店res.data.', res.data);
         setStoreList(res.data);
+        //如果回填表单有传门店和招聘员id，就回填表单；
+        if(msg.storeId && msg.recruiterId){
+          const storeName = [res.data.find(store => store.storeId === msg.storeId)];
+          const recruitName = [storeName[0].members.find(recruit => recruit.value === msg.recruiterId)];
+          restForm.setFieldValue('store', storeName);
+          restForm.setFieldValue('staff', recruitName);
+        }
       }
     }catch(err){
       console.log('err', err);
@@ -151,6 +157,7 @@ const JoinInSignUp = (props) => {
   };
 
   const setFieldValue = () => {
+    console.log('msg', msg);
     if(msg){
       restForm.setFieldValue('memberName', msg.userName);
       restForm.setFieldValue('memberPhone', msg.mobile);
@@ -180,12 +187,14 @@ const JoinInSignUp = (props) => {
                   <Field
                     name="memberTags"
                     title="会员标签"
+                    placeholder="无"
                     onlyShow
                     component={SelectTags}
                   />
                   <Field
                     name="memberName"
                     title="会员姓名"
+                    placeholder="无"
                     editable={false}
                     inputStyle={{color: '#CCCCCC'}}
                     component={FormItem}
@@ -193,6 +202,7 @@ const JoinInSignUp = (props) => {
                   <Field
                     name="memberPhone"
                     title="会员手机号"
+                    placeholder="无"
                     maxLength={11}
                     editable={false}
                     inputStyle={{color: '#CCCCCC'}}
@@ -201,6 +211,7 @@ const JoinInSignUp = (props) => {
                   <Field
                     name="memberIdCard"
                     title="身份证号"
+                    placeholder="无"
                     editable={false}
                     inputStyle={{color: '#CCCCCC'}}
                     component={FormItem}

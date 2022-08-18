@@ -51,6 +51,7 @@ const CompanyListDialog = (props, ref) => {
     <>
       <Dialog
         isVisible={showList}
+        overlayStyle={styles.dialogStyle}
         onBackdropPress={()=> setShowList(!showList)}>
         <View style={styles.listArea}>
           <Text style={styles.listTitle}>{list.companyName || '无'}</Text>
@@ -67,7 +68,7 @@ const CompanyListDialog = (props, ref) => {
           </View>
           <ScrollView style={styles.scrollArea}>
             {list.list.length ? list.list.map((item, index) => {
-              const isLastIndex = index === list.length - 1;
+              const isLastIndex = index === list.list.length - 1;
               return (
                 <View style={[styles.listItem, isLastIndex && styles.noBorder]} key={item.orderId}>
                   <Text style={[styles.item, styles.flex_1]}>{index + 1}</Text>
@@ -97,6 +98,11 @@ const styles = StyleSheet.create({
   },
   noBorder: {
     borderBottomWidth: 0
+  },
+  dialogStyle: {
+    padding: 20,
+    borderRadius: 6,
+    width: '80%'
   },
   listArea: {
     maxHeight: 450, 

@@ -307,7 +307,7 @@ const NewestState = () => {
         <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total || 0}</Text> 条数据</Text>
       </View> 
       <View style={styles.list_head}>
-        {NEWEST_STATE_LIST_HEAD.map(item => <Text style={styles.list_head_text}>{item.title}</Text>)}
+        {NEWEST_STATE_LIST_HEAD.map((item,index) => <Text key={index} style={styles.list_head_text}>{item.title}</Text>)}
       </View>
       <BottomList 
         list={showList}

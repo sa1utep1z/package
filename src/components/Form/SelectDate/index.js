@@ -21,6 +21,10 @@ const SelectDate = ({
 
   const dateChange = (event, selectedDate) => {
     setShowDatePicker(false);
+    if(event.type === 'neutralButtonPressed'){
+      form.setFieldValue(field.name, '');
+      return;
+    }
     if(event.type !== "set") return;
     form.setFieldValue(field.name, moment(selectedDate).format('YYYY-MM-DD'));
     setDateTime(selectedDate);
@@ -44,6 +48,7 @@ const SelectDate = ({
           <DateTimePicker 
             value={dateTime} 
             onChange={dateChange} 
+            neutralButtonLabel={field.value && '清除'}
           />
         }
       </View>

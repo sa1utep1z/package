@@ -85,6 +85,7 @@ const HeaderSearch = ({
         res.data.forEach((item,index) => {
           item.title = item.storeName;
           item.id = index + 1;
+          item.value = item.storeId;
         });
         setStoreList(res.data);
       }
@@ -244,12 +245,6 @@ const styles = StyleSheet.create({
   topView: {
     paddingHorizontal: 32,
     marginVertical: 30
-  },
-  selectAreaStyle: {
-    height: 30, 
-    backgroundColor: '#fff', 
-    borderRadius: 8,
-    paddingLeft: 10
   },
   selectContainerStyle: {
     flex: 1 

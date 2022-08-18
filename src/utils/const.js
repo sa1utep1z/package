@@ -115,7 +115,7 @@ export const TAB_OF_LIST = {
 };
 
 export const CHANGING_STAGE_LIST_IN_DIALOG = [
-  {title: '报名', value: 'signUp', statusList: [
+  {title: '报名', value: 'SIGN_UP_PENDING', statusList: [
     {title: '已报名', value: 'SIGN_UP_INTENTION'},
     {title: '无意向', value: 'SIGN_UP_NO_INTENTION', reasonList: [
       {title: '精神异常', value: 'jingshenbing'},
@@ -125,7 +125,7 @@ export const CHANGING_STAGE_LIST_IN_DIALOG = [
       {title: '在外地', value: 'out'}
     ]}
   ]},
-  {title: '面试', value: 'interview', statusList: [
+  {title: '面试', value: 'INTERVIEW_PENDING', statusList: [
     {title: '通过', value: 'INTERVIEW_PASS'},
     {title: '未通过', value: 'INTERVIEW_FAIL', reasonList: [
       {title: '现场放弃', value: 'giveUp'},
@@ -146,7 +146,7 @@ export const CHANGING_STAGE_LIST_IN_DIALOG = [
       {title: '体检不过', value: 'failInPhysical'}
     ]}
   ]},
-  {title: '待入职', value: 'joinIn', statusList: [
+  {title: '待入职', value: 'ON_BOARDING_PENDING', statusList: [
     {title: '已入职', value: 'ON_BOARDING_PASS'},
     {title: '未报到', value: 'ON_BOARDING_FAIL', reasonList: [
       {title: '联系不上', value: 'unconnected'},

@@ -33,7 +33,6 @@ const Mine = () => {
   const getMessage = async() => {
     try{
       const res = await MineApi.MineMessage();
-      console.log('resssssssssss', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;

@@ -17,9 +17,12 @@ const FormItem = ({
   formValue, //主动传值进去。做展示用。
   ...rest
 }) => {
+<<<<<<< Updated upstream
 
   // const [lines, setLines] = useState(1);
   // setLines(numberLines);
+=======
+>>>>>>> Stashed changes
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
@@ -44,6 +47,8 @@ const FormItem = ({
       <Input
         value={field.value || formValue}
         label={label}
+        multiline
+        allowFontScaling={false}
         placeholder={rest.placeholder || `请输入${rest.title}`}
         placeholderTextColor="#999999"
         onChangeText={form.handleChange(field.name)}
@@ -52,8 +57,11 @@ const FormItem = ({
         inputContainerStyle={[styles.noBorder, inputContainerStyle]}
         rightIcon={rest.OCR && OCRArea}
         {...rest}
+<<<<<<< Updated upstream
         multiline
         maxLength={maxLength}
+=======
+>>>>>>> Stashed changes
       />
       <ErrorMessage
         name={field.name}
@@ -66,7 +74,10 @@ const FormItem = ({
 
 const styles = StyleSheet.create({
   containerStyle: {
+<<<<<<< Updated upstream
     minHeight: 91,
+=======
+>>>>>>> Stashed changes
     flexDirection: 'row', 
     alignItems: 'center',
     borderBottomWidth: 2,
@@ -76,6 +87,8 @@ const styles = StyleSheet.create({
   },
   noBorder: {
     flex: 1,
+    minHeight: 91,
+    paddingVertical: 0,
     borderBottomWidth: 0
   },
   inputStyle: {

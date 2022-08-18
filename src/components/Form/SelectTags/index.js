@@ -18,6 +18,7 @@ const SelectTags = ({
   form, 
   title,
   onlyShow = false, //是否仅作展示
+  placeholder,
   labelAreaStyle,
   labelStyle,
   inputStyle,
@@ -86,7 +87,7 @@ const SelectTags = ({
     rightTitleOnPress: () => setSelectTags([]),
     dialogComponent: 
       <ScrollView style={{maxHeight: 300}}>
-        {loading ? <ActivityIndicator animating={loading} /> : <View style={{borderWidth: 1, borderRadius: 5, marginHorizontal: 10, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingVertical: 10, borderColor: '#CCCCCC'}}>
+        {loading ? <ActivityIndicator animating={loading} /> : <View style={{borderWidth: 1, borderRadius: 5, marginHorizontal: 10, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingVertical: 10, borderColor: '#CCCCCC', paddingHorizontal: 10}}>
           {tagList.length ?
             tagList.map((tag, tagIndex) => {
               const isSelected = selectTags.find(name => name === tag);
@@ -114,7 +115,7 @@ const SelectTags = ({
               )
             })}
           </View> : 
-          <Text style={[styles.rightArea_text, !field.value.length && {color: '#999999'}]}>{`请选择${title}`}</Text>}
+          <Text style={[styles.rightArea_text, !field.value.length && {color: '#999999'}]}>{`${placeholder ? placeholder : ` 请选择${title}`}`}</Text>}
           {!onlyShow && <AntDesign
             name={dialogRef?.current?.showDialog ? 'up' : 'down'}
             size={30}

@@ -199,7 +199,7 @@ const ListChangeStatus = ({
               </TouchableOpacity>
             </View>
           </View>
-          {showReason && <View style={styles.tagArea}>
+          {showReason && <View style={[styles.tagArea, {marginBottom: 0}]}>
             <Text style={[styles.tagArea_title, { marginBottom: 15 }]}>原因选择</Text>
             <ScrollView style={{ maxHeight: 150 }}>
               <View style={styles.tags_little}>
@@ -232,7 +232,7 @@ const ListChangeStatus = ({
               }
             />
           </View>}
-          {selectDate && <View style={styles.tagArea}>
+          {selectDate && <View style={[styles.tagArea, {marginBottom: 0}]}>
             <View style={styles.datePicker}>
               <Text style={styles.tagArea_title}>日期选择</Text>
               <TouchableOpacity style={styles.pickerTouchable} onPress={() => setModalVisible(true)}>

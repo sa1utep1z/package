@@ -56,6 +56,7 @@ const CenterSelectDate = ({
     } else if (startDate === endDate){
       if(!startDate && !endDate){
         setReturnToday(true);
+        setSelectDay(null);
         return;
       }
       setSelectDay(rangeDate.startDate);

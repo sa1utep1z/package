@@ -148,7 +148,7 @@ const ListChangeStatus = ({
               }
             />
           </View>
-          <View style={styles.tagArea}>
+          <View style={[styles.tagArea, {marginBottom: 0}]}>
             <View style={styles.datePicker}>
               <Text style={styles.tagArea_title}>日期选择</Text>
               <TouchableOpacity style={styles.pickerTouchable} onPress={() => setModalVisible(true)}>

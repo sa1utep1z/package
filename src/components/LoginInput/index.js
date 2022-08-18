@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useState, useRef, useMemo} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text, Input, Icon} from '@rneui/themed';
 import {ErrorMessage} from 'formik';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const LoginInput = ({
   field, 
@@ -9,30 +10,80 @@ const LoginInput = ({
   password = false,
   ...props
 }) => {
+  const inputRef = useRef(null);
   const [seePassword, setSeePassword] = useState(true);
+  const [showClear, setShowClear] = useState(false);
 
   const seePasswordOnPress = () => setSeePassword(!seePassword);
+
+  const clearInput = () => {
+    form.setFieldValue(field.name, '');
+    setShowClear(false);
+  };
+
+  const onChangeText = (e) => {
+    form.setFieldValue(field.name, e);
+    if(e.length){
+      setShowClear(true);
+    }else{
+      setShowClear(false);
+    }
+  };
+
+  const rightIcon = () => {
+    if(password){
+      return (
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {showClear && 
+          <TouchableOpacity onPress={clearInput} style={{height: '100%', justifyContent: 'center', paddingRight: 30}}>
+            <AntDesign
+              name='closecircle'
+              size={30}
+              color='#999999'
+            />
+          </TouchableOpacity>}
+          <Icon
+            name={seePassword ? 'eye-with-line' : 'eye'}
+            type='entypo'
+            size={40}
+            color="#409EFF"
+            onPress={seePasswordOnPress}
+          />
+        </View>
+      )
+    }else{
+      return (
+        <TouchableOpacity onPress={clearInput} style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: '100%', paddingTop: 5}}>
+          {showClear && <AntDesign
+            name='closecircle'
+            size={30}
+            color='#999999'
+          />}
+        </TouchableOpacity>
+      )
+    }
+  };
+
+  const onFocus = () => field.value.length && setShowClear(true);
+  const onBlur = () => setShowClear(false);
 
   return (
     <>
       <Input
+        ref={inputRef}
         label={props.label}
         placeholder={props.placeholder || `请输入${props.label}`}
         value={field.value}
-        onChangeText={form.handleChange(field.name)}
+        onChangeText={onChangeText}
         containerStyle={styles.containerStyle}
         labelStyle={styles.labelStyle}
         inputContainerStyle={styles.inputContainerStyle}
         inputStyle={styles.inputStyle}
         secureTextEntry={password && seePassword}
-        rightIcon={password && <Icon
-          name={seePassword ? 'eye-with-line' : 'eye'}
-          type='entypo'
-          size={40}
-          color="#409EFF"
-          onPress={seePasswordOnPress}
-        />}
+        rightIcon={rightIcon()}
         rightIconContainerStyle={{height: '100%', paddingTop: 24}}
+        onFocus={onFocus}
+        onBlur={onBlur}
         {...props}
       />
       <ErrorMessage

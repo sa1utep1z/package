@@ -13,7 +13,7 @@ import SearchInput from "../../../components/SearchInput";
 const today = moment().format("YYYY-MM-DD");
 const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
 
-export const Header = ({search, range}) => {
+export const Header = ({search, range, bannerList}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const [activeButton, setActiveButton] = useState(0);
@@ -74,11 +74,18 @@ export const Header = ({search, range}) => {
           style={styles.swiperStyle} 
           containerStyle={styles.containerStyle} 
           paginationStyle={styles.paginationStyle} 
+          defaultSource={require('../../../assets/images/loading.gif')}
           activeDotColor='#409EFF'>
-          <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg.png')}/>
-          <View style={styles.slide2}>
+          {bannerList.length ? bannerList.map((image, index) => 
+          <Image 
+            loadingindicatorsource={require('../../../assets/images/homeImg.png')} 
+            key={index} 
+            style={{width: '100%', height: '100%', borderRadius: 8}} 
+            source={{uri: `${image.coverImage.url}`}}/>)
+          : <>
+            <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg.png')}/>
             <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg2.jpg')}/>
-          </View>
+          </>}
         </Swiper>
       </View>
       <Animated.View style={[{opacity: fadeAnim}, !showSearch && {height: 0}]}>
@@ -152,25 +159,6 @@ const styles = StyleSheet.create({
   paginationStyle: {
     bottom: 0,
     marginBottom: 5
-  },
-  slide1: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#9DD6EB'
-  },
-  slide2: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#97CAE5'
-  },
-  slide3: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#92BBD9',
-    borderRadius: 8
   },
   text: {
     color: '#fff',

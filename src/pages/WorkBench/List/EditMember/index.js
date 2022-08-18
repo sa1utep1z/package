@@ -89,10 +89,12 @@ const EditMember = (props) => {
           item.value = item.storeId;
         });
         setStoreList(res.data);
-        const storeName = [res.data.find(store => store.storeId === params.fieldList.storeId)];
-        const recruitName = [storeName[0].members.find(recruit => recruit.value === params.fieldList.recruitId)];
-        restForm.setFieldValue('storeName', storeName);
-        restForm.setFieldValue('recruitName', recruitName);
+        if(params.fieldList.storeId && params.fieldList.recruiterId){
+          const storeName = [res.data.find(store => store.storeId === params.fieldList.storeId)];
+          const recruitName = [storeName[0].members.find(recruit => recruit.value === params.fieldList.recruitId)];
+          restForm.setFieldValue('storeName', storeName);
+          restForm.setFieldValue('recruitName', recruitName);
+        }
       }
     }catch(err){
       toast.show(`获取门店列表失败，请联系系统管理员处理`, { type: 'danger' });

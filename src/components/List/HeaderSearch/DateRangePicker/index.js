@@ -78,53 +78,68 @@ const PickerOfDateRange = ({
     }
   };
 
+  const clearStart = () => {
+    if(rangeDate.startDate){
+      dispatch(setStartDate(''));
+    }
+  };
+
+  const clearEnd = () => {
+    if(rangeDate.endDate){
+      dispatch(setEndDate(''));
+    }
+  };
+
   return (
     <>
       <View style={styles.dateArea}>
         <View style={styles.datePicker}>
           <Text style={styles.title}>开始日期：</Text>
-          <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
-            <AntDesign
-              name='calendar' 
-              size={30}
-              style={{marginHorizontal: 20}}
-              color='#999999'
-            />
-            <Text style={styles.font}>{rangeDate.startDate ? moment(rangeDate.startDate).format('MM-DD') : '无'}</Text>
-          </TouchableOpacity>
+          <View style={styles.pressArea}>
+            <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
+              <AntDesign
+                name='calendar' 
+                size={30}
+                color={rangeDate.startDate ? '#333333' : '#999999'}
+              />
+              <Text style={[styles.font, rangeDate.startDate && {color: '#333333'}]}>{rangeDate.startDate ? moment(rangeDate.startDate).format('MM-DD') : '无'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.iconStyle, !rangeDate.startDate && {opacity: 0}]} onPress={clearStart}>
+              <AntDesign
+                name='closecircle' 
+                size={30}
+                color='#999999'
+              />
+            </TouchableOpacity>
+          </View>
         </View> 
         <View style={{width: 40}}></View>
         <View style={styles.datePicker}>
           <Text style={styles.title}>结束日期：</Text>
-          <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
-            <AntDesign
-              name='calendar' 
-              size={30}
-              style={{marginHorizontal: 20}}
-              color='#999999'
-            />
-            <Text style={styles.font}>{rangeDate.endDate ? moment(rangeDate.endDate).format('MM-DD') : '无'}</Text>
-          </TouchableOpacity>
+          <View style={styles.pressArea}>
+            <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
+              <AntDesign
+                name='calendar' 
+                size={30}
+                color={rangeDate.endDate ? '#333333' : '#999999'}
+              />
+              <Text style={[styles.font, rangeDate.endDate && {color: '#333333'}]}>{rangeDate.endDate ? moment(rangeDate.endDate).format('MM-DD') : '无'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.iconStyle, !rangeDate.endDate && {opacity: 0}]} onPress={clearEnd}>
+              <AntDesign
+                name='closecircle' 
+                size={30}
+                color='#999999'
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
       {modalVisible && <DateTimePicker 
         value={dateTime} 
         onChange={dateChange} 
         neutralButtonLabel={clearTimer ? '清除' : ''}
-        // minimumDate={new Date()}
       />}
-      {/* <DateRangePicker
-        range
-        startDate={startDate}
-        endDate={endDate}
-        displayedDate={displayedDate}
-        open={modalVisible}
-        display={setModalVisible}
-        onChange={setDates}
-        confirmBtn={confirmBtn}
-        moment={moment}>
-        <View></View>
-      </DateRangePicker> */}
     </>
   )
 }
@@ -144,21 +159,33 @@ const styles = StyleSheet.create({
   pickerTouchable: {
     flex: 1,
     height: '100%',
-    backgroundColor: '#fff', 
     flexDirection: 'row', 
-    alignItems: 'center', 
-    borderRadius: 10, 
-    paddingLeft: 5,
-    marginLeft: 5
+    alignItems: 'center'
   },
   font: {
+    flex: 1,
+    textAlign: 'center',
     color: '#999999',
     fontSize: 28
+  },
+  iconStyle: {
+    height: '100%', 
+    justifyContent: 'center', 
+    paddingHorizontal: 10
   },
   title: {
     fontSize: 26,
     color: '#000',
     fontWeight: 'bold'
+  },
+  pressArea: {
+    flex: 1,
+    height: '100%',
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingLeft: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10
   }
 });
 
