@@ -79,7 +79,6 @@ const LeavingList = () => {
 
   // 获取在离职名单数据
   const getList = async (params) => {
-    console.log('getList --> params', params);
     setIsLoading(true);
     try {
       const res = await ListApi.GetJobOnList(params);
@@ -195,7 +194,6 @@ const LeavingList = () => {
       }
       res.data.flowId = item.flowId;
       dialogRef.current.setShowDialog(true);
-      console.log('打印会员数据：', res)
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />,

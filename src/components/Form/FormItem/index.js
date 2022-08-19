@@ -26,7 +26,6 @@ const FormItem = ({
 
   const OCRArea = (
     <TouchableOpacity title="request permissions" style={styles.OCRArea} onPress={onPress}>
-      {/* <Button title="request permissions" onPress={onPress} style={styles.OCRText}>OCR </Button> */}
       <Text style={styles.OCRText}>OCR  </Text>
       <AntDesign
         name='scan1'

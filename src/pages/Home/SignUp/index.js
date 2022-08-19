@@ -53,7 +53,7 @@ const SignUp = (props) => {
     const prams = {
       ...values,
       arrivalMode: values.arrivalMode === true ? 'FACTORY' : 'STORE',
-      // orderDate: values.orderDate ? moment(values.orderDate).format('YYYY-MM-DD') : '',
+      orderDate: values.orderDate ? moment(values.orderDate).format('YYYY-MM-DD') : '',
     }
     try {
       const res = await HomeApi.SignUp(orderId, prams);
@@ -72,37 +72,6 @@ const SignUp = (props) => {
       console.log('打印异常：', error)
     }
   }
-
-  //图片选择器参数设置
-  const options = {
-    title: '请选择',
-    cancelButtonTitle: '取消',
-    takePhotoButtonTitle: '拍照',
-    chooseFromLibraryButtonTitle: '从相册选择',
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
-
-  //选择照片按钮点击
-  // const choosePic = () => {
-  //   ImagePicker(options, (response) => {
-  //     console.log('Response = ', response);
-  //     if (response.didCancel) {
-  //       console.log('User cancelled image picker');
-  //     } else if (response.error) {
-  //       console.log('ImagePicker Error: ', response.error);
-  //     } else if (response.customButton) {
-  //       Alert.alert('自定义按钮:' + response.customButton)
-  //     } else {
-  //       const source = { uri: response.uri };
-  //       Alert.alert(JSON.stringify(source))
-  //       console.log("source:" + JSON.stringify(source))
-  //     }
-  //   });
-  // }
-
 
   // 上传图片
   const uploadImage = async (fileName, localFilePath) => {
@@ -151,7 +120,6 @@ const SignUp = (props) => {
     setModalVisible(false);
     const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
     uploadImage(fileName, pickerImage.path);
-    console.log('图库选择照片：', pickerImage);
   }
 
   //调用相机拍照
@@ -163,9 +131,7 @@ const SignUp = (props) => {
       multiple: false,
       compressImageQuality: 0.2,
     });
-    console.log('相机拍照数据：', cameraImage);
     const fileName = `${cameraImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
-    console.log('相机拍照文件名：', fileName);
     uploadImage(fileName, cameraImage.path);
   }
 
@@ -185,7 +151,6 @@ const SignUp = (props) => {
   return (
     <Formik
       initialValues={initialValues}
-      // validationSchema={SignUpValidationSchema}
       handleChange={(e) => console.log('e', e)}
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {
@@ -345,7 +310,7 @@ const SignUp = (props) => {
                     style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                     onPress={openPermission}
                   >
-                    <Text style={styles.textStyle}>手机拍摄</Text>
+                    <Text style={styles.textStyle}>拍照上传</Text>
                   </TouchableHighlight>
                   <TouchableHighlight
                     style={{ ...styles.openButton, backgroundColor: "#2196F3" }}

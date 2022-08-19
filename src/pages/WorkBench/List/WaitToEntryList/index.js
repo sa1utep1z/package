@@ -69,7 +69,6 @@ const WaitToEntryList = () => {
 
   // 获取待入职名单数据
   const getList = async (params) => {
-    console.log('getList --> params', params);
     setIsLoading(true);
     try {
       const res = await ListApi.GetWaitList(params);
@@ -106,7 +105,6 @@ const WaitToEntryList = () => {
     };
     try {
       const res = await ListApi.GetWaitStatus(params);
-      console.log('打印获取状态的数据：', res)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res.data?.msg}`, { type: 'danger' });
         return;
@@ -217,7 +215,6 @@ const WaitToEntryList = () => {
       }
       res.data.flowId = item.flowId;
       dialogRef.current.setShowDialog(true);
-      console.log('查看会员详情：', res)
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />,
@@ -228,7 +225,6 @@ const WaitToEntryList = () => {
   };
 
   const changeStatus = (item) => {
-    console.log('选择的状态：', item)
     if (item.onBoardingStatus !== 'ON_BOARDING_PENDING') {
       toast.show(`状态已确定！`, { type: 'warning' });
       return;
