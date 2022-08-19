@@ -1,19 +1,26 @@
-import React from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState} from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+
+import DataOverview from "./DataOverview";
+import DataTrend from "./DataTrend";
+import DataCompare from "./DataCompare";
 
 const HireReportForm = () => {
+
   return (
-    <View style={styles.screen}>
-      <Text>招聘报表</Text>
-    </View>
+    <ScrollView style={styles.screen}>
+      <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', paddingTop: 32}}>
+        <DataOverview />
+        <DataTrend />
+        <DataCompare />
+      </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    flex: 1
   }
 });
 

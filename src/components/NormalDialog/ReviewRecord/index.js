@@ -24,7 +24,7 @@ const ReviewRecord = ({
       {showList.map((item, index) => {
         if(item.type === 'tags'){
           return (
-            <View style={styles.listItem}>
+            <View key={index} style={styles.listItem}>
               <Text style={styles.listItem_text}>{item.title}：</Text>
               <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap'}}>
                 {item.value.length ? item.value.map((tag, tagIndex) => {

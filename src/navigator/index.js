@@ -185,7 +185,7 @@ export default Navigator = () => {
         name={NAVIGATION_KEYS.HIRE_REPORT_FORM}
         component={NAVIGATION_PAGES.HIRE_REPORT_FORM}
         options={{
-          headerTitle: '招聘报表',
+          headerTitle: '招聘看板',
         }}
       />
       <Stack.Screen

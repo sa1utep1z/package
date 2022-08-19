@@ -13,7 +13,7 @@ const Tabbar = () => {
     <Tab.Navigator
       initialRouteName={NAVIGATION_KEYS.HOME}
       screenOptions={{
-        headerTitleAlign: 'center',
+        // headerTitleAlign: 'center',
         tabBarStyle: {height: 100},
         tabBarActiveTintColor: '#409EFF',
         tabBarInactiveTintColor: '#666666',

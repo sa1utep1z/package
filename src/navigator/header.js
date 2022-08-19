@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     width: 50, 
     height: '100%',
     textAlignVertical: 'center',
-    paddingLeft: 5
+    paddingLeft: 15
   },
   centerArea: {
     height: '100%', 

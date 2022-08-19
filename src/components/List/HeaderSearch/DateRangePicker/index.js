@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector, useDispatch } from 'react-redux';
@@ -26,11 +26,12 @@ const PickerOfDateRange = ({
 
 
   //外部通过其他组件传进来的时间范围一旦发生改变，就主动修改组件内部的起始/结束日期。
-  useMemo(()=>{
-    form.setFieldValue(field.name, {
+  useEffect(()=>{
+    const formRangeDate = {
       startDate: rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '', 
       endDate: rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : ''
-    });
+    };
+    form.setFieldValue(field.name, formRangeDate);
     form.handleSubmit();
   }, [rangeDate])
 

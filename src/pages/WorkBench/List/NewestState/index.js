@@ -152,6 +152,10 @@ const NewestState = () => {
   };
 
   const callPhone = (item) => {
+    if(!item.mobile){
+      toast.show('暂无联系方式', {type: 'warning'});
+      return;
+    }
     dialogRef.current.setShowDialog(true);
     setDialogContent({
       dialogTitle: '温馨提示',
@@ -174,9 +178,9 @@ const NewestState = () => {
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '会员信息',
-        dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />,
-        rightTitle: '编辑',
-        rightTitleOnPress: () => editMemberMessage(res.data)
+        dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />
+        // rightTitle: '编辑',
+        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -252,9 +256,9 @@ const NewestState = () => {
     const renderList = [
       { 
         fieldName: item.name || '无', 
-        textStyle: { color: '#409EFF', textAlign: 'center' },
+        textStyle: {color: '#409EFF', textAlign: 'center'},
         itemStyle: { flexDirection: 'column' },
-        pressFun: () => item.mobile && callPhone(item)
+        pressFun: () => callPhone(item)
       },
       { 
         fieldName: item.companyShortName, 

@@ -70,7 +70,7 @@ const SignUpList = () => {
     setIsLoading(true);
     try{
       const res = await ListApi.SignUpList(params);
-      console.log('getList --> res', res);
+      // console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -105,7 +105,7 @@ const SignUpList = () => {
     try{
       console.log('getTypeList --> params', params)
       const res = await ListApi.GetTypeList(params);
-      console.log('getTypeList --> res', res);
+      // console.log('getTypeList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -195,7 +195,6 @@ const SignUpList = () => {
   };
 
   const pressName = async(item) => {
-    let hasAllMessage = true;
     try{
       const res = await ListApi.MemberMessage(item.flowId);
       console.log('res', res);
@@ -205,13 +204,10 @@ const SignUpList = () => {
       }
       res.data.flowId = item.flowId;
       dialogRef.current.setShowDialog(true);
-      if(!res.data.idNo || !res.data.mobile || !res.data.name){
-        hasAllMessage = false;
-      }
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data}/>,
-        rightTitle: !hasAllMessage && searchContent.status === 'SIGN_UP_PENDING' ? '完善信息' : '',
+        rightTitle: (!res.data.idNo || !res.data.mobile || !res.data.name) ? '完善信息' : '',
         rightTitleOnPress: () => editMemberMessage(item)
       });
     }catch(err){

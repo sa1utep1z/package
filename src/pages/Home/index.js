@@ -2,64 +2,74 @@ import React, {useState, useRef, useEffect} from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl} from "react-native";
 import { Text } from '@rneui/themed';
 import { useToast } from "react-native-toast-notifications";
-import { useQuery, useMutation, useQueries } from '@tanstack/react-query';
 
-import { Header, homeFooter, empty } from "./listComponent";
-import CompanyDetailDialog from '../../components/Home/CompanyDetailDialog';
+import { Header, empty } from "./listComponent";
 import CompanyListDialog from "../../components/Home/CompanyListDialog";
 import NAVIGATION_KEYS from "../../navigator/key";
 import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
-import { useMemo } from "react";
+
+let timer;
+const firstPage = {pageSize: 20, pageNumber: 0};
 
 const Home = (props) => {
   const {navigation} = props;
 
   const toast = useToast();
 
-  const detailRef = useRef(null);
   const listRef = useRef(null);
-  const [orderMsg, setOrderMsg] = useState({}); // 订单详情
-  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
-  const [bannerList, setBannerList] = useState([]);
-  const [showList, setShowList] = useState({
-    content: []
-  });
 
-  useEffect(()=>{
+  const [bannerList, setBannerList] = useState([]);
+  const [searchContent, setSearchContent] = useState({...firstPage});
+  const [showList, setShowList] = useState([]);
+  const [originData, setOriginData] = useState({});
+  const [nextPage, setNextPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [load, setLoad] = useState(true);
+
+  useEffect(() => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    getBannerList();
-    return () => {
-      setSearchContent({pageSize: 20, pageNumber: 0});
-      listRef?.current?.setShowList(false);
-    };
   }, [])
 
-  const { isLoading, data, isError, error, refetch, status } = useQuery(['homePage', searchContent], HomeApi.HomePage);
-  if(isError){
-    toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-  }
-  if(status === 'success' && data?.code !== SUCCESS_CODE){
-    toast.show(`${data?.msg}`, { type: 'danger' });
-  }
+  useEffect(()=>{
+    getBannerList();
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
+      getList(searchContent);
+    }, 0)
+    return () => timer && clearTimeout(timer);
+  }, [searchContent])
 
-  useMemo(()=>{
-    if(data){
-      //如果当前的渲染列表中hasNext为true且当前页面与接口请求数据的pageNumber不一样，就将新数据与目前渲染列表衔接到一起并渲染出来；
-      if(showList.hasNext && data.data.pageNumber !== showList.pageNumber){
-        const concatList = showList.content.concat(data.data.content);
-        showList.content = concatList;
-        showList.pageNumber = data.data.pageNumber;
-        showList.hasNext = data.data.hasNext;
-        setShowList(showList);
+  const getList = async(params) => {
+    console.log('getList --> params', params);
+    setIsLoading(true);
+    try{
+      const res = await HomeApi.HomePage(params);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      setShowList(data.data);
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if(nextPage){
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList(res.data.content);
+    }catch(err){
+      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      setIsLoading(false);
     }
-  },[data])
+  };
 
   const getBannerList = async() => {
     try{
@@ -109,20 +119,22 @@ const Home = (props) => {
   };
 
   const onEndReached = () => {
-    if(showList.hasNext){
-      setSearchContent({...searchContent, pageNumber: searchContent.pageNumber += 1});
+    if(!load) return;
+    setLoad(false);
+    if(originData.hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
     }
   };
 
   const search = (values) => {
-    setSearchContent({...searchContent, companyName: values, pageNumber: 0});
+    setSearchContent({...searchContent, ...firstPage, companyName: values});
   };
 
   const setRangeDate = (rangeDate) => {
-    setSearchContent({...searchContent, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate, pageNumber: 0});
+    setSearchContent({...searchContent, ...firstPage, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate});
   };
-
-  const refresh = () => refetch();
 
   const renderItem = ({item, index}) => {
     return (
@@ -135,6 +147,10 @@ const Home = (props) => {
       </View>
   )};
 
+  const refresh = () => {
+    setSearchContent({...searchContent, ...firstPage});
+  };
+
   const refreshControl = (
     <RefreshControl
       refreshing={isLoading}
@@ -145,19 +161,20 @@ const Home = (props) => {
   return(
     <View style={{flex: 1, backgroundColor: '#EEF4F7'}}>
       <FlatList
-        data={showList?.content}
-        keyExtractor={item => item.orderId}
+        data={showList}
+        keyExtractor={(item, index) => index}
         renderItem={renderItem}
         refreshControl={refreshControl}
         ListHeaderComponent={<Header search={search} range={setRangeDate} bannerList={bannerList}/>}
         ListEmptyComponent={empty}
-        ListFooterComponent={<View style={{height: 28}}></View>}
-        initialNumToRender={8}
+        ListFooterComponent={<Text style={styles.bottomText}>{nextPage ? '加载中...' : '没有更多数据'}</Text>}
+        removeClippedSubviews
+        initialNumToRender={15}
         keyboardShouldPersistTaps='handled'
         onEndReachedThreshold={0.01}
         onEndReached={onEndReached}
+        onScrollEndDrag={()=>setLoad(true)}
       />
-      <CompanyDetailDialog ref={detailRef} message={orderMsg}/>
       <CompanyListDialog ref={listRef}/>
     </View>
 )};
@@ -190,6 +207,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#999999',
     marginRight: 10
+  },
+  bottomText: {
+    textAlign: 'center',
+    fontSize: 26,
+    color: '#CCCCCC'
   }
 })
 

@@ -18,9 +18,7 @@ import MyMembersApi from '../../../../request/MyMembersApi';
 import { checkedType, deepCopy } from '../../../../utils';
 
 const SignUpValidationSchema = Yup.object().shape({
-  name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名'),
-  idNo: Yup.string().required('请输入身份证').matches(IDCard, '请输入正确的身份证号'),
-  mobile: Yup.string().required('请输入会员手机号').matches(phone, '请输入正确的手机号')
+  name: Yup.string().max(5, '姓名不能超过5个字符').required('请输入姓名')
 });
 const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
 let restForm, initialValues = {
@@ -67,10 +65,11 @@ const EditMember = (props) => {
           initialValues[key] = params.fieldList[key] ? moment(params.fieldList[key]).format('YYYY-MM-DD') : '';
           break;
         default:
-          initialValues[key] = params.fieldList[key];
+          initialValues[key] = params.fieldList[key] || '';
           break;
       }
     }
+    console.log('initialValues', initialValues);
     restForm.setValues(initialValues);
     getStoreList();
   }, [])
@@ -108,10 +107,12 @@ const EditMember = (props) => {
       mobile: values.mobile,
       idNo: values.idNo
     };
+    console.log('par', par);
     try {
       const res = await ListApi.CompleteInfo(flowId, par);
+      console.log('res', res);
       if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，请稍后重试。${res.data?.msg}`, { type: 'danger' });
+        toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
       toast.show(`修改成功`, { type: 'success' });
@@ -147,12 +148,14 @@ const EditMember = (props) => {
                 <Field
                   name="idNo"
                   title="身份证"
+                  placeholder="无"
                   disabled
                   component={FormItem}
                 />
                 <Field
                   name="mobile"
                   title="手机号"
+                  placeholder="无"
                   disabled
                   maxLength={11}
                   component={FormItem}
@@ -160,6 +163,7 @@ const EditMember = (props) => {
                 <Field
                   name="orderName"
                   title="职位名称"
+                  placeholder="无"
                   disabled
                   component={FormItem}
                 />

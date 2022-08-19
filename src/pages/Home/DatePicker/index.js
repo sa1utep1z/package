@@ -42,10 +42,18 @@ const DatePicker = ({
     const currentDate = selectedDate || dateTime;
     const currentDateText = getYMD(currentDate);
     if(type === 'start'){
+      if(currentDateText > endDate && !!endDate){
+        toast.show(`开始日期不可晚于结束日期！`, { type: 'warning' });
+        return;
+      }
       setStartDate(currentDateText);
       setRangeDate({...rangeDate, startDate: currentDateText});
     }
     if(type === 'end'){
+      if(currentDateText < startDate && !!startDate){
+        toast.show(`结束日期不可早于开始日期！`, { type: 'warning' });
+        return;
+      }
       setEndDate(currentDateText);
       setRangeDate({...rangeDate, endDate: currentDateText});
     }

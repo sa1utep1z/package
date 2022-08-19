@@ -12,6 +12,7 @@ import SearchInput from "../../../components/SearchInput";
 
 const today = moment().format("YYYY-MM-DD");
 const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
+let timer;
 
 export const Header = ({search, range, bannerList}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -24,6 +25,7 @@ export const Header = ({search, range, bannerList}) => {
   useEffect(()=>{
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
+    return () => timer && clearTimeout(timer);
   },[showSearch])
 
   useMemo(()=>{
@@ -36,7 +38,11 @@ export const Header = ({search, range, bannerList}) => {
     if(rangeDate.startDate === rangeDate.endDate && rangeDate.startDate === tomorrow){
       setActiveButton(1);
     }
-    range(rangeDate);
+    //fix执行顺序会报异常的问题；
+    timer && clearTimeout(timer);
+    timer = setTimeout(()=>{
+      range(rangeDate);
+    })
   }, [rangeDate])
 
   const startingAnimation = () => {

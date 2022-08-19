@@ -57,8 +57,11 @@ const ListApi = {
   BatchOperateInInterview: async(params) => await httpRequest.put(`admin/app/recruitFlow/interview/batch`, params),
 
   /**最新状态 */
+  //首页
   NewestList: async (params) =>await httpRequest.post('admin/app/recruitFlow/statusPage', params),
+  //修改状态
   ChangeStatusInNewestList: async(flowId,params) => await httpRequest.put(`admin/app/recruitFlow/status/${flowId}`, params),
+  //批量修改状态
   BatchOperateNewestStatus: async(params) => await httpRequest.put(`admin/app/recruitFlow/status/batch`, params)
 }
 

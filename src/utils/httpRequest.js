@@ -24,7 +24,7 @@ instance.interceptors.request.use(async(config) => {
       return config;
     }
   }catch(err){
-    console.log('token-err', err);
+    console.log('token->Not Found');
   }
   return config;
 }, (error) =>{

@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { Tab, TabView, Text, Badge } from "@rneui/themed";
-import { useSelector, useDispatch } from 'react-redux';
+import { Text } from "@rneui/themed";
+import { useDispatch } from 'react-redux';
 
-import { listFooter, empty } from "../../../pages/Home/listComponent";
+import { empty } from "../../../pages/Home/listComponent";
 import { setTabName } from "../../../redux/features/NowSelectTabNameInList";
 
+let timer;
 const BottomList = ({
     list = [],
     tab = [],
@@ -33,16 +34,19 @@ const BottomList = ({
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
-    return () => dispatch(setTabName(''));
-  }, [])
-
-  useMemo(() => {
     setShowList(list);
     setTabList(tab);
-  },[list, tab]);
+    return () => {
+      timer && clearTimeout(timer);
+      dispatch(setTabName(''));
+    };
+  }, [list, tab])
 
   useMemo(()=>{
-    nowSelectIndex && nowSelectIndex(index);
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      nowSelectIndex && nowSelectIndex(index);
+    });
   },[index])
 
   const selectIndex = (i) => {

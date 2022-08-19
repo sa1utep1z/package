@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { WebView } from 'react-native-webview';
 
 const CompanyDetailDialog = ({
-    message,
+    message = {},
     transferFactory
   }, ref) => {
   const [showDetail, setShowDetail] = useState(false);
@@ -15,8 +15,8 @@ const CompanyDetailDialog = ({
   }, []);
 
   const date = String(message.recruitRange).substring(5, 11);
-  const date2 = String(message.recruitRange).substring(16, 21)
-  const recruitRange = date + date2
+  const date2 = String(message.recruitRange).substring(16, 21);
+  const recruitRange = date + date2;
   
   return (
     <Dialog

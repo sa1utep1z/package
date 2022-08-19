@@ -243,8 +243,8 @@ export const STATUS_LIST_KEY = {
 };
 
 export const STATUS_LIST = [
-  {title: '全部', value: 'all', id: 1},
-  {title: '空', value: 'null', id: 2},
+  {title: '全部', value: '', id: 1},
+  {title: '无', value: 'none', id: 2},
   {title: '报名-无意向', value: 'sign_up_no_intention', id: 3},
   {title: '面试-未去面试', value: 'interview_no_arrive', id: 4},
   {title: '面试-未通过', value: 'interview_fail', id: 5},
@@ -252,7 +252,7 @@ export const STATUS_LIST = [
   {title: '在职', value: 'job_on', id: 7},
   {title: '预离职', value: 'prepare_job_resign', id: 8},
   {title: '离职', value: 'job_resign', id: 9}
-]
+];
  
 export const COMPANY_SHIFT = [
   { label: '长白班', value: 'SHIFT_CATEGORY_LONG' },
@@ -348,4 +348,58 @@ export const NEWEST_STATE_LIST_HEAD = [
   {title: '打卡记录'},
   {title: '状态'},
   {title: '来源'}
-]
+];
+
+export const HIRE_DATA_BOX_TAG_LIST = [
+  {
+    title: '今日',
+    value: 'today'
+  },
+  {
+    title: '本周',
+    value: 'thisWeek'
+  },
+  {
+    title: '本月',
+    value: 'thisMonth'
+  }
+];
+
+export const HIRE_DATA_BOX_LIST = [
+  {
+    title: '报名人数',
+    type: 'SIGN_UP',
+    num: 102,
+    trendNumber: -6
+  },
+  {
+    title: '面试人数',
+    type: 'INTERVIEW',
+    num: 55,
+    trendNumber: +3
+  },
+  {
+    title: '待入职人数',
+    type: 'WAIT_TO_ENTRY',
+    num: 25,
+    trendNumber: +3
+  },
+  {
+    title: '入职人数',
+    type: 'JOB_IN',
+    num: 62,
+    trendNumber: -6
+  },
+  {
+    title: '离职人数',
+    type: 'LEAVING',
+    num: 95,
+    trendNumber: +3
+  },
+  {
+    title: '当前人数',
+    type: 'NOW',
+    num: 6428,
+    trendNumber: -6
+  }
+];

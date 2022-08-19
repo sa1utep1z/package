@@ -58,22 +58,20 @@ const Login = props => {
         setFieldValue('password', password);
       }
     } catch (err) {
-      console.log('userMsg->notFound', err);
+      console.log('getUserMsg_err -->Not Found Account&&Password');
     }
   };
 
   const login = async values => {
-    console.log('你点击了');
     setLoading(true);
     const params = {
       loginType: 'pwd',
       account: values.user,
       password: md5(values.password),
     };
-    console.log('params', params);
     try {
       const res = await httpRequest.post('admin/login/app', params);
-      console.log('login->res', res);
+      // console.log('login->res', res);
       if (res.code !== SUCCESS_CODE) {
         toast.show(`${res.msg}`, {type: 'danger'});
         setLoading(false);

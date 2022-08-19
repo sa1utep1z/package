@@ -138,6 +138,10 @@ const MyMembers = () => {
   };
 
   const companyDetailOnPress = async(msg) => {
+    if(!msg.willSignUpCompanyName) {
+      toast.show('无企业详情', {type: 'warning'});
+      return;
+    };
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.CompanyDetail(poolId);
@@ -168,7 +172,7 @@ const MyMembers = () => {
         return;
       }
       if(!res.data.length){
-        toast.show('暂无入职记录', {type: 'warning'});
+        toast.show('无入职记录', {type: 'warning'});
         return;
       }
       dialogRef.current.setShowDialog(true);
@@ -267,22 +271,29 @@ const MyMembers = () => {
 
   const renderItem = ({item}) => {
     const renderList = [
-      { fieldName: item.userName || '无', pressFun: () => memberDetailOnPress(item)},
+      { 
+        fieldName: item.userName || '无', 
+        pressFun: () => memberDetailOnPress(item)
+      },
       { 
         fieldName: item.willSignUpCompanyName || '无', 
-        textStyle: !item.willSignUpCompanyName && {color: '#000'},
-        pressFun: () => {
-          if(item.willSignUpCompanyName){
-            companyDetailOnPress(item);
-            return;
-          }
-          toast.show('暂无企业', { type: 'warning' });
-        }
+        textStyle: !item.willSignUpCompanyName && {color: '#333333'},
+        pressFun: () => companyDetailOnPress(item)
       },
-      { fieldName: '查看', pressFun: () => entryRecordOnPress(item)},
-      { fieldName: '查看', pressFun: () => reviewRecordOnPress(item)},
-      { fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'},
-      { fieldName: '加入', pressFun: () => joinInSignUpOnPress(item)}
+      { 
+        fieldName: '查看', 
+        pressFun: () => entryRecordOnPress(item)
+      },
+      { 
+        fieldName: '查看', 
+        pressFun: () => reviewRecordOnPress(item)
+      },
+      { 
+        fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'
+      },
+      { 
+        fieldName: '加入', pressFun: () => joinInSignUpOnPress(item)
+      }
     ];
     return (
       <View key={item.poolId} style={styles.listStyle}>
