@@ -3,13 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import { HIRE_DATA_BOX_TAG_LIST, HIRE_DATA_BOX_LIST } from "../../../../../utils/const";
+import { FAKE_HIRE_DATA_BOX_LIST } from "../../../../../utils/const";
+import Tag from "../Component/Tag";
 
 const DataOverview = () => {
-  const [selectTag, setSelectTag] = useState('today');
-  
-  const chooseTag = (tag) => setSelectTag(tag.value);
-  
   return (
     <View style={styles.totalArea}>
       <View style={styles.titleArea}>
@@ -17,17 +14,9 @@ const DataOverview = () => {
         <Text style={styles.title}>数据概览</Text>
       </View>
       <View style={styles.bottomArea}>
-        <View style={styles.tagsArea}>
-          {HIRE_DATA_BOX_TAG_LIST.map((tag, tagIndex) => {
-            const isSelected = selectTag === tag.value;
-            return (
-            <TouchableOpacity key={tagIndex} style={[styles.tag, isSelected && styles.selectedTag]} onPress={() => chooseTag(tag)}>
-              <Text style={[styles.tagText, isSelected && styles.selectedTagText]}>{tag.title}</Text>
-            </TouchableOpacity>
-          )})}
-        </View>
+        <Tag tagAreaStyle={{paddingLeft: 20}}/>
         <View style={styles.dataArea}>
-          {HIRE_DATA_BOX_LIST.map((data, dataIndex) => {
+          {FAKE_HIRE_DATA_BOX_LIST.map((data, dataIndex) => {
             return (
               <View key={dataIndex} style={styles.data}>
                 <Shadow distance={15} startColor={'#f5f8fa'} endColor={'#fff'}>
@@ -88,33 +77,6 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#fff', 
     borderRadius: 10
-  },
-  tagsArea: {
-    height: 70, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    paddingLeft: 20
-  },
-  tag: {
-    width: 80, 
-    height: 40, 
-    marginRight: 30, 
-    borderRadius: 5, 
-    justifyContent: 'center', 
-    borderWidth: 2, 
-    borderColor: '#E5E5E5'
-  },
-  selectedTag: {
-    backgroundColor: '#409EFF', 
-    borderWidth: 0
-  },
-  tagText: {
-    fontSize: 26, 
-    textAlign: 'center', 
-    color: '#999999'
-  },
-  selectedTagText: {
-    color: '#fff'
   },
   dataArea: {
     flex: 1, 

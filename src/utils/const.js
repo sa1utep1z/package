@@ -365,7 +365,7 @@ export const HIRE_DATA_BOX_TAG_LIST = [
   }
 ];
 
-export const HIRE_DATA_BOX_LIST = [
+export const FAKE_HIRE_DATA_BOX_LIST = [
   {
     title: '报名人数',
     type: 'SIGN_UP',
@@ -397,9 +397,16 @@ export const HIRE_DATA_BOX_LIST = [
     trendNumber: +3
   },
   {
-    title: '当前人数',
+    title: '在职人数',
     type: 'NOW',
     num: 6428,
     trendNumber: -6
   }
+];
+
+export const HIRE_DATA_TREND_TAB_LIST = [
+  { key: 'company', title: '企业' },
+  { key: 'store', title: '门店' },
+  { key: 'recruiter', title: '招聘员' },
+  { key: 'supplier', title: '供应商' }
 ];

@@ -1,56 +1,33 @@
 import React, {useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
-import { Tab, TabView } from '@rneui/themed';
+import { SceneMap } from 'react-native-tab-view';
+
+import { HIRE_DATA_TREND_TAB_LIST } from "../../../../../utils/const";
+import Tab from "../Component/Tab";
+
+import CompanyRoute from "./CompanyRoute";
+import StoreRoute from "./StoreRoute";
+import RecruiterStore from "./RecruiterStore";
+import SupplierStore from "./SupplierStore";
+
+const renderScene = SceneMap({
+  company: CompanyRoute,
+  store: StoreRoute,
+  recruiter: RecruiterStore,
+  supplier: SupplierStore,
+});
 
 const DataTrend = () => {
-  const [index, setIndex] = useState(0);
-  
+
   return (
     <Shadow>
       <View style={styles.totalArea}>
         <View style={styles.titleArea}>
           <View style={styles.titleLine}></View>
-          <Text style={styles.title}>数据概览</Text>
+          <Text style={styles.title}>数据趋势</Text>
         </View>
-        <View style={styles.bottomArea}>
-          {/* <Tab
-            value={index}
-            onChange={(e) => setIndex(e)}
-            indicatorStyle={{
-              backgroundColor: 'white',
-              height: 3,
-            }}
-            variant="primary"
-          >
-            <Tab.Item
-              title="Recent"
-              titleStyle={{ fontSize: 12 }}
-              icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
-            />
-            <Tab.Item
-              title="favorite"
-              titleStyle={{ fontSize: 12 }}
-              icon={{ name: 'heart', type: 'ionicon', color: 'white' }}
-            />
-            <Tab.Item
-              title="cart"
-              titleStyle={{ fontSize: 12 }}
-              icon={{ name: 'cart', type: 'ionicon', color: 'white' }}
-            />
-          </Tab>
-          <TabView value={index} onChange={setIndex} animationType="spring">
-            <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
-              <Text h1>Recent</Text>
-            </TabView.Item>
-            <TabView.Item style={{ backgroundColor: 'blue', width: '100%' }}>
-              <Text h1>Favorite</Text>
-            </TabView.Item>
-            <TabView.Item style={{ backgroundColor: 'green', width: '100%' }}>
-              <Text h1>Cart</Text>
-            </TabView.Item>
-          </TabView> */}
-        </View>
+        <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/>
       </View>
     </Shadow>
   )
@@ -82,10 +59,6 @@ const styles = StyleSheet.create({
     fontSize: 36, 
     color: '#000', 
     fontWeight: 'bold'
-  },
-  bottomArea: {
-    flex: 1, 
-    borderWidth: 1
   }
 });
 

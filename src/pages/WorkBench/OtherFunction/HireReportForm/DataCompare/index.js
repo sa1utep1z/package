@@ -1,8 +1,27 @@
 import React, {useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
+import { TabView, SceneMap } from 'react-native-tab-view';
+
+const FirstRoute = () => (
+  <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
+);
+
+const SecondRoute = () => (
+  <View style={{ flex: 1, backgroundColor: '#673ab7' }} />
+);
+
+const renderScene = SceneMap({
+  first: FirstRoute,
+  second: SecondRoute,
+});
 
 const DataCompare = () => {
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'first', title: 'First' },
+    { key: 'second', title: 'Second' },
+  ]);
   
   return (
     <Shadow>
@@ -12,7 +31,11 @@ const DataCompare = () => {
           <Text style={styles.title}>数据对比</Text>
         </View>
         <View style={styles.bottomArea}>
-
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+        />
         </View>
       </View>
     </Shadow>
