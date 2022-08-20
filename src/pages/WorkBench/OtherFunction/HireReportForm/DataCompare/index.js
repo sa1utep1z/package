@@ -1,27 +1,24 @@
 import React, {useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { SceneMap } from 'react-native-tab-view';
 
-const FirstRoute = () => (
-  <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
-);
+import { HIRE_DATA_TREND_TAB_LIST } from "../../../../../utils/const";
+import Tab from "../Component/Tab";
 
-const SecondRoute = () => (
-  <View style={{ flex: 1, backgroundColor: '#673ab7' }} />
-);
+import CompanyRoute from "./CompanyRoute";
+import StoreRoute from "./StoreRoute";
+import RecruiterStore from "./RecruiterStore";
+import SupplierStore from "./SupplierStore";
 
 const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
+  company: CompanyRoute,
+  store: StoreRoute,
+  recruiter: RecruiterStore,
+  supplier: SupplierStore,
 });
 
 const DataCompare = () => {
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'first', title: 'First' },
-    { key: 'second', title: 'Second' },
-  ]);
   
   return (
     <Shadow>
@@ -30,13 +27,7 @@ const DataCompare = () => {
           <View style={styles.titleLine}></View>
           <Text style={styles.title}>数据对比</Text>
         </View>
-        <View style={styles.bottomArea}>
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-        />
-        </View>
+        <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/>
       </View>
     </Shadow>
   )
@@ -68,10 +59,6 @@ const styles = StyleSheet.create({
     fontSize: 36, 
     color: '#000', 
     fontWeight: 'bold'
-  },
-  bottomArea: {
-    flex: 1, 
-    borderWidth: 1
   }
 });
 

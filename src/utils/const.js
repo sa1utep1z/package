@@ -410,3 +410,8 @@ export const HIRE_DATA_TREND_TAB_LIST = [
   { key: 'recruiter', title: '招聘员' },
   { key: 'supplier', title: '供应商' }
 ];
+
+export const HIRE_DATA_COMPARE_TAB_LIST = [
+  { key: 'week', title: '本周VS上周' },
+  { key: 'month', title: '本月VS上月' }
+];

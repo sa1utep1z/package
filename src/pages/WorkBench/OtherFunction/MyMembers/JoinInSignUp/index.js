@@ -50,22 +50,29 @@ const JoinInSignUp = (props) => {
   },[])
 
   const onSubmit = async(values) => {
+    const notBelong = checkStore(values);
+    if(notBelong) {
+      toast.show('请重新选择招聘员', {type: 'warning'});
+      return;
+    }
     if(!values.orderId.length){
       toast.show('请选择订单编号！', {type: 'danger'});
+      return;
     }
     const params = {
       userName: msg.userName,
       mobile: msg.mobile,
-      arrivalMode: values.way[0].value,
+      idNo: msg.idNo,
+      arrivalMode: values.way[0].value === 'byHimself' ? 'FACTORY' : 'STORE',
       orderId: values.orderId[0].orderId,
       storeId: values.store[0].storeId,
       recruiterId: values.staff[0].value,
       signUpType: 'RECRUITER' // 默认渠道来源为门店录入；
     };
     try{  
-      const res = await MyMembersApi.CompaniesList(msg.poolId, params);
+      const res = await MyMembersApi.SignUp(msg.poolId, params);
       if(res.code !== SUCCESS_CODE){
-        toast.show(`加入报名失败，${res.msg}`, { type: 'danger' });
+        toast.show(`${res.msg}`, { type: 'danger' });
         return;
       }
       toast.show(`加入报名成功！`, { type: 'success' });
@@ -112,9 +119,13 @@ const JoinInSignUp = (props) => {
         //如果回填表单有传门店和招聘员id，就回填表单；
         if(msg.storeId && msg.recruiterId){
           const storeName = [res.data.find(store => store.storeId === msg.storeId)];
-          const recruitName = [storeName[0].members.find(recruit => recruit.value === msg.recruiterId)];
           restForm.setFieldValue('store', storeName);
-          restForm.setFieldValue('staff', recruitName);
+          const recruit = storeName[0].members.find(recruit => recruit.value === msg.recruiterId);
+          if(recruit){
+            restForm.setFieldValue('staff', [recruit]);
+            return;
+          }
+          restForm.setFieldValue('staff', []);
         }
       }
     }catch(err){
@@ -146,6 +157,7 @@ const JoinInSignUp = (props) => {
         res.data.forEach((item,index) => {
           item.title = item.orderNo;
           item.id = index + 1;
+          item.value = item.orderId;
         });
         setOrderList(res.data);
       }
@@ -157,13 +169,27 @@ const JoinInSignUp = (props) => {
   };
 
   const setFieldValue = () => {
-    console.log('msg', msg);
     if(msg){
       restForm.setFieldValue('memberName', msg.userName);
       restForm.setFieldValue('memberPhone', msg.mobile);
       restForm.setFieldValue('memberIdCard', msg.idNo);
       restForm.setFieldValue('memberTags', msg.tags);
     }
+  };
+
+  //检查归属招聘员是否在所属门店列表里面；
+  const checkStore = (values) => {
+    if(values.store.length){
+      const memberList = values.store[0].members;
+      if(values.staff.length){
+        const findIndex = memberList.findIndex(member => member.value === values.staff[0].value); 
+        if(findIndex === -1){
+          restForm.setFieldError('staff', '该门店下无该招聘员，请重新选择招聘员');
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   return (

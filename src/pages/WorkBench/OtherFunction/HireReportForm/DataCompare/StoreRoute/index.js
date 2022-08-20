@@ -4,9 +4,8 @@ import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text } from 'react-native-svg';
 
 import Tag from "../../Component/Tag";
-import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 
-const RecruiterStore = () => {
+const StoreRoute = () => {
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
@@ -67,8 +66,8 @@ const RecruiterStore = () => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton />
-      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+      <Tag lastButton />
+      {/* <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
         <LineChart
           style={styles.LineStyle}
           data={data}
@@ -84,7 +83,7 @@ const RecruiterStore = () => {
           onDataPointClick={({value, dataset, getColor})=> console.log('哇啊哈哈哈', value, dataset)}
           renderDotContent={renderDotContent}
         />
-      </View>
+      </View> */}
     </View>
   )
 }
@@ -96,4 +95,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RecruiterStore;
+export default StoreRoute;

@@ -48,8 +48,9 @@ const Mine = () => {
       CommonActions.reset({
         index: 0,
         routes: [{
-            name: NAVIGATION_KEYS.LOGIN,
-        }]
+          name: NAVIGATION_KEYS.LOGIN,
+          params: 'logout'
+        }],
       })
     );
   };
