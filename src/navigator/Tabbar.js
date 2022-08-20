@@ -64,7 +64,7 @@ const Tabbar = () => {
         component={NAVIGATION_PAGES.MESSAGE}
         options={{
             tabBarLabel: '消息',
-            headerTitle: '消息',
+            headerTitle: '最新消息',
             tabBarIcon: ({focused}) => (
               <AntDesign
                 name='message1' 
