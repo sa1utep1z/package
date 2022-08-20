@@ -3,6 +3,7 @@ import { StyleSheet, ScrollView, View, Text, Modal, PermissionsAndroid, Platform
 import { Button } from '@rneui/themed';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
+import moment from 'moment';
 import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../components/Form/FormItem';
 import Radio from '../../../components/Form/Radio';
@@ -11,7 +12,6 @@ import { IDCard, phone } from '../../../utils/validate';
 import HomeApi from "../../../request/HomeApi";
 import ImagePicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-// import * as ImagePicker from 'react-native-image-picker';
 
 
 let restForm;
