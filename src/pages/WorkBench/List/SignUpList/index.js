@@ -66,11 +66,11 @@ const SignUpList = () => {
   },[role])
 
   const getList = async(params) => {
-    // console.log('getList --> params', params)
+    console.log('getList --> params', params)
     setIsLoading(true);
     try{
       const res = await ListApi.SignUpList(params);
-      // console.log('getList --> res', res);
+      console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;

@@ -2,6 +2,7 @@ import React, {useState, useRef, useEffect} from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl} from "react-native";
 import { Text } from '@rneui/themed';
 import { useToast } from "react-native-toast-notifications";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Header, empty } from "./listComponent";
 import CompanyListDialog from "../../components/Home/CompanyListDialog";
@@ -9,11 +10,14 @@ import NAVIGATION_KEYS from "../../navigator/key";
 import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
+import { setRoleInfo } from "../../redux/features/RoleInfo";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const Home = (props) => {
+  const dispatch = useDispatch();
+
   const {navigation} = props;
 
   const toast = useToast();
@@ -36,12 +40,28 @@ const Home = (props) => {
 
   useEffect(()=>{
     getBannerList();
+    getRoleInfo();
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList(searchContent);
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
+
+  const getRoleInfo = async() => {
+    try{
+      const res = await HomeApi.getRoleInfo();
+      // console.log('getRoleInfo --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dispatch(setRoleInfo(res.data.systemIdentities));
+    }catch(err){
+      console.log('err', err);
+      toast.show(`获取用户角色失败，请联系管理员`, { type: 'danger' });
+    }
+  };
 
   const getList = async(params) => {
     console.log('getList --> params', params);

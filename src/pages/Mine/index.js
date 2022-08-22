@@ -128,6 +128,7 @@ const Mine = () => {
           })}
         </View>
       </View>
+      <Text style={styles.bottomText}>版本号：0.1.4</Text>
       <NormalDialog 
         ref={dialogRef} 
         dialogContent={dialogContent}
@@ -167,12 +168,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32
   },
   funcArea: {
-    height: 526,
     backgroundColor: '#fff', 
     borderRadius: 8
   },
   func_title: {
-    height: 90, 
+    height: 80, 
     textAlignVertical: 'center', 
     fontWeight: 'bold', 
     fontSize: 32, 
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     paddingLeft: 29
   },
   pressItem: {
-    height: 107, 
+    height: 95, 
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
@@ -199,6 +199,12 @@ const styles = StyleSheet.create({
   item_title: {
     fontSize: 32,
     marginLeft: 40
+  },
+  bottomText: {
+    textAlign: 'center', 
+    textAlignVertical: 'bottom',
+    fontSize: 22, 
+    marginBottom: 10
   }
 });
 

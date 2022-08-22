@@ -6,7 +6,8 @@ const HomeApi = {
   orderDetail: async (orderId) => await httpRequest.get(`admin/app/orderDetail/${orderId}`),
   SignUp: async (orderId, prams) => await httpRequest.post(`admin/app/orderDetail/${orderId}`, prams),
   GetBannerList: async () => await httpRequest.get(`admin/app/banner/list`),
-  ocrReq: async (prams) => await httpRequest.post('admin/app/ocr', prams,
+  getRoleInfo: async () => await httpRequest.get(`admin/user/info`),
+  ocrReq: async (prams) => await httpRequest.post('admin/app/ocr', prams, 
     {
       headers: {
         'Content-Type': 'multipart/form-data'

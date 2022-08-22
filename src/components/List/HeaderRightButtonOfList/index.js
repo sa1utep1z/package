@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -7,10 +7,21 @@ import { setRole } from "../../../redux/features/RoleSwitch";
 const HeaderRightButtonOfList = () => {
   const dispatch = useDispatch();
 
-  //权限管理
-  const hasPermission = useSelector((state) => state.hasPermission.isAdministrators);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   //RECRUIT：招聘；RESIDENT：驻厂
   const role = useSelector((state) => state.roleSwitch.role);
+  const roleInfo = useSelector((state) => state.roleInfo.roleInfo);
+
+  useEffect(()=>{
+    const roleIndex = roleInfo.findIndex(role => role === 'ADMIN' || role === 'FINANCE' || role === 'RESIDENT');
+    if(roleIndex !== -1){
+      setIsAdmin(true);
+      return;
+    }
+    setIsAdmin(false);
+    dispatch(setRole('RECRUIT'));
+  },[])
 
   const pressButton = () => {
     switch(role){
@@ -25,7 +36,7 @@ const HeaderRightButtonOfList = () => {
 
   return (
     <View style={styles.screen}>
-      {hasPermission && (
+      {isAdmin ? (
         <>
           <TouchableOpacity 
             style={[styles.btnArea, styles.btn1, role === 'RESIDENT' && styles.selectedArea]} 
@@ -39,7 +50,13 @@ const HeaderRightButtonOfList = () => {
             <Text style={[styles.btnText, role === 'RECRUIT' && styles.selected]}>招聘</Text>
           </TouchableOpacity>
         </>
-      )}
+      ): <>
+        <TouchableOpacity 
+          style={[styles.btnArea, role === 'RECRUIT' && styles.selectedArea]} 
+          onPress={pressButton}>
+          <Text style={[styles.btnText, role === 'RECRUIT' && styles.selected]}>招聘</Text>
+        </TouchableOpacity>
+      </>}
     </View>
   )
 };

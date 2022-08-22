@@ -406,3 +406,10 @@ export const HIRE_DATA_COMPARE_TAB_LIST = [
   { value: 'week', title: '本周VS上周' },
   { value: 'month', title: '本月VS上月' }
 ];
+
+export const ROLE_INFO = {
+  'ADMIN': '管理员',
+  'RECRUITER': '招聘员',
+  'RESIDENT': '驻厂',
+  'FINANCE': '财务'
+}
