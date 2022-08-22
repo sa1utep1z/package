@@ -200,7 +200,7 @@ const SignUp = (props) => {
                   onPress={openSelect}
                   autoFocus
                   inputStyle={{ fontSize: 28 }}
-                  // isRequired
+                  isRequired
                   maxLength={5}
                   component={FormItem}
                 />
@@ -209,14 +209,14 @@ const SignUp = (props) => {
                   title="身份证"
                   placeholder="请输入会员身份证"
                   maxLength={18}
-                  // validate={value => {
-                  //   let errorMsg;
-                  //   if (!IDCard.test(value)) {
-                  //     errorMsg = '请输入正确的身份证号';
-                  //   }
-                  //   return errorMsg
-                  // }}
-                  // isRequired
+                  validate={value => {
+                    let errorMsg;
+                    if (!IDCard.test(value)) {
+                      errorMsg = '请输入正确的身份证号';
+                    }
+                    return errorMsg
+                  }}
+                  isRequired
                   inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
@@ -225,14 +225,14 @@ const SignUp = (props) => {
                   title="手机号"
                   placeholder="请输入会员手机号"
                   maxLength={11}
-                  // validate={value => {
-                  //   let errorMsg;
-                  //   if (!phone.test(value)) {
-                  //     errorMsg = '请输入正确的手机号';
-                  //   }
-                  //   return errorMsg
-                  // }}
-                  // isRequired
+                  validate={value => {
+                    let errorMsg;
+                    if (!phone.test(value)) {
+                      errorMsg = '请输入正确的手机号';
+                    }
+                    return errorMsg
+                  }}
+                  isRequired
                   inputStyle={{ fontSize: 28 }}
                   component={FormItem}
                 />
