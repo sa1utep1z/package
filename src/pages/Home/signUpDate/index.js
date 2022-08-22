@@ -20,7 +20,7 @@ const SignUpDate = ({
   var now = new Date();
   var nowTime = now.getTime();
   var year = now.getFullYear();
-  var month = now.getMonth() + 1 ;//js从0开始取
+  var month = now.getMonth() + 1;//js从0开始取
   var date = now.getDate();
   var deadlineStr = year + "/" + month + "/" + date + " " + "16:00:00";
   var deadline = Date.parse(deadlineStr);
@@ -29,7 +29,7 @@ const SignUpDate = ({
   var dateTime1 = new Date();
   dateTime1 = dateTime1.setDate(dateTime1.getDate() + 1);
   dateTime1 = new Date(dateTime1);
-  
+
   const toast = useToast();
   const invalidVal = (nowTime > deadline) ? dateTime1 : new Date();
   const [dateTime, setDateTime] = useState(invalidVal);
@@ -41,6 +41,13 @@ const SignUpDate = ({
     setDateTime(selectedDate);
     form.setFieldValue(field.name, selectedDate);
   };
+
+  useEffect(() => {
+    if (nowTime > deadline) {
+      form.setFieldValue(field.name, dateTime1);
+    }
+  }, [])
+
 
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
