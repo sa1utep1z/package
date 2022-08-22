@@ -278,6 +278,26 @@ export default Navigator = () => {
     </>
   );
 
+  // 消息
+  const message = (
+    <>
+      <Stack.Screen
+        name={NAVIGATION_KEYS.RESIGNATION_MESSAGE}
+        component={NAVIGATION_PAGES.RESIGNATION_MESSAGE}
+        options={{
+          headerTitle: '离职提醒',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.REVISIT_MESSAGE}
+        component={NAVIGATION_PAGES.REVISIT_MESSAGE}
+        options={{
+          headerTitle: '回访提醒',
+        }}
+      />
+    </>
+  );
+
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator 
@@ -292,6 +312,7 @@ export default Navigator = () => {
         {workbench}
         {myMembers}
         {mine}
+        {message}
         <Stack.Screen
           name={NAVIGATION_KEYS.TABBAR}
           component={Tabbar}

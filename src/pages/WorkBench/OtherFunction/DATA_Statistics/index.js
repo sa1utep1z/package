@@ -36,15 +36,6 @@ const DATA_Statistics = () => {
     navigation.setOptions({
       headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
-    // timer && clearTimeout(timer);
-    // timer = setTimeout(()=>{
-    //   companyData(searchContent);
-    // }, 0)
-    // return () => {
-    //   setCompanyDetails([]);
-    //   setOriginData({});
-    //   timer && clearTimeout(timer);
-    // }
   }, []);
 
   // 获取企业总数据
@@ -77,6 +68,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取到的企业数据：', res)
+      console.log('请求企业参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -120,6 +113,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取到的门店数据：', res)
+      console.log('请求门店参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -164,6 +159,7 @@ const DATA_Statistics = () => {
       //初始数据
       setOriginData(res.data);
       console.log('获取到的供应商数据：', res)
+      console.log('请求供应商参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -207,6 +203,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取到的招聘员数据：', res)
+      console.log('请求招聘员参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -226,13 +224,14 @@ const DATA_Statistics = () => {
     if (index === 0 && searchContent.startDate) {
       companyData(searchContent);
       companyTotalData(searchContent);
+      console.log('是否执行：', searchContent.startDate)
     } else if (index === 1) {
       storeTotalData(searchContent);
       storeGroupData(searchContent);
     } else if (index === 2) {
       supplierTotalData(searchContent);
       supplierData(searchContent);
-    } else {
+    } else if(index === 3) {
       recruiterTotalData(searchContent)
       recruiterData(searchContent)
     }
@@ -507,7 +506,7 @@ const DATA_Statistics = () => {
   const selectIndex = (i) => {
     setIndex(i);
   };
-
+  console.log('打印index值：', index);
   const tabHead = () => {
     return (
       <>
