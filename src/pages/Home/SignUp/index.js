@@ -55,6 +55,7 @@ const SignUp = (props) => {
       arrivalMode: values.arrivalMode === true ? 'FACTORY' : 'STORE',
       orderDate: values.orderDate ? moment(values.orderDate).format('YYYY-MM-DD') : '',
     }
+    console.log('提交是否成功：', prams)
     try {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {

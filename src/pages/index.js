@@ -51,7 +51,11 @@ const NAVIGATION_PAGES_LIST = {
 
   //我的
   PERSONAL_CARD: require('./Mine/PersonalCard'),
-  RESET: require('./Mine/Reset')
+  RESET: require('./Mine/Reset'),
+
+  // 消息
+  RESIGNATION_MESSAGE: require('./resignationMessage'),
+  REVISIT_MESSAGE: require('./ReVisitMessage'),
 };
 
 module.exports = FilterNavigationList(NAVIGATION_PAGES_LIST);

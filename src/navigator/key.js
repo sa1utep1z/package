@@ -50,7 +50,11 @@ const NAVIGATION_KEYS = {
 
   //我的
   PERSONAL_CARD: 'personal_card',
-  RESET: 'reset'
+  RESET: 'reset',
+
+  // 消息
+  RESIGNATION_MESSAGE: 'resignation_message',
+  REVISIT_MESSAGE: 'revisit_message',
 };
 
 export default NAVIGATION_KEYS;
