@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import { FAKE_HIRE_DATA_BOX_LIST } from "../../../../../utils/const";
+import { FAKE_HIRE_DATA_BOX_LIST, HIRE_DATA_BOX_TAG_LIST } from "../../../../../utils/const";
 import Tag from "../Component/Tag";
 
 const DataOverview = () => {
@@ -14,7 +14,7 @@ const DataOverview = () => {
         <Text style={styles.title}>数据概览</Text>
       </View>
       <View style={styles.bottomArea}>
-        <Tag tagAreaStyle={{paddingLeft: 20}}/>
+        <Tag tagAreaStyle={{paddingLeft: 20}} tagList={HIRE_DATA_BOX_TAG_LIST}/>
         <View style={styles.dataArea}>
           {FAKE_HIRE_DATA_BOX_LIST.map((data, dataIndex) => {
             return (

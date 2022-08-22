@@ -350,21 +350,6 @@ export const NEWEST_STATE_LIST_HEAD = [
   {title: '来源'}
 ];
 
-export const HIRE_DATA_BOX_TAG_LIST = [
-  {
-    title: '今日',
-    value: 'today'
-  },
-  {
-    title: '本周',
-    value: 'thisWeek'
-  },
-  {
-    title: '本月',
-    value: 'thisMonth'
-  }
-];
-
 export const FAKE_HIRE_DATA_BOX_LIST = [
   {
     title: '报名人数',
@@ -404,6 +389,12 @@ export const FAKE_HIRE_DATA_BOX_LIST = [
   }
 ];
 
+export const HIRE_DATA_BOX_TAG_LIST = [
+  { title: '今日', value: 'today' },
+  { title: '本周', value: 'thisWeek' },
+  { title: '本月', value: 'thisMonth' }
+];
+
 export const HIRE_DATA_TREND_TAB_LIST = [
   { key: 'company', title: '企业' },
   { key: 'store', title: '门店' },
@@ -412,6 +403,6 @@ export const HIRE_DATA_TREND_TAB_LIST = [
 ];
 
 export const HIRE_DATA_COMPARE_TAB_LIST = [
-  { key: 'week', title: '本周VS上周' },
-  { key: 'month', title: '本月VS上月' }
+  { value: 'week', title: '本周VS上周' },
+  { value: 'month', title: '本月VS上月' }
 ];

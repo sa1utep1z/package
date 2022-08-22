@@ -1,13 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import { View, StyleSheet } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
-import Svg, { Circle, Text } from 'react-native-svg';
+import Svg, { Circle, Text, Line } from 'react-native-svg';
 
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 
 const CompanyRoute = () => {
-
+  
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
@@ -23,35 +23,30 @@ const CompanyRoute = () => {
     backgroundGradientFrom: '#fff',
     backgroundGradientTo: '#fff',
     fillShadowGradientFrom: '#409EFF',
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientFromOffset: 0.2,
     fillShadowGradientTo: '#fff',
+    fillShadowGradientFromOpacity: 1,
+    fillShadowGradientFromOffset: 0.1,
     color: () => '#333333',
     strokeWidth: 2, 
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false, // optional  
-    barPercentage: 0.8,
+    useShadowColorFromDataset: false,
     propsForLabels: {
-      fontWeight: 'bold',
-      fontSize: '22'
-    },
-    propsForVerticalLabels: {
-      fontWeight: 'bold',
-      fontSize: '22'
+      fontSize: '22',
+      fontWeight: 'bold'
     },
     propsForBackgroundLines: {
-      stroke: '#333333',
-      strokeDashoffset: 1
+      stroke: '#999999',
+      strokeDasharray: '2,2'
     }
   };
 
-  const renderDotContent = ({x, y, index, indexData})=> (<View key={index}>
+  const renderDotContent = ({x, y, index, indexData})=> (
+    <View key={index}>
       <Text
         x={x-20}
-        y={y-15}
-        fontSize="22"
-        fontWeight="bold"
+        y={y-12}
         fill="#409EFF"
+        fontSize="20"
+        fontWeight="bold"
       >
         {indexData}
       </Text>
@@ -66,12 +61,41 @@ const CompanyRoute = () => {
     </View>
   );
 
+  const decorator = ({width, height, ...rest})=>{
+    return (
+      <Svg width={width} height={height}>
+        <Line x1="70" y1={height - 76} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
+        <Line x1={width - 10} y1={height - 85} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
+        <Line x1={width - 10} y1={height - 65} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
+        <Line x1="65" y1={-30} x2="65" y2={height - 82} stroke="#999999" strokeWidth="2" />
+        <Line x1="65" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Line x1="65" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Text
+          x={5}
+          y={-25}
+          fontSize="22"
+          fontWeight="bold"
+          fill="#333333">
+            人数
+        </Text>
+        <Text
+          x={width - 50}
+          y={height - 40}
+          fontSize="22"
+          fontWeight="bold"
+          fill="#333333">
+            日期
+        </Text>
+      </Svg>
+    )
+  };
+
   return (
     <View style={{flex: 1}} >
       <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton />
       <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
         <LineChart
-          style={{position: 'absolute', bottom: -30}}
+          style={styles.LineStyle}
           data={data}
           chartConfig={chartConfig}
           width={620}
@@ -79,10 +103,11 @@ const CompanyRoute = () => {
           segments={6}
           bezier
           fromZero
+          getDotColor={(...rest) => console.log('rest', rest)}
+          decorator={decorator}
           withOuterLines={false}
           withVerticalLines={false}
           formatYLabel={(num) => Math.trunc(num)}
-          onDataPointClick={({value, dataset, getColor})=> console.log('哇啊哈哈哈', value, dataset)}
           renderDotContent={renderDotContent}
         />
       </View>
@@ -91,7 +116,10 @@ const CompanyRoute = () => {
 }
 
 const styles = StyleSheet.create({
-
+  LineStyle: {
+    position: 'absolute',
+    bottom: -30
+  }
 });
 
 export default CompanyRoute;

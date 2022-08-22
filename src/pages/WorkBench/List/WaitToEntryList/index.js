@@ -28,7 +28,7 @@ const WaitToEntryList = () => {
   const dialogRef = useRef(null);
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
-  const [searchContent, setSearchContent] = useState({ role, ...firstPage });
+  const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage });
   const [showList, setShowList] = useState([]);
   const [tabNumberList, setTabNumberList] = useState({});
   const [dialogContent, setDialogContent] = useState({});
@@ -69,9 +69,11 @@ const WaitToEntryList = () => {
 
   // 获取待入职名单数据
   const getList = async (params) => {
+    // console.log('getList --> params', params)
     setIsLoading(true);
     try {
       const res = await ListApi.GetWaitList(params);
+      // console.log('getList --> res', res);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
@@ -147,21 +149,23 @@ const WaitToEntryList = () => {
 
   // 切换状态
   const selectIndex = (selectIndex) => {
-    switch (selectIndex) {
-      case 0:
-        searchContent.status = 'ALL';
-        break;
-      case 1:
-        searchContent.status = 'ON_BOARDING_PENDING';
-        break;
-      case 2:
-        searchContent.status = 'ON_BOARDING_FAIL';
-        break;
-      case 3:
-        searchContent.status = 'ON_BOARDING_PASS';
-        break;
+    if(searchContent.startDate && searchContent.endDate){
+      switch (selectIndex) {
+        case 0:
+          searchContent.status = 'ALL';
+          break;
+        case 1:
+          searchContent.status = 'ON_BOARDING_PENDING';
+          break;
+        case 2:
+          searchContent.status = 'ON_BOARDING_FAIL';
+          break;
+        case 3:
+          searchContent.status = 'ON_BOARDING_PASS';
+          break;
+      }
+      setSearchContent({ ...searchContent, ...firstPage });
     }
-    setSearchContent({ ...searchContent, ...firstPage });
   };
 
   // 跳转编辑会员信息页面
