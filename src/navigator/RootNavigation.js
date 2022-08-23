@@ -10,7 +10,10 @@ export function resetLogin() {
     navigationRef.resetRoot({
       index: 0,
       routes: [{
-        name: NAVIGATION_KEYS.LOGIN
+        name: NAVIGATION_KEYS.LOGIN,
+        params: {
+          handleUnauthorized: true
+        }
       }]
     })
   }

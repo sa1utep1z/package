@@ -16,6 +16,7 @@ const Tab = ({
 
   const tabBar = props => (
     <TabBar
+      pressColor="rgba(0,0,0,0)"
       activeColor="#409EFF"
       inactiveColor="#999999"
       style={styles.tabBarStyle}

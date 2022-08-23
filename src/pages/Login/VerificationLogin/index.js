@@ -51,7 +51,6 @@ const ForgetPassword = () => {
         validationSchema={LoginSchema}
         onSubmit={onSubmit}>
           {({handleSubmit, ...rest}) => {
-            console.log('rest',rest);
             return (
               <View style={styles.formArea}>
                 <Field

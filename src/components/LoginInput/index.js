@@ -42,13 +42,14 @@ const LoginInput = ({
               color='#999999'
             />
           </TouchableOpacity>}
-          <Icon
-            name={seePassword ? 'eye-with-line' : 'eye'}
-            type='entypo'
-            size={40}
-            color="#409EFF"
-            onPress={seePasswordOnPress}
-          />
+          <TouchableOpacity onPress={seePasswordOnPress}>
+            <Icon
+              name={seePassword ? 'eye-with-line' : 'eye'}
+              type='entypo'
+              size={40}
+              color="#409EFF"
+            />
+          </TouchableOpacity>
         </View>
       )
     }else{

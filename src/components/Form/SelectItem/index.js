@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   scrollItem: {
-    height: 35, 
+    minHeight: 35, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center', 

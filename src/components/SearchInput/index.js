@@ -80,7 +80,7 @@ const SearchInput = ({
     <AntDesign 
       name='closecircle' 
       color='#A9A9A9' 
-      size={smallSize ? 25 : 31}
+      size={smallSize ? 18 : 31}
       style={{marginRight: 10}}
       onPress={clearIconPress}
     />

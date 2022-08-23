@@ -43,6 +43,13 @@ const Login = props => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if(props.route.params?.handleUnauthorized){
+      toast.show('登录信息失效', {
+        type: 'danger',
+        duration: 5000
+      })
+      return;
+    }
     getUserMsg();
     storage.remove({key: 'token'});
   }, []);
@@ -76,7 +83,7 @@ const Login = props => {
     };
     try {
       const res = await httpRequest.post('admin/login/app', params);
-      // console.log('login->res', res);
+      console.log('login->res', res);
       if (res.code !== SUCCESS_CODE) {
         toast.show(`${res.msg}`, {type: 'danger'});
         setLoading(false);

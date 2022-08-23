@@ -155,9 +155,9 @@ const JoinInSignUp = (props) => {
       }
       if(res.data.length){
         res.data.forEach((item,index) => {
-          item.title = item.orderNo;
+          item.title = item.name;
           item.id = index + 1;
-          item.value = item.orderId;
+          item.value = item.name;
         });
         setOrderList(res.data);
       }
@@ -331,7 +331,7 @@ const JoinInSignUp = (props) => {
                   </View>
                   <Field
                     name="orderId"
-                    title="订单编号"
+                    title="订单名称"
                     noBorder
                     bottomButton
                     singleSelect
@@ -340,7 +340,7 @@ const JoinInSignUp = (props) => {
                     validate={value=>{
                       let errorMsg;
                       if(value.length === 0) {
-                        errorMsg = '请选择订单编号';
+                        errorMsg = '请选择订单';
                       }
                       return errorMsg;
                     }}
@@ -351,9 +351,9 @@ const JoinInSignUp = (props) => {
                   {rest.values.orderId.length ? <>
                     <Field
                       name="orderName"
-                      title="订单名称"
+                      title="订单编号"
                       editable={false}
-                      formValue={rest.values.orderId.length ? rest.values.orderId[0].name : ''}
+                      formValue={rest.values.orderId.length ? rest.values.orderId[0].orderId : ''}
                       component={FormItem}
                     />
                     <View style={{padding: 28}}>

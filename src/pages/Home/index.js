@@ -1,8 +1,9 @@
 import React, {useState, useRef, useEffect} from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl} from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, AppState} from "react-native";
 import { Text } from '@rneui/themed';
 import { useToast } from "react-native-toast-notifications";
 import { useSelector, useDispatch } from 'react-redux';
+import {CommonActions} from '@react-navigation/native';
 
 import { Header, empty } from "./listComponent";
 import CompanyListDialog from "../../components/Home/CompanyListDialog";
@@ -23,6 +24,7 @@ const Home = (props) => {
   const toast = useToast();
 
   const listRef = useRef(null);
+  const appState = useRef(AppState.currentState);
 
   const [bannerList, setBannerList] = useState([]);
   const [searchContent, setSearchContent] = useState({...firstPage});
@@ -36,6 +38,9 @@ const Home = (props) => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    //监听事件，并保证全局只有一个监听进程。
+    const eventListener = AppState.addEventListener('change', handleChange);
+    return () => eventListener.remove();
   }, [])
 
   useEffect(()=>{
@@ -47,6 +52,22 @@ const Home = (props) => {
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
+
+  //这里是作为一个监听程序，监听该页面是否在前台，如果切换桌面再返回页面，则将页面reload一下，防止组件还保留以前的状态（时间）；
+  const handleChange = (state) => {
+    if (state === 'active') {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: NAVIGATION_KEYS.HOME,
+            },
+          ],
+        }),
+      );
+    }
+  };
 
   const getRoleInfo = async() => {
     try{

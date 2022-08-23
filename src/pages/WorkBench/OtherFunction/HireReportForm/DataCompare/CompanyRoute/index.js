@@ -108,7 +108,7 @@ const CompanyRoute = () => {
           segments={6}
           bezier
           fromZero
-          getDotColor={(...rest) => console.log('rest', rest)}
+          getDotColor={(...rest) => console.log('getDotColor-color', rest)}
           decorator={decorator}
           withShadow={false}
           withOuterLines={false}

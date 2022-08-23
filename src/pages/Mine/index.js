@@ -204,7 +204,8 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     textAlignVertical: 'bottom',
     fontSize: 22, 
-    marginBottom: 10
+    marginBottom: 10,
+    color: '#999999'
   }
 });
 
