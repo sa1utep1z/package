@@ -353,7 +353,7 @@ const JoinInSignUp = (props) => {
                       name="orderName"
                       title="订单编号"
                       editable={false}
-                      formValue={rest.values.orderId.length ? rest.values.orderId[0].orderId : ''}
+                      formValue={rest.values.orderId.length ? rest.values.orderId[0].orderNo : ''}
                       component={FormItem}
                     />
                     <View style={{padding: 28}}>

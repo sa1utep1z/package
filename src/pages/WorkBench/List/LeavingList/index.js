@@ -80,8 +80,10 @@ const LeavingList = () => {
   // 获取在离职名单数据
   const getList = async (params) => {
     setIsLoading(true);
+    console.log('getList -> params', params);
     try {
       const res = await ListApi.GetJobOnList(params);
+      console.log('getList -> res', res);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
@@ -127,8 +129,10 @@ const LeavingList = () => {
 
   // 获取搜索栏的数据
   const filter = (values) => {
-    const startDate = values.dateRange.startDate;
-    const endDate = values.dateRange.endDate;
+    const jobStartDate = values.joinIn.startDate;
+    const jobEndDate = values.joinIn.endDate;
+    const resignStartDate = values.leaving.startDate;
+    const resignEndDate = values.leaving.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const names = values.staff.length ? values.staff.map(item => item.value) : [];
@@ -137,8 +141,10 @@ const LeavingList = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
-      startDate,
-      endDate,
+      jobStartDate,
+      jobEndDate,
+      resignStartDate,
+      resignEndDate,
       str,
       companyIds,
       storeIds,
@@ -283,6 +289,7 @@ const LeavingList = () => {
   return (
     <View style={styles.screen}>
       <HeaderSearch
+        leavingList
         filterFun={filter}
       />
       <CenterSelectDate />

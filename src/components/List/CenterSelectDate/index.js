@@ -48,19 +48,21 @@ const CenterSelectDate = ({
   };
 
   useMemo(() => {
+    const today = moment().format('YYYY-MM-DD');
     if (startDate !== endDate){
       checkIfWeekOrMonth();
       setSelectDay(null);
       setReturnToday(true);
       return;
     } else if (startDate === endDate){
+      //都为空
       if(!startDate && !endDate){
         setReturnToday(true);
         setSelectDay(null);
         return;
       }
       setSelectDay(rangeDate.startDate);
-      setReturnToday(false);
+      setReturnToday(startDate === today ? false : true);
       return;
     }
   }, [rangeDate])

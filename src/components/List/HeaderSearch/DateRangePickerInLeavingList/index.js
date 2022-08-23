@@ -9,10 +9,11 @@ import { useToast } from "react-native-toast-notifications";
 import { getYMD } from "../../../../utils";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 
-const PickerOfDateRange = ({
+const DateRangePickerInLeavingList = ({
     field, 
     form, 
-    clearTimer = true, //时间组件默认支持清空
+    clearTimer = true, //时间组件默认支持清空；
+    leaving = false, //是否离职时间范围，需和中间快捷切换时间组件联调；
     ...rest
   }) => {
   const toast = useToast();
@@ -24,21 +25,25 @@ const PickerOfDateRange = ({
   const [dateTime, setDateTime] = useState();
   const [type, setType] = useState('start');
 
+  const {startDate, endDate} = field.value;
+
   //外部通过其他组件传进来的时间范围一旦发生改变，就主动修改组件内部的起始/结束日期。
   useEffect(()=>{
-    const formRangeDate = {
-      startDate: rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '', 
-      endDate: rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : ''
-    };
-    form.setFieldValue(field.name, formRangeDate);
-    form.handleSubmit();
+    if(leaving){
+      const formRangeDate = {
+        startDate: rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '', 
+        endDate: rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : ''
+      };
+      form.setFieldValue(field.name, formRangeDate);
+      form.handleSubmit();
+    }
   }, [rangeDate])
 
   const showDate = (type) => {
     setType(type);
     setModalVisible(!modalVisible);
-    const startDate = rangeDate.startDate ? new Date(rangeDate.startDate) : new Date();
-    const endDate = rangeDate.endDate ? new Date(rangeDate.endDate) : new Date();
+    const startDate = field.value.startDate ? new Date(field.value.startDate) : new Date();
+    const endDate = field.value.endDate ? new Date(field.value.endDate) : new Date();
     setDateTime(type === 'start' ? startDate : endDate);
   };
 
@@ -47,91 +52,129 @@ const PickerOfDateRange = ({
     //清空
     if(event.type === 'neutralButtonPressed'){
       if(type === 'start'){
-        dispatch(setStartDate(''));
+        if(leaving){
+          dispatch(setStartDate(''));
+          return;
+        }
+        form.setFieldValue(field.name, {
+          ...field.value,
+          startDate: ''
+        })
+        form.handleSubmit();
         return;
       }
       if(type === 'end'){
-        dispatch(setEndDate(''));
+        if(leaving){
+          dispatch(setEndDate(''));
+          return;
+        }
+        form.setFieldValue(field.name, {
+          ...field.value,
+          endDate: ''
+        })
+        form.handleSubmit();
         return;
       }
     }
     if (event.type !== 'set') return;
     const currentDate = selectedDate || dateTime;
     const currentDateText = getYMD(currentDate);
-    const startDate = moment(rangeDate.startDate).format('YYYY-MM-DD');
-    const endDate = moment(rangeDate.endDate).format('YYYY-MM-DD');
     switch(type){
       case 'start': 
-        if(currentDateText > endDate){
+        if((currentDateText > field.value.endDate) && !!field.value.endDate){
           toast.show(`开始日期不能晚于结束日期！`, { type: 'warning' });
           return;
         }
-        dispatch(setStartDate(moment.utc(selectedDate)));
+        if(leaving){
+          dispatch(setStartDate(moment.utc(selectedDate)));
+        }
+        form.setFieldValue(field.name, {
+          ...field.value,
+          startDate: currentDateText
+        })
+        form.handleSubmit();
         return;
       case 'end':
-        if(currentDateText < startDate){
+        if((currentDateText < field.value.startDate) && !!field.value.startDate){
           toast.show(`结束日期不能早于开始日期！`, { type: 'warning' });
           return;
         }
-        dispatch(setEndDate(moment.utc(selectedDate)));
+        if(leaving){
+          dispatch(setEndDate(moment.utc(selectedDate)));
+        }
+        form.setFieldValue(field.name, {
+          ...field.value,
+          endDate: currentDateText
+        })
+        form.handleSubmit();
         return;
     }
   };
 
   const clearStart = () => {
-    if(rangeDate.startDate){
+    form.setFieldValue(field.name, {
+      ...field.value,
+      startDate: ''
+    })
+    if(leaving && rangeDate.startDate){
       dispatch(setStartDate(''));
     }
+    form.handleSubmit();
   };
 
   const clearEnd = () => {
-    if(rangeDate.endDate){
+    form.setFieldValue(field.name, {
+      ...field.value,
+      endDate: ''
+    })
+    if(leaving && rangeDate.endDate){
       dispatch(setEndDate(''));
     }
+    form.handleSubmit();
   };
 
   return (
     <>
       <View style={styles.dateArea}>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>开始日期：</Text>
+          <Text style={styles.title}>{`${field.name === 'joinIn' ? '入职' : '离职'}开始日期：`}</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
-              <AntDesign
+              {!field.value.startDate && <AntDesign
                 name='calendar' 
                 size={30}
-                color={rangeDate.startDate ? '#333333' : '#999999'}
-              />
-              <Text style={[styles.font, rangeDate.startDate && {color: '#333333'}]}>{rangeDate.startDate ? moment(rangeDate.startDate).format('MM-DD') : '无'}</Text>
+                color={startDate ? '#333333' : '#999999'}
+              />}
+              <Text style={[styles.font, startDate && {color: '#333333'}]}>{field.value.startDate ? moment(field.value.startDate).format('MM-DD') : '无'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.iconStyle, !rangeDate.startDate && {opacity: 0}]} onPress={clearStart}>
+            {!!field.value.startDate && <TouchableOpacity style={styles.iconStyle} onPress={clearStart}>
               <AntDesign
                 name='closecircle' 
                 size={30}
                 color='#999999'
               />
-            </TouchableOpacity>
+            </TouchableOpacity>}
           </View>
         </View> 
         <View style={{width: 40}}></View>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>结束日期：</Text>
+          <Text style={styles.title}>{`${field.name === 'joinIn' ? '入职' : '离职'}结束日期：`}</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
-              <AntDesign
+              {!field.value.endDate && <AntDesign
                 name='calendar' 
                 size={30}
-                color={rangeDate.endDate ? '#333333' : '#999999'}
-              />
-              <Text style={[styles.font, rangeDate.endDate && {color: '#333333'}]}>{rangeDate.endDate ? moment(rangeDate.endDate).format('MM-DD') : '无'}</Text>
+                color={endDate ? '#333333' : '#999999'}
+              />}
+              <Text style={[styles.font, endDate && {color: '#333333'}]}>{field.value.endDate ? moment(field.value.endDate).format('MM-DD') : '无'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.iconStyle, !rangeDate.endDate && {opacity: 0}]} onPress={clearEnd}>
+            {!!field.value.endDate && <TouchableOpacity style={[styles.iconStyle, !endDate && {opacity: 0}]} onPress={clearEnd}>
               <AntDesign
                 name='closecircle' 
                 size={30}
                 color='#999999'
               />
-            </TouchableOpacity>
+            </TouchableOpacity>}
           </View>
         </View>
       </View>
@@ -160,18 +203,18 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     flexDirection: 'row', 
+    justifyContent: 'center',
     alignItems: 'center'
   },
   font: {
-    flex: 1,
     textAlign: 'center',
     color: '#999999',
-    fontSize: 28
+    fontSize: 28,
+    paddingLeft: 10
   },
   iconStyle: {
     height: '100%', 
-    justifyContent: 'center', 
-    paddingHorizontal: 10
+    justifyContent: 'center'
   },
   title: {
     fontSize: 26,
@@ -183,10 +226,9 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'row', 
     alignItems: 'center', 
-    paddingLeft: 20,
     backgroundColor: '#fff',
     borderRadius: 10
   }
 });
 
-export default PickerOfDateRange;
+export default DateRangePickerInLeavingList;
