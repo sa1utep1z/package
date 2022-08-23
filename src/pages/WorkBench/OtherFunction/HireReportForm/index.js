@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import DataOverview from "./DataOverview";
 import DataTrend from "./DataTrend";
 import DataCompare from "./DataCompare";
+import DataPercent from "./DataPercent";
 
 const HireReportForm = () => {
 
@@ -13,6 +14,7 @@ const HireReportForm = () => {
         <DataOverview />
         <DataTrend />
         <DataCompare />
+        <DataPercent />
       </View>
     </ScrollView>
   )

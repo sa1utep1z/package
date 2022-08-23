@@ -56,6 +56,11 @@ const Login = props => {
         const {account, password} = userMsg;
         setFieldValue('user', account);
         setFieldValue('password', password);
+        setRadio(true);
+        if(props.route.params === 'logout'){
+          return;
+        }
+        restForm.submitForm();
       }
     } catch (err) {
       console.log('getUserMsg_err -->Not Found Account&&Password');

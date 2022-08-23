@@ -61,10 +61,11 @@ const MyMembers = () => {
   };
 
   const getList = async(params) => {
-    console.log('getList --> params', params);
+    // console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await MyMembersApi.MyMemberList(params);
+      // console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;

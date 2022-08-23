@@ -32,7 +32,7 @@ const SignUpList = () => {
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
 
-  const [searchContent, setSearchContent] = useState({role, ...firstPage});
+  const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [tabNumberList, setTabNumberList] = useState({});
@@ -70,7 +70,7 @@ const SignUpList = () => {
     setIsLoading(true);
     try{
       const res = await ListApi.SignUpList(params);
-      // console.log('getList --> res', res);
+      console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -103,9 +103,7 @@ const SignUpList = () => {
       role
     };
     try{
-      console.log('getTypeList --> params', params)
       const res = await ListApi.GetTypeList(params);
-      // console.log('getTypeList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -115,6 +113,26 @@ const SignUpList = () => {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   }
+
+  const selectIndex = (selectIndex) => {
+    if(searchContent.startDate && searchContent.endDate){
+      switch(selectIndex){
+        case 0:
+          searchContent.status = 'ALL';
+          break;
+        case 1:
+          searchContent.status = 'SIGN_UP_PENDING';
+          break;
+        case 2:
+          searchContent.status = 'SIGN_UP_NO_INTENTION';
+          break;
+        case 3:
+          searchContent.status = 'SIGN_UP_INTENTION';
+          break;
+      }
+      setSearchContent({...searchContent, ...firstPage});
+    }
+  };
 
   const filter = (values) => {
     const startDate = values.dateRange.startDate;
@@ -134,24 +152,6 @@ const SignUpList = () => {
       storeIds,
       names
     });
-  };
-
-  const selectIndex = (selectIndex) => {
-    switch(selectIndex){
-      case 0:
-        searchContent.status = 'ALL';
-        break;
-      case 1:
-        searchContent.status = 'SIGN_UP_PENDING';
-        break;
-      case 2:
-        searchContent.status = 'SIGN_UP_NO_INTENTION';
-        break;
-      case 3:
-        searchContent.status = 'SIGN_UP_INTENTION';
-        break;
-    }
-    setSearchContent({...searchContent, ...firstPage});
   };
 
   const transferFactory = (item) => {
@@ -186,7 +186,6 @@ const SignUpList = () => {
   };
 
   const editMemberMessage = (item) => {
-    console.log('item', item);
     dialogRef.current.setShowDialog(false);
     navigation.navigate(NAVIGATION_KEYS.COMPLETE_MEMBER, {
       item,
@@ -197,7 +196,6 @@ const SignUpList = () => {
   const pressName = async(item) => {
     try{
       const res = await ListApi.MemberMessage(item.flowId);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;

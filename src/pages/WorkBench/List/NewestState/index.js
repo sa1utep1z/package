@@ -92,7 +92,12 @@ const NewestState = () => {
     }
   };
 
-  const gotoRecordOfWorking = () => navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING)
+  const gotoRecordOfWorking = () => {
+    toast.show('敬请期待...');
+    return;
+    //TODO待开发
+    navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING);
+  }
 
   const checkStatus = (message) => {
     if(message.backAccount && message.idNo){

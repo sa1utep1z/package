@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { SceneMap } from 'react-native-tab-view';
 
-import Tab from "../Component/Tab";
 import { HIRE_DATA_TREND_TAB_LIST } from "../../../../../utils/const";
+import Tab from "../Component/Tab";
 
 import CompanyRoute from "./CompanyRoute";
 import StoreRoute from "./StoreRoute";
@@ -18,14 +18,14 @@ const renderScene = SceneMap({
   supplier: SupplierStore,
 });
 
-const DataTrend = () => {
-
+const DataCompare = () => {
+  
   return (
     <Shadow>
       <View style={styles.totalArea}>
         <View style={styles.titleArea}>
           <View style={styles.titleLine}></View>
-          <Text style={styles.title}>数据趋势</Text>
+          <Text style={styles.title}>数据占比</Text>
         </View>
         <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/>
       </View>
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DataTrend;
+export default DataCompare;

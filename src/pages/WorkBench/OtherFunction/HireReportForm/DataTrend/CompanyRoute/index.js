@@ -1,73 +1,114 @@
-import React from "react";
-import { View, Text, StyleSheet } from 'react-native';
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
-} from "react-native-chart-kit";
+import React, {useState} from "react";
+import { View, StyleSheet } from 'react-native';
+import { LineChart } from "react-native-chart-kit";
+import Svg, { Circle, Text, Line } from 'react-native-svg';
 
 import Tag from "../../Component/Tag";
+import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 
 const CompanyRoute = () => {
-
+  
   const data = {
-    labels: ["6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
+    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
       {
-        data: [155, 240, 130, 260, 320, 170],
-        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`
+        data: ['', 155, 240, 130, 260, 320, 170], 
+        color: () => '#409EFF'
       }
     ],
-    // legend: ["Rainy Days"] // optional
+    legend: ['已报名']
   };
 
   const chartConfig = {
     backgroundGradientFrom: '#fff',
     backgroundGradientTo: '#fff',
     fillShadowGradientFrom: '#409EFF',
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientFromOffset: 0.3,
     fillShadowGradientTo: '#fff',
-    color: (opacity = 1) => '#333333',
-    strokeWidth: 3, // optional, default 3
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false, // optional  
-    propsForDots: {
-      r: "6",
-      strokeWidth: "2",
-      stroke: "#409EFF"
-    },
+    fillShadowGradientFromOpacity: 1,
+    fillShadowGradientFromOffset: 0.1,
+    color: () => '#333333',
+    strokeWidth: 2, 
+    useShadowColorFromDataset: false,
     propsForLabels: {
-      fontWeight: 'bold',
-      fontSize: '22'
-    },
-    propsForVerticalLabels: {
-      fontWeight: 'bold',
       fontSize: '22',
-      rotation: '0'
+      fontWeight: 'bold'
     },
     propsForBackgroundLines: {
-      
+      stroke: '#999999',
+      strokeDasharray: '2,2'
     }
+  };
+
+  const renderDotContent = ({x, y, index, indexData})=> (
+    <View key={index}>
+      <Text
+        x={x-20}
+        y={y-12}
+        fill="#409EFF"
+        fontSize="20"
+        fontWeight="bold"
+      >
+        {indexData}
+      </Text>
+      <Circle
+        cx={x}
+        cy={y}
+        r= "6"
+        strokeWidth="2"
+        stroke="#409EFF"
+        fill="#fff"
+      />
+    </View>
+  );
+
+  const decorator = ({width, height, ...rest})=>{
+    return (
+      <Svg width={width} height={height}>
+        <Line x1="70" y1={height - 76} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
+        <Line x1={width - 10} y1={height - 85} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
+        <Line x1={width - 10} y1={height - 65} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
+        <Line x1="65" y1={-30} x2="65" y2={height - 82} stroke="#999999" strokeWidth="2" />
+        <Line x1="65" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Line x1="65" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Text
+          x={5}
+          y={-25}
+          fontSize="22"
+          fontWeight="bold"
+          fill="#333333">
+            人数
+        </Text>
+        <Text
+          x={width - 50}
+          y={height - 40}
+          fontSize="22"
+          fontWeight="bold"
+          fill="#333333">
+            日期
+        </Text>
+      </Svg>
+    )
   };
 
   return (
     <View style={{flex: 1}} >
-      <Tag lastButton />
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton />
+      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
         <LineChart
+          style={styles.LineStyle}
           data={data}
-          width={626}
-          height={380}
-          verticalLabelRotation={30}
           chartConfig={chartConfig}
+          width={620}
+          height={370}
+          segments={6}
           bezier
-          style={{
-            borderWidth: 1,
-          }}
+          fromZero
+          getDotColor={(...rest) => console.log('rest', rest)}
+          decorator={decorator}
+          withOuterLines={false}
+          withVerticalLines={false}
+          formatYLabel={(num) => Math.trunc(num)}
+          renderDotContent={renderDotContent}
         />
       </View>
     </View>
@@ -75,7 +116,10 @@ const CompanyRoute = () => {
 }
 
 const styles = StyleSheet.create({
-
+  LineStyle: {
+    position: 'absolute',
+    bottom: -30
+  }
 });
 
 export default CompanyRoute;

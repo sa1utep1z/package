@@ -4,7 +4,7 @@ import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
 
 import Tag from "../../Component/Tag";
-import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
+import { HIRE_DATA_COMPARE_TAB_LIST } from "../../../../../../utils/const";
 
 const RecruiterStore = () => {
   const data = {
@@ -12,22 +12,20 @@ const RecruiterStore = () => {
     datasets: [
       {
         data: ['', 155, 240, 130, 260, 320, 170], 
-        color: () => '#409EFF'
+        color: () => '#7640FF'
+      },
+      {
+        data: ['', 65, 95, 300, 320, 235, 190], 
+        color: () => '#FFA800'
       }
     ],
-    legend: ['已报名']
+    legend: ['本周', '上周']
   };
 
   const chartConfig = {
+    color: () => '#333333',
     backgroundGradientFrom: '#fff',
     backgroundGradientTo: '#fff',
-    fillShadowGradientFrom: '#409EFF',
-    fillShadowGradientTo: '#fff',
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientFromOffset: 0.1,
-    color: () => '#333333',
-    strokeWidth: 2, 
-    useShadowColorFromDataset: false,
     propsForLabels: {
       fontSize: '22',
       fontWeight: 'bold'
@@ -38,27 +36,34 @@ const RecruiterStore = () => {
     }
   };
 
-  const renderDotContent = ({x, y, index, indexData})=> (
-    <View key={index}>
-      <Text
-        x={x-20}
-        y={y-15}
-        fontSize="22"
-        fontWeight="bold"
-        fill="#409EFF"
-      >
-        {indexData}
-      </Text>
-      <Circle
-        cx={x}
-        cy={y}
-        r= "6"
-        strokeWidth="2"
-        stroke="#409EFF"
-        fill="#fff"
-      />
-    </View>
-  );
+  const renderDotContent = ({x, y, index, indexData})=> {
+    let belong = '';
+    const dataIndex = data.datasets[0].data.findIndex(data => data === indexData);
+    if(dataIndex === index){
+      belong = 'first';
+    }
+    return (
+      <View>
+        <Text
+          x={x-20}
+          y={y-10}
+          fill={belong === 'first' ? "#7640FF" : "#FFA800"}
+          fontSize="20"
+          fontWeight="bold"
+        >
+          {indexData}
+        </Text>
+        <Circle
+          cx={x}
+          cy={y}
+          r="6"
+          strokeWidth="2"
+          stroke={belong === 'first' ? "#7640FF" : "#FFA800"}
+          fill="#fff"
+        />
+      </View>
+    )
+  };
 
   const decorator = ({width, height, ...rest})=>{
     return (
@@ -91,8 +96,8 @@ const RecruiterStore = () => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton />
-      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+      <Tag tagList={HIRE_DATA_COMPARE_TAB_LIST} lastButton />
+      <View style={styles.LineArea}>
         <LineChart
           style={styles.LineStyle}
           data={data}
@@ -102,7 +107,9 @@ const RecruiterStore = () => {
           segments={6}
           bezier
           fromZero
+          getDotColor={(...rest) => console.log('rest', rest)}
           decorator={decorator}
+          withShadow={false}
           withOuterLines={false}
           withVerticalLines={false}
           formatYLabel={(num) => Math.trunc(num)}
@@ -114,6 +121,11 @@ const RecruiterStore = () => {
 }
 
 const styles = StyleSheet.create({
+  LineArea: {
+    flex: 1, 
+    justifyContent: 'flex-end', 
+    alignItems: 'center'
+  },
   LineStyle: {
     position: 'absolute',
     bottom: -30

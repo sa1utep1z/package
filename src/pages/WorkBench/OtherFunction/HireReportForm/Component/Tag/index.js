@@ -3,15 +3,21 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 import NormalDialog from '../../../../../../components/NormalDialog';
+import { useEffect } from "react";
 
 const Tag = ({
   lastButton = false,
+  tagList = [],
   tagAreaStyle
 }) => {
   const dialogRef = useRef(null);
 
-  const [selectTag, setSelectTag] = useState('today');
+  const [selectTag, setSelectTag] = useState('');
   const [dialogContent, setDialogContent] = useState({});
+
+  useEffect(()=>{
+    tagList.length && setSelectTag(tagList[0].value);
+  },[])
 
   const chooseTag = (tag) => setSelectTag(tag.value);
 
@@ -31,12 +37,12 @@ const Tag = ({
     <>
       <View style={[styles.tagsArea, tagAreaStyle]}>
         <View style={{flexDirection: 'row'}}>
-          {HIRE_DATA_BOX_TAG_LIST.map((tag, tagIndex) => {
+          {tagList.map((tag, tagIndex) => {
             const isSelected = selectTag === tag.value;
             return (
-            <TouchableOpacity key={tagIndex} style={[styles.tag, isSelected && styles.selectedTag]} onPress={() => chooseTag(tag)}>
-              <Text style={[styles.tagText, isSelected && styles.selectedTagText]}>{tag.title}</Text>
-            </TouchableOpacity>
+              <TouchableOpacity key={tagIndex} style={[styles.tag, isSelected && styles.selectedTag]} onPress={() => chooseTag(tag)}>
+                <Text style={[styles.tagText, isSelected && styles.selectedTagText]}>{tag.title}</Text>
+              </TouchableOpacity>
           )})}
         </View>
         {lastButton && (
@@ -61,8 +67,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   tag: {
-    width: 80, 
-    height: 40, 
+    height: 40,
+    paddingHorizontal: 10,
     marginRight: 30, 
     borderRadius: 5, 
     justifyContent: 'center', 

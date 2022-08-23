@@ -90,9 +90,13 @@ const EditMember = (props) => {
         setStoreList(res.data);
         if(params.fieldList.storeId && params.fieldList.recruiterId){
           const storeName = [res.data.find(store => store.storeId === params.fieldList.storeId)];
-          const recruitName = [storeName[0].members.find(recruit => recruit.value === params.fieldList.recruitId)];
           restForm.setFieldValue('storeName', storeName);
-          restForm.setFieldValue('recruitName', recruitName);
+          const recruit = storeName[0].members.find(recruit => recruit.value === msg.recruiterId);
+          if(recruit){
+            restForm.setFieldValue('recruitName', recruit);
+            return;
+          }
+          restForm.setFieldValue('recruitName', []);
         }
       }
     }catch(err){
@@ -101,6 +105,8 @@ const EditMember = (props) => {
   };
 
   const onSubmit = async (values) => {
+    //提交时如果有门店/招聘员关系的需要加下面函数判断招聘员是否在门店列表下；
+    // checkStore(values);
     const flowId = params.fieldList.flowId;
     const par = {
       name: values.name,
@@ -119,6 +125,19 @@ const EditMember = (props) => {
       navigation.goBack();
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const checkStore = (values) => {
+    if(values.storeName.length){
+      const memberList = values.store[0].members;
+      if(values.recruitName.length){
+        const findIndex = memberList.findIndex(member => member.value === values.recruitName[0].value); 
+        if(findIndex === -1){
+          restForm.setFieldError('recruitName', '该门店下无该招聘员，请重新选择招聘员');
+          return
+        }
+      }
     }
   };
 
@@ -204,7 +223,7 @@ const EditMember = (props) => {
                 />
                 <Field
                   name="recruitName"
-                  title="经纪人"
+                  title="归属招聘员"
                   noBorder
                   canSearch
                   bottomButton

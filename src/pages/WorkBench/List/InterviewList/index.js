@@ -32,7 +32,7 @@ const InterviewList = () => {
   const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
 
-  const [searchContent, setSearchContent] = useState({role, ...firstPage});
+  const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [tabNumberList, setTabNumberList] = useState({});
@@ -66,6 +66,7 @@ const InterviewList = () => {
   },[role])
 
   const getList = async(params) => {
+    console.log('getList --> params', params)
     setIsLoading(true);
     try{
       const res = await ListApi.InterViewList(params);
@@ -223,24 +224,26 @@ const InterviewList = () => {
   };
 
   const selectIndex = (selectIndex) => {
-    switch(selectIndex){
-      case 0:
-        searchContent.status = 'ALL';
-        break;
-      case 1:
-        searchContent.status = 'INTERVIEW_PENDING';
-        break;
-      case 2:
-        searchContent.status = 'INTERVIEW_NO_ARRIVE';
-        break;
-      case 3:
-        searchContent.status = 'INTERVIEW_FAIL';
-        break;
-      case 4:
-        searchContent.status = 'INTERVIEW_PASS';
-        break;
+    if(searchContent.startDate && searchContent.endDate){
+      switch(selectIndex){
+        case 0:
+          searchContent.status = 'ALL';
+          break;
+        case 1:
+          searchContent.status = 'INTERVIEW_PENDING';
+          break;
+        case 2:
+          searchContent.status = 'INTERVIEW_NO_ARRIVE';
+          break;
+        case 3:
+          searchContent.status = 'INTERVIEW_FAIL';
+          break;
+        case 4:
+          searchContent.status = 'INTERVIEW_PASS';
+          break;
+      }
+      setSearchContent({...searchContent, ...firstPage});
     }
-    setSearchContent({...searchContent, ...firstPage});
   };
 
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
