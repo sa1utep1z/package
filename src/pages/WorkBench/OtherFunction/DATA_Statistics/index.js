@@ -568,8 +568,6 @@ const DATA_Statistics = () => {
           )
         })}
       </View>
-      {/* <ScrollView alwaysBounceHorizontal={true}> */}
-      {/* <View style={styles.scrollTab}> */}
       <FlatList
         data={companyDetails}
         ListHeaderComponent={tabHead()}
@@ -585,8 +583,6 @@ const DATA_Statistics = () => {
         onEndReachedThreshold={0.01}
         onScrollEndDrag={() => setLoad(true)}
       />
-      {/* </View> */}
-      {/* </ScrollView> */}
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}

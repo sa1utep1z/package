@@ -29,7 +29,7 @@ export const isPositiveDecimal = (value) => /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9
   * 是否是手机号
   */
 export const isPhoneNumber = (value) => /^((13[0-9])|(17[0-1,6-8])|(15[^4,\\D])|(18[0-9]))\d{8}$/.test(value);
-export const phone = /^((13[0-9])|(17[0-1,6-8])|(15[^4,\\D])|(18[0-9]))\d{8}$/;
+export const phone = /^1[3-9]\d{9}$/;
 
 /**
   * 是否是身份证
