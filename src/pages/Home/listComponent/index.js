@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef, useMemo} from 'react';
-import {StyleSheet, View, Image, Animated, } from 'react-native';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { StyleSheet, View, Image, Animated, } from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,33 +14,33 @@ const today = moment().format("YYYY-MM-DD");
 const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
 let timer;
 
-export const Header = ({search, range, bannerList}) => {
+export const Header = ({ search, range, bannerList }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const [activeButton, setActiveButton] = useState(0);
-  const [rangeDate, setRangeDate] = useState({startDate: today, endDate: today});
+  const [rangeDate, setRangeDate] = useState({ startDate: today, endDate: today });
 
   const showSearch = useSelector((state) => state.homeSearch.canSearch);
 
-  useEffect(()=>{
+  useEffect(() => {
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
     return () => timer && clearTimeout(timer);
-  },[showSearch])
+  }, [showSearch])
 
-  useMemo(()=>{
-    if(rangeDate.startDate !== rangeDate.endDate){
+  useMemo(() => {
+    if (rangeDate.startDate !== rangeDate.endDate) {
       setActiveButton();
     }
-    if(rangeDate.startDate === rangeDate.endDate && rangeDate.startDate === today){
+    if (rangeDate.startDate === rangeDate.endDate && rangeDate.startDate === today) {
       setActiveButton(0);
     }
-    if(rangeDate.startDate === rangeDate.endDate && rangeDate.startDate === tomorrow){
+    if (rangeDate.startDate === rangeDate.endDate && rangeDate.startDate === tomorrow) {
       setActiveButton(1);
     }
     //fix执行顺序会报异常的问题；
     timer && clearTimeout(timer);
-    timer = setTimeout(()=>{
+    timer = setTimeout(() => {
       range(rangeDate);
     })
   }, [rangeDate])
@@ -63,51 +63,51 @@ export const Header = ({search, range, bannerList}) => {
 
   const todayOnPress = () => {
     setActiveButton(0);
-    setRangeDate({startDate: today, endDate: today});
+    setRangeDate({ startDate: today, endDate: today });
   };
-  
+
   const tomorrowOnPress = () => {
     setActiveButton(1);
-    setRangeDate({startDate: tomorrow, endDate: tomorrow});
+    setRangeDate({ startDate: tomorrow, endDate: tomorrow });
   };
 
   return (
     <>
       <View style={styles.swiperArea}>
-        <Swiper 
-          autoplay 
+        <Swiper
+          autoplay
           autoplayTimeout={4}
-          style={styles.swiperStyle} 
-          containerStyle={styles.containerStyle} 
-          paginationStyle={styles.paginationStyle} 
+          style={styles.swiperStyle}
+          containerStyle={styles.containerStyle}
+          paginationStyle={styles.paginationStyle}
           defaultSource={require('../../../assets/images/loading.gif')}
           activeDotColor='#409EFF'>
-          {bannerList.length ? bannerList.map((image, index) => 
-          <Image 
-            loadingindicatorsource={require('../../../assets/images/homeImg.png')} 
-            key={index} 
-            style={{width: '100%', height: '100%', borderRadius: 8}} 
-            source={{uri: `${image.coverImage.url}`}}/>)
-          : <>
-            <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg.png')}/>
-            <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg2.jpg')}/>
-          </>}
+          {bannerList.length ? bannerList.map((image, index) =>
+            <Image
+              loadingindicatorsource={require('../../../assets/images/homeImg.png')}
+              key={index}
+              style={{ width: '100%', height: '100%', borderRadius: 8 }}
+              source={{ uri: `${image.coverImage.url}` }} />)
+            : <>
+              <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg.png')} />
+              <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg2.jpg')} />
+            </>}
         </Swiper>
       </View>
-      <Animated.View style={[{opacity: fadeAnim}, !showSearch && {height: 0}]}>
-        <SearchInput searchPress={search}/>
-        <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate}/>
+      <Animated.View style={[{ opacity: fadeAnim }, !showSearch && { height: 0 }]}>
+        <SearchInput searchPress={search} />
+        <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate} />
       </Animated.View>
       <View style={styles.buttonArea}>
-        <Button 
-          buttonStyle={[styles.btn, {marginLeft: 75}, activeButton === 0 && styles.activeButton]} 
-          titleStyle={[{fontSize: 32}, activeButton === 1 && styles.activeButtonTitle]} 
+        <Button
+          buttonStyle={[styles.btn, { marginLeft: 75 }, activeButton === 0 && styles.activeButton]}
+          titleStyle={[{ fontSize: 32 }, activeButton === 1 && styles.activeButtonTitle]}
           onPress={todayOnPress}>今日热招
         </Button>
         <View style={styles.centerLine}></View>
-        <Button 
-          buttonStyle={[styles.btn, {marginRight: 75}, activeButton === 1 && styles.activeButton]} 
-          titleStyle={[{fontSize: 32}, activeButton === 0 && styles.activeButtonTitle]} 
+        <Button
+          buttonStyle={[styles.btn, { marginRight: 75 }, activeButton === 1 && styles.activeButton]}
+          titleStyle={[{ fontSize: 32 }, activeButton === 0 && styles.activeButtonTitle]}
           onPress={tomorrowOnPress}>明日预招
         </Button>
       </View>
@@ -140,7 +140,7 @@ export const listFooter = () => (
 export const empty = () => (
   <>
     <View style={styles.emptyStyle}>
-    <AntDesign
+      <AntDesign
         name='frowno'
         size={60}
         color='#999999'
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   containerStyle: {
-    margin: 31, 
+    margin: 31,
     borderRadius: 10
   },
   paginationStyle: {
@@ -203,54 +203,54 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCCCCC'
   },
   listHeader: {
-    height: 74, 
-    backgroundColor: '#fff', 
-    marginHorizontal: 31, 
+    height: 74,
+    backgroundColor: '#fff',
+    marginHorizontal: 31,
     borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)',
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center'
   },
   listHeader_flex1: {
-    flex: 1, 
-    textAlign: 'center', 
+    flex: 1,
+    textAlign: 'center',
     fontWeight: '700',
     fontSize: 32
   },
   listHeader_flex2: {
-    flex: 2, 
-    textAlign: 'center', 
+    flex: 2,
+    textAlign: 'center',
     fontWeight: '700',
     fontSize: 32
   },
-  footer:{
-    height: 13, 
+  footer: {
+    height: 13,
     textAlign: 'center',
     marginBottom: 10,
     fontSize: 10,
     color: '#999999'
   },
   homeFooter: {
-    height: 13, 
-    borderBottomLeftRadius: 30, 
-    borderBottomRightRadius: 30, 
-    backgroundColor: '#fff', 
+    height: 13,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    backgroundColor: '#fff',
     marginHorizontal: 31
   },
   footerText: {
-    textAlign: 'center', 
-    paddingVertical: 10, 
-    color: '#999999', 
+    textAlign: 'center',
+    paddingVertical: 10,
+    color: '#999999',
     fontSize: 20,
     backgroundColor: 'rgba(0,0,0,0)'
   },
   emptyStyle: {
-    flex: 1, 
-    marginHorizontal: 10, 
-    backgroundColor: '#fff', 
-    height: 200, 
-    justifyContent: 'center', 
-    alignItems: 'center'
+    flex: 1,
+    marginHorizontal: 10,
+    backgroundColor: '#fff',
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   emptyIcon: {
     fontSize: 30
