@@ -43,13 +43,6 @@ const Login = props => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if(props.route.params?.handleUnauthorized){
-      toast.show('登录信息失效', {
-        type: 'danger',
-        duration: 5000
-      })
-      return;
-    }
     getUserMsg();
     storage.remove({key: 'token'});
   }, []);
@@ -64,6 +57,13 @@ const Login = props => {
         setFieldValue('user', account);
         setFieldValue('password', password);
         setRadio(true);
+        if(props.route.params.handleUnauthorized){
+          toast.show('登录信息失效', {
+            type: 'danger',
+            duration: 5000
+          })
+          return;
+        }
         if(props.route.params === 'logout'){
           return;
         }

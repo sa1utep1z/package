@@ -10,6 +10,7 @@ import SelectItem from '../../Form/SelectItem';
 import SearchItem from '../../Form/SearchItem';
 import SearchInput from '../../SearchInput';
 import DateRangePicker from './DateRangePicker';
+import DateRangePickerInLeavingList from './DateRangePickerInLeavingList';
 import MyMembersApi from '../../../request/MyMembersApi';
 
 let restForm;
@@ -19,6 +20,8 @@ const initialValues = {
   status: [],
   store: [],
   staff: [],
+  joinIn: {startDate: '', endDate: ''},
+  leaving: {startDate: '', endDate: ''},
   dateRange: {},
   staffSearch: '',
   search: ''
@@ -35,6 +38,7 @@ const HeaderSearch = ({
   companyShow = true,
   withoutCompanyFilter = false,
   batchOperate, // 批量操作函数
+  leavingList = false,
     ...rest
   }) => {
   const toast = useToast();
@@ -206,7 +210,7 @@ const HeaderSearch = ({
                   bottomButton
                   noBorder
                   autoSubmit
-                  fontStyle={{fontSize: 30}}
+                  fontStyle={{fontSize: 26}}
                   formalLabel={false}
                   component={SearchItem}
                 /> : <Field
@@ -223,15 +227,26 @@ const HeaderSearch = ({
                   component={SelectItem}
                 />}
               </View>}
-              <Field
+              {leavingList && <>
+                <Field
+                  name="joinIn"
+                  component={DateRangePickerInLeavingList}
+                />
+                <Field
+                  name="leaving"
+                  leaving
+                  component={DateRangePickerInLeavingList}
+                />
+              </>}
+              {!leavingList && <Field
                 name="dateRange"
                 component={DateRangePicker}
-              />
+              />}
               <Field
                 name="search"
                 placeholder={placeholder? placeholder : '请输入姓名或身份证'}
                 borderRadius={8}
-                fontStyle={{fontSize: 30}}
+                fontStyle={{fontSize: 26}}
                 searchInputStyle={styles.searchInputStyle}
                 component={SearchInput}
               />

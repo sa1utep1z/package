@@ -94,9 +94,9 @@ export const Header = ({ search, range, bannerList }) => {
             </>}
         </Swiper>
       </View>
-      <Animated.View style={[{ opacity: fadeAnim }, !showSearch && { height: 0 }]}>
-        <SearchInput searchPress={search} />
-        <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate} />
+      <Animated.View style={[{opacity: fadeAnim}, !showSearch && {height: 0}]}>
+        <SearchInput searchPress={search} fontStyle={{fontSize: 26}}/>
+        <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate}/>
       </Animated.View>
       <View style={styles.buttonArea}>
         <Button

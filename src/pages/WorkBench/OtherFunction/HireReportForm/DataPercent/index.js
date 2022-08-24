@@ -27,7 +27,7 @@ const DataCompare = () => {
           <View style={styles.titleLine}></View>
           <Text style={styles.title}>数据占比</Text>
         </View>
-        {/* <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/> */}
+        <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/>
       </View>
     </Shadow>
   )
@@ -35,7 +35,7 @@ const DataCompare = () => {
 
 const styles = StyleSheet.create({
   totalArea: {
-    height: 655,
+    height: 750,
     width: 686,
     backgroundColor: '#fff',
     borderRadius: 10,
