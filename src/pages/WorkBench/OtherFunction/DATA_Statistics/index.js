@@ -68,8 +68,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取到的企业数据：', res)
-      console.log('请求企业参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -113,8 +111,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取到的门店数据：', res)
-      console.log('请求门店参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -158,8 +154,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取到的供应商数据：', res)
-      console.log('请求供应商参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -203,8 +197,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取到的招聘员数据：', res)
-      console.log('请求招聘员参数：', prams)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -224,19 +216,17 @@ const DATA_Statistics = () => {
     if (index === 0 && searchContent.startDate) {
       companyData(searchContent);
       companyTotalData(searchContent);
-      console.log('是否执行：', searchContent.startDate)
     } else if (index === 1) {
       storeTotalData(searchContent);
       storeGroupData(searchContent);
     } else if (index === 2) {
       supplierTotalData(searchContent);
       supplierData(searchContent);
-    } else if(index === 3) {
+    } else if (index === 3) {
       recruiterTotalData(searchContent)
       recruiterData(searchContent)
     }
   }, [index, searchContent]);
-
 
   const toTalItem = (res) => {
     const renderList = [
@@ -384,7 +374,9 @@ const DATA_Statistics = () => {
     const prams = {
       ...searchContent,
       property: item,
+      pageNumber: 0,
     }
+    setSearchContent(prams)
     if (index === 0) {
       companyData(prams);
     } else if (index === 1) {
@@ -457,7 +449,7 @@ const DATA_Statistics = () => {
 
   const renderItem = ({ item }) => {
     const renderList = [
-      { fieldName: item.name, textStyle: { width: 100, fontSize: 26, color: '#333' } },
+      { fieldName: item.name, textStyle: String(item.name).length > 4 ? styles.style2 : styles.style1 },
       { fieldName: item.signUpIntention || '0', textStyle: { width: 98 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
       { fieldName: item.interviewNoArrive || '0', textStyle: { width: 83 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
       { fieldName: item.interviewFail || '0', textStyle: { width: 84 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
@@ -468,7 +460,7 @@ const DATA_Statistics = () => {
     ];
 
     return (
-      <View key={item.poolId} style={styles.listStyle}>
+      <View key={item.id} style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
           <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
             <Text style={[styles.itemText, renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
@@ -496,6 +488,7 @@ const DATA_Statistics = () => {
   const onEndReached = () => {
     if (!load) return;
     if (originData.hasNext) {
+      console.log('6666666')
       const nextPage = { ...searchContent, pageNumber: searchContent.pageNumber += 1 };
       setSearchContent(nextPage);
       setNextPage(true);
@@ -506,7 +499,7 @@ const DATA_Statistics = () => {
   const selectIndex = (i) => {
     setIndex(i);
   };
-  console.log('打印index值：', index);
+
   const tabHead = () => {
     return (
       <>
@@ -517,7 +510,7 @@ const DATA_Statistics = () => {
           <View style={styles.ItemStyle}>
             <Text style={styles.title}>报名人数</Text>
           </View>
-          <View style={[styles.centerStyle, {width: 260}]}>
+          <View style={[styles.centerStyle, { width: 260 }]}>
             <Text style={styles.stageStyle}>面试阶段</Text>
             <View style={styles.stageItemStyle}>
               <Text style={styles.statuStyle}>未去</Text>
@@ -568,21 +561,24 @@ const DATA_Statistics = () => {
           )
         })}
       </View>
-      <FlatList
-        data={companyDetails}
-        ListHeaderComponent={tabHead()}
-        refreshing={isLoading}
-        onRefresh={refresh}
-        onEndReached={onEndReached}
-        keyExtractor={(item) => item.id}
-        renderItem={(item) => renderItem(item)}
-        getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-        initialNumToRender={15}
-        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
-        ListEmptyComponent={empty}
-        onEndReachedThreshold={0.01}
-        onScrollEndDrag={() => setLoad(true)}
-      />
+      <View style={styles.flatStyle}>
+        <FlatList
+          data={companyDetails}
+          ListHeaderComponent={tabHead()}
+          refreshing={isLoading}
+          onRefresh={refresh}
+          onEndReached={onEndReached}
+          keyExtractor={(item) => item.id}
+          renderItem={(item) => renderItem(item)}
+          getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+          initialNumToRender={15}
+          ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
+          ListEmptyComponent={empty}
+          onEndReachedThreshold={0.01}
+          onScrollEndDrag={() => setLoad(true)}
+          stickyHeaderIndices={[0]}
+        />
+      </View>
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -623,7 +619,6 @@ const styles = StyleSheet.create({
     height: 132,
     borderWidth: 1,
     borderColor: '#409EFF',
-    marginTop: 30,
     backgroundColor: '#fff',
     display: 'flex',
     flexWrap: 'nowrap',
@@ -711,7 +706,7 @@ const styles = StyleSheet.create({
     minHeight: 35,
     fontSize: 26,
     color: '#409EFF',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   itemText1: {
     fontSize: 26,
@@ -786,7 +781,22 @@ const styles = StyleSheet.create({
   scrollTab: {
     width: '100%',
     overflowX: 'scroll'
-  }
+  },
+  flatStyle: {
+    paddingTop: 30
+  },
+  style1: {
+    width: 100,
+    fontSize: 26,
+    color: '#333',
+    paddingLeft: 20,
+    paddingRight: 20
+  },
+  style2: {
+    width: 100,
+    fontSize: 26,
+    color: '#333',
+  },
 });
 
 export default DATA_Statistics;
