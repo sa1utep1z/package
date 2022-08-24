@@ -1,9 +1,9 @@
-import React from 'react';
-import {Platform, View, Text, TextInput, StatusBar} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, TextInput, StatusBar} from 'react-native';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from "react-native-toast-notifications";
-import { simpleUpdate } from 'react-native-update';
+import SplashScreen from 'react-native-splash-screen';
 import ScaleView from 'react-native-scale-view';
 import moment from 'moment';
 import "moment/locale/zh-cn";
@@ -14,13 +14,16 @@ import _updateConfig from '../update.json';
 
 moment.locale('zh-cn');
 
-const { appKey } = _updateConfig[Platform.OS];
-
 //这里是解决应用字体随设备设置字体大小而缩放的问题；
 TextInput.defaultProps = Object.assign({}, TextInput.defaultProps, {defaultProps: false});
 Text.defaultProps = Object.assign({}, Text.defaultProps, {allowFontScaling: false});
 
 const App = () => {
+  
+  useEffect(() => {
+    SplashScreen.hide();
+  }, [])
+  
   const queryClient = new QueryClient();
 
   return (

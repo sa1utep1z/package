@@ -33,13 +33,16 @@ const BottomList = ({
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
 
-  useEffect(() => {
-    setShowList(list);
-    setTabList(tab);
+  useEffect(()=>{
     return () => {
       timer && clearTimeout(timer);
       dispatch(setTabName(''));
     };
+  },[])
+
+  useEffect(() => {
+    setShowList(list);
+    setTabList(tab);
   }, [list, tab])
 
   useMemo(()=>{

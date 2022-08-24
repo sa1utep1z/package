@@ -210,7 +210,6 @@ const HeaderSearch = ({
                   bottomButton
                   noBorder
                   autoSubmit
-                  fontStyle={{fontSize: 26}}
                   formalLabel={false}
                   component={SearchItem}
                 /> : <Field
@@ -246,7 +245,6 @@ const HeaderSearch = ({
                 name="search"
                 placeholder={placeholder? placeholder : '请输入姓名或身份证'}
                 borderRadius={8}
-                fontStyle={{fontSize: 26}}
                 searchInputStyle={styles.searchInputStyle}
                 component={SearchInput}
               />
@@ -275,7 +273,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     backgroundColor: '#409EFF', 
-    marginLeft: 28, 
+    marginLeft: 20,
     borderRadius: 10
   },
   btnText: {

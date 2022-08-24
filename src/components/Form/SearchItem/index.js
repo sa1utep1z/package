@@ -28,6 +28,7 @@ const SearchItem = ({
         <TextInput
           placeholder={placeholder || `请输入${title}`}
           value={search}
+          allowFontScaling={false}
           onChangeText={text => setSearch(text)}
           style={[styles.inputStyle, fontStyle]}
         />

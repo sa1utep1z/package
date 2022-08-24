@@ -27,6 +27,7 @@ const LongTextArea = ({
           value={field.value}
           placeholder='暂无回访记录'
           multiline
+          allowFontScaling={false}
           inputContainerStyle={styles.inputContainerStyle}
           inputStyle={styles.inputStyle}
           errorStyle={styles.errorStyle}

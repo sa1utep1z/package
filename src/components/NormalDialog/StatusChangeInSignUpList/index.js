@@ -150,6 +150,7 @@ const StatusChangeInSignUpList = ({
               value={inputContent}
               onChangeText={text => setInputContent(text)}
               placeholder='手动输入原因' 
+              allowFontScaling={false}
               containerStyle={styles.input_containerStyle} 
               inputContainerStyle={styles.input_inputContainerStyle}
               inputStyle={styles.inputStyle}

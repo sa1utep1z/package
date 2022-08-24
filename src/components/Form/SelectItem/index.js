@@ -193,8 +193,8 @@ const SelectItem = ({
                 color='#999999'
               />
             </TouchableOpacity>}
-          {lastButton}
         </View>
+        {lastButton}
       </View>
       <ErrorMessage
         name={field.name}
@@ -215,6 +215,7 @@ const SelectItem = ({
               placeholder={`请输入${title}名称`}
               smallSize
               // autoFocus
+              allowFontScaling={false}
               withoutButton
               keyboardType='default'
               onChange={onChanging}

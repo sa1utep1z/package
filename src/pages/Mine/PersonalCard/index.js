@@ -92,6 +92,7 @@ const PersonalCard = () => {
                 <Field
                   name="name"
                   title="姓名"
+                  placeholder={isEditing ? '请输入姓名' : '无'}
                   labelAreaStyle={styles.labelAreaStyle}
                   inputStyle={styles.inputStyle}
                   editable={isEditing}

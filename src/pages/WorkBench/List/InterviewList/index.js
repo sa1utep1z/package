@@ -115,9 +115,13 @@ const InterviewList = () => {
   };
 
   const batchOperate = () => {
+    const searchParams = {
+      ...searchContent,
+      pageNumber: 0
+    };
     navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, {
       list: 'interview',
-      searchParams: searchContent,
+      searchParams,
       refresh
     })
   };

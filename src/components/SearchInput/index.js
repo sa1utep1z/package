@@ -96,6 +96,7 @@ const SearchInput = ({
         platform="android"
         lightTheme
         showCancel
+        allowFontScaling={false}
         searchIcon={searchIcon}
         cancelIcon={cancelIcon}
         clearIcon={clearIcon}

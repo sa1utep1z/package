@@ -140,9 +140,13 @@ const WaitToEntryList = () => {
 
   // 批量操作
   const batchOperate = () => {
+    const searchParams = {
+      ...searchContent,
+      pageNumber: 0
+    };
     navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, { 
       list: 'onBoarding',
-      searchParams: searchContent,
+      searchParams,
       refresh
     })
   };

@@ -75,6 +75,7 @@ const LoginInput = ({
         label={props.label}
         placeholder={props.placeholder || `请输入${props.label}`}
         value={field.value}
+        allowFontScaling={false}
         onChangeText={onChangeText}
         containerStyle={styles.containerStyle}
         labelStyle={styles.labelStyle}
@@ -126,7 +127,8 @@ const styles = StyleSheet.create({
     color: '#000'
   },
   errorInput: {
-    marginLeft: 75,
+    fontSize: 26,
+    marginLeft: 164,
     color: 'red'
   }
 })

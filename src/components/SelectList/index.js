@@ -15,6 +15,8 @@ const SelectList = ({
     bottomButton, //是否有底部按钮
     listStyle,
     bottomButtonStyle,
+    totalNumber,
+    otherText,
     ...rest
 }) => {
   const navigation = useNavigation();
@@ -26,6 +28,7 @@ const SelectList = ({
   useEffect(()=> {
     const newArr = deepCopy(data);
     newArr.map(item => item.isChecked = false);
+    setConfirmList([]);
     setList(newArr);
   }, [data])
 
@@ -78,7 +81,6 @@ const SelectList = ({
     }
     newConfirmList.push(item);
     setConfirmList(newConfirmList);
-
   };
 
   const goBack = () => navigation.goBack();
@@ -113,8 +115,8 @@ const SelectList = ({
       <View style={[styles.listView, listStyle]}>
         <View style={styles.topMessage}>
           <View style={styles.message_text}>
-            <Text style={styles.top_text}>共 <Text style={{color: '#409EFF'}}>{list.length}</Text> 条数据，</Text>
-            <Text style={styles.top_text}>已选择 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
+            <Text style={styles.top_text}>共 <Text style={{color: '#409EFF'}}>{totalNumber ? totalNumber : list.length}</Text> 条数据，{otherText}</Text>
+            <Text style={styles.top_text}>已选 <Text style={{color: 'red'}}>{confirmList.length}</Text> 条数据</Text>
           </View>
           {!!canMultiChoice && <CheckRadio 
             checked={isSelectAll}
@@ -130,6 +132,7 @@ const SelectList = ({
           getItemLayout={(data, index)=>({length: 90, offset: 90 * index, index})}
           initialNumToRender={15}
           ListEmptyComponent={empty}
+          {...rest}
         />
       </View>
       {bottomButton && (

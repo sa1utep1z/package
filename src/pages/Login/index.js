@@ -57,7 +57,7 @@ const Login = props => {
         setFieldValue('user', account);
         setFieldValue('password', password);
         setRadio(true);
-        if(props.route.params.handleUnauthorized){
+        if(props.route.params?.handleUnauthorized){
           toast.show('登录信息失效', {
             type: 'danger',
             duration: 5000
@@ -70,7 +70,7 @@ const Login = props => {
         restForm.submitForm();
       }
     } catch (err) {
-      console.log('getUserMsg_err -->Not Found Account&&Password');
+      console.log('getUserMsg_err -->Not Found Account&&Password', err);
     }
   };
 
@@ -224,6 +224,7 @@ const Login = props => {
           <View style={styles.bottomArea_textArea}>
             <TouchableOpacity
               activeOpacity={1}
+              style={{height: '100%', justifyContent: 'center'}}
               onPress={() => setRadio(!radio)}>
               <Text style={styles.bottomArea_text}>请先阅读并同意</Text>
             </TouchableOpacity>
@@ -314,23 +315,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 33
   },
   bottomArea: {
+    height: 140,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 0,
-    marginBottom: 68
+    bottom: 0
   },
   checkBox_containerStyle: {
     margin: 0,
     padding: 0,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   bottomArea_textArea: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: '100%'
   },
   bottomArea_text: {
     color: '#000',

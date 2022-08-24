@@ -110,8 +110,10 @@ const LeavingList = () => {
       companyIds: searchContent?.companyIds || [],
       storeIds: searchContent?.storeIds || [],
       recruitIds: searchContent?.names || [],
-      startDate: searchContent?.startDate || '',
-      endDate: searchContent?.endDate || '',
+      jobStartDate: searchContent?.jobStartDate || '',
+      jobEndDate: searchContent?.jobEndDate || '',
+      resignStartDate: searchContent?.resignStartDate || '',
+      resignEndDate: searchContent?.resignEndDate || '',
       str: searchContent?.str || '',
       role
     };
