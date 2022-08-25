@@ -99,8 +99,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerTouchable: {
-    // width: 350,
-    // height: 80,
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',

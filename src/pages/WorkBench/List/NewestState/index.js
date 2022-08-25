@@ -66,7 +66,6 @@ const NewestState = () => {
   },[role])
 
   const getList = async(params) => {
-    console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await ListApi.NewestList(params);

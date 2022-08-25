@@ -85,7 +85,6 @@ const Home = (props) => {
   };
 
   const getList = async(params) => {
-    console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await HomeApi.HomePage(params);
