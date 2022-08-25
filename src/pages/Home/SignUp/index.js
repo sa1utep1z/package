@@ -20,7 +20,7 @@ const SignUp = (props) => {
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [modalVisible, setModalVisible] = useState(false); // 图库选择、拍照弹框
   const time = '23:59:00'
-  const startDate = new Date(`${params.startDate} ${time}`); // 开始日期
+  const startDate = new Date(); // 开始日期
   const endDate = new Date(`${params.endDate} ${time}`); // 结束日期
   const toast = useToast();
   var now = new Date();
@@ -64,13 +64,14 @@ const SignUp = (props) => {
 
   // 提交报名表单
   const onSubmit = async (values) => {
-    console.log('提交参数：', values)
+    console.log('提交参数11：', values)
     setOrderTime(values.orderDate)
     const prams = {
       ...values,
       arrivalMode: values.arrivalMode === true ? 'FACTORY' : 'STORE',
       orderDate: values.orderDate ? moment(values.orderDate).format('YYYY-MM-DD') : '',
     }
+  
     try {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {
@@ -112,10 +113,10 @@ const SignUp = (props) => {
             authority: formData.authority ? formData.authority : '',
             mobile: formData.mobile ? formData.mobile : '',
             jobName: params.jobName,
-            orderDate: moment(orderTime).format('YYYY-MM-DD'),
+            orderDate: moment(formData.orderDate).format('YYYY-MM-DD'),
           }
           restForm.setValues(prams)
-          console.log('识别成功后的参数：', prams)
+          console.log('识别成功后的参数：', prams, formData)
         }
       } else {
         toast.show('识别失败，请重新识别一次')
@@ -125,7 +126,7 @@ const SignUp = (props) => {
     }
 
   }
-  // console.log('参数：',restForm.getValues() )
+
   //从图库选择图片
   const openPick = async () => {
     const pickerImage = await ImagePicker.openPicker({

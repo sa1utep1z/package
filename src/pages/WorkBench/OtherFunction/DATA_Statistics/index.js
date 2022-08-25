@@ -449,7 +449,7 @@ const DATA_Statistics = () => {
 
   const renderItem = ({ item }) => {
     const renderList = [
-      { fieldName: item.name, textStyle: String(item.name).length > 4 ? styles.style2 : styles.style1 },
+      { fieldName: item.name, textStyle: (String(item.name).length === 4 && (index === 0 || index === 1) ) ? styles.style1 : styles.style2 },
       { fieldName: item.signUpIntention || '0', textStyle: { width: 98 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
       { fieldName: item.interviewNoArrive || '0', textStyle: { width: 83 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
       { fieldName: item.interviewFail || '0', textStyle: { width: 84 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
@@ -505,7 +505,7 @@ const DATA_Statistics = () => {
       <>
         <View style={styles.tabTopStyle}>
           <View style={styles.ItemStyle}>
-            <Text style={styles.title}>招聘企业</Text>
+            <Text style={styles.title}>{index === 0 ? '招聘企业' : index === 1 ? '门店名称' : index === 2 ? '供应商名' : '招聘专员'}</Text>
           </View>
           <View style={styles.ItemStyle}>
             <Text style={styles.title}>报名人数</Text>
