@@ -571,7 +571,7 @@ const DATA_Statistics = () => {
           keyExtractor={(item) => item.id}
           renderItem={(item) => renderItem(item)}
           getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-          initialNumToRender={15}
+          initialNumToRender={20}
           ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
           ListEmptyComponent={empty}
           onEndReachedThreshold={0.01}
@@ -783,7 +783,8 @@ const styles = StyleSheet.create({
     overflowX: 'scroll'
   },
   flatStyle: {
-    paddingTop: 30
+    flex: 1,
+    paddingTop: 30,
   },
   style1: {
     width: 100,
