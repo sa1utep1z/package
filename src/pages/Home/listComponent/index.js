@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { StyleSheet, View, Image, Animated, } from 'react-native';
+import { StyleSheet, View, Image, Animated, TouchableOpacity} from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -66,6 +66,10 @@ export const Header = ({ search, range, bannerList }) => {
     setRangeDate({ startDate: tomorrow, endDate: tomorrow });
   };
 
+  const pressPicture = (image) => {
+    console.log('你点击了图片哇奥', image);
+  };
+
   return (
     <>
       <View style={styles.swiperArea}>
@@ -78,11 +82,13 @@ export const Header = ({ search, range, bannerList }) => {
           defaultSource={require('../../../assets/images/loading.gif')}
           activeDotColor='#409EFF'>
           {bannerList.length ? bannerList.map((image, index) =>
-            <Image
-              loadingindicatorsource={require('../../../assets/images/homeImg.png')}
-              key={index}
-              style={{ width: '100%', height: '100%', borderRadius: 8 }}
-              source={{ uri: `${image.coverImage.url}` }} />)
+            <TouchableOpacity activeOpacity={1} onPress={()=>pressPicture(image)}>
+              <Image
+                loadingindicatorsource={require('../../../assets/images/homeImg.png')}
+                key={index}
+                style={{ width: '100%', height: '100%', borderRadius: 8 }}
+                source={{ uri: `${image.coverImage.url}` }} />
+            </TouchableOpacity>)
             : <>
               <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg.png')} />
               <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg2.jpg')} />

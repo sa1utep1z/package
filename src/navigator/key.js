@@ -1,9 +1,7 @@
 const NAVIGATION_KEYS = {
   //登录首页
   LOGIN: 'login',
-  REGISTER: 'register',
   FORGET_PSW: 'forget_psw',
-  VERIFICATION_LOGIN: 'verification_login',
   USER_AGREEMENT: 'user_agreement',
   PRIVACY_POLICY: 'privacy_policy',
 

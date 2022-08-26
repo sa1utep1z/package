@@ -20,24 +20,10 @@ export default Navigator = () => {
         options={{header: () => null}}
       />
       <Stack.Screen
-        name={NAVIGATION_KEYS.REGISTER}
-        component={NAVIGATION_PAGES.REGISTER}
-        options={{
-          headerTitle: '注册',
-        }}
-      />
-      <Stack.Screen
         name={NAVIGATION_KEYS.FORGET_PSW}
         component={NAVIGATION_PAGES.FORGET_PSW}
         options={{
           headerTitle: '忘记密码',
-        }}
-      />
-      <Stack.Screen
-        name={NAVIGATION_KEYS.VERIFICATION_LOGIN}
-        component={NAVIGATION_PAGES.VERIFICATION_LOGIN}
-        options={{
-          headerTitle: '验证码登录',
         }}
       />
       <Stack.Screen

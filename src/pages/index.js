@@ -3,9 +3,7 @@ import { FilterNavigationList } from '../utils';
 const NAVIGATION_PAGES_LIST = {
   //登录首页
   LOGIN: require('./Login'), 
-  REGISTER: require('./Login/Register'),
   FORGET_PSW: require('./Login/ForgetPassword'), 
-  VERIFICATION_LOGIN: require('./Login/VerificationLogin'),
   USER_AGREEMENT: require('./Login/UserAgreement'),
   PRIVACY_POLICY: require('./Login/PrivacyPolicy'),
 

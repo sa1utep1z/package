@@ -181,7 +181,7 @@ const Home = (props) => {
     return (
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
-        <TouchableOpacity style={{flex: 2, alignItems: 'center'}} onPress={()=>gotoList(item)}>
+        <TouchableOpacity style={styles.touchItemArea} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
         </TouchableOpacity>
         <Text style={styles.item_flex2}>{item.recruitRange}</Text>
@@ -229,6 +229,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
     alignItems: 'center'
+  },
+  touchItemArea: {
+    flex: 2, 
+    height: '100%', 
+    alignItems: 'center', 
+    justifyContent: 'center'
   },
   item_flex1: {
     flex: 1, 

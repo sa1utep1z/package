@@ -69,13 +69,14 @@ const CompanyListDialog = (props, ref) => {
           <ScrollView style={styles.scrollArea}>
             {list.list.length ? list.list.map((item, index) => {
               const isLastIndex = index === list.list.length - 1;
+              const isSingular = index % 2 !== 0;
               return (
-                <View style={[styles.listItem, isLastIndex && styles.noBorder]} key={item.orderId}>
-                  <Text style={[styles.item, styles.flex_1]}>{index + 1}</Text>
-                  <TouchableOpacity style={[styles.gotoDetail, styles.flex_4]} onPress={() => orderDetail(item)}>
+                <View style={[styles.listItem, isLastIndex && styles.noBorder, isSingular && {backgroundColor: '#FDFDFD'}]} key={item.orderId}>
+                  <Text style={[styles.item, styles.flex_1, {height: '100%', borderRightWidth: 1, borderColor: '#409EFF'}]}>{index + 1}</Text>
+                  <TouchableOpacity style={[styles.gotoDetail, styles.flex_4, {minHeight: 40, justifyContent: 'center', borderRightWidth: 1, borderColor: '#409EFF'}]} onPress={() => orderDetail(item)}>
                     <Text style={[styles.item, styles.gotoDetailPress]}>{item.orderName}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.gotoDetail, styles.flex_1]} onPress={() => gotoDetail(item)}>
+                  <TouchableOpacity style={[styles.gotoDetail, styles.flex_1, {minHeight: 40, justifyContent: 'center'}]} onPress={() => gotoDetail(item)}>
                     <Text style={styles.gotoDetailPress}>进入</Text>
                   </TouchableOpacity>
                 </View>
@@ -114,7 +115,8 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   scrollArea: {
-    borderRadius: 8
+    borderWidth: 1,
+    borderColor: '#409EFF'
   },
   icon: {
     position: 'absolute', 
@@ -126,11 +128,19 @@ const styles = StyleSheet.create({
     height: 45, 
     backgroundColor: '#e7f3ff', 
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#409EFF',
+    borderBottomWidth: 0,
+    borderRightWidth: 0
   },
   head: {
     textAlign: 'center', 
-    fontWeight: 'bold'
+    textAlignVertical: 'center',
+    fontWeight: 'bold',
+    height: '100%',
+    borderRightWidth: 1,
+    borderColor: '#409EFF'
   },
   headText: {
     fontWeight: 'bold'
@@ -140,15 +150,14 @@ const styles = StyleSheet.create({
   },
   listItem: {
     minHeight: 40, 
-    paddingVertical: 5, 
-    backgroundColor: '#fdfdfd', 
     flexDirection: 'row', 
     alignItems: 'center', 
     borderBottomWidth: 1, 
-    borderColor: '#E3E3E3'
+    borderColor: '#409EFF'
   },
   item: {
     textAlign: 'center', 
+    textAlignVertical: 'center',
     fontSize: 13
   },
   gotoDetailPress: {

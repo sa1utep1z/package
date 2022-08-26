@@ -1,4 +1,4 @@
-import React, {useState, useRef, useMemo} from 'react';
+import React, {useState, useRef} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text, Input, Icon} from '@rneui/themed';
 import {ErrorMessage} from 'formik';
@@ -11,10 +11,9 @@ const LoginInput = ({
   ...props
 }) => {
   const inputRef = useRef(null);
+
   const [seePassword, setSeePassword] = useState(true);
   const [showClear, setShowClear] = useState(false);
-
-  const seePasswordOnPress = () => setSeePassword(!seePassword);
 
   const clearInput = () => {
     form.setFieldValue(field.name, '');
@@ -65,6 +64,7 @@ const LoginInput = ({
     }
   };
 
+  const seePasswordOnPress = () => setSeePassword(!seePassword);
   const onFocus = () => field.value.length && setShowClear(true);
   const onBlur = () => setShowClear(false);
 
@@ -100,25 +100,24 @@ const LoginInput = ({
 const styles = StyleSheet.create({
   containerStyle: {
     flexDirection: 'row', 
-    paddingLeft: 33,
-    paddingRight: 33,
-    height: 114
+    paddingLeft: 0,
+    paddingRight: 0,
+    height: 114,
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    borderBottomWidth: 2
   },
   labelStyle: {
     width: 131, 
     fontSize: 36, 
     paddingBottom: 24,
     color: '#000',
-    textAlignVertical: 'bottom',
-    borderBottomColor: 'rgba(0, 0, 0, .05)',
-    borderBottomWidth: 2
+    textAlignVertical: 'bottom'
   },
   inputContainerStyle: {
     flex: 1, 
     padding: 0,
     alignItems: 'flex-end',
-    borderBottomColor: 'rgba(0, 0, 0, .05)',
-    borderBottomWidth: 2
+    borderBottomWidth: 0
   },
   inputStyle: {
     fontSize: 30,
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
   },
   errorInput: {
     fontSize: 26,
-    marginLeft: 164,
+    marginLeft: 131,
     color: 'red'
   }
 })
