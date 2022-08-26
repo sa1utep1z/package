@@ -29,7 +29,8 @@ const CompanyDetail = (props) => {
   const recruitRange = date + date2;
   const startTime = String(orderData.recruitRange).substring(0, 10); //开始日期
   const endTime = String(orderData.recruitRange).substring(11, 21);// 结束日期
-
+  
+ 
   const getDetail = async () => {
     try {
       const res = await HomeApi.orderDetail(orderId);

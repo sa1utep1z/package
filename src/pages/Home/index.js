@@ -4,7 +4,7 @@ import { Text } from '@rneui/themed';
 import { useToast } from "react-native-toast-notifications";
 import { useSelector, useDispatch } from 'react-redux';
 import {CommonActions} from '@react-navigation/native';
-
+import moment from 'moment';
 import { Header, empty } from "./listComponent";
 import CompanyListDialog from "../../components/Home/CompanyListDialog";
 import NAVIGATION_KEYS from "../../navigator/key";
@@ -34,7 +34,8 @@ const Home = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSeacher, setIsSeacher] = useState(false); // 是否搜索历史
   const [load, setLoad] = useState(true);
-
+  const tody = moment(new Date()).format('YYYY-MM-DD')
+  console.log('打印时间： ', tody)
   useEffect(() => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
@@ -180,7 +181,11 @@ const Home = (props) => {
   };
 
   const setRangeDate = (rangeDate) => {
-    console.log('搜索的日期：', rangeDate)
+    if (rangeDate.startDate === tody && (rangeDate.endDate === tody)) {
+      setIsSeacher(false)
+    } else {
+      setIsSeacher(true)
+    }
     setSearchContent({...searchContent, ...firstPage, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate});
   };
 
