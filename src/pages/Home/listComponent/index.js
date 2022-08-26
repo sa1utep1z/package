@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { StyleSheet, View, Image, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, Animated, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback, Alert, Platform} from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector } from 'react-redux';
+import { useToast } from 'react-native-toast-notifications';
 import moment from "moment";
+import FitImage from 'react-native-fit-image';
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import RNFS from 'react-native-fs';
 
 import DatePicker from "../DatePicker";
 import SearchInput from "../../../components/SearchInput";
@@ -16,7 +20,11 @@ const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
 export const Header = ({ search, isSeacher, range, bannerList }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const toast = useToast();
+
   const [activeButton, setActiveButton] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [showImage, setShowImage] = useState([]);
   const [rangeDate, setRangeDate] = useState({ startDate: today, endDate: today });
 
   const showSearch = useSelector((state) => state.homeSearch.canSearch);
@@ -67,7 +75,42 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
   };
 
   const pressPicture = (image) => {
-    console.log('你点击了图片哇奥', image);
+    if(!image.contentImage.length){
+      toast.show('无详情', {type: 'warning'});
+      return;
+    }
+    setModalVisible(true);
+    setShowImage(image.contentImage);
+  };
+
+  const closePicture = () => setModalVisible(!modalVisible);
+
+  const savePicture = (url) => {
+    Alert.alert('提示  ', '确定保存照片到相册？',
+      [
+        { text: " 取消", onPress: () => {} },
+        { text: "确定", onPress: () => saveImgInAndroid(url) },
+      ]
+    )
+  };
+
+  const saveImgInAndroid = (url) => {
+    const storeLocation = `${RNFS.ExternalDirectoryPath}`; 
+    let pathName = new Date().getTime();
+    let downloadDest = `${storeLocation}/${pathName}`;
+    const ret = RNFS.downloadFile({fromUrl: url, toFile: downloadDest});
+    ret.promise.then(res => {
+      if(res && res.statusCode === 200){
+        var promise = CameraRoll.saveToCameraRoll("file://" + downloadDest);
+        promise.then(function(result) {
+          console.log('result', result);
+          Alert.alert("图片已保存至相册");
+        }).catch(function(error) {
+          console.log('error', error);
+          Alert.alert("保存失败");
+        })
+      }
+    })
   };
 
   return (
@@ -122,6 +165,33 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
           )
         }
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closePicture}>
+        <View style={{backgroundColor: 'rgba(0,0,0,.4)', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{width: '90%', height: '90%', backgroundColor: '#fff', borderRadius: 10, padding: 10}}>
+          <TouchableOpacity style={{position: 'absolute', width: 50, height: 50, right: 0, backgroundColor: 'rgba(0,0,0,0)', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={closePicture}>
+            <Icon
+              type="antdesign"
+              name='close'
+              color='#fff'
+              size={30}
+            />
+          </TouchableOpacity>
+            <ScrollView style={{flex: 1}}>
+              {showImage.map((image, imageIndex) => {
+                return (
+                  <TouchableWithoutFeedback onLongPress={() => savePicture(image.url)}>
+                    <FitImage key={imageIndex} source={{uri: `${image.url}`}}/>
+                  </TouchableWithoutFeedback>
+                )
+              })}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </>
   )
 };
