@@ -102,6 +102,7 @@ const SignUp = (props) => {
       const res = await HomeApi.ocrReq(data)
       const newData = res.data;
       const formData = restForm.values;
+      console.log('是否执行操作识别', res)
       if (res.code == 0) {
         toast.show('识别成功')
         if (newData.timeLimit || newData.authority) {
@@ -123,6 +124,7 @@ const SignUp = (props) => {
       }
     } catch (error) {
       toast.show('识别失败，出现异常请联系管理员处理')
+      console.log('识别失败：', error)
     }
 
   }
@@ -133,12 +135,14 @@ const SignUp = (props) => {
       cropperChooseText: '确定',
       cropperCancelText: '取消',
       width: 300,
-      height: 400,
-      cropping: true
+      hignt: 400,
+      compressImageMaxWidth: 300,
+      cropping: true,
     })
     setModalVisible(false);
     const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
     uploadImage(fileName, pickerImage.path);
+    console.log('选择图库照片：', pickerImage)
   }
 
   //调用相机拍照
@@ -152,6 +156,7 @@ const SignUp = (props) => {
     });
     const fileName = `${cameraImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
     uploadImage(fileName, cameraImage.path);
+    console.log('拍照上传照片', cameraImage)
   }
 
   // 获取权限
