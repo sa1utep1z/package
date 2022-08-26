@@ -259,6 +259,11 @@ export const COMPANY_SHIFT = [
   { label: '两班倒', value: 'SHIFT_CATEGORY_TWO' },
   { label: '三班倒', value: 'SHIFT_CATEGORY_THREE' },
 ];
+export const PROFESSION = [
+  { label: '正式工', value: 'FORMAL_WORKER' },
+  { label: '派遣工-小时工', value: 'DISPATCH_HOURLY_WORKER' },
+  { label: '派遣工-同工同酬', value: 'DISPATCH_EQUAL_PAY' },
+];
 export const SITSTAND = [
   { label: '站班', value: 'STAND' },
   { label: '坐班', value: 'SIT_DOWN' },
