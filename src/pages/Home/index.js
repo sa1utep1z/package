@@ -32,6 +32,7 @@ const Home = (props) => {
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSeacher, setIsSeacher] = useState(false); // 是否搜索历史
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
@@ -170,9 +171,16 @@ const Home = (props) => {
 
   const search = (values) => {
     setSearchContent({...searchContent, ...firstPage, companyName: values});
+    if (values) {
+      setIsSeacher(true)
+    } else {
+      setIsSeacher(false)
+    }
+    console.log('搜索的值：', values)
   };
 
   const setRangeDate = (rangeDate) => {
+    console.log('搜索的日期：', rangeDate)
     setSearchContent({...searchContent, ...firstPage, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate});
   };
 
@@ -180,10 +188,15 @@ const Home = (props) => {
     return (
       <View style={styles.itemArea}>
         <Text style={styles.item_flex1}>{index+1}</Text>
-        <TouchableOpacity style={styles.touchItemArea} onPress={()=>gotoList(item)}>
+        <TouchableOpacity style={isSeacher ? styles.touchItemArea : styles.touchItemArea1} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
         </TouchableOpacity>
-        <Text style={styles.item_flex2}>{item.recruitRange}</Text>
+        <Text style={styles.item_flex2}>100人</Text>
+        {
+          isSeacher && (
+            <Text style={styles.item_flex2}>{item.recruitRange}</Text>
+          )
+        }
       </View>
   )};
 
@@ -205,7 +218,7 @@ const Home = (props) => {
         keyExtractor={(item, index) => index}
         renderItem={renderItem}
         refreshControl={refreshControl}
-        ListHeaderComponent={<Header search={search} range={setRangeDate} bannerList={bannerList}/>}
+        ListHeaderComponent={<Header search={search} isSeacher={isSeacher} range={setRangeDate} bannerList={bannerList}/>}
         ListEmptyComponent={empty}
         ListFooterComponent={<Text style={styles.bottomText}>{nextPage ? '加载中...' : '没有更多数据'}</Text>}
         removeClippedSubviews
@@ -232,8 +245,19 @@ const styles = StyleSheet.create({
   touchItemArea: {
     flex: 2, 
     height: '100%', 
-    alignItems: 'center', 
-    justifyContent: 'center'
+    alignItems: 'flex-start', 
+    justifyContent: 'center',
+    textAlign: 'left',
+    paddingLeft: 15
+  },
+  touchItemArea1: {
+    flex: 2, 
+    height: '100%', 
+    alignItems: 'flex-start', 
+    justifyContent: 'center',
+    textAlign: 'left',
+    marginLeft: 50,
+    paddingLeft: 30,
   },
   item_flex1: {
     flex: 1, 
@@ -247,7 +271,7 @@ const styles = StyleSheet.create({
   },
   itemPress: {
     color: '#409EFF',
-    fontSize: 32
+    fontSize: 32,
   },
   icon: {
     fontSize: 20,

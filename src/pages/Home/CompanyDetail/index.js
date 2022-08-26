@@ -9,10 +9,10 @@ import { useToast } from "react-native-toast-notifications";
 import HomeApi from "../../../request/HomeApi";
 import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
-import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE } from '../../../utils/const';
+import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE, PROFESSION } from '../../../utils/const';
 
 const CompanyDetail = (props) => {
-  const {route: {params: {bannerList = []}}} = props;
+  const { route: { params: { bannerList = [] } } } = props;
   const webRef = useRef(null);
   const toast = useToast();
 
@@ -23,7 +23,7 @@ const CompanyDetail = (props) => {
   const [orderData, setOrderData] = useState({
     orderPolicyDetail: ''
   }); // 岗位详情数据
-  const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n")
+  const orderPolicyDetail = String(orderData.orderPolicyDetail).replace(/<br\/>/g, "\n")
   const date = String(orderData.recruitRange).substring(5, 11);
   const date2 = String(orderData.recruitRange).substring(16, 21);
   const recruitRange = date + date2;
@@ -31,14 +31,15 @@ const CompanyDetail = (props) => {
   const endTime = String(orderData.recruitRange).substring(11, 21);// 结束日期
 
   const getDetail = async () => {
-    try{
+    try {
       const res = await HomeApi.orderDetail(orderId);
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`请求失败，${res.msg}`, {type: 'danger'});
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res.msg}`, { type: 'danger' });
         return;
       }
       setOrderData(res.data);
-    }catch(err){
+      console.log('岗位详情：', res)
+    } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
@@ -58,7 +59,7 @@ const CompanyDetail = (props) => {
   });
 
   return (
-    <View style={{ flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.swiperArea}>
           <Swiper
@@ -69,45 +70,57 @@ const CompanyDetail = (props) => {
             paginationStyle={styles.paginationStyle}
             defaultSource={require('../../../assets/images/loading.gif')}
             activeDotColor='#409EFF'>
-            {bannerList.length ? bannerList.map((image, index) => 
-              <Image 
-                loadingindicatorsource={require('../../../assets/images/homeImg.png')} 
-                key={index} 
-                style={{width: '100%', height: '100%', borderRadius: 8}} 
-                source={{uri: `${image.coverImage.url}`}}/>)
+            {bannerList.length ? bannerList.map((image, index) =>
+              <Image
+                loadingindicatorsource={require('../../../assets/images/homeImg.png')}
+                key={index}
+                style={{ width: '100%', height: '100%', borderRadius: 8 }}
+                source={{ uri: `${image.coverImage.url}` }} />)
               : <>
-                <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg.png')}/>
-                <Image style={{width: '100%', height: '100%', borderRadius: 8}} source={require('../../../assets/images/homeImg2.jpg')}/>
+                <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg.png')} />
+                <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg2.jpg')} />
               </>}
           </Swiper>
         </View>
         <View style={styles.jobBoxStyle}>
+          <Text style={styles.textStyle}>{orderData.orderName}</Text>
           <View style={styles.jobBoxLeft}>
-            <Text style={styles.textStyle}>{orderData.orderName}</Text>
             <View style={styles.rowStyles}>
               <Text style={styles.salaryStyle}>综合薪资</Text>
               <Text style={styles.amountStyle}>{orderData.salary}</Text>
             </View>
-            <View style={styles.rowStyles}>
-              {
-                orderData.tags?.map((item) => (
-                  <Text style={styles.tagsStyle}>{item}</Text>
-                ))
-              }
-            </View>
-            <View style={styles.rowStyles}>
-              <Text style={styles.workStyle}>正式工</Text>
-              <Text style={styles.quotaStyle}>剩余名额：</Text>
-              <Text style={styles.workStyle}>{orderData.last}</Text>
-              {
-                orderData.genderLimit && (
-                  <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.male}</Text> 女：<Text style={styles.workStyle}>{orderData.female}</Text>】</Text>
-                )
-              }
+            <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ fontSize: 26 }}>{recruitRange}</Text>
             </View>
           </View>
-          <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: 26 }}>{recruitRange}</Text>
+          <View style={styles.rowStyles}>
+            {
+              orderData.tags?.map((item) => (
+                <Text style={styles.tagsStyle}>{item}</Text>
+              ))
+            }
+          </View>
+          <View style={styles.rowStyles}>
+            <Text style={styles.workBox}>{getEnumValue(PROFESSION, orderData.typeOfWork)}</Text>
+          </View>
+          <View style={styles.rowStyles}>
+            <Text style={styles.quotaStyle}>招聘人数：</Text>
+            <Text style={styles.workStyle}>{orderData.total}</Text>
+            {
+              orderData.genderLimit && (
+                <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.maleTotal}</Text> 女：<Text style={styles.workStyle}>{orderData.femaleTotal}</Text>】</Text>
+              )
+            }
+            {
+              !orderData.genderLimit && (
+                <Text style={styles.quotaStyle}>【男女不限】</Text>
+              )
+            }
+          </View>
+          <View style={styles.rowStyles}>
+            <Text style={styles.quotaStyle}>已报名人数：</Text>
+            <Text style={styles.workStyle}>{parseInt(orderData.male)+parseInt(orderData.female)}</Text>
+            <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.male}</Text> 女：<Text style={styles.workStyle}>{orderData.female}</Text>】</Text>
           </View>
         </View>
         <View style={styles.boxStyle}>
@@ -116,8 +129,8 @@ const CompanyDetail = (props) => {
             <Text style={styles.titlesStyle}>发单详情</Text>
           </View>
           <View style={styles.contentStyle}>
-            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail.length ? String(orderData.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text>
-            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail? orderPolicyDetail : '无'}</Text>
+            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail.length ? String(orderData.orderPolicyDetail).replace(/<br\/>/g, "\n") : '无'}</Text>
+            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
             {/* <WebView
               scrollEnabled={false}
               scalesPageToFit={false}
@@ -255,7 +268,7 @@ const CompanyDetail = (props) => {
           </View>
         </View>
       </ScrollView>
-      <View style={{marginVertical: 20, marginHorizontal: 20}}>
+      <View style={{ marginVertical: 20, marginHorizontal: 20 }}>
         <Button
           title="帮他报名"
           onPress={signUpPress}
@@ -286,14 +299,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 30,
     marginBottom: 30,
-    flexDirection: 'row',
-    paddingRight: 15
+    padding: 20,
+
   },
   jobBoxLeft: {
     flex: 7,
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingLeft: 15
   },
   textStyle: {
     fontSize: 36,
@@ -321,6 +333,16 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     fontWeight: 'bold'
   },
+  workBox: {
+    color: '#409EFF',
+    borderColor: '#409EFF',
+    borderWidth: 2,
+    fontSize: 24,
+    paddingHorizontal: 8,
+    // paddingVertical: 2,
+    borderRadius: 3,
+    fontWeight: 'bold'
+  },
   rowStyles: {
     flexDirection: 'row',
     marginTop: 5,
@@ -329,8 +351,7 @@ const styles = StyleSheet.create({
   workStyle: {
     color: '#409EFF',
     fontWeight: 'bold',
-    paddingRight: 8,
-    fontSize: 24
+    fontSize: 24,
   },
   quotaStyle: {
     color: '#000',

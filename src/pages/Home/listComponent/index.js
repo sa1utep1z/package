@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { StyleSheet, View, Image, Animated, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Image, Animated, TouchableOpacity } from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,14 +13,14 @@ import SearchInput from "../../../components/SearchInput";
 const today = moment().format("YYYY-MM-DD");
 const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
 
-export const Header = ({ search, range, bannerList }) => {
+export const Header = ({ search, isSeacher, range, bannerList }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const [activeButton, setActiveButton] = useState(0);
   const [rangeDate, setRangeDate] = useState({ startDate: today, endDate: today });
 
   const showSearch = useSelector((state) => state.homeSearch.canSearch);
-
+  
   useEffect(() => {
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
@@ -82,7 +82,7 @@ export const Header = ({ search, range, bannerList }) => {
           defaultSource={require('../../../assets/images/loading.gif')}
           activeDotColor='#409EFF'>
           {bannerList.length ? bannerList.map((image, index) =>
-            <TouchableOpacity activeOpacity={1} onPress={()=>pressPicture(image)}>
+            <TouchableOpacity activeOpacity={1} onPress={() => pressPicture(image)}>
               <Image
                 loadingindicatorsource={require('../../../assets/images/homeImg.png')}
                 key={index}
@@ -95,9 +95,9 @@ export const Header = ({ search, range, bannerList }) => {
             </>}
         </Swiper>
       </View>
-      <Animated.View style={[{opacity: fadeAnim}, !showSearch && {height: 0}]}>
-        <SearchInput searchPress={search} fontStyle={{fontSize: 26}}/>
-        <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate}/>
+      <Animated.View style={[{ opacity: fadeAnim }, !showSearch && { height: 0 }]}>
+        <SearchInput searchPress={search} fontStyle={{ fontSize: 26 }} />
+        <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate} />
       </Animated.View>
       <View style={styles.buttonArea}>
         <Button
@@ -114,8 +114,13 @@ export const Header = ({ search, range, bannerList }) => {
       </View>
       <View style={styles.listHeader}>
         <Text style={styles.listHeader_flex1}>序号</Text>
-        <Text style={[styles.listHeader_flex2]}>企业名称</Text>
-        <Text style={styles.listHeader_flex2}>招聘时段</Text>
+        <Text style={isSeacher ? styles.listHeader_flex4 : styles.listHeader_flex3}>企业名称</Text>
+        <Text style={[styles.listHeader_flex2]}>招聘人数</Text>
+        {
+          isSeacher && (
+            <Text style={styles.listHeader_flex2}>招聘时段</Text>
+          )
+        }
       </View>
     </>
   )
@@ -223,6 +228,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     fontSize: 32
+  },
+  listHeader_flex3: {
+    flex: 2,
+    // textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 32,
+    textAlign: 'left',
+    marginLeft: 50,
+    paddingLeft: 30,
+  },
+  listHeader_flex4: {
+    flex: 2,
+    // textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 32,
+    textAlign: 'left',
+    paddingLeft: 15
   },
   footer: {
     height: 13,
