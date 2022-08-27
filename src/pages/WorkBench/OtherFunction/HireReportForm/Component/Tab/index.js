@@ -29,6 +29,7 @@ const Tab = ({
   return (
     <TabView
       lazy
+      swipeEnabled={false}
       renderTabBar={tabBar}
       onIndexChange={setIndex}
       renderScene={renderScene}

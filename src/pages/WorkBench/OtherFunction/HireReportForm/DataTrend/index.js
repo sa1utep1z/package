@@ -8,17 +8,24 @@ import { HIRE_DATA_TREND_TAB_LIST } from "../../../../../utils/const";
 
 import CompanyRoute from "./CompanyRoute";
 import StoreRoute from "./StoreRoute";
-import RecruiterStore from "./RecruiterStore";
-import SupplierStore from "./SupplierStore";
+import RecruiterRoute from "./RecruiterRoute";
+import SupplierRoute from "./SupplierRoute";
 
-const renderScene = SceneMap({
-  company: CompanyRoute,
-  store: StoreRoute,
-  recruiter: RecruiterStore,
-  supplier: SupplierStore,
-});
 
-const DataTrend = () => {
+const DataTrend = ({CompanyList}) => {
+  
+const renderScene = ({route}) => {
+  switch(route.key){
+    case 'company': 
+      return <CompanyRoute CompanyList={CompanyList}/>
+    case 'store':
+      return <StoreRoute />
+    case 'recruiter':
+      return <RecruiterRoute />
+    case 'supplier':
+      return <SupplierRoute />
+  }
+};
 
   return (
     <Shadow>

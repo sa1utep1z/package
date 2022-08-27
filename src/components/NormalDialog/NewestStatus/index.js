@@ -258,7 +258,8 @@ const NewestStatus = ({
               <Text style={isSelected && {fontWeight: 'bold'}}>{stageInList.title}</Text>
               {isSelected && <CheckBox
                 checked
-                size={20}
+                size={18}
+                containerStyle={{padding: 0}}
                 checkedIcon={"dot-circle-o"}
                 uncheckedIcon={"circle-o"}
               />}
@@ -285,7 +286,8 @@ const NewestStatus = ({
               <Text style={isSelected && {fontWeight: 'bold'}}>{statusInList.title}</Text>
               {isSelected && <CheckBox
                 checked
-                size={20}
+                size={18}
+                containerStyle={{padding: 0}}
                 checkedIcon={"dot-circle-o"}
                 uncheckedIcon={"circle-o"}
               />}

@@ -1,18 +1,18 @@
 import React, {useState} from "react";
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
 
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 
-const CompanyRoute = () => {
+const CompanyRoute = ({CompanyList}) => {
   
   const data = {
-    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
+    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
       {
-        data: ['', 155, 240, 130, 260, 320, 170], 
+        data: ['', 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170], 
         color: () => '#409EFF'
       }
     ],
@@ -79,8 +79,8 @@ const CompanyRoute = () => {
             人数
         </Text>
         <Text
-          x={width - 50}
-          y={height - 40}
+          x={width - 40}
+          y={height - 50}
           fontSize="22"
           fontWeight="bold"
           fill="#333333">
@@ -92,33 +92,35 @@ const CompanyRoute = () => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton />
-      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-        <LineChart
-          style={styles.LineStyle}
-          data={data}
-          chartConfig={chartConfig}
-          width={620}
-          height={370}
-          segments={6}
-          bezier
-          fromZero
-          getDotColor={(...rest) => console.log('getDotColor-rest', rest)}
-          decorator={decorator}
-          withOuterLines={false}
-          withVerticalLines={false}
-          formatYLabel={(num) => Math.trunc(num)}
-          renderDotContent={renderDotContent}
-        />
+      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton CompanyList={CompanyList}/>
+      <View style={styles.bottomArea}>
+        <ScrollView horizontal>
+          <LineChart
+            data={data}
+            chartConfig={chartConfig}
+            width={data.labels.length * 50}
+            height={370}
+            segments={6}
+            bezier
+            fromZero
+            getDotColor={(...rest) => console.log('getDotColor-rest', rest)}
+            decorator={decorator}
+            withOuterLines={false}
+            withVerticalLines={false}
+            formatYLabel={(num) => Math.trunc(num)}
+            renderDotContent={renderDotContent}
+          />
+        </ScrollView>
       </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  LineStyle: {
-    position: 'absolute',
-    bottom: -30
+  bottomArea: {
+    flex: 1, 
+    justifyContent: 'flex-end', 
+    alignItems: 'center'
   }
 });
 

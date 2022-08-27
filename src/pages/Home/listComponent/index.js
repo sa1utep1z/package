@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { useToast } from 'react-native-toast-notifications';
 import moment from "moment";
 import FitImage from 'react-native-fit-image';
-// import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import RNFS from 'react-native-fs';
 
 import DatePicker from "../DatePicker";
@@ -101,14 +101,14 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
     const ret = RNFS.downloadFile({fromUrl: url, toFile: downloadDest});
     ret.promise.then(res => {
       if(res && res.statusCode === 200){
-        // var promise = CameraRoll.saveToCameraRoll("file://" + downloadDest);
-        // promise.then(function(result) {
-        //   console.log('result', result);
-        //   Alert.alert("图片已保存至相册");
-        // }).catch(function(error) {
-        //   console.log('error', error);
-        //   Alert.alert("保存失败");
-        // })
+        var promise = CameraRoll.saveToCameraRoll("file://" + downloadDest);
+        promise.then(function(result) {
+          console.log('result', result);
+          Alert.alert("图片已保存至相册");
+        }).catch(function(error) {
+          console.log('error', error);
+          Alert.alert("保存失败");
+        })
       }
     })
   };

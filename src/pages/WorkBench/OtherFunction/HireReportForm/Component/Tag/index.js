@@ -1,14 +1,15 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 import NormalDialog from '../../../../../../components/NormalDialog';
-import { useEffect } from "react";
+import FilterMore from "../../../../../../components/NormalDialog/FilterMore";
 
 const Tag = ({
   lastButton = false,
   tagList = [],
-  tagAreaStyle
+  tagAreaStyle,
+  CompanyList
 }) => {
   const dialogRef = useRef(null);
 
@@ -26,10 +27,7 @@ const Tag = ({
     dialogRef?.current.setShowDialog(true);
     setDialogContent({
       dialogTitle: '筛选更多',
-      dialogComponent: 
-        (<View style={{height: 30, borderWidth: 1}}>
-
-        </View>)
+      dialogComponent: <FilterMore CompanyList={CompanyList}/>
     })
   };
 

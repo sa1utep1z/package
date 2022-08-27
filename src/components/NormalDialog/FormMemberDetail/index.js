@@ -7,6 +7,7 @@ import { MEMBER_INFO_KEY, FAKE_MEMBER_INFO, GENDER, SEAS_SOURCE_TYPE } from '../
 import moment from 'moment';
 import EmptyArea from '../../EmptyArea';
 import { CHANEL_SOURCE_LIST, MEMBERS_STATUS, WAY_TO_GO } from '../../../utils/const';
+import { deepCopy } from '../../../utils';
 
 const FormMemberDetail = ({
   memberInfoList = FAKE_MEMBER_INFO,
@@ -31,9 +32,10 @@ const FormMemberDetail = ({
   ]);
 
   useMemo(() => {
+    const copyList = deepCopy(showList);
     for (let key in memberInfoList) {
-      if (showList.length) {
-        const findItem = showList.find(item => item.type === key);
+      if (copyList.length) {
+        const findItem = copyList.find(item => item.type === key);
         if (findItem) {
           switch (key) {
             case 'signUpType':
@@ -64,14 +66,14 @@ const FormMemberDetail = ({
       }
     }
     //门店录入,删除供应商;供应商,删除经纪人;
-    if(memberInfoList.signUpType === 'RECRUITER'){
-      const supplierIndex = showList.findIndex(item => item.type === 'supplier');
-      showList.splice(supplierIndex, 1);
-    }else if(memberInfoList.signUpType === 'SUPPLIER'){
-      const recruiterIndex = showList.findIndex(item => item.type === 'recruitName');
-      showList.splice(recruiterIndex, 1);
+    if(memberInfoList.signUpType === 'RECRUITER' && (copyList.findIndex(item => item.type === 'supplier') !== -1)){
+      const supplierIndex = copyList.findIndex(item => item.type === 'supplier');
+      copyList.splice(supplierIndex, 1);
+    }else if(memberInfoList.signUpType === 'SUPPLIER' && (copyList.findIndex(item => item.type === 'recruitName') !== -1)){
+      const recruiterIndex = copyList.findIndex(item => item.type === 'recruitName');
+      copyList.splice(recruiterIndex, 1);
     }
-    setShowList(showList);
+    setShowList(copyList);
   }, [memberInfoList])
 
   const callPhone = (item) => {

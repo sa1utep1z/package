@@ -6,7 +6,7 @@ import Svg, { Circle, Text, Line } from 'react-native-svg';
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 
-const RecruiterStore = () => {
+const RecruiterRoute = () => {
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
@@ -120,4 +120,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RecruiterStore;
+export default RecruiterRoute;

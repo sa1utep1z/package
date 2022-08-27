@@ -1,66 +1,17 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
-  Dimensions,
-  ScrollView,
-  KeyboardAvoidingView,
-  ToastAndroid,
+  ImageBackground
 } from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
-import {CommonActions, useNavigation} from '@react-navigation/native';
 import {Text, Button, CheckBox} from '@rneui/themed';
-import {Formik, Field} from 'formik';
 import { TabView, TabBar } from 'react-native-tab-view';
-import md5 from 'md5';
-import { SceneMap } from 'react-native-tab-view';
 
-import httpRequest from '../../utils/httpRequest';
-import storage from '../../utils/storage';
 import NAVIGATION_KEYS from '../../navigator/key';
-import Toast from '../../components/Toast';
-import LoginInput from '../../components/LoginInput';
-import {SUCCESS_CODE} from '../../utils/const';
 import AccountLoginRoute from './AccountLoginRoute';
 import VerificationLoginRoute from './VerificationLoginRoute';
-
-let restForm;
-
-// const verificationLoginRoute = () => {
-//   const toast = useToast();
-
-//   const onSubmit = values => {
-//     toast.show('敬请期待...', {type: 'warning'});
-//     console.log('执行的是验证码登录', values);
-//   };
-
-//   return (
-//     <View style={{minHeight: 370, justifyContent: 'center'}}>
-//       <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 28}}>敬请期待...</Text>
-//       {/* <Formik
-//         initialValues={initialValues}
-//         validationSchema={LoginSchema}
-//         onSubmit={onSubmit}>
-//         {({handleSubmit, ...rest}) => {
-//           restForm = rest;
-//           return (
-//             <View style={{paddingTop: 20}}>
-//               <Field name="mobile" label="手机号" component={LoginInput} />
-//               <Field
-//                 name="verifyCode"
-//                 label="验证码"
-//                 maxLength={6}
-//                 component={LoginInput}
-//               />
-//             </View>
-//           );
-//         }}
-//       </Formik> */}
-//     </View>
-//   )
-// };
 
 const Login = props => {
   const {navigation} = props;
@@ -72,7 +23,6 @@ const Login = props => {
   
   const [index, setIndex] = useState(0);
   const [radio, setRadio] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   const renderLabel = ({ route, focused, color }) => (
     <Text style={[{fontSize: 36, color}, focused && {fontWeight: 'bold'}]}>

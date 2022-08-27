@@ -53,7 +53,8 @@ export const workBenchList = [
         imgBackground: require('../../assets/images/lightBlue.png'),
         iconSource: require('../../assets/images/DATA_StatisticsIcon.png'),
         routeName: NAVIGATION_KEYS.DATA_STATISTICS
-      }, {
+      },
+       {
         title: '招聘看板',
         imgBackground: require('../../assets/images/deepGreen.png'),
         iconSource: require('../../assets/images/HireReportFormIcon.png'),

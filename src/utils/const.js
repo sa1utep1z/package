@@ -417,4 +417,14 @@ export const ROLE_INFO = {
   'RECRUITER': '招聘员',
   'RESIDENT': '驻厂',
   'FINANCE': '财务'
-}
+};
+
+export const CHART_STATUS_LIST = [
+  {value: 'SIGN_UP_INTENTION', title: '已报名'},
+  {value: 'INTERVIEW_NO_ARRIVE', title: '面试未去'},
+  {value: 'INTERVIEW_FAIL', title: '面试未过'},
+  {value: 'INTERVIEW_PASS', title: '面试通过'},
+  {value: 'ON_BOARDING_FAIL', title: '未报到'},
+  {value: 'ON_BOARDING_PASS', title: '入职'},
+  {value: 'JOB_RESIGN', title: '离职'}
+]
