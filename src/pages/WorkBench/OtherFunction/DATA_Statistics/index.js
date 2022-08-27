@@ -68,6 +68,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取企业数据参数：', prams)
+      console.log('获取企业数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -111,6 +113,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取门店数据参数：', prams)
+      console.log('获取门店数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -154,6 +158,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取供应商数据参数：', prams)
+      console.log('获取供应商数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -197,6 +203,8 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
+      console.log('获取招聘员数据参数：', prams)
+      console.log('获取招聘员数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -449,7 +457,7 @@ const DATA_Statistics = () => {
 
   const renderItem = ({ item }) => {
     const renderList = [
-      { fieldName: item.name, textStyle: (String(item.name).length === 4 && (index === 0 || index === 1) ) ? styles.style1 : styles.style2 },
+      { fieldName: item.name, textStyle: (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2 },
       { fieldName: item.signUpIntention || '0', textStyle: { width: 98 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
       { fieldName: item.interviewNoArrive || '0', textStyle: { width: 83 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
       { fieldName: item.interviewFail || '0', textStyle: { width: 84 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
@@ -484,7 +492,6 @@ const DATA_Statistics = () => {
 
   // 刷新
   const refresh = () => setSearchContent({ ...searchContent });
-
   const onEndReached = () => {
     if (!load) return;
     if (originData.hasNext) {
@@ -498,6 +505,7 @@ const DATA_Statistics = () => {
 
   const selectIndex = (i) => {
     setIndex(i);
+    setSearchContent({ ...searchContent, pageNumber: 0 });
   };
 
   const tabHead = () => {

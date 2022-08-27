@@ -35,7 +35,8 @@ const Home = (props) => {
   const [isSeacher, setIsSeacher] = useState(false); // 是否搜索历史
   const [load, setLoad] = useState(true);
   const tody = moment(new Date()).format('YYYY-MM-DD')
-  console.log('打印时间： ', tody)
+  const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
+ 
   useEffect(() => {
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
@@ -88,9 +89,10 @@ const Home = (props) => {
 
   const getList = async(params) => {
     setIsLoading(true);
+    console.log('首页数据请求参数：', params);
     try{
       const res = await HomeApi.HomePage(params);
-      console.log('res', res);
+      console.log('首页数据', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -174,6 +176,8 @@ const Home = (props) => {
     setSearchContent({...searchContent, ...firstPage, companyName: values});
     if (values) {
       setIsSeacher(true)
+    } else if (!values && (searchContent.recruitStart !== tody || searchContent.recruitEnd !== tody)) {
+      setIsSeacher(true)
     } else {
       setIsSeacher(false)
     }
@@ -181,12 +185,13 @@ const Home = (props) => {
   };
 
   const setRangeDate = (rangeDate) => {
-    if (rangeDate.startDate === tody && (rangeDate.endDate === tody)) {
+    if ((rangeDate.startDate === tody && rangeDate.endDate === tody) || (rangeDate.startDate === tomorrow && rangeDate.endDate === tomorrow)) {
       setIsSeacher(false)
+      setSearchContent({...searchContent, ...firstPage, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate, ifShelf: rangeDate.ifShelf});
     } else {
       setIsSeacher(true)
+      setSearchContent({...searchContent, ...firstPage, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate, ifShelf: null});
     }
-    setSearchContent({...searchContent, ...firstPage, recruitStart: rangeDate.startDate, recruitEnd: rangeDate.endDate});
   };
 
   const renderItem = ({item, index}) => {
@@ -196,7 +201,7 @@ const Home = (props) => {
         <TouchableOpacity style={isSeacher ? styles.touchItemArea : styles.touchItemArea1} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
         </TouchableOpacity>
-        <Text style={styles.item_flex2}>100人</Text>
+        <Text style={styles.item_flex2}>{item.recruitNum}人</Text>
         {
           isSeacher && (
             <Text style={styles.item_flex2}>{item.recruitRange}</Text>

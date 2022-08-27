@@ -66,12 +66,12 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
 
   const todayOnPress = () => {
     setActiveButton(0);
-    setRangeDate({ startDate: today, endDate: today });
+    setRangeDate({ startDate: today, endDate: today, ifShelf: true });
   };
 
   const tomorrowOnPress = () => {
     setActiveButton(1);
-    setRangeDate({ startDate: tomorrow, endDate: tomorrow });
+    setRangeDate({ startDate: tomorrow, endDate: tomorrow, ifShelf: true });
   };
 
   const pressPicture = (image) => {
