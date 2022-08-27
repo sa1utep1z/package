@@ -1066,11 +1066,6 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@react-native-camera-roll/camera-roll@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.npmmirror.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.0.0.tgz#86564e335df5fc1e765a025f369c653283bd54ab"
-  integrity sha512-H7xfQnzNUnJ/TN+cqtepJ3A6CP4c1zaRKYkoL/DGISzcZFCLwrRcOnrgZLyeJwQhfXwgcoZMFlUtfUDiKO9YMg==
-
 "@react-native-community/cameraroll@^4.1.2":
   version "4.1.2"
   resolved "https://registry.npmmirror.com/@react-native-community/cameraroll/-/cameraroll-4.1.2.tgz#489c6bb6137571540d93c543d5fcf8c652b548ec"
