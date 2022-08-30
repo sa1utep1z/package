@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import NAVIGATION_KEYS from "../../navigator/key";
+import MessageApi from "../../request/MessageApi"
 import { empty } from "../../pages/Home/listComponent";
 
 const Message = () => {
@@ -25,6 +26,23 @@ const Message = () => {
   const toReVisit = () => {
     navigation.navigate(NAVIGATION_KEYS.REVISIT_MESSAGE)
   };
+
+  // 获取消息列表数据
+  const messageData = async (value) => {
+    try {
+      const res = await MessageApi.MessageList(value)
+      if (res.code === 0) {
+        setMessageInfo(res.data.content);
+        console.log('打印消息数据：', res)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  useEffect(() => {
+    messageData(searchContent)
+  }, [searchContent]);
 
   const data = [
     {
@@ -59,8 +77,11 @@ const Message = () => {
     }
     setLoad(false);
   };
-
+  let renderData = [];
   const renderItem = ({ item }) => {
+    console.log('打印item的值：', item)
+    renderData.push(item)
+    console.log('打印item的值：', renderData)
     return (
       <>
         <View style={styles.contentBox}>
@@ -162,7 +183,7 @@ const Message = () => {
         </View>
       </View>
       <FlatList
-        data={data}
+        data={messageInfo}
         refreshing={isLoading}
         onRefresh={refresh}
         onEndReached={onEndReached}

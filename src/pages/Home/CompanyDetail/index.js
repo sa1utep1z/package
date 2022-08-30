@@ -39,7 +39,7 @@ const CompanyDetail = (props) => {
         return;
       }
       setOrderData(res.data);
-      console.log('岗位详情：', res)
+      console.log('岗位详情：', res, params)
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -47,7 +47,7 @@ const CompanyDetail = (props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: params.companyName,
+      headerTitle: params.orderName,
     });
     getDetail();
   }, [orderId])
@@ -71,12 +71,12 @@ const CompanyDetail = (props) => {
             paginationStyle={styles.paginationStyle}
             defaultSource={require('../../../assets/images/loading.gif')}
             activeDotColor='#409EFF'>
-            {bannerList.length ? bannerList.map((image, index) =>
+            {orderData.positionImage ? orderData.positionImage.map((image, index) =>
               <Image
-                loadingindicatorsource={require('../../../assets/images/homeImg.png')}
+                loadingindicatorsource={image}
                 key={index}
                 style={{ width: '100%', height: '100%', borderRadius: 8 }}
-                source={{ uri: `${image.coverImage.url}` }} />)
+                source={{ uri: `${image.url}` }} />)
               : <>
                 <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg.png')} />
                 <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg2.jpg')} />
@@ -84,7 +84,7 @@ const CompanyDetail = (props) => {
           </Swiper>
         </View>
         <View style={styles.jobBoxStyle}>
-          <Text style={styles.textStyle}>{orderData.orderName}</Text>
+          <Text style={styles.textStyle}>{params.companyName}</Text>
           <View style={styles.jobBoxLeft}>
             <View style={styles.rowStyles}>
               <Text style={styles.salaryStyle}>综合薪资</Text>

@@ -34,7 +34,7 @@ const Home = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSeacher, setIsSeacher] = useState(false); // 是否搜索历史
   const [load, setLoad] = useState(true);
-  const tody = moment(new Date()).format('YYYY-MM-DD')
+  const tody = moment().format('YYYY-MM-DD')
   const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
  
   useEffect(() => {

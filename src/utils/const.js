@@ -427,4 +427,11 @@ export const CHART_STATUS_LIST = [
   {value: 'ON_BOARDING_FAIL', title: '未报到'},
   {value: 'ON_BOARDING_PASS', title: '入职'},
   {value: 'JOB_RESIGN', title: '离职'}
-]
+];
+export const MESSAGE_TYPE = [
+  { label: '公告', value: 'ANNOUNCEMENT' },
+  { label: '通知', value: 'ADMIN' },
+  { label: '离职提醒', value: 'INNER_JOB_NOTIFICATION' },
+  { label: '回访提醒', value: 'INNER_VISIT_NOTIFICATION' },
+  { label: '系统消息', value: 'INNER_SYSTEM_MESSAGE' },
+];
