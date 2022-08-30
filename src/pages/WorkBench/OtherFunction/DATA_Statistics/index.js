@@ -239,12 +239,12 @@ const DATA_Statistics = () => {
   }, [index, searchContent]);
 
   // 监听横向滑动事件
-  const scrollFun = ({nativeEvent}) => {
+  const scrollFun = ({ nativeEvent }) => {
     console.log('打印滑动参数：', nativeEvent)
     setIsModalVisible(true)
   };
 
-  const toTalItem = (res) => {
+  const toTalItems = (res) => {
     const renderList = [
       { fieldName: res.total || '0', textStyle: { width: 199, fontSize: 26, } },
       { fieldName: res.signUp || '0', textStyle: { width: 152 } },
@@ -255,6 +255,22 @@ const DATA_Statistics = () => {
       { fieldName: res.onBoardingFail || '0', textStyle: { width: 151 } },
       { fieldName: res.onBoardingPass || '0', textStyle: { width: 149 } },
       { fieldName: res.jobOn || '0', textStyle: { width: 202 } }
+    ];
+
+    return (
+      <View style={styles.listStyle}>
+        {renderList.map((renderItem, index) => (
+          <View key={index} style={[styles.listItem, renderItem.itemStyle]} >
+            <Text style={[styles.itemText1, renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
+          </View>
+        ))}
+      </View>
+    )
+  };
+
+  const toTalItem = (res) => {
+    const renderList = [
+      { fieldName: res.total || '0', textStyle: { width: 199, fontSize: 26, } },
     ];
 
     return (
@@ -481,7 +497,7 @@ const DATA_Statistics = () => {
   const renderItem = ({ item }) => {
     const renderList = [
       { fieldName: item.name, textStyle: (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2 },
-      { fieldName: item.signUp || '0', textStyle: { width: 152}, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp) },
+      { fieldName: item.signUp || '0', textStyle: { width: 152 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp) },
       { fieldName: item.signUpIntention || '0', textStyle: { width: 148 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
       { fieldName: item.interviewNoArrive || '0', textStyle: { width: 120 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
       { fieldName: item.interviewFail || '0', textStyle: { width: 118 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
@@ -541,6 +557,30 @@ const DATA_Statistics = () => {
     setSearchContent({ ...searchContent, pageNumber: 0 });
   };
 
+  const tabHeader = () => {
+    return (
+      <>
+        <View style={[styles.tabTopStyle]}>
+          <View style={styles.ItemStyle}>
+            <Text style={styles.title}>{index === 0 ? '招聘企业' : index === 1 ? '门店名称' : index === 2 ? '供应商名' : '招聘专员'}</Text>
+          </View>
+        </View>
+        <View style={styles.Icon}>
+          <TouchableOpacity style={{ width: 201, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }} onPress={() => sortEvent(item.label)}>
+            <AntDesign
+              name='caretdown'
+              size={32}
+              color='#409EFF'
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.Icon}>
+          {toTalItem(totalData)}
+        </View>
+      </>
+    )
+  };
+
   const tabHead = () => {
     return (
       <>
@@ -586,23 +626,32 @@ const DATA_Statistics = () => {
           }
         </View>
         <View style={styles.Icon}>
-          {toTalItem(totalData)}
+          {toTalItems(totalData)}
         </View>
       </>
     )
   };
-  const renderLeftItem = ({item}) => {
+
+  const renderLeftItem = ({ item }) => {
+    const renderName = [
+      { fieldName: item.name, textStyle: (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2 }
+    ]
+
     return (
-      <View style={{height: 80, borderWidth: 1}}>
-        <Text style={{fontSize: 28, textAlign: 'center', textAlignVertical: 'center'}}>{item.name}</Text>
+      <View key={item.id} style={styles.listStyle}>
+        {renderName.map((renderItem, index) => (
+          <View key={index} style={[styles.listItem, renderItem.itemStyle]}>
+            <Text style={[renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
+          </View>
+        ))}
       </View>
     )
   };
 
-  const onScroll = ({nativeEvent}) => {
-    const {contentOffset} = nativeEvent;
-    if(contentOffset.y > 0){
-      leftFlatListRef.current.scrollToOffset({animated: true, offset: contentOffset.y})
+  const onScroll = ({ nativeEvent }) => {
+    const { contentOffset } = nativeEvent;
+    if (contentOffset.y > 0) {
+      leftFlatListRef.current.scrollToOffset({ animated: true, offset: contentOffset.y })
     }
   };
 
@@ -620,17 +669,21 @@ const DATA_Statistics = () => {
           )
         })}
       </View>
-      <View style={{flexDirection: 'row'}}>
-        {true && <View style={{width: 150, borderWidth: 1}}>
+      <View style={{ flexDirection: 'row', flex: 1, paddingTop: 30, }}>
+        {true && <View style={{ width: 150, borderWidth: 1 }}>
           <FlatList
             ref={leftFlatListRef}
             data={companyDetails}
             keyExtractor={(item) => item.id}
-            renderItem={renderLeftItem}
-            ListHeaderComponent={() => (
-              <View style={{height: 100}}></View>
-            )}
-            // stickyHeaderIndices={[0]}
+            renderItem={(item) => renderLeftItem(item)}
+            ListHeaderComponent={tabHeader()}
+            stickyHeaderIndices={[0]}
+            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+            initialNumToRender={20}
+            ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
+            ListEmptyComponent={empty}
+            onEndReachedThreshold={0.01}
+            onScrollEndDrag={() => setLoad(true)}
           />
         </View>}
         <ScrollView horizontal={true}>
@@ -865,8 +918,7 @@ const styles = StyleSheet.create({
     // width: 750,
     overflowX: 'scroll',
     // flex: 1,
-    paddingTop: 30,
-    position: 'relative',
+    // paddingTop: 30,
   },
   style1: {
     width: 199,
