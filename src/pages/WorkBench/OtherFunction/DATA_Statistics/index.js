@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: '100%',
     height: 132,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#409EFF',
     backgroundColor: '#fff',
   },
