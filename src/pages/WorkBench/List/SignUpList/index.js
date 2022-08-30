@@ -3,7 +3,6 @@ import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
-import moment from "moment";
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";

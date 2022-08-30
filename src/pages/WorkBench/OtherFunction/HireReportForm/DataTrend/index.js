@@ -12,20 +12,20 @@ import RecruiterRoute from "./RecruiterRoute";
 import SupplierRoute from "./SupplierRoute";
 
 
-const DataTrend = ({CompanyList}) => {
+const DataTrend = () => {
   
-const renderScene = ({route}) => {
-  switch(route.key){
-    case 'company': 
-      return <CompanyRoute CompanyList={CompanyList}/>
-    case 'store':
-      return <StoreRoute />
-    case 'recruiter':
-      return <RecruiterRoute />
-    case 'supplier':
-      return <SupplierRoute />
-  }
-};
+  const renderScene = ({route}) => {
+    switch(route.key){
+      case 'company': 
+        return <CompanyRoute />
+      case 'store':
+        return <StoreRoute />
+      case 'recruiter':
+        return <RecruiterRoute />
+      case 'supplier':
+        return <SupplierRoute />
+    }
+  };
 
   return (
     <Shadow>
@@ -38,7 +38,7 @@ const renderScene = ({route}) => {
       </View>
     </Shadow>
   )
-}
+};
 
 const styles = StyleSheet.create({
   totalArea: {

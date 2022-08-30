@@ -14,10 +14,10 @@ import RNFS from 'react-native-fs';
 import DatePicker from "../DatePicker";
 import SearchInput from "../../../components/SearchInput";
 
-const today = moment().format("YYYY-MM-DD");
-const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
-
 export const Header = ({ search, isSeacher, range, bannerList }) => {
+  const today = moment().format("YYYY-MM-DD");
+  const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const toast = useToast();
@@ -25,7 +25,7 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
   const [activeButton, setActiveButton] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showImage, setShowImage] = useState([]);
-  const [rangeDate, setRangeDate] = useState({ startDate: today, endDate: today });
+  const [rangeDate, setRangeDate] = useState({startDate: today, endDate: today});
 
   const showSearch = useSelector((state) => state.homeSearch.canSearch);
   
@@ -103,10 +103,8 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
       if(res && res.statusCode === 200){
         var promise = CameraRoll.saveToCameraRoll("file://" + downloadDest);
         promise.then(function(result) {
-          console.log('result', result);
           Alert.alert("图片已保存至相册");
         }).catch(function(error) {
-          console.log('error', error);
           Alert.alert("保存失败");
         })
       }
@@ -125,10 +123,9 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
           defaultSource={require('../../../assets/images/loading.gif')}
           activeDotColor='#409EFF'>
           {bannerList.length ? bannerList.map((image, index) =>
-            <TouchableOpacity activeOpacity={1} onPress={() => pressPicture(image)}>
+                <TouchableOpacity key={index} activeOpacity={1} onPress={() => pressPicture(image)}>
               <Image
                 loadingindicatorsource={require('../../../assets/images/homeImg.png')}
-                key={index}
                 style={{ width: '100%', height: '100%', borderRadius: 8 }}
                 source={{ uri: `${image.coverImage.url}` }} />
             </TouchableOpacity>)
@@ -339,8 +336,10 @@ const styles = StyleSheet.create({
   },
   emptyStyle: {
     flex: 1,
-    marginHorizontal: 10,
+    marginHorizontal: 32,
     backgroundColor: '#fff',
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 8,
     height: 200,
     justifyContent: 'center',
     alignItems: 'center',

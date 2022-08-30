@@ -38,6 +38,7 @@ const Home = (props) => {
   const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
  
   useEffect(() => {
+    getBannerList();
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
@@ -47,8 +48,6 @@ const Home = (props) => {
   }, [])
 
   useEffect(()=>{
-    getBannerList();
-    getRoleInfo();
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList(searchContent);
@@ -82,17 +81,14 @@ const Home = (props) => {
       }
       dispatch(setRoleInfo(res.data.systemIdentities));
     }catch(err){
-      console.log('err', err);
-      toast.show(`获取用户角色失败，请联系管理员`, { type: 'danger' });
+      toast.show(`获取用户角色失败，请确认网络是否开启。`, { type: 'danger' });
     }
   };
 
   const getList = async(params) => {
     setIsLoading(true);
-    console.log('首页数据请求参数：', params);
     try{
       const res = await HomeApi.HomePage(params);
-      console.log('首页数据', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -109,7 +105,7 @@ const Home = (props) => {
       setShowList(res.data.content);
     }catch(err){
       console.log('err', err);
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`获取首页列表失败，请确认网络是否开启。`, { type: 'danger' });
     }finally{
       setIsLoading(false);
     }
@@ -123,8 +119,9 @@ const Home = (props) => {
         return;
       }
       setBannerList(res.data);
+      getRoleInfo();
     }catch(err){
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, {type: 'danger'});
+      toast.show(`获取首页banner列表失败，请确认网络是否开启。`, {type: 'danger'});
     }
   };
 
@@ -181,7 +178,6 @@ const Home = (props) => {
     } else {
       setIsSeacher(false)
     }
-    console.log('搜索的值：', values)
   };
 
   const setRangeDate = (rangeDate) => {
