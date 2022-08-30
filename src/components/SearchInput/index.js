@@ -14,6 +14,7 @@ const SearchInput = ({
     autoSearch,
     borderRadius, 
     searchInputStyle, 
+    inputContainerStyle,
     placeholder, 
     fontStyle,
     smallSize,
@@ -65,14 +66,14 @@ const SearchInput = ({
     <AntDesign 
       name='search1' 
       color='#A9A9A9'
-      size={smallSize ? 25 : 31}
+      size={smallSize ? 18 : 31}
     />
   ),
   cancelIcon = (
     <AntDesign 
       name='left' 
       color='#A9A9A9'
-      size={smallSize ? 25 : 31}
+      size={smallSize ? 18 : 31}
       onPress={cancelIconPress}
     />
   ),
@@ -106,7 +107,8 @@ const SearchInput = ({
         inputContainerStyle={[
           styles.inputContainerStyle, 
           borderRadius && {borderTopLeftRadius: borderRadius, borderBottomLeftRadius: borderRadius},
-          withoutButton && {borderTopRightRadius: borderRadius}
+          withoutButton && {borderTopRightRadius: borderRadius},
+          inputContainerStyle
         ]}
         leftIconContainerStyle={[styles.leftIconContainerStyle, smallSize && styles.smallLeftArea]}
         rightIconContainerStyle={styles.rightIconContainerStyle}

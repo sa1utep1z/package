@@ -1,35 +1,20 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
-import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
-import NormalDialog from '../../../../../../components/NormalDialog';
-import FilterMore from "../../../../../../components/NormalDialog/FilterMore";
 
 const Tag = ({
   lastButton = false,
   tagList = [],
   tagAreaStyle,
-  CompanyList
+  filterMore
 }) => {
-  const dialogRef = useRef(null);
 
   const [selectTag, setSelectTag] = useState('');
-  const [dialogContent, setDialogContent] = useState({});
 
   useEffect(()=>{
     tagList.length && setSelectTag(tagList[0].value);
   },[])
 
   const chooseTag = (tag) => setSelectTag(tag.value);
-
-  const filterMore = () => {
-    console.log('你点击了筛选更多');
-    dialogRef?.current.setShowDialog(true);
-    setDialogContent({
-      dialogTitle: '筛选更多',
-      dialogComponent: <FilterMore CompanyList={CompanyList}/>
-    })
-  };
 
   return (
     <>
@@ -49,10 +34,6 @@ const Tag = ({
           </TouchableOpacity>
         )}
       </View>
-      <NormalDialog 
-        ref={dialogRef}
-        dialogContent={dialogContent}
-      />
     </>
   )
 };

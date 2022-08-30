@@ -107,7 +107,6 @@ const StoreRoute = () => {
           segments={6}
           bezier
           fromZero
-          getDotColor={(...rest) => console.log('getDotColor-rest', rest)}
           decorator={decorator}
           withShadow={false}
           withOuterLines={false}

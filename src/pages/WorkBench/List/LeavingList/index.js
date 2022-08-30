@@ -1,10 +1,8 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
-import moment from "moment";
 import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from "react-native-toast-notifications";
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
@@ -25,7 +23,6 @@ let timer;
 
 const LeavingList = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const toast = useToast();
   const firstPage = { pageSize: 20, pageNumber: 0 };
   const dialogRef = useRef(null);
@@ -46,7 +43,6 @@ const LeavingList = () => {
   };
 
   useEffect(() => {
-    clearRangeDate();
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
@@ -70,12 +66,6 @@ const LeavingList = () => {
       role
     });
   }, [role])
-
-  //每次进入页面的时候都清空顶部时间筛选值
-  const clearRangeDate = () => {
-    dispatch(setStartDate(''));
-    dispatch(setEndDate(''));
-  };
 
   // 获取在离职名单数据
   const getList = async (params) => {
@@ -293,6 +283,7 @@ const LeavingList = () => {
       <HeaderSearch
         leavingList
         filterFun={filter}
+        clearRangeDate
       />
       <CenterSelectDate />
       <BottomList

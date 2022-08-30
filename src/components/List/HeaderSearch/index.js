@@ -3,6 +3,8 @@ import { View, StyleSheet, TouchableOpacity, Animated, TextInput } from 'react-n
 import { useSelector } from 'react-redux';
 import {Formik, Field} from 'formik';
 import { Text } from '@rneui/themed';
+import moment from "moment";
+import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import { STATUS_LIST, SUCCESS_CODE } from '../../../utils/const';
@@ -12,6 +14,7 @@ import SearchInput from '../../SearchInput';
 import DateRangePicker from './DateRangePicker';
 import DateRangePickerInLeavingList from './DateRangePickerInLeavingList';
 import MyMembersApi from '../../../request/MyMembersApi';
+import { setStartDate, setEndDate } from "../../../redux/features/RangeDateOfList";
 
 let restForm;
 
@@ -39,9 +42,11 @@ const HeaderSearch = ({
   withoutCompanyFilter = false,
   batchOperate, // 批量操作函数
   leavingList = false,
+  clearRangeDate, //进入页面时不要筛选时间
     ...rest
   }) => {
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -56,7 +61,13 @@ const HeaderSearch = ({
     !showSearch && closeAnimation();
     getCompaniesList();
     getStoreList();
+    setRangeDate();
   },[showSearch])
+
+  const setRangeDate = () => {
+    dispatch(setStartDate(!clearRangeDate ? moment().format('YYYY-MM-DD'): ''));
+    dispatch(setEndDate(!clearRangeDate ? moment().format('YYYY-MM-DD'): ''));
+  };
 
   const getCompaniesList = async() => {
     try{  

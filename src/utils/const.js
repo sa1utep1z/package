@@ -395,8 +395,8 @@ export const FAKE_HIRE_DATA_BOX_LIST = [
 ];
 
 export const HIRE_DATA_BOX_TAG_LIST = [
-  { title: '今日', value: 'today' },
   { title: '本周', value: 'thisWeek' },
+  { title: '上周', value: 'lastWeek' },
   { title: '本月', value: 'thisMonth' }
 ];
 

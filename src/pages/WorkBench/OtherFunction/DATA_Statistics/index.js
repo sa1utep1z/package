@@ -14,6 +14,7 @@ import { empty } from "../../../../pages/Home/listComponent";
 import { SUCCESS_CODE } from "../../../../utils/const";
 
 const DATA_Statistics = () => {
+  const leftFlatListRef = useRef(null);
   const navigation = useNavigation();
   const toast = useToast();
   const [index, setIndex] = useState(0);
@@ -589,7 +590,21 @@ const DATA_Statistics = () => {
         </View>
       </>
     )
-  }
+  };
+  const renderLeftItem = ({item}) => {
+    return (
+      <View style={{height: 80, borderWidth: 1}}>
+        <Text style={{fontSize: 28, textAlign: 'center', textAlignVertical: 'center'}}>{item.name}</Text>
+      </View>
+    )
+  };
+
+  const onScroll = ({nativeEvent}) => {
+    const {contentOffset} = nativeEvent;
+    if(contentOffset.y > 0){
+      leftFlatListRef.current.scrollToOffset({animated: true, offset: contentOffset.y})
+    }
+  };
 
   return (
     <View style={styles.screen}>
@@ -605,26 +620,41 @@ const DATA_Statistics = () => {
           )
         })}
       </View>
-      <ScrollView horizontal={true} contentContainerStyle={styles.scrollStyle}>
-        <View style={styles.flatStyle}>
+      <View style={{flexDirection: 'row'}}>
+        {true && <View style={{width: 150, borderWidth: 1}}>
           <FlatList
+            ref={leftFlatListRef}
             data={companyDetails}
-            ListHeaderComponent={tabHead()}
-            refreshing={isLoading}
-            onRefresh={refresh}
-            onEndReached={onEndReached}
             keyExtractor={(item) => item.id}
-            renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
-            initialNumToRender={20}
-            ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
-            ListEmptyComponent={empty}
-            onEndReachedThreshold={0.01}
-            onScrollEndDrag={() => setLoad(true)}
-            stickyHeaderIndices={[0]}
+            renderItem={renderLeftItem}
+            ListHeaderComponent={() => (
+              <View style={{height: 100}}></View>
+            )}
+            // stickyHeaderIndices={[0]}
           />
-        </View>
-      </ScrollView>
+        </View>}
+        <ScrollView horizontal={true}>
+          <View style={styles.flatStyle}>
+            <FlatList
+              data={companyDetails}
+              ListHeaderComponent={tabHead()}
+              refreshing={isLoading}
+              onScroll={onScroll}
+              onRefresh={refresh}
+              onEndReached={onEndReached}
+              keyExtractor={(item) => item.id}
+              renderItem={(item) => renderItem(item)}
+              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+              initialNumToRender={20}
+              ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
+              ListEmptyComponent={empty}
+              onEndReachedThreshold={0.01}
+              onScrollEndDrag={() => setLoad(true)}
+              stickyHeaderIndices={[0]}
+            />
+          </View>
+        </ScrollView>
+      </View>
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}

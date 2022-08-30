@@ -1,12 +1,16 @@
-import React, {useState} from "react";
+import React, {useContext, useState, useRef} from "react";
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
+import FilterMoreInCompany from "../../../../../../components/HireReportDialog/FilterMoreInCompany";
+import { openDialog } from "../../../../../../redux/features/HireReportDialog";
 
-const CompanyRoute = ({CompanyList}) => {
+const CompanyRoute = ({}) => {
+  const dispatch = useDispatch();
   
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
@@ -90,9 +94,11 @@ const CompanyRoute = ({CompanyList}) => {
     )
   };
 
+  const filterMore = () => dispatch(openDialog(<FilterMoreInCompany/>));
+
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton CompanyList={CompanyList}/>
+      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore}/>
       <View style={styles.bottomArea}>
         <ScrollView horizontal>
           <LineChart
@@ -103,7 +109,6 @@ const CompanyRoute = ({CompanyList}) => {
             segments={6}
             bezier
             fromZero
-            getDotColor={(...rest) => console.log('getDotColor-rest', rest)}
             decorator={decorator}
             withOuterLines={false}
             withVerticalLines={false}
