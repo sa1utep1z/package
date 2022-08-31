@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
-import { View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
@@ -18,6 +18,7 @@ import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import { pageEmpty } from "../../../Home/listComponent";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -37,6 +38,7 @@ const MyMembers = () => {
   const [showList, setShowList] = useState([]);
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     navigation.setOptions({
@@ -65,7 +67,7 @@ const MyMembers = () => {
     setIsLoading(true);
     try{
       const res = await MyMembersApi.MyMemberList(params);
-      // console.log('getList --> res', res);
+      console.log('getList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -227,6 +229,7 @@ const MyMembers = () => {
   };
 
   const selectIndex = (selectIndex) => {
+    setIndex(selectIndex);
     switch(selectIndex){
       case 0:
         searchContent.returnVisitResult = '';
@@ -244,22 +247,6 @@ const MyMembers = () => {
     setSearchContent({ ...searchContent, ...firstPage });
   };
 
-  const listHead = (
-    <>
-      {/* <View style={styles.numberOfList}>
-        <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total|| 0}</Text> 条数据</Text>
-      </View>  */}
-      <View style={styles.listHead_title}>
-        <Text style={styles.listHead_item}>姓名</Text>
-        <Text style={styles.listHead_item}>企业</Text>
-        <Text style={styles.listHead_item}>入职记录</Text>
-        <Text style={styles.listHead_item}>回访记录</Text>
-        <Text style={styles.listHead_item}>状态</Text>
-        <Text style={styles.listHead_item}>加入报名</Text>
-      </View>
-    </>
-  );
-
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
 
   const onEndReached = () => {
@@ -271,51 +258,58 @@ const MyMembers = () => {
   };
 
   const renderItem = ({item}) => {
-    const renderList = [
-      { 
-        fieldName: item.userName || '无', 
-        pressFun: () => memberDetailOnPress(item)
-      },
-      { 
-        fieldName: item.willSignUpCompanyName || '无', 
-        textStyle: !item.willSignUpCompanyName && {color: '#333333'},
-        pressFun: () => companyDetailOnPress(item)
-      },
-      { 
-        fieldName: '查看', 
-        pressFun: () => entryRecordOnPress(item)
-      },
-      { 
-        fieldName: '查看', 
-        pressFun: () => reviewRecordOnPress(item)
-      },
-      { 
-        fieldName: item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'
-      },
-      { 
-        fieldName: '加入', pressFun: () => joinInSignUpOnPress(item)
-      }
-    ];
     return (
-      <View key={item.poolId} style={styles.listStyle}>
-        {renderList.map((renderItem, index) => (
-          <TouchableOpacity 
-            key={index}
-            activeOpacity={renderItem.pressFun ? 0.2 : 1}
-            style={[styles.listItem, renderItem.itemStyle]} 
-            onPress={renderItem.pressFun}>
-            <Text 
-              ellipsizeMode='tail' 
-              numberOfLines={2} 
-              style={[styles.itemText, renderItem.pressFun && {color: '#409EFF'}, renderItem.textStyle]}>{renderItem.fieldName}</Text>
-          </TouchableOpacity>
-        ))}
+      <View style={styles.listStyle}>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => memberDetailOnPress(item)}
+          ellipsizeMode="tail">{item.userName || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText
+          ]}
+          numberOfLines={2}
+          onPress={() => companyDetailOnPress(item)}
+          ellipsizeMode="tail">{item.willSignUpCompanyName || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => entryRecordOnPress(item)}
+          ellipsizeMode="tail">查看</Text>
+        <Text 
+          style={[
+            styles.itemText, 
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => reviewRecordOnPress(item)}
+          ellipsizeMode="tail">查看</Text>
+        <Text 
+          style={[
+            styles.itemText, 
+          ]}
+          numberOfLines={2}
+          ellipsizeMode="tail">{item.memberStatus ?  MEMBERS_STATUS[item.memberStatus] : '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText, 
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => joinInSignUpOnPress(item)}
+          ellipsizeMode="tail">加入</Text>
       </View>
     )
   };
 
-  //优化加载速度；
-  const memoizedValue = useMemo(() => renderItem, [showList]);
+  const memoList = useMemo(() => showList, [showList])
 
   return (
     <View style={styles.screen}>
@@ -325,19 +319,40 @@ const MyMembers = () => {
         staffSearch
         companySingleSelect
         storeSingleSelect
+        clearRangeDate
       />
-      <BottomList 
-        list={showList}
-        isLoading={isLoading}
-        listHead={listHead}
-        tab={TAB_OF_LIST.MY_MEMBERS}
-        tabNumberList={tabNumberList}
-        renderItem={memoizedValue}
+      <View style={styles.tab_containerStyle}>
+        {TAB_OF_LIST.MY_MEMBERS.map((tabItem, tabIndex) => {
+          const active = index === tabIndex;
+          return (
+            <TouchableOpacity key={tabIndex} style={styles.tabItem} onPress={()=>selectIndex(tabIndex)}>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem.title}</Text>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tabItem.type] || 0}</Text>
+            </TouchableOpacity>
+          )
+        })}
+      </View>
+      <View style={styles.listHead_title}>
+        <Text style={styles.listHead_item}>姓名</Text>
+        <Text style={styles.listHead_item}>企业</Text>
+        <Text style={styles.listHead_item}>入职记录</Text>
+        <Text style={styles.listHead_item}>回访记录</Text>
+        <Text style={styles.listHead_item}>状态</Text>
+        <Text style={styles.listHead_item}>加入报名</Text>
+      </View>
+      <FlatList 
+        data={memoList}
+        style={{backgroundColor: '#fff'}}
+        renderItem={renderItem}
+        keyExtractor={(item,index) => item.poolId}
+        getItemLayout={(data, index)=>({length: 100, offset: 100 * index, index})}
+        refreshing={isLoading}
         onRefresh={refresh}
+        initialNumToRender={20}
+        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
+        ListEmptyComponent={pageEmpty()}
         onEndReached={onEndReached}
-        nowSelectIndex={selectIndex}
-        renderItemHeight={100}
-        hasNext={originData?.hasNext}
+        onEndReachedThreshold={0.01}
       />
       <NormalDialog 
         ref={dialogRef}
@@ -376,9 +391,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemText: {
+    flex: 1,
     fontSize: 28,
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
+    textAlignVertical: 'center'
   },
   listHead_title: {
     height: 60, 
@@ -391,6 +408,27 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center', 
     fontSize: 26, 
     color: '#000'
+  },
+  tab_containerStyle: {
+    minHeight: 120, 
+    flexDirection: 'row', 
+    backgroundColor: '#fff'
+  },
+  tabItem: {
+    flex: 1, 
+    justifyContent: 'center'
+  },
+  tabItem_text: {
+    fontSize: 32,
+    textAlign: 'center'
+  },
+  tabItem_titleStyle_active: {
+    color: '#409EFF',
+    fontWeight: 'bold',
+  },
+  bottomText: {
+    textAlign: 'center',
+    fontSize: 22
   }
 });
 

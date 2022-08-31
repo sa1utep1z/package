@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
+import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from "react-native-toast-notifications";
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
@@ -18,10 +18,12 @@ import NAVIGATION_KEYS from "../../../../navigator/key";
 import { SUCCESS_CODE, TAB_OF_LIST, JOB_ON_STATUS } from "../../../../utils/const";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
+import { pageEmpty } from "../../../Home/listComponent";
 
 let timer;
 
 const LeavingList = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const toast = useToast();
   const firstPage = { pageSize: 20, pageNumber: 0 };
@@ -35,6 +37,7 @@ const LeavingList = () => {
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [index, setIndex] = useState(0);
 
   // 手机号隐藏四位数
   const geTel = (tel) => {
@@ -43,6 +46,7 @@ const LeavingList = () => {
   };
 
   useEffect(() => {
+    clearRangeDate();
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
@@ -66,6 +70,12 @@ const LeavingList = () => {
       role
     });
   }, [role])
+
+  //每次进入页面的时候都清空顶部时间筛选值
+  const clearRangeDate = () => {
+    dispatch(setStartDate(''));
+    dispatch(setEndDate(''));
+  };
 
   // 获取在离职名单数据
   const getList = async (params) => {
@@ -99,7 +109,7 @@ const LeavingList = () => {
     const params = {
       companyIds: searchContent?.companyIds || [],
       storeIds: searchContent?.storeIds || [],
-      recruitIds: searchContent?.names || [],
+      recruitIds: searchContent?.recruitIds || [],
       jobStartDate: searchContent?.jobStartDate || '',
       jobEndDate: searchContent?.jobEndDate || '',
       resignStartDate: searchContent?.resignStartDate || '',
@@ -108,7 +118,9 @@ const LeavingList = () => {
       role
     };
     try {
+      console.log('getStatusList -> params', params);
       const res = await ListApi.GetJobStatus(params);
+      console.log('getStatusList -> res', res);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，请稍后重试。${res.data?.msg}`, { type: 'danger' });
         return;
@@ -127,7 +139,7 @@ const LeavingList = () => {
     const resignEndDate = values.leaving.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const names = values.staff.length ? values.staff.map(item => item.value) : [];
+    const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
     const str = values.search;
 
     setSearchContent({
@@ -140,12 +152,13 @@ const LeavingList = () => {
       str,
       companyIds,
       storeIds,
-      names
+      recruitIds
     });
   };
 
   // 切换状态
   const selectIndex = (selectIndex) => {
+    setIndex(selectIndex);
     switch (selectIndex) {
       case 0:
         searchContent.status = 'ALL';
@@ -161,7 +174,7 @@ const LeavingList = () => {
   };
 
   // 查看企业详情
-  const pressFactory = async (item) => {
+  const pressFactory = useCallback(async (item) => {
     try {
       const res = await ListApi.FactoryMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
@@ -180,10 +193,10 @@ const LeavingList = () => {
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  };
+  }, []);
 
   // 查看会员详情
-  const pressMemberInfo = async (item) => {
+  const pressMemberInfo = useCallback(async (item) => {
     try {
       const res = await ListApi.MemberMessage(item.flowId);
       if (res?.code !== SUCCESS_CODE) {
@@ -199,9 +212,9 @@ const LeavingList = () => {
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  };
+  }, []);
 
-  const changeStatus = (item) => {
+  const changeStatus = useCallback((item) => {
     if (item.jobStatus === 'JOB_RESIGN') {
       toast.show(`状态已确定！`, { type: 'warning' });
       return;
@@ -212,9 +225,9 @@ const LeavingList = () => {
       bottomButton: false,
       dialogComponent: <JobResignStatus dialogRef={dialogRef} item={item} refresh={refresh}/>,
     });
-  };
+  }, []);
 
-  const callPhone = item => {
+  const callPhone = useCallback(item => {
     dialogRef.current.setShowDialog(true);
     setDialogContent({
       dialogTitle: '温馨提示',
@@ -224,7 +237,7 @@ const LeavingList = () => {
       },
       dialogComponent: <CallPhone message={item}/>
     });
-  };
+  }, []);
 
   const refresh = () => setSearchContent({ ...searchContent, ...firstPage });
 
@@ -237,46 +250,43 @@ const LeavingList = () => {
   };
 
   const renderItem = ({ item }) => {
-    const renderList = [
-      {
-        fieldName: item.companyShortName,
-        textStyle: { color: '#409EFF', textAlign: 'center' },
-        pressFun: () => pressFactory(item)
-      },
-      {
-        fieldName: item.name,
-        pressFun: () => pressMemberInfo(item)
-      },
-      {
-        fieldName: JOB_ON_STATUS[item.jobStatus],
-        pressFun: () => changeStatus(item)
-      },
-      {
-        fieldName: geTel(item.mobile) || '无',
-        textStyle: { color: '#409EFF', fontSize: 28 },
-        pressFun: () => item.mobile && callPhone(item)
-      }
-    ];
     return (
-      <View key={item.id} style={styles.listStyle}>
-        {renderList.map((renderItem, index) => (
-          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text style={[styles.itemText, renderItem.textStyle]}>{renderItem.fieldName}</Text>
-            {renderItem.fieldName === item.phone && <Entypo name='phone' size={16} color='#409EFF' />}
-          </TouchableOpacity>
-        ))}
+      <View style={styles.listStyle}>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => pressFactory(item)}
+          ellipsizeMode="tail">{item.companyShortName || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText
+          ]}
+          numberOfLines={2}
+          onPress={() => pressMemberInfo(item)}
+          ellipsizeMode="tail">{item.name || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText
+          ]}
+          numberOfLines={2}
+          onPress={() => changeStatus(item)}
+          ellipsizeMode="tail">{JOB_ON_STATUS[item.jobStatus] || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText, 
+            {color: '#409EFF', fontSize: 24}
+          ]}
+          numberOfLines={2}
+          onPress={() => item.mobile && callPhone(item)}
+          ellipsizeMode="tail">{geTel(item.mobile) || '无'}</Text>
       </View>
     )
   };
 
-  const listHead = (
-    <View style={styles.tabArea}>
-      <Text style={styles.tab}>企业</Text>
-      <Text style={styles.tab}>姓名</Text>
-      <Text style={styles.tab}>状态</Text>
-      <Text style={styles.tab}>联系方式</Text>
-    </View>   
-  );
+  const memoList = useMemo(() => showList, [showList])
 
   return (
     <View style={styles.screen}>
@@ -286,7 +296,7 @@ const LeavingList = () => {
         clearRangeDate
       />
       <CenterSelectDate />
-      <BottomList
+      {/* <BottomList
         list={showList}
         tab={TAB_OF_LIST.LEAVING_LIST}
         renderItem={renderItem}
@@ -296,6 +306,37 @@ const LeavingList = () => {
         onRefresh={refresh}
         onEndReached={onEndReached}
         nowSelectIndex={selectIndex}
+      /> */}
+      <View style={styles.tab_containerStyle}>
+        {TAB_OF_LIST.LEAVING_LIST.map((tabItem, tabIndex) => {
+          const active = index === tabIndex;
+          return (
+            <TouchableOpacity key={tabIndex} style={styles.tabItem} onPress={()=>selectIndex(tabIndex)}>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem.title}</Text>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tabItem.type] || 0}</Text>
+            </TouchableOpacity>
+          )
+        })}
+      </View>
+      <View style={styles.tabArea}>
+        <Text style={styles.tab}>企业</Text>
+        <Text style={styles.tab}>姓名</Text>
+        <Text style={styles.tab}>状态</Text>
+        <Text style={styles.tab}>联系方式</Text>
+      </View>
+      <FlatList 
+        data={memoList}
+        style={{backgroundColor: '#fff'}}
+        renderItem={renderItem}
+        keyExtractor={(item,index) => item.flowId}
+        getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
+        refreshing={isLoading}
+        onRefresh={refresh}
+        initialNumToRender={20}
+        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
+        ListEmptyComponent={pageEmpty()}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.01}
       />
       <NormalDialog
         ref={dialogRef}
@@ -323,8 +364,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemText: {
+    flex: 1,
     fontSize: 28,
-    color: '#333'
+    color: '#000',
+    textAlign: 'center',
+    textAlignVertical: 'center'
   },
   tabArea: {
     height: 60,
@@ -336,6 +380,27 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     fontSize: 30, 
     color: '#333333'
+  },
+  tab_containerStyle: {
+    minHeight: 120, 
+    flexDirection: 'row', 
+    backgroundColor: '#fff'
+  },
+  tabItem: {
+    flex: 1, 
+    justifyContent: 'center'
+  },
+  tabItem_text: {
+    fontSize: 32,
+    textAlign: 'center'
+  },
+  tabItem_titleStyle_active: {
+    color: '#409EFF',
+    fontWeight: 'bold',
+  },
+  bottomText: {
+    textAlign: 'center',
+    fontSize: 22
   }
 });
 

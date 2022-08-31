@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Linking} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -21,6 +21,7 @@ import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDe
 import TwoCard from "../../../../components/NormalDialog/TwoCard";
 import NewestStatus from "../../../../components/NormalDialog/NewestStatus";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
+import { pageEmpty } from "../../../Home/listComponent";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -115,7 +116,7 @@ const NewestState = () => {
     const endDate = values.dateRange.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const names = values.staff.length ? values.staff.map(item => item.value) : [];
+    const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
     const str = values.search;
 
     setSearchContent({
@@ -126,7 +127,7 @@ const NewestState = () => {
       str,
       companyIds,
       storeIds,
-      names
+      recruitIds
     });
   };
 
@@ -257,55 +258,59 @@ const NewestState = () => {
 
   const renderItem = ({item}) => {
     const status = checkStatus(item);
-    const renderList = [
-      { 
-        fieldName: item.name || '无', 
-        textStyle: {color: '#409EFF', textAlign: 'center'},
-        itemStyle: { flexDirection: 'column' },
-        pressFun: () => callPhone(item)
-      },
-      { 
-        fieldName: item.companyShortName, 
-        textStyle: {fontSize: 26},
-        pressFun: () => pressFactory(item)
-      },
-      { 
-        fieldName: status, 
-        textStyle: {fontSize: 26},
-        pressFun: () => showTwoCard(item)
-      },
-      { 
-        fieldName: 'press', 
-        textStyle: {color: '#409EFF'},
-        pressFun: gotoRecordOfWorking
-      },
-      { 
-        fieldName: MEMBERS_STATUS[item.status], 
-        textStyle: {fontSize: 26},
-        pressFun: () => changeStatus(item)
-      },
-      { 
-        fieldName: 'press' ,
-        textStyle: {color: '#409EFF'},
-        pressFun: () => pressName(item)
-      }
-    ];
-    
+
     return (
-      <View key={item.flowId} style={styles.listStyle}>
-        {renderList.map((renderItem, index) => (
-          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text
-              allowFontScaling={false}
-              numberOfLines={2}
-              ellipsizeMode='tail'
-              style={[styles.itemText, renderItem.textStyle]}>{renderItem.fieldName !== 'press' ? renderItem.fieldName : '查看'}</Text>
-            {renderItem.fieldName === item.name && <Entypo name='phone' size={28} color='#409EFF'/>}
-          </TouchableOpacity>
-        ))}
+      <View style={styles.listStyle}>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => callPhone(item)}
+          ellipsizeMode="tail">{item.name || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText,
+          ]}
+          numberOfLines={2}
+          onPress={() => pressFactory(item)}
+          ellipsizeMode="tail">{item.companyShortName || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText,
+          ]}
+          numberOfLines={2}
+          onPress={() => showTwoCard(item)}
+          ellipsizeMode="tail">{status}</Text>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF'}
+          ]}
+          numberOfLines={2}
+          onPress={() => gotoRecordOfWorking(item)}
+          ellipsizeMode="tail">查看</Text>
+        <Text 
+          style={[
+            styles.itemText,
+          ]}
+          numberOfLines={2}
+          onPress={() => changeStatus(item)}
+          ellipsizeMode="tail">{MEMBERS_STATUS[item.status] || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF'}
+          ]}
+          numberOfLines={2}
+          onPress={() => pressName(item)}
+          ellipsizeMode="tail">查看</Text>
       </View>
     )
   };
+
+  const memoList = useMemo(() => showList, [showList])
 
   return (
     <View style={[styles.screen]}>
@@ -317,7 +322,7 @@ const NewestState = () => {
       <View style={styles.list_head}>
         {NEWEST_STATE_LIST_HEAD.map((item,index) => <Text key={index} style={styles.list_head_text}>{item.title}</Text>)}
       </View>
-      <BottomList 
+      {/* <BottomList 
         list={showList}
         tab={TAB_OF_LIST.NEWEST_STATE}
         renderItem={renderItem}
@@ -328,6 +333,20 @@ const NewestState = () => {
         renderItemHeight={100}
         hasTab={false}
         tabTextStyle={{fontSize: 30}}
+      /> */}
+      <FlatList 
+        data={memoList}
+        style={{backgroundColor: '#fff'}}
+        renderItem={renderItem}
+        keyExtractor={(item,index) => item.flowId}
+        getItemLayout={(data, index)=>({length: 100, offset: 100 * index, index})}
+        refreshing={isLoading}
+        onRefresh={refresh}
+        initialNumToRender={20}
+        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
+        ListEmptyComponent={pageEmpty()}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.01}
       />
       <NormalDialog 
         ref={dialogRef}
@@ -367,7 +386,7 @@ const styles = StyleSheet.create({
     color: '#000'
   },
   listStyle: {
-    minHeight: 100,
+    height: 100,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
@@ -380,9 +399,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemText: {
-    fontSize: 30,
-    color: '#333333',
-    textAlign: 'center'
+    flex: 1,
+    fontSize: 28,
+    color: '#000',
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  },
+  bottomText: {
+    textAlign: 'center',
+    fontSize: 22
   }
 });
 

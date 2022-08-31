@@ -50,6 +50,7 @@ const HeaderSearch = ({
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const rangeDate = useSelector(state => state.RangeDateOfList);
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
   const nowTabName = useSelector(state => state.nowSelectTabNameInList.tabName);
 
@@ -65,6 +66,7 @@ const HeaderSearch = ({
   },[showSearch])
 
   const setRangeDate = () => {
+    if(rangeDate.startDate && rangeDate.endDate) return;
     dispatch(setStartDate(!clearRangeDate ? moment().format('YYYY-MM-DD'): ''));
     dispatch(setEndDate(!clearRangeDate ? moment().format('YYYY-MM-DD'): ''));
   };
