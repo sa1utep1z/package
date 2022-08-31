@@ -476,25 +476,70 @@ const DATA_Statistics = () => {
   }
 
   const renderItem = ({ item }) => {
-    const renderList = [
-      { fieldName: item.name, textStyle: (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2 },
-      { fieldName: item.signUp || '0', textStyle: { width: 100 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp) },
-      { fieldName: item.signUpIntention || '0', textStyle: { width: 99 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention) },
-      { fieldName: item.interviewNoArrive || '0', textStyle: { width: 67 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive) },
-      { fieldName: item.interviewFail || '0', textStyle: { width: 65 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail) },
-      { fieldName: item.interviewPass || '0', textStyle: { width: 67 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass) },
-      { fieldName: item.onBoardingFail || '0', textStyle: { width: 100 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail) },
-      { fieldName: item.onBoardingPass || '0', textStyle: { width: 99 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass) },
-      { fieldName: item.jobOn || '0', textStyle: { width: 162 }, pressFun: () => record(item, Object.keys(item).filter((key) => key === 'jobOn')[0], item.jobOn) }
-    ];
-
     return (
-      <View key={item.id} style={[styles.listStyle, { position: 'relative' }]}>
-        {renderList.map((renderItem, index) => (
-          <TouchableOpacity key={index} style={[styles.listItem, renderItem.itemStyle]} onPress={renderItem.pressFun}>
-            <Text style={[styles.itemText, renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
-          </TouchableOpacity>
-        ))}
+      <View key={item.id} style={[styles.listStyle]}>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 160, color: '#333' }]}
+            numberOfLines={2}
+            ellipsizeMode="tail">{item.name}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 100 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp)}
+            ellipsizeMode="tail">{item.signUp || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 99 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention)}
+            ellipsizeMode="tail">{item.signUpIntention || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 67 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive)}
+            ellipsizeMode="tail">{item.interviewNoArrive || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 65 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail)}
+            ellipsizeMode="tail">{item.interviewFail || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 67 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass)}
+            ellipsizeMode="tail">{item.interviewPass || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 100 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail)}
+            ellipsizeMode="tail">{item.onBoardingFail || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 99 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass)}
+            ellipsizeMode="tail">{item.onBoardingPass || '0'}</Text>
+        </View>
+        <View style={styles.listItem}>
+          <Text
+            style={[styles.itemText, { width: 162 }]}
+            numberOfLines={2}
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'jobOn')[0], item.jobOn)}
+            ellipsizeMode="tail">{item.jobOn || '0'}</Text>
+        </View>
       </View>
     )
   };
@@ -603,7 +648,7 @@ const DATA_Statistics = () => {
             onEndReached={onEndReached}
             keyExtractor={(item) => item.id}
             renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+            getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
             initialNumToRender={20}
             ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
             ListEmptyComponent={empty}
@@ -813,12 +858,6 @@ const styles = StyleSheet.create({
     width: '100%',
     overflowX: 'scroll'
   },
-  scrollStyle: {
-    // width: 750,
-    // height: '100%',
-    overflow: 'scroll',
-    // position: 'relative',
-  },
   flatStyle: {
     // width: 750,
     overflowX: 'scroll',
@@ -831,17 +870,11 @@ const styles = StyleSheet.create({
     color: '#333',
     paddingLeft: 20,
     paddingRight: 20,
-    // position: 'absolute',
-    // top: 0,
-    // left: 0
   },
   style2: {
     width: 160,
     fontSize: 26,
     color: '#333',
-    // position: 'absolute',
-    // top: 0,
-    // left: 0
   },
 });
 
