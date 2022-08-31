@@ -28,42 +28,21 @@ const Message = () => {
   };
 
   // 获取消息列表数据
-  const messageData = async (value) => {
-    try {
-      const res = await MessageApi.MessageList(value)
-      if (res.code === 0) {
-        setMessageInfo(res.data.content);
-        console.log('打印消息数据：', res)
-      }
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }
-  };
+  // const messageData = async (value) => {
+  //   try {
+  //     const res = await MessageApi.MessageList(value)
+  //     if (res.code === 0) {
+  //       setMessageInfo(res.data.content);
+  //       console.log('打印消息数据：', res)
+  //     }
+  //   } catch (error) {
+  //     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+  //   }
+  // };
 
-  useEffect(() => {
-    messageData(searchContent)
-  }, [searchContent]);
-
-  const data = [
-    {
-      title: '离职提醒',
-      content: '会员张三在2022年8月1日离职',
-      time: '08:00',
-      number: 1
-    },
-    {
-      title: '系统消息',
-      content: '管理系统升级啦！增加回访...',
-      time: '周一',
-      number: 1
-    },
-    {
-      title: '回访提醒',
-      content: '您预约2022年8月22日回访...',
-      time: '2022/08/20',
-      number: 1
-    },
-  ]
+  // useEffect(() => {
+  //   messageData(searchContent)
+  // }, [searchContent]);
 
   // 刷新
   const refresh = () => setSearchContent({ ...searchContent });

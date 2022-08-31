@@ -98,7 +98,7 @@ const ResignationMessage = () => {
   return (
     <View style={styles.index}>
       <FlatList
-        data={data}
+        data={messageInfo}
         refreshing={isLoading}
         onRefresh={refresh}
         onEndReached={onEndReached}
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     backgroundColor: '#EEF4F7',
+    paddingTop: 10
   },
   topStyle: {
     width: 686,
