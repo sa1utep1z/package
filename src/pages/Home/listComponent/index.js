@@ -25,7 +25,7 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
   const [activeButton, setActiveButton] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showImage, setShowImage] = useState([]);
-  const [rangeDate, setRangeDate] = useState({startDate: today, endDate: today});
+  const [rangeDate, setRangeDate] = useState({startDate: today, endDate: today, ifShelf: true});
 
   const showSearch = useSelector((state) => state.homeSearch.canSearch);
   
