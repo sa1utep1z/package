@@ -2,11 +2,16 @@ import React from "react";
 import { View, StyleSheet } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
+import FilterMoreInRecruiter from "../../../../../../components/HireReportDialog/FilterMoreInRecruiter";
+import { openDialog } from "../../../../../../redux/features/HireReportDialog";
 
 const RecruiterRoute = () => {
+  const dispatch = useDispatch();
+
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
@@ -89,9 +94,11 @@ const RecruiterRoute = () => {
     )
   };
 
+  const filterMore = () => dispatch(openDialog(<FilterMoreInRecruiter/>));
+
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton />
+      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore}/>
       <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
         <LineChart
           style={styles.LineStyle}

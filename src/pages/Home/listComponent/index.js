@@ -224,6 +224,18 @@ export const empty = () => (
   </>
 )
 
+export const pageEmpty = () => (
+  <View style={styles.pageEmptyStyle}>
+    <AntDesign
+      name='frowno'
+      size={60}
+      color='#999999'
+      style={styles.antIcon}
+    />
+    <Text style={styles.emptyText}>暂无数据</Text>
+  </View>
+)
+
 const styles = StyleSheet.create({
   swiperArea: {
     height: 312
@@ -343,6 +355,12 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  pageEmptyStyle: {
+    height: 500,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   emptyIcon: {
     fontSize: 30

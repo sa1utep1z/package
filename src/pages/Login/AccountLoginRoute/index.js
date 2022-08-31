@@ -57,7 +57,6 @@ const AccountLoginRoute = ({props}, ref) => {
         if(props.route.params === 'logout'){
           return;
         }
-        console.log('到了自动登录这一步', restForm)
         restForm.submitForm();
       }
     } catch (err) {

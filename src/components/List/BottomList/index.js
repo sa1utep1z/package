@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback, memo } from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Text } from "@rneui/themed";
 import { useDispatch } from 'react-redux';
@@ -64,7 +64,7 @@ const BottomList = ({
     onEndReached && onEndReached();
     setLoad(false);
   };
-
+  
   return (
     <>
       {hasTab && <View style={styles.tab_containerStyle}>
@@ -94,6 +94,7 @@ const BottomList = ({
         onEndReachedThreshold={0.01}
         onEndReached={onEndReachedFunc}
         onScrollEndDrag={()=>setLoad(true)}
+        windowSize={20}
       />
     </>
   )
@@ -129,4 +130,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default BottomList;
+export default memo(BottomList);

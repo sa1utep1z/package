@@ -1,5 +1,5 @@
-import React, {useRef, useEffect, useState, useMemo} from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
+import React, {useRef, useEffect, useState, useMemo, useCallback} from "react";
+import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
@@ -18,6 +18,7 @@ import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDeta
 import StatusChangeInSignUpList from "../../../../components/NormalDialog/StatusChangeInSignUpList";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { replaceMobile } from "../../../../utils";
+import { pageEmpty } from "../../../Home/listComponent";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -38,6 +39,7 @@ const SignUpList = () => {
   const [dialogContent, setDialogContent] = useState({});
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     navigation.setOptions({
@@ -113,6 +115,7 @@ const SignUpList = () => {
   }
 
   const selectIndex = (selectIndex) => {
+    setIndex(selectIndex);
     if(searchContent.startDate && searchContent.endDate){
       switch(selectIndex){
         case 0:
@@ -160,7 +163,7 @@ const SignUpList = () => {
     })
   };
 
-  const pressFactory = async(item) => {
+  const pressFactory = useCallback(async(item) => {
     try{
       const res = await ListApi.FactoryMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
@@ -181,7 +184,7 @@ const SignUpList = () => {
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  };
+  }, []);
 
   const editMemberMessage = (item) => {
     dialogRef.current.setShowDialog(false);
@@ -191,7 +194,7 @@ const SignUpList = () => {
     });
   };
 
-  const pressName = async(item) => {
+  const pressName = useCallback(async(item) => {
     try{
       const res = await ListApi.MemberMessage(item.flowId);
       if(res?.code !== SUCCESS_CODE){
@@ -209,9 +212,9 @@ const SignUpList = () => {
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  };
+  }, []);
 
-  const changeStatus = (item) => {
+  const changeStatus = useCallback((item) => {
     if(item.signUpStatus !== 'SIGN_UP_PENDING'){
       toast.show(`状态已确定！`, {type: 'warning'});
       return;
@@ -222,9 +225,9 @@ const SignUpList = () => {
       bottomButton: false,
       dialogComponent: <StatusChangeInSignUpList dialogRef={dialogRef} item={item} refresh={refresh}/>
     });
-  };
+  }, []);
 
-  const callPhone = item => {
+  const callPhone = useCallback(item => {
     dialogRef.current.setShowDialog(true);
     setDialogContent({
       dialogTitle: '温馨提示',
@@ -234,7 +237,7 @@ const SignUpList = () => {
       },
       dialogComponent: <CallPhone message={item}/>
     });
-  };
+  }, []);
 
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
 
@@ -247,70 +250,78 @@ const SignUpList = () => {
   };
     
   const renderItem = ({item}) => {
-    const renderList = [
-      { 
-        fieldName: item.companyShortName, 
-        textStyle: { color: '#409EFF', textAlign: 'center' },
-        pressFun: () => pressFactory(item)
-      },
-      { 
-        fieldName: item.name, 
-        pressFun: () => pressName(item)
-      },
-      { 
-        fieldName: SIGN_UP_STATUS[item.signUpStatus], 
-        pressFun: () => changeStatus(item)
-      },
-      { 
-        fieldName: item.mobile ? replaceMobile(item.mobile) : '无', 
-        textStyle: {color: '#409EFF', fontSize: 24},
-        pressFun: () => item.mobile && callPhone(item)
-      }
-    ];
     return (
-      <View key={item.id} style={styles.listStyle}>
-        {renderList.map((renderItem, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={[styles.listItem, renderItem.itemStyle]} 
-            onPress={renderItem.pressFun}>
-            <Text 
-              style={[
-                styles.itemText, 
-                renderItem.textStyle
-              ]}
-              numberOfLines={2}
-              ellipsizeMode="tail">{renderItem.fieldName || '无'}</Text>
-          </TouchableOpacity>
-        ))}
+      <View style={styles.listStyle}>
+        <Text 
+          style={[
+            styles.itemText,
+            {color: '#409EFF', textAlign: 'center'}
+          ]}
+          numberOfLines={2}
+          onPress={() => pressFactory(item)}
+          ellipsizeMode="tail">{item.companyShortName || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText
+          ]}
+          numberOfLines={2}
+          onPress={() => pressName(item)}
+          ellipsizeMode="tail">{item.name || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText
+          ]}
+          numberOfLines={2}
+          onPress={() => changeStatus(item)}
+          ellipsizeMode="tail">{SIGN_UP_STATUS[item.signUpStatus] || '无'}</Text>
+        <Text 
+          style={[
+            styles.itemText, 
+            {color: '#409EFF', fontSize: 24}
+          ]}
+          numberOfLines={2}
+          onPress={() => item.mobile && callPhone(item)}
+          ellipsizeMode="tail">{item.mobile ? replaceMobile(item.mobile) : '无'}</Text>
       </View>
     )
   };
 
-  const listHead = (
-    <View style={styles.tabArea}>
-      <Text style={styles.tab}>企业</Text>
-      <Text style={styles.tab}>姓名</Text>
-      <Text style={styles.tab}>状态</Text>
-      <Text style={styles.tab}>联系方式</Text>
-    </View>   
-  );
+  const memoList = useMemo(() => showList, [showList])
 
   return (
     <View style={styles.screen}>
       <HeaderSearch filterFun={filter}/>
       <CenterSelectDate />
-      <BottomList
-        list={showList}
+      <View style={styles.tab_containerStyle}>
+        {TAB_OF_LIST.SIGN_UP_LIST.map((tabItem, tabIndex) => {
+          const active = index === tabIndex;
+          return (
+            <TouchableOpacity key={tabIndex} style={styles.tabItem} onPress={()=>selectIndex(tabIndex)}>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem.title}</Text>
+              <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabNumberList[tabItem.type] || 0}</Text>
+            </TouchableOpacity>
+          )
+        })}
+      </View>
+      <View style={styles.tabArea}>
+        <Text style={styles.tab}>企业</Text>
+        <Text style={styles.tab}>姓名</Text>
+        <Text style={styles.tab}>状态</Text>
+        <Text style={styles.tab}>联系方式</Text>
+      </View>  
+      <FlatList 
+        data={memoList}
+        style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
-        tab={TAB_OF_LIST.SIGN_UP_LIST}
-        tabNumberList={tabNumberList}
-        listHead={listHead}
-        isLoading={isLoading}
+        keyExtractor={(item,index) => item.flowId}
+        getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
+        refreshing={isLoading}
         onRefresh={refresh}
+        initialNumToRender={20}
+        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
+        ListEmptyComponent={pageEmpty()}
         onEndReached={onEndReached}
-        nowSelectIndex={selectIndex}
-        hasNext={originData?.hasNext}
+        onEndReachedThreshold={0.01}
       />
       <NormalDialog 
         ref={dialogRef}
@@ -325,7 +336,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   listStyle: {
-    minHeight: 80,
+    height: 80,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
@@ -338,20 +349,44 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   itemText: {
+    flex: 1,
     fontSize: 28,
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
+    textAlignVertical: 'center'
   },
   tabArea: {
     height: 60,
     backgroundColor: '#fff', 
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   tab: {
     flex: 1, 
     textAlign: 'center', 
     fontSize: 30, 
     color: '#333333'
+  },
+  tab_containerStyle: {
+    minHeight: 120, 
+    flexDirection: 'row', 
+    backgroundColor: '#fff'
+  },
+  tabItem: {
+    flex: 1, 
+    justifyContent: 'center'
+  },
+  tabItem_text: {
+    fontSize: 32,
+    textAlign: 'center'
+  },
+  tabItem_titleStyle_active: {
+    color: '#409EFF',
+    fontWeight: 'bold',
+  },
+  bottomText: {
+    textAlign: 'center',
+    fontSize: 22
   }
 });
 
