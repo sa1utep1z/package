@@ -52,7 +52,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
     }
   };
 
@@ -80,7 +80,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +97,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
     }
 
   };
@@ -125,7 +125,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +142,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
     }
 
   };
@@ -170,7 +170,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -187,7 +187,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
     }
   };
 
@@ -215,7 +215,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -249,7 +249,6 @@ const DATA_Statistics = () => {
       { fieldName: res.onBoardingPass || '0', textStyle: { width: 98 } },
       { fieldName: res.jobOn || '0', textStyle: { width: 163 } }
     ];
-
     return (
       <View style={styles.listStyle}>
         {renderList.map((renderItem, index) => (
@@ -260,7 +259,6 @@ const DATA_Statistics = () => {
       </View>
     )
   };
-
 
   const IconItem = [
     {
@@ -360,7 +358,7 @@ const DATA_Statistics = () => {
         }
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
     }
   }
 
