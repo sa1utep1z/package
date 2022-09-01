@@ -20,6 +20,7 @@ import { replaceMobile } from "../../../../utils";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { pageEmpty } from "../../../Home/listComponent";
 import { setTabName } from "../../../../redux/features/NowSelectTabNameInList";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -44,6 +45,7 @@ const InterviewList = () => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    dispatch(openListSearch());
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
@@ -310,6 +312,8 @@ const InterviewList = () => {
       <HeaderSearch 
         filterFun={filter} 
         batchOperate={batchOperate}
+        startText="面试开始："
+        endText="面试结束："
       />
       <CenterSelectDate />
       <View style={styles.tab_containerStyle}>

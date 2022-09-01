@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import { View, StyleSheet } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
@@ -24,15 +24,11 @@ const RecruiterRoute = () => {
   };
 
   const chartConfig = {
+    color: () => '#333333',
     backgroundGradientFrom: '#fff',
     backgroundGradientTo: '#fff',
-    fillShadowGradientFrom: '#409EFF',
+    fillShadowGradientFrom: '#fff',
     fillShadowGradientTo: '#fff',
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientFromOffset: 0.1,
-    color: () => '#333333',
-    strokeWidth: 2, 
-    useShadowColorFromDataset: false,
     propsForLabels: {
       fontSize: '22',
       fontWeight: 'bold'
@@ -127,4 +123,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RecruiterRoute;
+export default memo(RecruiterRoute);

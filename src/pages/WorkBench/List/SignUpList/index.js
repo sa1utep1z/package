@@ -2,6 +2,7 @@ import React, {useRef, useEffect, useState, useMemo, useCallback} from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
@@ -19,6 +20,7 @@ import StatusChangeInSignUpList from "../../../../components/NormalDialog/Status
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { replaceMobile } from "../../../../utils";
 import { pageEmpty } from "../../../Home/listComponent";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -26,6 +28,7 @@ const firstPage = {pageSize: 20, pageNumber: 0};
 const SignUpList = () => {
   const toast = useToast();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const dialogRef = useRef(null);
 
@@ -46,6 +49,7 @@ const SignUpList = () => {
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
+    dispatch(openListSearch());
   }, [])
 
   useEffect(()=>{

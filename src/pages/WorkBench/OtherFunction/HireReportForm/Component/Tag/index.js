@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useDispatch } from "react-redux/es/exports";
+// import {setStartDate, setEndDate} from '../../../../../../redux/features/HireReportRangeDate';
 
 const Tag = ({
   lastButton = false,
@@ -7,6 +9,7 @@ const Tag = ({
   tagAreaStyle,
   filterMore
 }) => {
+  const dispatch = useDispatch();
 
   const [selectTag, setSelectTag] = useState('');
 
@@ -14,7 +17,10 @@ const Tag = ({
     tagList.length && setSelectTag(tagList[0].value);
   },[])
 
-  const chooseTag = (tag) => setSelectTag(tag.value);
+  const chooseTag = (tag) => {
+    setSelectTag(tag.value);
+    // dispatch()
+  };
 
   return (
     <>

@@ -43,6 +43,8 @@ const HeaderSearch = ({
   batchOperate, // 批量操作函数
   leavingList = false,
   clearRangeDate, //进入页面时不要筛选时间
+  startText,
+  endText,
     ...rest
   }) => {
   const toast = useToast();
@@ -216,7 +218,7 @@ const HeaderSearch = ({
                 />
                 <View style={{width: 40}}></View>
                 {staffSearch ? <Field
-                  title="店员"
+                  title="招聘员"
                   name="staffSearch"
                   showLittleTitle
                   canSearch
@@ -226,7 +228,7 @@ const HeaderSearch = ({
                   formalLabel={false}
                   component={SearchItem}
                 /> : <Field
-                  title="员工"
+                  title="招聘员"
                   name="staff"
                   showLittleTitle
                   canSearch
@@ -252,11 +254,13 @@ const HeaderSearch = ({
               </>}
               {!leavingList && <Field
                 name="dateRange"
+                startText={startText}
+                endText={endText}
                 component={DateRangePicker}
               />}
               <Field
                 name="search"
-                placeholder={placeholder? placeholder : '请输入姓名或身份证'}
+                placeholder={placeholder? placeholder : '请输入会员姓名或身份证'}
                 borderRadius={8}
                 searchInputStyle={styles.searchInputStyle}
                 component={SearchInput}

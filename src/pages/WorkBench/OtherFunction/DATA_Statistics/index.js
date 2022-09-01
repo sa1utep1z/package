@@ -626,7 +626,7 @@ const DATA_Statistics = () => {
 
   return (
     <View style={styles.screen}>
-      <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
+      <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入企业名称" />
       <CenterSelectDate />
       <View style={styles.tab_containerStyle}>
         {title.map((tabItem, tabIndex) => {

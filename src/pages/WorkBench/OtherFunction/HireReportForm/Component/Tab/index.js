@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 
 const Tab = ({
@@ -29,6 +29,9 @@ const Tab = ({
   return (
     <TabView
       lazy
+      initialLayout={{ width: 686 }}
+      lazyPreloadDistance={1}
+      renderLazyPlaceholder={() => <View style={styles.renderLazyStyle}><ActivityIndicator color="#409EFF" size={48}/></View>}
       swipeEnabled={false}
       renderTabBar={tabBar}
       onIndexChange={setIndex}
@@ -44,7 +47,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   tabBarIndicatorStyle: {
-    backgroundColor: '#409EFF' 
+    backgroundColor: '#409EFF'
+  },
+  renderLazyStyle: {
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center'
   }
 });
 

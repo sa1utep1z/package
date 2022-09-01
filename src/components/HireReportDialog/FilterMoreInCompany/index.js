@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, TouchableOpacity, Text, FlatList} from 'react-native';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {StyleSheet, View, TouchableOpacity, Text, FlatList, ScrollView, ActivityIndicator} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CheckBox } from '@rneui/themed';
@@ -15,6 +15,7 @@ import SearchInput from '../../SearchInput';
 const FilterMoreInCompany = () => {
   const toast = useToast();
   const dispatch = useDispatch();
+  const scrollViewRef = useRef(null);
 
   const [list, setList] = useState([]);
   const [originList, setOriginList] = useState([]);
@@ -38,21 +39,24 @@ const FilterMoreInCompany = () => {
   const [showOther, setShowOther] = useState(false);
   const [selectOther, setSelectOther] = useState({});
 
-  useEffect(()=>{
-    getCompanyList();
-  },[])
+  const [loading, setLoading] = useState(false);
 
   const getCompanyList = async() => {
+    setLoading(true);
     try{  
       const res = await MyMembersApi.CompaniesList();
+      console.log('getCompanyList-->res', res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
         return;
       }
       setList(res.data);
       setOriginList(res.data);
+      setLoading(false);
     }catch(err){
       toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -75,6 +79,7 @@ const FilterMoreInCompany = () => {
     setDateRangePicker(false);
     setShowStatusList(false);
     setShowWay(false);
+    getCompanyList();
   };
 
   const changeWay = () => {
@@ -124,9 +129,10 @@ const FilterMoreInCompany = () => {
     setSelectWay(way);
   };
 
-  const selectCompanyOnPress = (value) => {
+  const selectCompanyOnPress = useCallback((value) => {
     setSelectOther(value);
-  };
+    scrollViewRef?.current?.flashScrollIndicators();
+  }, []);
 
   const onChanging = value => {
     const filterList = originList.filter(item => item.label.includes(value));
@@ -136,22 +142,6 @@ const FilterMoreInCompany = () => {
   const confirmOnPress = () => {
     console.log('点击了确认！');
     dispatch(closeDialog());
-  };
-
-  const renderItem = ({item}) => {
-    const isSelected = selectOther.value === item.value;
-    return (
-      <TouchableOpacity style={{height: 30, borderWidth: 1, borderTopWidth: 0, borderColor: '#EFEFEF', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10}} onPress={() => selectCompanyOnPress(item)}>
-        <Text style={{color: '#333333'}}>{item.label}</Text>
-        <CheckBox
-          checked={isSelected}
-          size={18}
-          containerStyle={{padding: 0}}
-          checkedIcon={"dot-circle-o"}
-          uncheckedIcon={"circle-o"}
-        />
-      </TouchableOpacity>
-    )
   };
 
   return (
@@ -241,24 +231,41 @@ const FilterMoreInCompany = () => {
           <TouchableOpacity style={[styles.touchArea, showOther && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeOther}>
             <Text numberOfLines={1} style={[{fontSize: 16, color: '#000'}, showOther && styles.fontBold]}>{`${selectOther.value ? `已选企业：${selectOther.label}` : '请选择企业'}`}</Text>
           </TouchableOpacity>
-          {showOther && <SearchInput
-            placeholder='请输入企业名称'
-            smallSize
-            withoutButton
-            keyboardType='default'
-            onChange={onChanging}
-            fontStyle={{fontSize: 14}}
-            searchInputStyle={styles.searchInputStyle}
-            inputContainerStyle={{paddingLeft: 0}}
-          />}
           {showOther && 
-          <FlatList 
-            data={list}
-            renderItem={renderItem} 
-            initialNumToRender={10}
-            getItemLayout={(data, index)=>({length: 30, offset: 30 * index, index})}
-            keyExtractor={item => item.value}
-          />}
+            <>
+              {!loading ? 
+                <>
+                  <SearchInput
+                    placeholder='请输入企业名称'
+                    smallSize
+                    withoutButton
+                    keyboardType='default'
+                    onChange={onChanging}
+                    fontStyle={{fontSize: 14}}
+                    searchInputStyle={styles.searchInputStyle}
+                    inputContainerStyle={{paddingLeft: 0}}
+                  />
+                  <ScrollView ref={scrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
+                    {list.map(company => {
+                      const isSelected = selectOther.value === company.value;
+                      return (
+                        <TouchableOpacity key={company.value} style={styles.renderItemStyle} onPress={() => selectCompanyOnPress(company)}>
+                        <Text style={{color: '#333333'}}>{company.label}</Text>
+                        <CheckBox
+                          checked={isSelected}
+                          size={18}
+                          onPress={() => selectCompanyOnPress(company)}
+                          containerStyle={{padding: 0}}
+                          checkedIcon={"dot-circle-o"}
+                          uncheckedIcon={"circle-o"}
+                        />
+                      </TouchableOpacity>
+                      )})}
+                    </ScrollView>
+                </> : <View style={styles.emptyArea}>
+                <ActivityIndicator size={20} color="#409EFF"/>
+              </View>}
+            </>}
         </>
       </View>
       <View style={styles.bottomButtonArea}>
@@ -318,6 +325,24 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderColor: '#EFEFEF',
     paddingHorizontal: 0
+  },
+  renderItemStyle: {
+    height: 30, 
+    borderWidth: 1, 
+    borderTopWidth: 0, 
+    borderColor: '#EFEFEF', 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingLeft: 10
+  },
+  emptyArea: {
+    borderWidth: 1, 
+    borderColor: '#EFEFEF', 
+    borderTopWidth: 0, 
+    paddingVertical: 10, 
+    borderBottomLeftRadius: 8, 
+    borderBottomRightRadius: 8
   },
   bottomButtonArea: {
     flexDirection: 'row',

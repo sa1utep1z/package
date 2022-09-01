@@ -59,7 +59,7 @@ const SelectItem = ({
     if(singleSelect){
       const newList = [item];
       setSelectedItemList(newList);
-      const newArr = deepCopy(selectList);
+      const newArr = deepCopy(list);
       newArr.map(data => {
         if(data.id === item.id){
           data.isChecked = true;
@@ -120,6 +120,7 @@ const SelectItem = ({
   };
 
   const onChanging = value => {
+    if(!list.length) return;
     let newArr = selectList?.length && selectList.filter(item => item.title.includes(value));
     setList(newArr);
   };
@@ -245,6 +246,7 @@ const SelectItem = ({
                     </TouchableOpacity>
                   )
                 }}
+                keyboardShouldPersistTaps="handled"
                 keyExtractor={item => item.id}
                 getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
                 initialNumToRender={15}

@@ -1,7 +1,7 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
@@ -22,11 +22,14 @@ import TwoCard from "../../../../components/NormalDialog/TwoCard";
 import NewestStatus from "../../../../components/NormalDialog/NewestStatus";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { pageEmpty } from "../../../Home/listComponent";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const NewestState = () => {
+  const dispatch = useDispatch();
+
   const toast = useToast();
   const navigation = useNavigation();
 
@@ -43,6 +46,7 @@ const NewestState = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    dispatch(openListSearch());
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>

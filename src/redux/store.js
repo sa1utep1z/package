@@ -7,6 +7,7 @@ import RoleSwitchReducer from './features/RoleSwitch';
 import NowSelectTabNameInListReducer from './features/NowSelectTabNameInList';
 import RoleInfoReducer from './features/RoleInfo';
 import HireReportDialogReducer from './features/HireReportDialog';
+import HireReportRangeDateReducer from './features/HireReportRangeDate';
 
 export default configureStore({
   reducer: {
@@ -16,7 +17,8 @@ export default configureStore({
     roleSwitch: RoleSwitchReducer,
     nowSelectTabNameInList: NowSelectTabNameInListReducer,
     roleInfo: RoleInfoReducer,
-    HireReportDialog: HireReportDialogReducer
+    HireReportDialog: HireReportDialogReducer,
+    HireReportRangeDate: HireReportRangeDateReducer,
   },
   
   //解决redux更新数据无法传入Moment的问题；
