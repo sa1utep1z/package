@@ -128,7 +128,7 @@ const Mine = () => {
           })}
         </View>
       </View>
-      <Text style={styles.bottomText}>版本号：0.1.7</Text>
+      <Text style={styles.bottomText}>版本号：0.1.8</Text>
       <NormalDialog 
         ref={dialogRef} 
         dialogContent={dialogContent}
@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
   },
   headContainerStyle: {
     borderWidth: 1,
-    backgroundColor: '#fff',
     borderColor: '#fff'
   },
   titleArea: {

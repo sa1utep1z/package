@@ -96,7 +96,7 @@ const SignUpList = () => {
     const params = {
       companyIds: searchContent?.companyIds || [],  
       storeIds: searchContent?.storeIds || [],
-      recruitIds: searchContent?.names || [],
+      recruitIds: searchContent?.recruitIds || [],
       startDate: searchContent?.startDate || '',
       endDate: searchContent?.endDate || '',
       str: searchContent?.str || '',
@@ -140,7 +140,7 @@ const SignUpList = () => {
     const endDate = values.dateRange.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const names = values.staff.length ? values.staff.map(item => item.value) : [];
+    const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
     const str = values.search;
 
     setSearchContent({
@@ -151,7 +151,7 @@ const SignUpList = () => {
       str,
       companyIds,
       storeIds,
-      names
+      recruitIds
     });
   };
 
