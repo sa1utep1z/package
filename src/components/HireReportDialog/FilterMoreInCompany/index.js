@@ -6,6 +6,7 @@ import { CheckBox } from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 import { CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE } from '../../../utils/const';
 import { closeDialog } from '../../../redux/features/HireReport/HireReportDialog';
@@ -16,6 +17,8 @@ const FilterMoreInCompany = () => {
   const toast = useToast();
   const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
+
+  const rangeDate = useSelector(state => state.RangeDateOfTrend);
 
   const [list, setList] = useState([]);
   const [originList, setOriginList] = useState([]);
@@ -149,7 +152,7 @@ const FilterMoreInCompany = () => {
       <View style={{maxHeight: 450, paddingHorizontal: 10}}>
         <>
           <TouchableOpacity style={[styles.touchArea, dataRangePicker && styles.selectedTouchArea]} onPress={changeDateRangePicker}>
-            <Text style={[{fontSize: 16, color: '#000'}, dataRangePicker && styles.fontBold]}>{`时间范围${!dataRangePicker ? `：${rangeTime.startTime + `~` + rangeTime.endTime}` : ''}`}</Text>
+            <Text style={[{fontSize: 16, color: '#000'}, dataRangePicker && styles.fontBold]}>{`时间范围${!dataRangePicker ? `：${rangeDate.startDate + `~` + rangeDate.endDate}` : ''}`}</Text>
           </TouchableOpacity>
           {dataRangePicker && (
             <View style={styles.selectArea}>
