@@ -1,25 +1,52 @@
 import React, { useRef, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { empty } from "../../pages/Home/listComponent";
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import { empty } from "../../Home/listComponent";
+import MessageApi from "../../../request/MessageApi";
+import moment from 'moment';
 
-const ReVsitMessage = () => {
-  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
+const AdviseMessage = (props) => {
+  const { route: { params } } = props;
+  const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0, type: params.type });
   const [messageInfo, setMessageInfo] = useState([]); // 消息数据
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 是否展开
+  const [isOpen, setIsOpen] = useState(false);
   const [nextPage, setNextPage] = useState(false);
   const [originData, setOriginData] = useState({});
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
 
-  const data = [
-    {
-      title: '离职提醒',
-      content: '会员张三在2022年8月1日离职',
-      time: '08:00',
-      number: 1
-    },
-  ]
+  // 获取消息列表数据
+  const messageData = async (value) => {
+    try {
+      const res = await MessageApi.MessageList(value)
+      if (res.code === 0) {
+        setMessageInfo(res.data.content);
+        console.log('打印消息数据：', res, params)
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  // 标记消息已读
+  const readMessage = async (value, hasRead) => {
+    try {
+      if (!hasRead) {
+        const res = await MessageApi.MessageRead(value)
+        if (res.code === 0) {
+          console.log('打印已读消息数据：', res, isOpen)
+        }
+      }
+      setIsOpen(!isOpen)
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  useEffect(() => {
+    messageData(searchContent)
+  }, [searchContent]);
 
   // 刷新
   const refresh = () => setSearchContent({ ...searchContent });
@@ -37,60 +64,27 @@ const ReVsitMessage = () => {
   const renderItem = ({ item }) => {
     return (
       <>
-        <View style={styles.contentBox}>
-          <AntDesign
-            name='message1'
+        <TouchableOpacity style={isOpen ? styles.contentBox1 : styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
+          <EvilIcons
+            name='comment'
             color='#409EFF'
-            size={60}
+            size={90}
             style={styles.iconStyle}
           />
           <View style={styles.content}>
-            <Text style={styles.title}>回访提醒</Text>
-            <Text style={styles.tips}>您预约2022年8月22日回访...</Text>
+            <Text style={styles.title}>{item.title}</Text>
+            {
+              isOpen ? <Text style={styles.tips}>{item.content}</Text> : <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.content}</Text>
+
+            }
           </View>
           <View style={styles.right}>
-            <Text style={styles.time}>2022/8/20</Text>
-            <View style={styles.border}>
-              <Text style={styles.number}>4</Text>
-            </View>
+            <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:SS') : ''}</Text>
+            {
+              !item.hasRead && <View style={styles.border}></View>
+            }
           </View>
-        </View>
-        <View style={styles.contentBox}>
-          <AntDesign
-            name='message1'
-            color='#409EFF'
-            size={60}
-            style={styles.iconStyle}
-          />
-          <View style={styles.content}>
-            <Text style={styles.title}>回访提醒</Text>
-            <Text style={styles.tips}>您预约2022年8月22日回访...</Text>
-          </View>
-          <View style={styles.right}>
-            <Text style={styles.time}>2022/8/20</Text>
-            <View style={styles.border}>
-              <Text style={styles.number}>1</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.contentBox}>
-          <AntDesign
-            name='message1'
-            color='#409EFF'
-            size={60}
-            style={styles.iconStyle}
-          />
-          <View style={styles.content}>
-            <Text style={styles.title}>回访提醒</Text>
-            <Text style={styles.tips}>您预约2022年8月22日回访...</Text>
-          </View>
-          <View style={styles.right}>
-            <Text style={styles.time}>2022/8/20</Text>
-            <View style={styles.border}>
-              <Text style={styles.number}>6</Text>
-            </View>
-          </View>
-        </View>
+        </TouchableOpacity>
       </>
     )
   };
@@ -102,7 +96,7 @@ const ReVsitMessage = () => {
         refreshing={isLoading}
         onRefresh={refresh}
         onEndReached={onEndReached}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.type}
         renderItem={(item) => renderItem(item)}
         getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
         initialNumToRender={15}
@@ -158,6 +152,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 15
   },
+  contentBox1: {
+    width: 686,
+    minHeight: 130,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    margin: 30,
+    marginBottom: 0,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    padding: 15
+  },
   content: {
     width: '65%',
     height: '100%',
@@ -186,8 +193,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   border: {
-    width: 35,
-    height: 35,
+    width: 15,
+    height: 15,
     borderRadius: 50,
     backgroundColor: '#E71B1B',
   },
@@ -205,4 +212,4 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
 })
-export default ReVsitMessage;
+export default AdviseMessage;

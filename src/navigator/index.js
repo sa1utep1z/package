@@ -17,7 +17,7 @@ export default Navigator = () => {
       <Stack.Screen
         name={NAVIGATION_KEYS.LOGIN}
         component={NAVIGATION_PAGES.LOGIN}
-        options={{header: () => null}}
+        options={{ header: () => null }}
       />
       <Stack.Screen
         name={NAVIGATION_KEYS.FORGET_PSW}
@@ -281,12 +281,33 @@ export default Navigator = () => {
           headerTitle: '回访提醒',
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.SYSTEM_MESSAGE}
+        component={NAVIGATION_PAGES.SYSTEM_MESSAGE}
+        options={{
+          headerTitle: '系统信息',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.NOTICE_MESSAGE}
+        component={NAVIGATION_PAGES.NOTICE_MESSAGE}
+        options={{
+          headerTitle: '公告信息',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ADVISE_MESSAGE}
+        component={NAVIGATION_PAGES.ADVISE_MESSAGE}
+        options={{
+          headerTitle: '通知信息',
+        }}
+      />
     </>
   );
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator 
+      <Stack.Navigator
         initialRouteName={NAVIGATION_KEYS.LOGIN}
         screenOptions={{
           headerTitleAlign: 'center',

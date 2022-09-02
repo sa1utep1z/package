@@ -44,7 +44,7 @@ const NAVIGATION_PAGES_LIST = {
   
   //工具栏
   WORKBENCH: require('./WorkBench'),
-  MESSAGE: require('./Message'),
+  MESSAGE: require('./messages/Message'),
   MINE: require('./Mine'),
 
   //我的
@@ -52,8 +52,11 @@ const NAVIGATION_PAGES_LIST = {
   RESET: require('./Mine/Reset'),
 
   // 消息
-  RESIGNATION_MESSAGE: require('./resignationMessage'),
-  REVISIT_MESSAGE: require('./ReVisitMessage'),
+  RESIGNATION_MESSAGE: require('./messages/resignationMessage'),
+  REVISIT_MESSAGE: require('./messages/ReVisitMessage'),
+  SYSTEM_MESSAGE: require('./messages/systemMessage'),
+  NOTICE_MESSAGE: require('./messages/noticeMessage'),
+  ADVISE_MESSAGE: require('./messages/adviseMessage'),
 };
 
 module.exports = FilterNavigationList(NAVIGATION_PAGES_LIST);

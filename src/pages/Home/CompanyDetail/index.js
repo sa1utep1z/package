@@ -12,7 +12,6 @@ import NAVIGATION_KEYS from '../../../navigator/key';
 import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE, PROFESSION } from '../../../utils/const';
 
 const CompanyDetail = (props) => {
-  const { route: { params: { bannerList = [] } } } = props;
   const webRef = useRef(null);
   const toast = useToast();
 
@@ -39,7 +38,7 @@ const CompanyDetail = (props) => {
         return;
       }
       setOrderData(res.data);
-      console.log('岗位详情：', res, params)
+      console.log('岗位详情：', res)
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -130,14 +129,7 @@ const CompanyDetail = (props) => {
             <Text style={styles.titlesStyle}>发单详情</Text>
           </View>
           <View style={styles.contentStyle}>
-            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail.length ? String(orderData.orderPolicyDetail).replace(/<br\/>/g, "\n") : '无'}</Text>
             <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
-            {/* <WebView
-              scrollEnabled={false}
-              scalesPageToFit={false}
-              originWhitelist={['*']}
-              source={{ html: orderData.orderPolicyDetail }}>
-            </WebView> */}
           </View>
         </View>
         <View style={styles.boxStyle}>

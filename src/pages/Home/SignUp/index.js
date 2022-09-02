@@ -48,7 +48,7 @@ const SignUp = (props) => {
     address: '',
     authority: '',
     timeLimit: '',
-    arrivalMode: 'FACTORY',
+    arrivalMode: true,
     remark: '',
     tip: true
   };
@@ -68,10 +68,10 @@ const SignUp = (props) => {
     setOrderTime(values.orderDate)
     const prams = {
       ...values,
-      arrivalMode: values.arrivalMode === true ? 'FACTORY' : 'STORE',
+      arrivalMode: values.arrivalMode === true ? 'STORE' : 'FACTORY',
       orderDate: values.orderDate ? moment(values.orderDate).format('YYYY-MM-DD') : '',
     }
-  
+    console.log('提交参数22：', prams)
     try {
       const res = await HomeApi.SignUp(orderId, prams);
       if (res.code === 0) {

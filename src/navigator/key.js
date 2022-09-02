@@ -53,6 +53,9 @@ const NAVIGATION_KEYS = {
   // 消息
   RESIGNATION_MESSAGE: 'resignation_message',
   REVISIT_MESSAGE: 'revisit_message',
+  SYSTEM_MESSAGE: 'system_message',
+  NOTICE_MESSAGE: 'notice_message',
+  ADVISE_MESSAGE: 'advise_message',
 };
 
 export default NAVIGATION_KEYS;

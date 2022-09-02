@@ -52,7 +52,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
 
@@ -80,7 +80,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +97,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
 
   };
@@ -125,7 +125,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +142,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
 
   };
@@ -170,7 +170,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -187,7 +187,7 @@ const DATA_Statistics = () => {
         setTotalData(res.data);
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
 
@@ -215,7 +215,7 @@ const DATA_Statistics = () => {
       //无下一页（第一页）
       setCompanyDetails(res.data.content);
     } catch (err) {
-      toast.show(`出现异常，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现异常，请联系管理员处理`, { type: 'danger' });
     } finally {
       setIsLoading(false);
     }
@@ -239,15 +239,15 @@ const DATA_Statistics = () => {
 
   const toTalItems = (res) => {
     const renderList = [
-      { fieldName: res.total || '0', textStyle: { width: 160, fontSize: 26, } },
-      { fieldName: res.signUp || '0', textStyle: { width: 100 } },
-      { fieldName: res.signUpIntention || '0', textStyle: { width: 99 } },
-      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 67 } },
-      { fieldName: res.interviewFail || '0', textStyle: { width: 65 } },
-      { fieldName: res.interviewPass || '0', textStyle: { width: 66 } },
-      { fieldName: res.onBoardingFail || '0', textStyle: { width: 101 } },
-      { fieldName: res.onBoardingPass || '0', textStyle: { width: 98 } },
-      { fieldName: res.jobOn || '0', textStyle: { width: 163 } }
+      { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
+      { fieldName: res.signUp || '0', textStyle: { width: 109 } },
+      // { fieldName: res.signUpIntention || '0', textStyle: { width: 99 } },
+      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 78 } },
+      { fieldName: res.interviewFail || '0', textStyle: { width: 68 } },
+      { fieldName: res.interviewPass || '0', textStyle: { width: 70 } },
+      { fieldName: res.onBoardingFail || '0', textStyle: { width: 88 } },
+      { fieldName: res.onBoardingPass || '0', textStyle: { width: 78 } },
+      { fieldName: res.jobOn || '0', textStyle: { width: 126 } }
     ];
     return (
       <View style={styles.listStyle}>
@@ -268,7 +268,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 162, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 118, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'signUp',
@@ -277,17 +277,17 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 102, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 111, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
-    {
-      label: 'signUpIntention',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 101, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
+    // {
+    //   label: 'signUpIntention',
+    //   Icon: <AntDesign
+    //     name='caretdown'
+    //     size={32}
+    //     color='#409EFF'
+    //   />,
+    //   styles: { width: 101, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+    // },
     {
       label: 'interviewNoArrive',
       Icon: <AntDesign
@@ -295,7 +295,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 69, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 80, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'interviewFail',
@@ -304,7 +304,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 67, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 70, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'interviewPass',
@@ -313,7 +313,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 68, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 71, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'onBoardingFail',
@@ -322,7 +322,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 103, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 91, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'onBoardingPass',
@@ -331,7 +331,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 100, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 80, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'jobOn',
@@ -340,7 +340,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 165, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 128, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     }
   ]
 
@@ -358,7 +358,7 @@ const DATA_Statistics = () => {
         }
       }
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系统管理员处理`, { type: 'danger' });
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   }
 
@@ -366,7 +366,7 @@ const DATA_Statistics = () => {
     return (
       <View style={[{ minHeight: 200 }]}>
         <View style={styles.titleBox}>
-          <Text style={styles.status}>{key === 'signUpIntention' ? '报名有意愿人数' : key === 'signUp' ? '报名邀约人数' : key === 'onBoardingFail' ? '未报到人数' : key == 'onBoardingPass' ? '入职人数' : key == 'jobOn' ? '在职人数' : key == 'interviewNoArrive' ? '面试未去' : key == 'interviewFail' ? '面试未过' : '面试通过'}</Text>
+          <Text style={styles.status}>{key === 'signUp' ? '报名人数' : key === 'onBoardingFail' ? '未报到人数' : key == 'onBoardingPass' ? '入职人数' : key == 'jobOn' ? '在职人数' : key == 'interviewNoArrive' ? '面试未去' : key == 'interviewFail' ? '面试未过' : '面试通过'}</Text>
           <Text style={styles.number}>{value}</Text>
         </View>
         <ScrollView style={{ flex: 1 }}>
@@ -476,64 +476,64 @@ const DATA_Statistics = () => {
   const renderItem = ({ item }) => {
     return (
       <View key={item.id} style={[styles.listStyle]}>
-        <View style={styles.listItem}>
+        <View style={[styles.listItem, (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2]}>
           <Text
-            style={[styles.itemText, { width: 160, color: '#333' }]}
+            style={[styles.itemText, { width: 116, color: '#333' }]}
             numberOfLines={2}
             ellipsizeMode="tail">{item.name}</Text>
         </View>
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 100 }]}
+            style={[styles.itemText, { width: 109 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp)}
             ellipsizeMode="tail">{item.signUp || '0'}</Text>
         </View>
-        <View style={styles.listItem}>
+        {/* <View style={styles.listItem}>
           <Text
             style={[styles.itemText, { width: 99 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention)}
             ellipsizeMode="tail">{item.signUpIntention || '0'}</Text>
-        </View>
+        </View> */}
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 67 }]}
+            style={[styles.itemText, { width: 78 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive)}
             ellipsizeMode="tail">{item.interviewNoArrive || '0'}</Text>
         </View>
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 65 }]}
+            style={[styles.itemText, { width: 67 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail)}
             ellipsizeMode="tail">{item.interviewFail || '0'}</Text>
         </View>
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 67 }]}
+            style={[styles.itemText, { width: 70 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass)}
             ellipsizeMode="tail">{item.interviewPass || '0'}</Text>
         </View>
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 100 }]}
+            style={[styles.itemText, { width: 89 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail)}
             ellipsizeMode="tail">{item.onBoardingFail || '0'}</Text>
         </View>
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 99 }]}
+            style={[styles.itemText, { width: 78 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass)}
             ellipsizeMode="tail">{item.onBoardingPass || '0'}</Text>
         </View>
         <View style={styles.listItem}>
           <Text
-            style={[styles.itemText, { width: 162 }]}
+            style={[styles.itemText, { width: 126 }]}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'jobOn')[0], item.jobOn)}
             ellipsizeMode="tail">{item.jobOn || '0'}</Text>
@@ -578,14 +578,17 @@ const DATA_Statistics = () => {
           <View style={styles.ItemStyle}>
             <Text style={styles.title}>{index === 0 ? '招聘企业' : index === 1 ? '门店名称' : index === 2 ? '供应商名' : '招聘专员'}</Text>
           </View>
-          <View style={[styles.centerStyle]}>
+          {/* <View style={[styles.centerStyle]}>
             <Text style={styles.stageStyle}>报名人数</Text>
             <View style={styles.stageItemStyle}>
               <Text style={styles.inductionStyle}>邀约</Text>
               <Text style={[styles.inductionStyle, { borderRightWidth: 0 }]}>有意愿</Text>
             </View>
+          </View> */}
+          <View style={[styles.ItemStyle, {width: 100}]}>
+            <Text style={styles.title}>报名邀约</Text>
           </View>
-          <View style={[styles.centerStyle, { width: 200 }]}>
+          <View style={[styles.centerStyle, { width: 210 }]}>
             <Text style={styles.stageStyle}>面试阶段</Text>
             <View style={styles.stageItemStyle}>
               <Text style={styles.statuStyle}>未去</Text>
@@ -624,7 +627,7 @@ const DATA_Statistics = () => {
 
   return (
     <View style={styles.screen}>
-      <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder="请输入搜索" />
+      <HeaderSearch withoutCompanyFilter filterFun={filter} noStoreAndStaff companyShow={false} placeholder={ index === 0 ? "请输入企业名称搜索" : index === 1 ? '请输入门店名称搜索': index === 2 ? '请输入供应商名称搜索': '请输入招聘员名称搜索'} />
       <CenterSelectDate />
       <View style={styles.tab_containerStyle}>
         {title.map((tabItem, tabIndex) => {
@@ -636,26 +639,26 @@ const DATA_Statistics = () => {
           )
         })}
       </View>
-      <ScrollView horizontal={true}>
-        <View style={styles.flatStyle}>
-          <FlatList
-            data={companyDetails}
-            ListHeaderComponent={tabHead()}
-            refreshing={isLoading}
-            onRefresh={refresh}
-            onEndReached={onEndReached}
-            keyExtractor={(item) => item.id}
-            renderItem={(item) => renderItem(item)}
-            getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
-            initialNumToRender={20}
-            ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
-            ListEmptyComponent={empty}
-            onEndReachedThreshold={0.01}
-            onScrollEndDrag={() => setLoad(true)}
-            stickyHeaderIndices={[0]}
-          />
-        </View>
-      </ScrollView>
+      {/* <ScrollView horizontal={true}> */}
+      <View style={styles.flatStyle}>
+        <FlatList
+          data={companyDetails}
+          ListHeaderComponent={tabHead()}
+          refreshing={isLoading}
+          onRefresh={refresh}
+          onEndReached={onEndReached}
+          keyExtractor={(item) => item.id}
+          renderItem={(item) => renderItem(item)}
+          getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
+          initialNumToRender={20}
+          ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
+          ListEmptyComponent={empty}
+          onEndReachedThreshold={0.01}
+          onScrollEndDrag={() => setLoad(true)}
+          stickyHeaderIndices={[0]}
+        />
+      </View>
+      {/* </ScrollView> */}
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -699,7 +702,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   ItemStyle: {
-    width: 160,
+    width: 116,
     height: '100%',
     borderRightWidth: 2,
     borderColor: '#409EFF',
@@ -708,7 +711,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
   },
   centerStyle: {
-    width: 200,
+    width: 160,
     height: '100%',
     borderRightWidth: 2,
     borderColor: '#409EFF',
@@ -859,18 +862,18 @@ const styles = StyleSheet.create({
   flatStyle: {
     // width: 750,
     overflowX: 'scroll',
-    // flex: 1,
+    flex: 1,
     paddingTop: 30,
   },
   style1: {
-    width: 160,
+    width: 118,
     fontSize: 26,
     color: '#333',
     paddingLeft: 20,
     paddingRight: 20,
   },
   style2: {
-    width: 160,
+    width: 118,
     fontSize: 26,
     color: '#333',
   },
