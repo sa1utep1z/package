@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {StyleSheet, View, TouchableOpacity, TextInput} from 'react-native';
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -11,6 +11,7 @@ const SearchItem = ({
   placeholder,
   pressStyle,
   fontStyle,
+  autoSearch = false,
   ...rest
 }) => {
 
@@ -21,15 +22,31 @@ const SearchItem = ({
     form.handleSubmit();
   };
 
+  const onChangeText = value => {
+    setSearch(value);
+    if(autoSearch){
+      form.setFieldValue(field.name, value);
+      form.handleSubmit();
+    }
+  };
+
+  const onSubmit = () => searchOnPress();
+
   return (
     <View style={styles.totalArea}>
       <Text style={styles.title}>{title}：</Text>
       <View style={styles.searchArea}>
         <TextInput
           placeholder={placeholder || `请输入${title}`}
+          clearTextOnFocus
+          selectTextOnFocus
+          ellipsizeMode="tail"
+          onSubmitEditing={onSubmit}
+          blurOnSubmit={false}
+          numberOfLines={1}
           value={search}
           allowFontScaling={false}
-          onChangeText={text => setSearch(text)}
+          onChangeText={onChangeText}
           style={[styles.inputStyle, fontStyle]}
         />
         <TouchableOpacity style={styles.pressArea} onPress={searchOnPress}>

@@ -220,6 +220,7 @@ const HeaderSearch = ({
                 {staffSearch ? <Field
                   title="招聘员"
                   name="staffSearch"
+                  placeholder="手动输入"
                   showLittleTitle
                   canSearch
                   bottomButton

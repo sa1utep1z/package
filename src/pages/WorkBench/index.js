@@ -1,12 +1,45 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { useToast } from "react-native-toast-notifications";
 
 import Card from "../../components/Card";
 import NAVIGATION_KEYS from "../../navigator/key";
+import HomeApi from "../../request/HomeApi";
 import { workBenchList } from "./workBenchList";
+import { SUCCESS_CODE } from '../../utils/const';
+import { deepCopy } from "../../utils";
 
 const WorkBench = (props) => {
   const {navigation} = props;
+
+  const toast = useToast();
+
+  const [showList, setShowList] = useState(workBenchList);
+
+  useEffect(() => {
+    getSeaPermission();
+  }, [])
+
+  //第一次进来的时候获取是否展示公海;
+  const getSeaPermission = async() => {
+    try {
+      const res = await HomeApi.SeasEnable();
+      if(res.code !== SUCCESS_CODE){
+        toast.show('获取公海权限失败', {type: 'danger'});
+        return;
+      }
+      if(!res.data){
+        const copyArr = deepCopy(showList);
+        const List = copyArr.find(list => list.key === 'list').list;
+        List.splice(List.findIndex(list => list.key === 'seas'), 1);
+        setShowList(copyArr);
+        return;
+      }
+      setShowList(workBenchList);
+    } catch (error) {
+      toast.show('获取公海权限失败,请联系管理员', {type: 'danger'});
+    }
+  };
 
   const gotoPage = (item) => {
     navigation.navigate(item.routeName);
@@ -14,7 +47,7 @@ const WorkBench = (props) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#EEF4F7' }}>
-      {workBenchList?.length && workBenchList.map((item, index) => (
+      {showList?.length && showList.map((item, index) => (
         <Card
           key={index}
           title={item.moduleName}

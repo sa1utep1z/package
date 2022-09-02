@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 import FilterMoreInCompany from "../../../../../../components/HireReportDialog/FilterMoreInCompany";
-import { openDialog } from "../../../../../../redux/features/HireReportDialog";
+import { openDialog } from "../../../../../../redux/features/HireReport/HireReportDialog";
 
 const CompanyRoute = ({}) => {
   const dispatch = useDispatch();
@@ -94,7 +94,7 @@ const CompanyRoute = ({}) => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore}/>
+      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} type="trend"/>
       <View style={styles.bottomArea}>
         <ScrollView horizontal>
           <LineChart

@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
-import { SceneMap } from 'react-native-tab-view';
 
 import Tab from "../Component/Tab";
 import { HIRE_DATA_TREND_TAB_LIST } from "../../../../../utils/const";
@@ -11,8 +10,7 @@ import StoreRoute from "./StoreRoute";
 import RecruiterRoute from "./RecruiterRoute";
 import SupplierRoute from "./SupplierRoute";
 
-
-const DataTrend = () => {
+const DataTrend = ({loading}) => {
   
   const renderScene = ({route}) => {
     switch(route.key){
@@ -34,7 +32,11 @@ const DataTrend = () => {
           <View style={styles.titleLine}></View>
           <Text style={styles.title}>数据趋势</Text>
         </View>
-        <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/>
+        {loading ?
+          <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/> : 
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <ActivityIndicator size={48} color="#409EFF" />
+          </View>}
       </View>
     </Shadow>
   )

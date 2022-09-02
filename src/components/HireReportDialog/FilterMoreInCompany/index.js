@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE } from '../../../utils/const';
-import { closeDialog } from '../../../redux/features/HireReportDialog';
+import { closeDialog } from '../../../redux/features/HireReport/HireReportDialog';
 import MyMembersApi from '../../../request/MyMembersApi';
 import SearchInput from '../../SearchInput';
 

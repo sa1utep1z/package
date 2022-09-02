@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Modal }
 import { useNavigation } from "@react-navigation/native";
 import { Tab, TabView } from '@rneui/themed';
 import { useQuery } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
@@ -12,8 +13,11 @@ import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from 'react-native-toast-notifications';
 import { empty } from "../../../../pages/Home/listComponent";
 import { SUCCESS_CODE } from "../../../../utils/const";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import { pageEmpty } from "../../../Home/listComponent";
 
 const DATA_Statistics = () => {
+  const dispatch = useDispatch();
   const leftFlatListRef = useRef(null);
   const navigation = useNavigation();
   const toast = useToast();
@@ -31,9 +35,12 @@ const DATA_Statistics = () => {
   const [originData, setOriginData] = useState({});
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
-  const title = ['企业', '门店', '供应商', '招聘员']
+
+  const title = ['企业', '门店', '供应商', '招聘员'];
   // let timer;
+
   useEffect(() => {
+    dispatch(openListSearch());
     navigation.setOptions({
       headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
@@ -651,7 +658,7 @@ const DATA_Statistics = () => {
             getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
             initialNumToRender={20}
             ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
-            ListEmptyComponent={empty}
+            ListEmptyComponent={pageEmpty()}
             onEndReachedThreshold={0.01}
             onScrollEndDrag={() => setLoad(true)}
             stickyHeaderIndices={[0]}

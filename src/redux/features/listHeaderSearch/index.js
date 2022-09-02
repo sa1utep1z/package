@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const listHeaderSearch = createSlice({
   name: 'search',
   initialState: {
-    canSearch: false
+    canSearch: true
   },
   reducers: {
     openListSearch: (state) => {
