@@ -13,6 +13,8 @@ const PickerOfDateRange = ({
     field, 
     form, 
     clearTimer = true, //时间组件默认支持清空
+    startText,
+    endText,
     ...rest
   }) => {
   const toast = useToast();
@@ -94,7 +96,7 @@ const PickerOfDateRange = ({
     <>
       <View style={styles.dateArea}>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>开始日期：</Text>
+          <Text style={styles.title}>{startText || '报名开始：'}</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
               <AntDesign
@@ -115,7 +117,7 @@ const PickerOfDateRange = ({
         </View> 
         <View style={{width: 40}}></View>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>结束日期：</Text>
+          <Text style={styles.title}>{endText || '报名结束：'}</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
               <AntDesign

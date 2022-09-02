@@ -1,5 +1,9 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSelector, useDispatch } from "react-redux";
+import moment from "moment";
+
+import {setStartDate, setEndDate} from '../../../../../../redux/features/HireReport/RangeDateOfTrend';
 
 const Tag = ({
   lastButton = false,
@@ -7,14 +11,44 @@ const Tag = ({
   tagAreaStyle,
   filterMore
 }) => {
+  const dispatch = useDispatch();
+
+  const rangeDate = useSelector(state => state.RangeDateOfTrend);
 
   const [selectTag, setSelectTag] = useState('');
 
   useEffect(()=>{
-    tagList.length && setSelectTag(tagList[0].value);
-  },[])
+    setSelectedTag();
+  },[rangeDate])
 
-  const chooseTag = (tag) => setSelectTag(tag.value);
+  //设置不同页面的
+  const setSelectedTag = () => {
+    //TODO
+  };
+
+  const chooseTag = (tag) => {
+    setSelectTag(tag.value);
+    switch (tag.value) {
+      case 'thisWeek':
+        const thisWeekStart = moment().weekday(0).format('YYYY-MM-DD');
+        const thisWeekEnd = moment().weekday(6).format('YYYY-MM-DD');
+        dispatch(setStartDate(thisWeekStart));
+        dispatch(setEndDate(thisWeekEnd));
+        break;
+      case 'lastWeek':
+        const lastWeekStart = moment().weekday(-7).format('YYYY-MM-DD');
+        const lastWeekEnd = moment().weekday(-1).format('YYYY-MM-DD');
+        dispatch(setStartDate(lastWeekStart));
+        dispatch(setEndDate(lastWeekEnd));
+        break;
+      case 'thisMonth':
+        const thisMonthStart = moment().startOf('month').format('YYYY-MM-DD');
+        const thisMonthEnd = moment().endOf('month').format('YYYY-MM-DD');
+        dispatch(setStartDate(thisMonthStart));
+        dispatch(setEndDate(thisMonthEnd));
+        break;
+    }
+  };
 
   return (
     <>

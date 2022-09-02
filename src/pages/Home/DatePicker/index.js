@@ -82,7 +82,7 @@ const DatePicker = ({
   return (
     <View style={styles.dateArea}>
       <View style={styles.datePicker}>
-        <Text style={{fontSize: 26}}>开始日期：</Text>
+        <Text style={{fontSize: 26}}>订单开始：</Text>
         <View style={styles.totalArea}>
           <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('start')}>
             <AntDesign
@@ -102,7 +102,7 @@ const DatePicker = ({
         </View>
       </View>
       <View style={styles.datePicker}>
-        <Text style={{fontSize: 26}}>结束日期：</Text>
+        <Text style={{fontSize: 26}}>订单结束：</Text>
         <View style={styles.totalArea}>
           <TouchableOpacity style={styles.pickerTouchable} onPress={()=>datePickerPress('end')}>
             <AntDesign

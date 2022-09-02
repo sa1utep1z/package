@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const homeSearch = createSlice({
   name: 'homeSearch',
   initialState: {
-    canSearch: false
+    canSearch: true
   },
   reducers: {
     openHomeSearch: (state) => {

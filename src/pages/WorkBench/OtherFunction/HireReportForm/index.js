@@ -1,52 +1,40 @@
-import React, {useState, useEffect, createContext, useRef} from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useToast } from "react-native-toast-notifications";
-import { useSelector } from 'react-redux';
+import React, {useState, useEffect, useRef, useMemo} from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useSelector, useDispatch } from "react-redux";
 
 import DataOverview from "./DataOverview";
 import DataTrend from "./DataTrend";
 import DataCompare from "./DataCompare";
 import DataPercent from "./DataPercent";
 
-import MyMembersApi from "../../../../request/MyMembersApi";
-import { SUCCESS_CODE } from "../../../../utils/const";
 import HireReportDialog from "../../../../components/HireReportDialog";
+import {setStartDate, setEndDate} from '../../../../redux/features/HireReport/RangeDateOfTrend';
 
-export const DataList = createContext({});
+let timer;
 
 const HireReportForm = () => {
-  const toast = useToast();
-  const dialogRef = useRef(null);
+  const dispatch = useDispatch();
 
-  const [dataList, setDataList] = useState([]);
-  const [dialogContent, setDialogContent] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  //招聘看板中的筛选框开关
+  const rangeDate = useSelector(state => state.RangeDateOfTrend);
 
-  useEffect(() => {
-    // getDataList();
+  useMemo(() => console.log('rangeDate', rangeDate), [rangeDate])
+
+  useEffect(()=>{
+    timer = setTimeout(() => {
+      setLoading(true);
+    }, 1000)
+    return () => {
+      timer && clearTimeout(timer);
+      //清空所有选择的时间;
+      clearRangeTime();
+    }
   }, [])
 
-  const getDataList = async() => {
-    try{  
-      const companyRes = await MyMembersApi.CompaniesList();
-      const storeRes = await MyMembersApi.StoreList();
-      console.log('storeRes', storeRes);
-      if(companyRes.code !== SUCCESS_CODE){
-        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      const resList = {
-        companyList: companyRes.data,
-        storeList: storeRes.data,
-        dialogRef,
-        setDialogContent
-      }
-      setDataList(resList);
-    }catch(err){
-      console.log('err', err);
-      toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
-    }
+  const clearRangeTime = () => {
+    dispatch(setStartDate(''));
+    dispatch(setEndDate(''));
   };
 
   return (
@@ -54,11 +42,9 @@ const HireReportForm = () => {
       <ScrollView style={styles.screen}>
         <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', paddingTop: 32}}>
           <DataOverview />
-          <DataList.Provider value={dataList}>
-            <DataTrend />
-          </DataList.Provider>
-          {/* <DataCompare />
-          <DataPercent /> */}
+          <DataTrend loading={loading} />
+          <DataCompare loading={loading} />
+          <DataPercent loading={loading} />
         </View>
       </ScrollView>
       <HireReportDialog/>

@@ -9,17 +9,18 @@ import moment from 'moment';
 
 import { CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE } from '../../../utils/const';
 import { closeDialog } from '../../../redux/features/HireReport/HireReportDialog';
-import HireReportForm from '../../../request/HireReportForm';
+import HireReportFormApi from '../../../request/HireReportForm';
 import SearchInput from '../../SearchInput';
 
-const FilterMoreInRecruiter = () => {
+const FilterMoreInSupplier = () => {
   const recruiterScrollViewRef = useRef(null);
   const companyScrollViewRef = useRef(null);
+
   const toast = useToast();
   const dispatch = useDispatch();
 
-  const [recruiterList, setRecruiterList] = useState([]);
-  const [originRecruiterList, setOriginRecruiterList] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
+  const [originSupplierList, setOriginSupplierList] = useState([]);
 
   const [list, setList] = useState([]);
   const [originList, setOriginList] = useState([]);
@@ -45,20 +46,20 @@ const FilterMoreInRecruiter = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const getRecruiterList = async() => {
+  const getSupplierList = async() => {
     setLoading(true);
     try{  
-      const res = await HireReportForm.RecruiterList();
-      console.log('getRecruiterList --> res', res)
+      const res = await HireReportFormApi.SupplierList();
+      console.log('getSupplierList --> res', res)
       if(res.code !== SUCCESS_CODE){
-        toast.show(`获取招聘员列表失败，${res.msg}`, { type: 'danger' });
+        toast.show(`获取供应商列表失败，${res.msg}`, { type: 'danger' });
         return;
       }
       setLoading(true);
-      setRecruiterList(res.data);
-      setOriginRecruiterList(res.data);
+      setSupplierList(res.data);
+      setOriginSupplierList(res.data);
     }catch(err){
-      toast.show(`获取招聘员列表失败，请稍后重试`, { type: 'danger' });
+      toast.show(`获取供应商列表失败，请稍后重试`, { type: 'danger' });
     }finally{
       setLoading(false);
     }
@@ -67,7 +68,7 @@ const FilterMoreInRecruiter = () => {
   const getCompanyList = async() => {
     setLoading(true);
     try{  
-      const res = await HireReportForm.CompaniesList();
+      const res = await HireReportFormApi.CompaniesList();
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
         return;
@@ -104,12 +105,12 @@ const FilterMoreInRecruiter = () => {
     getCompanyList();
   };
 
-  const changeWay = () => {
+  const changeSupplier = () => {
     setShowRecruiter(!showRecruiter);
     setDateRangePicker(false);
     setShowStatusList(false);
     setShowOther(false);
-    getRecruiterList();
+    getSupplierList();
   };
 
   const showDate = (type) => {
@@ -148,8 +149,8 @@ const FilterMoreInRecruiter = () => {
     setSelectedState(copyList);
   };
 
-  const recruiterOnPress = (recruiter) => {
-    setSelectRecruiter(recruiter);
+  const supplierOnPress = (supplier) => {
+    setSelectRecruiter(supplier);
   };
 
   const selectCompanyOnPress = (value) => {
@@ -157,8 +158,8 @@ const FilterMoreInRecruiter = () => {
   };
 
   const recruiterOnChanging = value => {
-    const filterList = originRecruiterList.filter(item => item.label.includes(value));
-    setRecruiterList(filterList);
+    const filterList = originSupplierList.filter(item => item.label.includes(value));
+    setSupplierList(filterList);
   };
 
   const onChanging = value => {
@@ -230,14 +231,14 @@ const FilterMoreInRecruiter = () => {
           )}
         </>
         <>
-          <TouchableOpacity style={[styles.touchArea, showRecruiter && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeWay}>
-            <Text numberOfLines={1} style={[{fontSize: 16, color: '#000'}, showRecruiter && styles.fontBold]}>{`${selectRecruiter.value ? `已选招聘员：${selectRecruiter.label}` : '请选择招聘员'}`}</Text>
+          <TouchableOpacity style={[styles.touchArea, showRecruiter && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeSupplier}>
+            <Text numberOfLines={1} style={[{fontSize: 16, color: '#000'}, showRecruiter && styles.fontBold]}>{`${selectRecruiter.value ? `已选供应商：${selectRecruiter.label}` : '请选择供应商'}`}</Text>
           </TouchableOpacity>
           {showRecruiter && <>
             {!loading ? 
               <>
                 <SearchInput
-                  placeholder='请输入招聘员名称'
+                  placeholder='请输入供应商'
                   smallSize
                   withoutButton
                   keyboardType='default'
@@ -247,15 +248,15 @@ const FilterMoreInRecruiter = () => {
                   inputContainerStyle={{paddingLeft: 0}}
                 />
                 <ScrollView ref={recruiterScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
-                  {recruiterList.map(recruiter => {
-                    const isSelected = selectRecruiter.value === recruiter.value;
+                  {supplierList.map(supplier => {
+                    const isSelected = selectRecruiter.value === supplier.value;
                     return (
-                      <TouchableOpacity key={recruiter.value} style={styles.renderItemStyle} onPress={() => recruiterOnPress(recruiter)}>
-                      <Text style={{color: '#333333'}}>{recruiter.label}</Text>
+                      <TouchableOpacity key={supplier.value} style={styles.renderItemStyle} onPress={() => supplierOnPress(supplier)}>
+                      <Text style={{color: '#333333'}}>{supplier.label}</Text>
                       <CheckBox
                         checked={isSelected}
                         size={18}
-                        onPress={() => recruiterOnPress(recruiter)}
+                        onPress={() => supplierOnPress(supplier)}
                         containerStyle={{padding: 0}}
                         checkedIcon={"dot-circle-o"}
                         uncheckedIcon={"circle-o"}
@@ -416,4 +417,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default FilterMoreInRecruiter;
+export default FilterMoreInSupplier;

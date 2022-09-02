@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { SceneMap } from 'react-native-tab-view';
 
@@ -18,7 +18,7 @@ const renderScene = SceneMap({
   supplier: SupplierStore,
 });
 
-const DataCompare = () => {
+const DataCompare = ({loading}) => {
   
   return (
     <Shadow>
@@ -27,7 +27,10 @@ const DataCompare = () => {
           <View style={styles.titleLine}></View>
           <Text style={styles.title}>数据对比</Text>
         </View>
-        <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/>
+        {loading ? <Tab renderScene={renderScene} renderRoute={HIRE_DATA_TREND_TAB_LIST}/> : 
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <ActivityIndicator size={48} color="#409EFF" />
+        </View>}
       </View>
     </Shadow>
   )

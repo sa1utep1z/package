@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import { View, StyleSheet } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import Tag from "../../Component/Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
 import FilterMoreInRecruiter from "../../../../../../components/HireReportDialog/FilterMoreInRecruiter";
-import { openDialog } from "../../../../../../redux/features/HireReportDialog";
+import { openDialog } from "../../../../../../redux/features/HireReport/HireReportDialog";
 
 const RecruiterRoute = () => {
   const dispatch = useDispatch();
@@ -24,15 +24,11 @@ const RecruiterRoute = () => {
   };
 
   const chartConfig = {
+    color: () => '#333333',
     backgroundGradientFrom: '#fff',
     backgroundGradientTo: '#fff',
-    fillShadowGradientFrom: '#409EFF',
+    fillShadowGradientFrom: '#fff',
     fillShadowGradientTo: '#fff',
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientFromOffset: 0.1,
-    color: () => '#333333',
-    strokeWidth: 2, 
-    useShadowColorFromDataset: false,
     propsForLabels: {
       fontSize: '22',
       fontWeight: 'bold'
@@ -98,7 +94,7 @@ const RecruiterRoute = () => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore}/>
+      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} type="trend"/>
       <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
         <LineChart
           style={styles.LineStyle}
@@ -127,4 +123,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RecruiterRoute;
+export default memo(RecruiterRoute);

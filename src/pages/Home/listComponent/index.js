@@ -136,7 +136,7 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
         </Swiper>
       </View>
       <Animated.View style={[{ opacity: fadeAnim }, !showSearch && { height: 0 }]}>
-        <SearchInput searchPress={search} fontStyle={{ fontSize: 26 }} />
+        <SearchInput searchPress={search} fontStyle={{ fontSize: 26 }} placeholder="请输入企业名称"/>
         <DatePicker rangeDate={rangeDate} setRangeDate={setRangeDate} />
       </Animated.View>
       <View style={styles.buttonArea}>

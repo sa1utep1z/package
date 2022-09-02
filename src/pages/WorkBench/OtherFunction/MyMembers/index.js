@@ -320,6 +320,8 @@ const MyMembers = () => {
         companySingleSelect
         storeSingleSelect
         clearRangeDate
+        startText="开始日期："
+        endText="结束日期："
       />
       <View style={styles.tab_containerStyle}>
         {TAB_OF_LIST.MY_MEMBERS.map((tabItem, tabIndex) => {

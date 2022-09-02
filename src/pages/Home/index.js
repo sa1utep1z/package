@@ -12,6 +12,7 @@ import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
 import { setRoleInfo } from "../../redux/features/RoleInfo";
+import { openHomeSearch } from "../../redux/features/homeSearch";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -38,6 +39,7 @@ const Home = (props) => {
   const tomorrow = moment().add(1, 'd').format("YYYY-MM-DD");
  
   useEffect(() => {
+    dispatch(openHomeSearch());
     getBannerList();
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>

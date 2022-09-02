@@ -103,7 +103,6 @@ const SearchInput = ({
         clearIcon={clearIcon}
         containerStyle={styles.containerStyle}
         inputStyle={[styles.inputStyle, fontStyle]}
-        onEndEditing={(params)=>console.log('params', params)}
         inputContainerStyle={[
           styles.inputContainerStyle, 
           borderRadius && {borderTopLeftRadius: borderRadius, borderBottomLeftRadius: borderRadius},

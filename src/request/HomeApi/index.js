@@ -13,6 +13,7 @@ const HomeApi = {
         'Content-Type': 'multipart/form-data'
       }
     }),
+  SeasEnable: async () => await httpRequest.get(`admin/app/highSeas/enable`),
 }
 
 export default HomeApi;

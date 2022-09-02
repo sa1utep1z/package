@@ -20,6 +20,7 @@ import { SUCCESS_CODE, TAB_OF_LIST, ON_BOARDING_STATUS } from "../../../../utils
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { pageEmpty } from "../../../Home/listComponent";
 import { setTabName } from "../../../../redux/features/NowSelectTabNameInList";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 
 let timer;
 
@@ -47,6 +48,7 @@ const WaitToEntryList = () => {
   };
 
   useEffect(() => {
+    dispatch(openListSearch());
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
@@ -321,6 +323,8 @@ const WaitToEntryList = () => {
       <HeaderSearch
         batchOperate={batchOperate}
         filterFun={filter}
+        startText="入职开始："
+        endText="入职结束："
       />
       <CenterSelectDate />
       <View style={styles.tab_containerStyle}>

@@ -19,11 +19,13 @@ import { SUCCESS_CODE, TAB_OF_LIST, JOB_ON_STATUS } from "../../../../utils/cons
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 import { pageEmpty } from "../../../Home/listComponent";
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 
 let timer;
 
 const LeavingList = () => {
   const dispatch = useDispatch();
+
   const navigation = useNavigation();
   const toast = useToast();
   const firstPage = { pageSize: 20, pageNumber: 0 };
@@ -46,6 +48,7 @@ const LeavingList = () => {
   };
 
   useEffect(() => {
+    dispatch(openListSearch());
     clearRangeDate();
     navigation.setOptions({
       headerRight: () => <HeaderRightButtonOfList />,
