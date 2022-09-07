@@ -2,10 +2,9 @@ import React from "react";
 import { View, StyleSheet } from 'react-native';
 import { PieChart } from "react-native-chart-kit";
 
-import Tag from "../../Component/Tag";
 import { HIRE_DATA_COMPARE_TAB_LIST } from "../../../../../../utils/const";
 
-const CompanyRoute = () => {
+const PercentForm = () => {
   const data = [
     {
       name: "Seoul",
@@ -57,7 +56,6 @@ const CompanyRoute = () => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_COMPARE_TAB_LIST} lastButton />
       <PieChart
         data={data}
         width={620}
@@ -85,4 +83,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CompanyRoute;
+export default PercentForm;

@@ -54,7 +54,7 @@ const Reset = () => {
             return (
               <>
                 <View style={{flex: 1}}>
-                  <Text style={{margin: 20, color: 'grey'}}>已向您绑定的176***9417的手机发送验证码，请及时查收！</Text>
+                  <Text style={{margin: 32, color: 'grey', fontSize: 32}}>已向您绑定的176***9417的手机发送验证码，请及时查收！</Text>
                   <View style={styles.formArea}>
                     <Field
                       name="newPassword"
@@ -85,15 +85,13 @@ const Reset = () => {
                     />
                   </View>
                 </View>
-                <View style={styles.btnArea}>
-                  <Button
-                    title="提 交"
-                    onPress={handleSubmit}
-                    buttonStyle={styles.buttonStyle}
-                    containerStyle={styles.buttonContainerStyle}
-                    titleStyle={styles.titleStyle}
-                  />
-                </View>
+                <Button
+                  title="提 交"
+                  onPress={handleSubmit}
+                  buttonStyle={styles.buttonStyle}
+                  containerStyle={styles.buttonContainerStyle}
+                  titleStyle={styles.titleStyle}
+                />
               </>
             )}}
       </Formik>
@@ -107,12 +105,12 @@ const styles = StyleSheet.create({
   formArea: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginHorizontal: 10
+    marginHorizontal: 32
   },
   smallTitleStyle: {
     borderBottomWidth: 1, 
     borderBottomColor: 'grey', 
-    color: 'grey'
+    color: 'grey',
   },
   disabledTitleStyle : {
     color: '#E3E3E3'
@@ -129,17 +127,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonStyle: {
-    height: 45,
+    height: 90,
     backgroundColor: '#409EFF',
     borderColor: 'transparent',
     borderWidth: 0,
-    borderRadius: 30
+    borderRadius: 50
   },
   buttonContainerStyle: {
-    marginHorizontal: 8
+    marginHorizontal: 32,
+    marginBottom: 32
   },
   titleStyle: {
-    fontSize: 20,
+    fontSize: 36,
     fontWeight: 'bold'
   },
 });

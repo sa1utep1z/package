@@ -3,10 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
 
-import Tag from "../../Component/Tag";
+import Tag from "../../DataTrend/Tag";
 import { HIRE_DATA_COMPARE_TAB_LIST } from "../../../../../../utils/const";
 
-const StoreRoute = () => {
+const CompareForm = () => {
+
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
@@ -96,7 +97,6 @@ const StoreRoute = () => {
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_COMPARE_TAB_LIST} lastButton />
       <View style={styles.LineArea}>
         <LineChart
           style={styles.LineStyle}
@@ -131,4 +131,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default StoreRoute;
+export default CompareForm;

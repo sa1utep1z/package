@@ -72,7 +72,7 @@ const Mine = () => {
             </View>
           ),
           confirmText: '找回密码',
-          confirmOnPress: logout
+          confirmOnPress: reset
         })
         return;
       case 'logout':

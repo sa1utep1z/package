@@ -1,22 +1,22 @@
-import React, {memo} from "react";
-import { View, StyleSheet } from 'react-native';
+import React, {useContext, useState, useRef, memo} from "react";
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
-import Tag from "../../Component/Tag";
+import Tag from "../Tag";
 import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
+import FilterMoreInCompany from "../FilterMoreOfTrend";
 import { openDialog } from "../../../../../../redux/features/HireReport/HireReportDialog";
-import FilterMoreInStore from "../../../../../../components/HireReportDialog/FilterMoreInStore";
 
-const StoreRoute = () => {
+const TrendForm = ({}) => {
   const dispatch = useDispatch();
-
+  
   const data = {
-    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
+    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
     datasets: [
       {
-        data: ['', 155, 240, 130, 260, 320, 170], 
+        data: ['', 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170], 
         color: () => '#409EFF'
       }
     ],
@@ -39,14 +39,15 @@ const StoreRoute = () => {
     }
   };
 
-  const renderDotContent = ({x, y, index, indexData})=> (
+  const renderDotContent = ({x, y, index, indexData})=> {
+    return (
     <View key={index}>
       <Text
         x={x-20}
-        y={y-15}
-        fontSize="22"
-        fontWeight="bold"
+        y={y-12}
         fill="#409EFF"
+        fontSize="20"
+        fontWeight="bold"
       >
         {indexData}
       </Text>
@@ -59,7 +60,7 @@ const StoreRoute = () => {
         fill="#fff"
       />
     </View>
-  );
+  )};
 
   const decorator = ({width, height, ...rest})=>{
     return (
@@ -79,8 +80,8 @@ const StoreRoute = () => {
             人数
         </Text>
         <Text
-          x={width - 50}
-          y={height - 40}
+          x={width - 40}
+          y={height - 50}
           fontSize="22"
           fontWeight="bold"
           fill="#333333">
@@ -90,37 +91,37 @@ const StoreRoute = () => {
     )
   };
 
-  const filterMore = () => dispatch(openDialog(<FilterMoreInStore />));
 
   return (
     <View style={{flex: 1}} >
-      <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} type="trend"/>
-      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-        <LineChart
-          style={styles.LineStyle}
-          data={data}
-          chartConfig={chartConfig}
-          width={620}
-          height={370}
-          segments={6}
-          bezier
-          fromZero
-          decorator={decorator}
-          withOuterLines={false}
-          withVerticalLines={false}
-          formatYLabel={(num) => Math.trunc(num)}
-          renderDotContent={renderDotContent}
-        />
+      <View style={styles.bottomArea}>
+        <ScrollView horizontal>
+          <LineChart
+            data={data}
+            chartConfig={chartConfig}
+            width={data.labels.length * 50}
+            height={370}
+            segments={6}
+            bezier
+            fromZero
+            decorator={decorator}
+            withOuterLines={false}
+            withVerticalLines={false}
+            formatYLabel={(num) => Math.trunc(num)}
+            renderDotContent={renderDotContent}
+          />
+        </ScrollView>
       </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  LineStyle: {
-    position: 'absolute',
-    bottom: -30
+  bottomArea: {
+    flex: 1, 
+    justifyContent: 'flex-end', 
+    alignItems: 'center'
   }
 });
 
-export default memo(StoreRoute);
+export default TrendForm;

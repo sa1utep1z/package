@@ -3,41 +3,38 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
 
-import {setStartDate, setEndDate} from '../../../../../../redux/features/HireReport/RangeDateOfTrend';
+import {setRangeDateType} from '../../../../../../redux/features/HireReport/RangeDateOfTrend';
+import { THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../../utils/const";
 
 const Tag = ({
   lastButton = false,
   tagList = [],
   tagAreaStyle,
-  filterMore
+  filterMore,
+  rangeDate,
+  setTime,
+  searchOther = false //是否筛选了更多
 }) => {
   const dispatch = useDispatch();
-  const thisWeekStart = moment().weekday(0).format('YYYY-MM-DD');
-  const thisWeekEnd = moment().weekday(6).format('YYYY-MM-DD');
-  const lastWeekStart = moment().weekday(-7).format('YYYY-MM-DD');
-  const lastWeekEnd = moment().weekday(-1).format('YYYY-MM-DD');
-  const thisMonthStart = moment().startOf('month').format('YYYY-MM-DD');
-  const thisMonthEnd = moment().endOf('month').format('YYYY-MM-DD');
 
-  const rangeDate = useSelector(state => state.RangeDateOfTrend);
+  // const rangeDate = useSelector(state => state.RangeDateOfTrend);
 
-  const [selectTag, setSelectTag] = useState('');
+  const [selectTag, setSelectTag] = useState('thisWeek');
 
   useEffect(()=>{
-    // setSelectedTag();
+    rangeDate && setSelectedTag();
   },[rangeDate])
 
-  //设置不同页面的
   const setSelectedTag = () => {
     const startDate = rangeDate.startDate;
     const endDate = rangeDate.endDate;
-    if(startDate === thisWeekStart && endDate === thisWeekEnd){
+    if(startDate === THIS_WEEK_START && endDate === THIS_WEEK_END){
       setSelectTag('thisWeek');
       return;
-    }else if (startDate === lastWeekStart && endDate === lastWeekEnd){
+    }else if (startDate === LAST_WEEK_START && endDate === LAST_WEEK_END){
       setSelectTag('lastWeek');
       return;
-    }else if (startDate === thisMonthStart && endDate === thisMonthEnd){
+    }else if (startDate === THIS_MONTH_START && endDate === THIS_MONTH_END){
       setSelectTag('thisMonth');
       return;
     }else{
@@ -47,20 +44,7 @@ const Tag = ({
 
   const chooseTag = (tag) => {
     setSelectTag(tag.value);
-    switch (tag.value) {
-      case 'thisWeek':
-        dispatch(setStartDate(thisWeekStart));
-        dispatch(setEndDate(thisWeekEnd));
-        break;
-      case 'lastWeek':
-        dispatch(setStartDate(lastWeekStart));
-        dispatch(setEndDate(lastWeekEnd));
-        break;
-      case 'thisMonth':
-        dispatch(setStartDate(thisMonthStart));
-        dispatch(setEndDate(thisMonthEnd));
-        break;
-    }
+    setTime(tag);
   };
 
   return (
@@ -76,8 +60,8 @@ const Tag = ({
           )})}
         </View>
         {lastButton && (
-          <TouchableOpacity style={styles.lastButtonStyle} onPress={filterMore}>
-            <Text style={styles.lastButtonText}>筛选更多</Text>
+          <TouchableOpacity style={[styles.lastButtonStyle, searchOther && {backgroundColor: '#409EFF', borderColor: '#fff'}]} onPress={filterMore}>
+            <Text style={[styles.lastButtonText, searchOther && {color: '#fff'}]}>筛选更多</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -118,12 +102,14 @@ const styles = StyleSheet.create({
     width: 160, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: '#409EFF', 
-    borderRadius: 5
+    backgroundColor: '#fff', 
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#999999'
   },
   lastButtonText: {
     fontSize: 26, 
-    color: '#fff'
+    color: '#999999'
   }
 });
 
