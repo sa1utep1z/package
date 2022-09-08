@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
-import moment from "moment";
-import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from "react-native-toast-notifications";
+
+import NormalDialog from "../../../../components/NormalDialog";
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
@@ -13,14 +12,14 @@ import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch
 import OnBoardingStatus from "../../../../components/NormalDialog/OnBoardingStatus";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
-import BottomList from "../../../../components/List/BottomList";
 import ListApi from "../../../../request/ListApi";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import { SUCCESS_CODE, TAB_OF_LIST, ON_BOARDING_STATUS } from "../../../../utils/const";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
-import { pageEmpty } from "../../../Home/listComponent";
 import { setTabName } from "../../../../redux/features/NowSelectTabNameInList";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import Footer from '../../../../components/FlatList/Footer';
+import Empty from '../../../../components/FlatList/Empty';
 
 let timer;
 
@@ -338,25 +337,13 @@ const WaitToEntryList = () => {
           )
         })}
       </View>
-      {/* <BottomList
-        list={showList}
-        tab={TAB_OF_LIST.WAIT_TO_ENTRY_LIST}
-        renderItem={renderItem}
-        tabNumberList={tabNumberList}
-        isLoading={isLoading}
-        listHead={listHead}
-        onRefresh={refresh}
-        onEndReached={onEndReached}
-        nowSelectIndex={selectIndex}
-        hasNext={originData?.hasNext}
-      /> */}
       <View style={styles.tabArea}>
         <Text style={styles.tab}>企业</Text>
         <Text style={styles.tab}>姓名</Text>
         <Text style={styles.tab}>状态</Text>
         <Text style={styles.tab}>联系方式</Text>
       </View>  
-      <FlatList 
+      {memoList.length ? <FlatList 
         data={memoList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
@@ -364,12 +351,11 @@ const WaitToEntryList = () => {
         getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
         refreshing={isLoading}
         onRefresh={refresh}
-        initialNumToRender={20}
-        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
-        ListEmptyComponent={pageEmpty()}
         onEndReached={onEndReached}
+        initialNumToRender={20}
+        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
         onEndReachedThreshold={0.01}
-      />
+      /> : <Empty />}
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -388,12 +374,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
     marginHorizontal: 20
-  },
-  listItem: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
   itemText: {
     flex: 1,
@@ -429,10 +409,6 @@ const styles = StyleSheet.create({
   tabItem_titleStyle_active: {
     color: '#409EFF',
     fontWeight: 'bold',
-  },
-  bottomText: {
-    textAlign: 'center',
-    fontSize: 22
   }
 });
 

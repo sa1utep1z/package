@@ -3,14 +3,12 @@ import { View, StyleSheet, TouchableOpacity, Text, FlatList} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
-import moment from "moment";
 
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE } from "../../../../utils/const";
 import MyMembersApi from "../../../../request/MyMembersApi";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
-import BottomList from "../../../../components/List/BottomList";
 import NormalDialog from "../../../../components/NormalDialog";
 import CompanyDetail from "../../../../components/NormalDialog/CompanyDetail";
 import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
@@ -18,7 +16,8 @@ import EntryRecord from "../../../../components/NormalDialog/EntryRecord";
 import ReviewRecord from "../../../../components/NormalDialog/ReviewRecord";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
-import { pageEmpty } from "../../../Home/listComponent";
+import Footer from '../../../../components/FlatList/Footer';
+import Empty from '../../../../components/FlatList/Empty';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -342,20 +341,19 @@ const MyMembers = () => {
         <Text style={styles.listHead_item}>状态</Text>
         <Text style={styles.listHead_item}>加入报名</Text>
       </View>
-      <FlatList 
+      {memoList.length ? <FlatList 
         data={memoList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
+        onRefresh={refresh}
+        onEndReached={onEndReached}
         keyExtractor={(item,index) => item.poolId}
         getItemLayout={(data, index)=>({length: 100, offset: 100 * index, index})}
         refreshing={isLoading}
-        onRefresh={refresh}
         initialNumToRender={20}
-        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
-        ListEmptyComponent={pageEmpty()}
-        onEndReached={onEndReached}
+        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
         onEndReachedThreshold={0.01}
-      />
+      /> : <Empty />}
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -368,29 +366,11 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1
   },
-  numberOfList: {
-    alignItems: 'center', 
-    justifyContent: 'center',
-    backgroundColor: '#fff'
-  },
-  text: {
-    color: '#409EFF', 
-    fontSize: 22
-  },
-  number: {
-    color: 'red'
-  },
   listStyle: {
     height: 100,
     borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)',  
     flexDirection: 'row', 
-  },
-  listItem: {
-    flex: 1, 
-    flexDirection: 'row',
-    justifyContent: 'center', 
-    alignItems: 'center'
   },
   itemText: {
     flex: 1,
@@ -427,10 +407,6 @@ const styles = StyleSheet.create({
   tabItem_titleStyle_active: {
     color: '#409EFF',
     fontWeight: 'bold',
-  },
-  bottomText: {
-    textAlign: 'center',
-    fontSize: 22
   }
 });
 

@@ -5,7 +5,7 @@ import { useToast } from "react-native-toast-notifications";
 import Card from "../../components/Card";
 import NAVIGATION_KEYS from "../../navigator/key";
 import HomeApi from "../../request/HomeApi";
-import { workBenchList } from "./workBenchList";
+import { WORKBENCH_LIST } from "./workBenchList";
 import { SUCCESS_CODE } from '../../utils/const';
 import { deepCopy } from "../../utils";
 
@@ -14,7 +14,7 @@ const WorkBench = (props) => {
 
   const toast = useToast();
 
-  const [showList, setShowList] = useState(workBenchList);
+  const [showList, setShowList] = useState(WORKBENCH_LIST);
 
   useEffect(() => {
     getSeaPermission();
@@ -35,7 +35,7 @@ const WorkBench = (props) => {
         setShowList(copyArr);
         return;
       }
-      setShowList(workBenchList);
+      setShowList(WORKBENCH_LIST);
     } catch (error) {
       toast.show('获取公海权限失败,请联系管理员', {type: 'danger'});
     }
@@ -46,7 +46,7 @@ const WorkBench = (props) => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#EEF4F7' }}>
+    <ScrollView style={styles.screen}>
       {showList?.length && showList.map((item, index) => (
         <Card
           key={index}
@@ -79,9 +79,9 @@ const WorkBench = (props) => {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around'
+    flex: 1, 
+    backgroundColor: '#EEF4F7',
+    paddingTop: 32
   },
   cardContent: {
     flex: 1, 

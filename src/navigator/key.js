@@ -34,6 +34,8 @@ const NAVIGATION_KEYS = {
   MY_COMMISSION: 'my_commission',
   MY_MEMBERS: 'my_members',
   PAY_MANAGEMENT: 'pay_management',
+  //驻厂管理
+  LEAVING_MANAGE: 'leaving_manage',
 
   //我的会员
   EDIT_RETURN_VISIT: 'edit_return_visit',

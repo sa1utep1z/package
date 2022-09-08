@@ -14,7 +14,8 @@ import { useToast } from 'react-native-toast-notifications';
 import { empty } from "../../../../pages/Home/listComponent";
 import { SUCCESS_CODE } from "../../../../utils/const";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
-import { pageEmpty } from "../../../Home/listComponent";
+import Footer from '../../../../components/FlatList/Footer';
+import Empty from '../../../../components/FlatList/Empty';
 
 const DATA_Statistics = () => {
   const dispatch = useDispatch();
@@ -245,24 +246,36 @@ const DATA_Statistics = () => {
   }, [index, searchContent]);
 
   const toTalItems = (res) => {
-    const renderList = [
-      { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
-      { fieldName: res.signUp || '0', textStyle: { width: 109 } },
-      // { fieldName: res.signUpIntention || '0', textStyle: { width: 99 } },
-      { fieldName: res.interviewNoArrive || '0', textStyle: { width: 78 } },
-      { fieldName: res.interviewFail || '0', textStyle: { width: 68 } },
-      { fieldName: res.interviewPass || '0', textStyle: { width: 70 } },
-      { fieldName: res.onBoardingFail || '0', textStyle: { width: 88 } },
-      { fieldName: res.onBoardingPass || '0', textStyle: { width: 78 } },
-      { fieldName: res.jobOn || '0', textStyle: { width: 126 } }
-    ];
     return (
       <View style={styles.listStyle}>
-        {renderList.map((renderItem, index) => (
-          <View key={index} style={[styles.listItem, renderItem.itemStyle]} >
-            <Text style={[styles.itemText1, renderItem.textStyle, renderItem.style]}>{renderItem.fieldName}</Text>
+        <View key='total' style={[styles.listItem, {width: 116}]} >
+          <Text style={[styles.itemText1]}>{res.total || '0'}</Text>
+        </View>
+        <View key='signUp' style={[styles.listItem, {width: 116}]} >
+          <Text style={[styles.itemText1]}>{res.signUp || '0'}</Text>
+        </View>
+        <View style={{flex: 1, flexDirection: 'row'}}>
+          <View key='interviewNoArrive' style={[styles.listItem, {flex: 1, justifyContent: 'center', alignItems: 'center'}]} >
+            <Text style={styles.itemText1}>{res.interviewNoArrive || '0'}</Text>
           </View>
-        ))}
+          <View key='interviewFail' style={[styles.listItem, {flex: 1, justifyContent: 'center', alignItems: 'center'}]} >
+            <Text style={styles.itemText1}>{res.interviewFail || '0'}</Text>
+          </View>
+          <View key='interviewPass' style={[styles.listItem, {flex: 1, justifyContent: 'center', alignItems: 'center'}]} >
+            <Text style={styles.itemText1}>{res.interviewPass || '0'}</Text>
+          </View>
+        </View>
+        <View style={{width: 160, flexDirection: 'row'}}>
+          <View key='onBoardingFail' style={[styles.listItem, {flex: 1, justifyContent: 'center', alignItems: 'center'}]} >
+            <Text style={styles.itemText1}>{res.onBoardingFail || '0'}</Text>
+          </View>
+          <View key='onBoardingPass' style={[styles.listItem, {flex: 1, justifyContent: 'center', alignItems: 'center'}]} >
+            <Text style={styles.itemText1}>{res.onBoardingPass || '0'}</Text>
+          </View>
+        </View>
+        <View key='jobOn' style={[styles.listItem, {borderRightWidth: 0}]} >
+          <Text style={[styles.itemText1, {width: 116, borderRightWidth: 0}]}>{res.jobOn || '0'}</Text>
+        </View>
       </View>
     )
   };
@@ -275,7 +288,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 118, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
       label: 'signUp',
@@ -284,7 +297,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 111, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     // {
     //   label: 'signUpIntention',
@@ -347,7 +360,7 @@ const DATA_Statistics = () => {
         size={32}
         color='#409EFF'
       />,
-      styles: { width: 128, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
+      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     }
   ]
 
@@ -483,15 +496,15 @@ const DATA_Statistics = () => {
   const renderItem = ({ item }) => {
     return (
       <View key={item.id} style={[styles.listStyle]}>
-        <View style={[styles.listItem, (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2]}>
+        <View style={[styles.listItem, (String(item.name).length === 4 && (index === 0 || index === 1)) ? styles.style1 : styles.style2, {width: 116}]}>
           <Text
-            style={[styles.itemText, { width: 116, color: '#333' }]}
+            style={[styles.itemText, { color: '#333' }]}
             numberOfLines={2}
             ellipsizeMode="tail">{item.name}</Text>
         </View>
-        <View style={styles.listItem}>
+        <View style={[styles.listItem, { width: 116 }]}>
           <Text
-            style={[styles.itemText, { width: 109 }]}
+            style={styles.itemText}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp)}
             ellipsizeMode="tail">{item.signUp || '0'}</Text>
@@ -503,44 +516,49 @@ const DATA_Statistics = () => {
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention)}
             ellipsizeMode="tail">{item.signUpIntention || '0'}</Text>
         </View> */}
-        <View style={styles.listItem}>
-          <Text
-            style={[styles.itemText, { width: 78 }]}
-            numberOfLines={2}
-            onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive)}
-            ellipsizeMode="tail">{item.interviewNoArrive || '0'}</Text>
+        <View style={{flex: 1, flexDirection: 'row'}}>
+          <View style={[styles.listItem, {flex: 1}]}>
+            <Text
+              style={styles.itemText}
+              numberOfLines={2}
+              onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewNoArrive')[0], item.interviewNoArrive)}
+              ellipsizeMode="tail">{item.interviewNoArrive || '0'}</Text>
+          </View>
+          <View style={[styles.listItem, {flex: 1}]}>
+            <Text
+              style={styles.itemText}
+              numberOfLines={2}
+              onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail)}
+              ellipsizeMode="tail">{item.interviewFail || '0'}</Text>
+          </View>
+          <View style={[styles.listItem, {flex: 1}]}>
+            <Text
+              style={styles.itemText}
+              numberOfLines={2}
+              onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass)}
+              ellipsizeMode="tail">{item.interviewPass || '0'}</Text>
+          </View>
         </View>
-        <View style={styles.listItem}>
-          <Text
-            style={[styles.itemText, { width: 67 }]}
-            numberOfLines={2}
-            onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewFail')[0], item.interviewFail)}
-            ellipsizeMode="tail">{item.interviewFail || '0'}</Text>
+
+        <View style={{flexDirection: 'row', width: 160}}>
+          <View style={[styles.listItem, {flex: 1}]}>
+            <Text
+              style={styles.itemText}
+              numberOfLines={2}
+              onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail)}
+              ellipsizeMode="tail">{item.onBoardingFail || '0'}</Text>
+          </View>
+          <View style={[styles.listItem, {flex: 1}]}>
+            <Text
+              style={styles.itemText}
+              numberOfLines={2}
+              onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass)}
+              ellipsizeMode="tail">{item.onBoardingPass || '0'}</Text>
+          </View>
         </View>
-        <View style={styles.listItem}>
+        <View style={[styles.listItem, {width: 116, borderRightWidth: 0}]}>
           <Text
-            style={[styles.itemText, { width: 70 }]}
-            numberOfLines={2}
-            onPress={() => record(item, Object.keys(item).filter((key) => key === 'interviewPass')[0], item.interviewPass)}
-            ellipsizeMode="tail">{item.interviewPass || '0'}</Text>
-        </View>
-        <View style={styles.listItem}>
-          <Text
-            style={[styles.itemText, { width: 89 }]}
-            numberOfLines={2}
-            onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingFail')[0], item.onBoardingFail)}
-            ellipsizeMode="tail">{item.onBoardingFail || '0'}</Text>
-        </View>
-        <View style={styles.listItem}>
-          <Text
-            style={[styles.itemText, { width: 78 }]}
-            numberOfLines={2}
-            onPress={() => record(item, Object.keys(item).filter((key) => key === 'onBoardingPass')[0], item.onBoardingPass)}
-            ellipsizeMode="tail">{item.onBoardingPass || '0'}</Text>
-        </View>
-        <View style={styles.listItem}>
-          <Text
-            style={[styles.itemText, { width: 126 }]}
+            style={styles.itemText}
             numberOfLines={2}
             onPress={() => record(item, Object.keys(item).filter((key) => key === 'jobOn')[0], item.jobOn)}
             ellipsizeMode="tail">{item.jobOn || '0'}</Text>
@@ -592,11 +610,11 @@ const DATA_Statistics = () => {
               <Text style={[styles.inductionStyle, { borderRightWidth: 0 }]}>有意愿</Text>
             </View>
           </View> */}
-          <View style={[styles.ItemStyle, {width: 100}]}>
+          <View style={[styles.ItemStyle, {width: 116}]}>
             <Text style={styles.title}>报名邀约</Text>
           </View>
-          <View style={[styles.centerStyle, { width: 210 }]}>
-            <Text style={styles.stageStyle}>面试阶段</Text>
+          <View style={[styles.centerStyle, { flex: 1}]}>
+            <Text style={[styles.stageStyle]}>面试阶段</Text>
             <View style={styles.stageItemStyle}>
               <Text style={styles.statuStyle}>未去</Text>
               <Text style={styles.statuStyle}>未过</Text>
@@ -610,20 +628,74 @@ const DATA_Statistics = () => {
               <Text style={[styles.inductionStyle, { borderRightWidth: 0 }]}>入职</Text>
             </View>
           </View>
-          <View style={styles.ItemStyle}>
+          <View style={[styles.ItemStyle, {borderRightWidth: 0}]}>
             <Text style={styles.title}>当前在职</Text>
           </View>
         </View>
         <View style={styles.Icon}>
-          {
-            IconItem.map((item) => {
-              return (
-                <TouchableOpacity style={item.styles} onPress={() => sortEvent(item.label)}>
-                  {item.Icon}
-                </TouchableOpacity>
-              )
-            })
-          }
+          <TouchableOpacity style={{width: 116, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('name')}>
+            <AntDesign
+              name='caretdown'
+              size={32}
+              color='#409EFF'
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={{width: 116, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('signUp')}>
+            <AntDesign
+              name='caretdown'
+              size={32}
+              color='#409EFF'
+            />
+          </TouchableOpacity>
+
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('interviewNoArrive')}>
+              <AntDesign
+                name='caretdown'
+                size={32}
+                color='#409EFF'
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('interviewFail')}>
+              <AntDesign
+                name='caretdown'
+                size={32}
+                color='#409EFF'
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('interviewPass')}>
+              <AntDesign
+                name='caretdown'
+                size={32}
+                color='#409EFF'
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={{width: 160, flexDirection: 'row'}}>
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('onBoardingFail')}>
+              <AntDesign
+                name='caretdown'
+                size={32}
+                color='#409EFF'
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF'}} onPress={() => sortEvent('onBoardingPass')}>
+              <AntDesign
+                name='caretdown'
+                size={32}
+                color='#409EFF'
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={{width: 116, justifyContent: 'center', alignItems: 'center'}} onPress={() => sortEvent('jobOn')}>
+            <AntDesign
+              name='caretdown'
+              size={32}
+              color='#409EFF'
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.Icon}>
           {toTalItems(totalData)}
@@ -640,16 +712,17 @@ const DATA_Statistics = () => {
         {title.map((tabItem, tabIndex) => {
           const active = index === tabIndex;
           return (
-            <TouchableOpacity key={tabIndex} style={[styles.tabItem, active && { backgroundColor: '#409EFF' }]} onPress={() => selectIndex(tabIndex)}>
+            <TouchableOpacity key={tabIndex} style={[styles.tabItem]} onPress={() => selectIndex(tabIndex)}>
               <Text style={[styles.tabItem_text, active && styles.tabItem_titleStyle_active]}>{tabItem}</Text>
             </TouchableOpacity>
           )
         })}
       </View>
-      {/* <ScrollView horizontal={true}> */}
+      <View style={{height: 10, backgroundColor: '#fff'}}></View>
       <View style={styles.flatStyle}>
-        <FlatList
+        {companyDetails.length ? <FlatList
           data={companyDetails}
+          style={{backgroundColor: '#fff'}}
           ListHeaderComponent={tabHead()}
           refreshing={isLoading}
           onRefresh={refresh}
@@ -658,14 +731,12 @@ const DATA_Statistics = () => {
           renderItem={(item) => renderItem(item)}
           getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
           initialNumToRender={20}
-          ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : '没有更多数据'}</Text>}
-          ListEmptyComponent={empty}
+          ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
           onEndReachedThreshold={0.01}
           onScrollEndDrag={() => setLoad(true)}
           stickyHeaderIndices={[0]}
-        />
+        /> : <Empty />}
       </View>
-      {/* </ScrollView> */}
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -680,31 +751,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEF4F7',
   },
   Icon: {
-    width: '100%',
     flex: 1,
+    width: '100%',
     flexDirection: 'row',
     backgroundColor: '#fff',
   },
-  totalStyle: {
-    height: 30,
-    borderBottomWidth: 2,
-    borderColor: 'rgba(0, 0, 0, .05)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabStyle: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderColor: '#f2f2f2',
-  },
   tabTopStyle: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
-    width: '100%',
     height: 132,
-    borderWidth: 2,
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
     borderColor: '#409EFF',
     backgroundColor: '#fff',
   },
@@ -720,12 +779,11 @@ const styles = StyleSheet.create({
   centerStyle: {
     width: 160,
     height: '100%',
-    borderRightWidth: 2,
+    borderRightWidth: 1,
     borderColor: '#409EFF',
   },
   stageStyle: {
     width: '100%',
-    height: 65,
     borderBottomWidth: 1,
     borderColor: '#409EFF',
     lineHeight: 65,
@@ -741,9 +799,9 @@ const styles = StyleSheet.create({
   },
   statuStyle: {
     height: 65,
-    width: '33%',
+    flex: 1,
     lineHeight: 65,
-    borderRightWidth: 2,
+    borderRightWidth: 1,
     borderColor: '#409EFF',
     textAlign: 'center',
     color: '#000',
@@ -753,7 +811,7 @@ const styles = StyleSheet.create({
     height: 65,
     width: '50%',
     lineHeight: 65,
-    borderRightWidth: 2,
+    borderRightWidth: 1,
     borderColor: '#409EFF',
     textAlign: 'center',
     color: '#000',
@@ -765,13 +823,10 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 30,
   },
-  LookMoreStyle: {
-    fontSize: 16,
-    color: '#f9f9f9'
-  },
   listStyle: {
+    width: '100%',
     minHeight: 80,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderColor: '#409EFF',
     flexDirection: 'row',
     backgroundColor: '#fff',
@@ -782,7 +837,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 5,
     paddingBottom: 5,
-    borderRightWidth: 2,
+    borderRightWidth: 1,
     borderColor: '#409EFF',
   },
   itemText: {
@@ -797,10 +852,6 @@ const styles = StyleSheet.create({
     color: '#333333',
     textAlign: 'center'
   },
-  modalStyle: {
-    width: '100%',
-    minHeight: 280,
-  },
   titleBox: {
     flexDirection: 'row',
     width: '60%',
@@ -813,12 +864,6 @@ const styles = StyleSheet.create({
   },
   number: {
     color: '#409EFF'
-  },
-  scrollArea: {
-    borderRadius: 8,
-    maxHeight: 300,
-    borderWidth: 1,
-    borderColor: 'red'
   },
   companyInfo: {
     width: '100%',
@@ -836,41 +881,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333333'
   },
-  bottomText: {
-    textAlign: 'center',
-    fontSize: 26,
-    color: '#CCCCCC',
-    marginTop: 10
-  },
   tab_containerStyle: {
-    height: 75,
+    height: 80,
     flexDirection: 'row',
     backgroundColor: '#fff',
   },
   tabItem: {
     flex: 1,
-    justifyContent: 'center',
-    borderRightWidth: 2,
-    borderColor: "#EEF4F7",
-    // backgroundColor: 'red'
+    justifyContent: 'center'
   },
   tabItem_text: {
     fontSize: 32,
     textAlign: 'center',
   },
   tabItem_titleStyle_active: {
-    color: '#fff',
+    color: '#409EFF',
     fontWeight: 'bold',
   },
-  scrollTab: {
-    width: '100%',
-    overflowX: 'scroll'
-  },
   flatStyle: {
-    // width: 750,
     overflowX: 'scroll',
-    flex: 1,
-    paddingTop: 30,
+    flex: 1
   },
   style1: {
     width: 118,

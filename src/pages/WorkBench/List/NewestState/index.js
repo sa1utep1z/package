@@ -1,18 +1,15 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList} from 'react-native';
+import { View, StyleSheet, Text, Linking, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
-import Entypo from 'react-native-vector-icons/Entypo';
 import { useToast } from "react-native-toast-notifications";
-import moment from "moment";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
-import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { MEMBER_INFO, TAB_OF_LIST, SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD, CHANEL_SOURCE_LIST } from "../../../../utils/const";
+import { SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD } from "../../../../utils/const";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import ListApi from "../../../../request/ListApi";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
@@ -23,6 +20,8 @@ import NewestStatus from "../../../../components/NormalDialog/NewestStatus";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { pageEmpty } from "../../../Home/listComponent";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import Footer from '../../../../components/FlatList/Footer';
+import Empty from '../../../../components/FlatList/Empty';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -326,19 +325,7 @@ const NewestState = () => {
       <View style={styles.list_head}>
         {NEWEST_STATE_LIST_HEAD.map((item,index) => <Text key={index} style={styles.list_head_text}>{item.title}</Text>)}
       </View>
-      {/* <BottomList 
-        list={showList}
-        tab={TAB_OF_LIST.NEWEST_STATE}
-        renderItem={renderItem}
-        onRefresh={refresh}
-        onEndReached={onEndReached}
-        isLoading={isLoading}
-        hasNext={originData?.hasNext}
-        renderItemHeight={100}
-        hasTab={false}
-        tabTextStyle={{fontSize: 30}}
-      /> */}
-      <FlatList 
+      {memoList.length ? <FlatList 
         data={memoList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
@@ -347,11 +334,10 @@ const NewestState = () => {
         refreshing={isLoading}
         onRefresh={refresh}
         initialNumToRender={20}
-        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
-        ListEmptyComponent={pageEmpty()}
+        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.01}
-      />
+      /> : <Empty />}
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -396,22 +382,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 10
   },
-  listItem: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center', 
-    alignItems: 'center',
-  },
   itemText: {
     flex: 1,
     fontSize: 28,
     color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center'
-  },
-  bottomText: {
-    textAlign: 'center',
-    fontSize: 22
   }
 });
 

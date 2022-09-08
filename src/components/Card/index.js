@@ -15,7 +15,8 @@ const Card = ({title, content}) => (
 
 const styles = StyleSheet.create({
   card: {
-    margin: 32,
+    marginHorizontal: 32,
+    marginBottom: 32,
     backgroundColor: '#fff',
     borderRadius: 8
   },
