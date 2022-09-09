@@ -12,7 +12,6 @@ import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDeta
 import StatusChangeInInterviewList from "../../../../components/NormalDialog/StatusChangeInInterviewList";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
-import BottomList from "../../../../components/List/BottomList";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
 import { SUCCESS_CODE, INTERVIEW_STATUS, TAB_OF_LIST } from "../../../../utils/const";
@@ -21,6 +20,8 @@ import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { pageEmpty } from "../../../Home/listComponent";
 import { setTabName } from "../../../../redux/features/NowSelectTabNameInList";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import Footer from '../../../../components/FlatList/Footer';
+import Empty from '../../../../components/FlatList/Empty';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -333,20 +334,19 @@ const InterviewList = () => {
         <Text style={styles.tab}>状态</Text>
         <Text style={styles.tab}>联系方式</Text>
       </View>  
-      <FlatList 
+      {memoList.length ? <FlatList 
         data={memoList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
+        onRefresh={refresh}
+        onEndReached={onEndReached}
         keyExtractor={(item,index) => item.flowId}
         getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
         refreshing={isLoading}
-        onRefresh={refresh}
         initialNumToRender={20}
-        ListFooterComponent={<Text style={styles.bottomText}>{originData?.hasNext ? '加载中...' : ''}</Text>}
-        ListEmptyComponent={pageEmpty()}
-        onEndReached={onEndReached}
+        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
         onEndReachedThreshold={0.01}
-      />
+      /> : <Empty />}
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -414,10 +414,6 @@ const styles = StyleSheet.create({
   tabItem_titleStyle_active: {
     color: '#409EFF',
     fontWeight: 'bold',
-  },
-  bottomText: {
-    textAlign: 'center',
-    fontSize: 22
   }
 });
 

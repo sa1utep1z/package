@@ -1,6 +1,6 @@
 import NAVIGATION_KEYS from '../../navigator/key';
 
-export const workBenchList = [
+export const WORKBENCH_LIST = [
     {
       key: 'list',
       moduleName: '名单合集',
@@ -54,7 +54,17 @@ export const workBenchList = [
       //   iconSource: require('../../assets/images/MyCommissionIcon.png'),
       //   routeName: NAVIGATION_KEYS.MY_COMMISSION
       // }
-    ]}, {
+    ]},{
+      key: 'factoryManage',
+      moduleName: '驻厂管理',
+      list: [{
+        key: 'leavingManage',
+        title: '离职审核',
+        imgBackground: require('../../assets/images/blue.png'),
+        iconSource: require('../../assets/images/LeavingManage.png'),
+        routeName: NAVIGATION_KEYS.LEAVING_MANAGE
+      }]
+    }, {
       key: 'dataPanel',
       moduleName: '数据看板',
       list: [{

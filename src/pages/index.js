@@ -23,6 +23,7 @@ const NAVIGATION_PAGES_LIST = {
   BATCH_OPERATE_LIST: require('./WorkBench/List/BatchOperateList'),
   RECORD_OF_WORKING: require('./WorkBench/List/RecordOfWorking'),
   COMPLETE_MEMBER: require('./WorkBench/List/CompleteMember'),
+  LEAVING_MANAGE: require('./WorkBench/FactoryManage/LeavingManage'),
 
   //工作台（其他功能）
   AGREEMENT_MANAGEMENT: require('./WorkBench/OtherFunction/AgreementManagement'),

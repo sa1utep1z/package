@@ -2,7 +2,24 @@ import moment from "moment";
 
 export const SUCCESS_CODE = 0;
 
+//今天
 export const today = moment().format('YYYY-MM-DD');
+//本周开始
+export const THIS_WEEK_START = moment().weekday(0).format('YYYY-MM-DD');
+//本周结束
+export const THIS_WEEK_END = moment().weekday(6).format('YYYY-MM-DD');
+//上周开始
+export const LAST_WEEK_START = moment().weekday(-7).format('YYYY-MM-DD');
+//上周结束
+export const LAST_WEEK_END = moment().weekday(-1).format('YYYY-MM-DD');
+//本月开始
+export const THIS_MONTH_START = moment().startOf('month').format('YYYY-MM-DD');
+//本月结束
+export const THIS_MONTH_END = moment().endOf('month').format('YYYY-MM-DD');
+//上月开始
+export const LAST_MONTH_START = moment().subtract(1,'month').startOf('month').format('YYYY-MM-DD');
+//上月结束
+export const LAST_MONTH_END = moment().subtract(1,'month').endOf('month').format('YYYY-MM-DD');
 
 export const FAKE_MEMBER_INFO = [
   {type: 'name', title: '姓名', value: '呵呵'},
@@ -408,8 +425,8 @@ export const HIRE_DATA_TREND_TAB_LIST = [
 ];
 
 export const HIRE_DATA_COMPARE_TAB_LIST = [
-  { value: 'week', title: '本周VS上周' },
-  { value: 'month', title: '本月VS上月' }
+  { value: 'thisWeekVSlastWeek', title: '本周VS上周' },
+  { value: 'thisMonthVSlastMonth', title: '本月VS上月' }
 ];
 
 export const ROLE_INFO = {
@@ -420,6 +437,7 @@ export const ROLE_INFO = {
 };
 
 export const CHART_STATUS_LIST = [
+  {value: 'SIGN_UP_INVITED', title: '报名邀约'},
   {value: 'SIGN_UP_INTENTION', title: '已报名'},
   {value: 'INTERVIEW_NO_ARRIVE', title: '面试未去'},
   {value: 'INTERVIEW_FAIL', title: '面试未过'},

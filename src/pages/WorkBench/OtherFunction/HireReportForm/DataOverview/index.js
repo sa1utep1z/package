@@ -2,11 +2,53 @@ import React, {useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useDispatch } from 'react-redux';
 
-import { FAKE_HIRE_DATA_BOX_LIST, HIRE_DATA_BOX_TAG_LIST } from "../../../../../utils/const";
-import Tag from "../Component/Tag";
+import { FAKE_HIRE_DATA_BOX_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../utils/const";
+import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
+
+import Tag from "./Tag";
+import FilterMoreOfOverview from "./FilterMoreOfOverview";
+
+const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
+const lastWeek = {startDate: LAST_WEEK_START, endDate: LAST_WEEK_END};
+const thisMonth = {startDate: THIS_MONTH_START, endDate: THIS_MONTH_END};
 
 const DataOverview = () => {
+  const dispatch = useDispatch();
+
+  const [rangeDate, setRangeDate] = useState(thisWeek);
+  const [searchOther, setSearchOther] = useState(false);
+
+  const setTime = (range) => {
+    setSearchOther(false);
+    switch(range.value){
+      case 'thisWeek': 
+        setRangeDate(thisWeek);
+        break;
+      case 'lastWeek':
+        setRangeDate(lastWeek);
+        break;
+      case 'thisMonth':
+        setRangeDate(thisMonth);
+        break;
+    }
+  };
+
+  const confirm = (search) => {
+    const {rangeTime: {startTime, endTime}} = search;
+    if(startTime !== rangeDate.startDate || endTime !== rangeDate.endDate){
+      setSearchOther(true);
+    }else{
+      setSearchOther(false);
+    }
+    setRangeDate({startDate: startTime, endDate: endTime});
+  };
+
+  const filterMore = () => {
+    dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
+  };
+
   return (
     <View style={styles.totalArea}>
       <View style={styles.titleArea}>
@@ -14,7 +56,7 @@ const DataOverview = () => {
         <Text style={styles.title}>数据概览</Text>
       </View>
       <View style={styles.bottomArea}>
-        <Tag tagAreaStyle={{paddingLeft: 20}} tagList={HIRE_DATA_BOX_TAG_LIST}/>
+        <Tag tagAreaStyle={{paddingHorizontal: 20}} lastButton tagList={HIRE_DATA_BOX_TAG_LIST} filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther}/>
         <View style={styles.dataArea}>
           {FAKE_HIRE_DATA_BOX_LIST.map((data, dataIndex) => {
             return (

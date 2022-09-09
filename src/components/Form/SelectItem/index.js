@@ -9,6 +9,24 @@ import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
 import { deepCopy, checkedType } from '../../../utils';
 
+const FlattListItem = ({item, pressItem, checkedItem, isLastIndex}) => {
+  return useMemo(()=>(
+    <TouchableOpacity 
+      style={[styles.scrollItem, isLastIndex && {borderBottomWidth: 0}]} 
+      onPress={() => pressItem(item)}>
+      <Text>{item.title}</Text>
+      <CheckBox
+        center
+        checked={checkedItem}
+        onPress={() => pressItem(item)}
+        containerStyle={styles.checkBox_containerStyle}
+        checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
+        uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
+      />
+    </TouchableOpacity>
+  ),[checkedItem])
+};
+
 const SelectItem = ({
     field, 
     form, 
@@ -230,21 +248,7 @@ const SelectItem = ({
                 renderItem={({item, index})=>{
                   const checkedItem = item.isChecked;
                   const isLastIndex = index === list.length - 1;
-                  return (
-                    <TouchableOpacity 
-                      style={[styles.scrollItem, isLastIndex && {borderBottomWidth: 0}]} 
-                      onPress={() => pressItem(item)}>
-                      <Text>{item.title}</Text>
-                      <CheckBox
-                        center
-                        checked={checkedItem}
-                        onPress={() => pressItem(item)}
-                        containerStyle={styles.checkBox_containerStyle}
-                        checkedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue669'}</Text>}
-                        uncheckedIcon={<Text style={[styles.checkBox_icon, !checkedItem && styles.falseColor]}>{'\ue68d'}</Text>}
-                      />
-                    </TouchableOpacity>
-                  )
+                  return <FlattListItem item={item} pressItem={pressItem} checkedItem={checkedItem} isLastIndex={isLastIndex} />
                 }}
                 keyboardShouldPersistTaps="handled"
                 keyExtractor={item => item.id}

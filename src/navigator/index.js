@@ -216,6 +216,13 @@ export default Navigator = () => {
           headerTitle: '借支管理',
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.LEAVING_MANAGE}
+        component={NAVIGATION_PAGES.LEAVING_MANAGE}
+        options={{
+          headerTitle: '离职审核',
+        }}
+      />
     </>
   );
 

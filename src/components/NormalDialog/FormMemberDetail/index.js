@@ -50,7 +50,7 @@ const FormMemberDetail = ({
               findItem.value = arriveName?.label;
               break;
             case 'signUpTime':
-              findItem.value = memberInfoList[key] ? moment(memberInfoList[key]).format('YYYY-MM-DD HH:MM:SS') : '无';
+              findItem.value = memberInfoList[key] ? moment(memberInfoList[key]).format('YYYY-MM-DD HH:mm:ss') : '无';
               break;
             case 'jobDate':
               findItem.value = memberInfoList[key] ? moment(memberInfoList[key]).format('YYYY-MM-DD') : '无';
