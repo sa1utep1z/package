@@ -215,7 +215,6 @@ const SignUp = (props) => {
                   placeholder="请输入会员姓名"
                   OCR
                   onPress={openSelect}
-                  autoFocus
                   inputStyle={{ fontSize: 28 }}
                   isRequired
                   maxLength={5}

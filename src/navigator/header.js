@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
   },
   icon:{ 
     width: 50, 
+    color: '#333333',
     height: '100%',
     textAlignVertical: 'center',
     paddingLeft: 15

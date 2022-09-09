@@ -418,6 +418,7 @@ const styles = StyleSheet.create({
   },
   tabItem_text: {
     fontSize: 32,
+    color: '#333333',
     textAlign: 'center'
   },
   tabItem_titleStyle_active: {
