@@ -258,7 +258,7 @@ const MyMembers = () => {
 
   const renderItem = ({item}) => {
     return (
-      <View style={styles.listStyle}>
+      <View style={[ item.highSeasResource === true ? styles.listStyle1 : styles.listStyle]}>
         <Text 
           style={[
             styles.itemText,
@@ -372,6 +372,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, .05)',  
     flexDirection: 'row', 
   },
+  listStyle1: {
+    height: 100,
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    flexDirection: 'row', 
+    backgroundColor: '#ffcfcf'
+  },
   itemText: {
     flex: 1,
     fontSize: 28,
@@ -381,7 +388,7 @@ const styles = StyleSheet.create({
   },
   listHead_title: {
     height: 60, 
-    flexDirection: 'row', 
+    flexDirection: 'row',
     backgroundColor: '#fff', 
   },
   listHead_item: {

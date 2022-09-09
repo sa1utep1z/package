@@ -155,20 +155,6 @@ const SignUp = (props) => {
     }
   }
 
-  const selectImage = async () => {
-    ImagePicker.openPicker({
-      cropperChooseText: '确定',
-      cropperCancelText: '取消',
-      width: 300,
-      hignt: 400,
-      compressImageMaxWidth: 300,
-      cropping: true,
-    }).then(image => {
-      console.log(image);
-    }).catch(err => {
-      console.log("没有选择照片");
-    })
-  }
   //调用相机拍照
   const openCamera = async () => {
     const cameraImage = await ImagePicker.openCamera({
