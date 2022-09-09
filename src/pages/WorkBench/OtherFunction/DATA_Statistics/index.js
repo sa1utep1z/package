@@ -1,8 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import { Tab, TabView } from '@rneui/themed';
-import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
@@ -11,7 +9,6 @@ import DataStatisticApi from "../../../../request/DataStatisticApi"
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from 'react-native-toast-notifications';
-import { empty } from "../../../../pages/Home/listComponent";
 import { SUCCESS_CODE } from "../../../../utils/const";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import Footer from '../../../../components/FlatList/Footer';
@@ -19,17 +16,16 @@ import Empty from '../../../../components/FlatList/Empty';
 
 const DATA_Statistics = () => {
   const dispatch = useDispatch();
-  const leftFlatListRef = useRef(null);
+  const flatListRef = useRef(null);
+  const dialogRef = useRef(null);
   const navigation = useNavigation();
   const toast = useToast();
   const [index, setIndex] = useState(0);
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0 });
-  const [searchTotal, setSearchTotal] = useState({}); // 查询总数据参数
   const [companyDetails, setCompanyDetails] = useState([]); // 各分组数据
   const [totalData, setTotalData] = useState([]); // 各列表总数据
   const groupStoreData = useRef([]); // 搜索门店分组数据
   const groupCompanyData = useRef([]); // 搜索企业分组数据
-  const dialogRef = useRef(null);
   const [dialogContent, setDialogContent] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [nextPage, setNextPage] = useState(false);
@@ -55,8 +51,6 @@ const DATA_Statistics = () => {
       const res = await DataStatisticApi.Company(prams)
       if (res.code === 0) {
         setTotalData(res.data);
-        console.log('获取企业总数据数据参数：', prams)
-        console.log('获取企业总数据：', res)
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -65,6 +59,7 @@ const DATA_Statistics = () => {
 
   // 获取企业分组数据
   const companyData = async (value) => {
+    setIsLoading(true);
     try {
       const prams = {
         ...value,
@@ -76,8 +71,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取企业数据参数：', prams)
-      console.log('获取企业数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -106,10 +99,11 @@ const DATA_Statistics = () => {
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
-
   };
+
   // 获取门店分组数据
   const storeGroupData = async (value) => {
+    setIsLoading(true);
     try {
       const prams = {
         ...value,
@@ -121,8 +115,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取门店数据参数：', prams)
-      console.log('获取门店数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -151,10 +143,11 @@ const DATA_Statistics = () => {
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
-
   };
+
   // 获取供应商分组数据
   const supplierData = async (value) => {
+    setIsLoading(true);
     try {
       const prams = {
         ...value,
@@ -166,8 +159,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取供应商数据参数：', prams)
-      console.log('获取供应商数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -200,6 +191,7 @@ const DATA_Statistics = () => {
 
   // 获取招聘员分组数据
   const recruiterData = async (value) => {
+    setIsLoading(true);
     try {
       const prams = {
         ...value,
@@ -211,8 +203,6 @@ const DATA_Statistics = () => {
       }
       //初始数据
       setOriginData(res.data);
-      console.log('获取招聘员数据参数：', prams)
-      console.log('获取招聘员数据：', res)
       //渲染的列表（有下一页时）
       if (nextPage) {
         setCompanyDetails([...companyDetails, ...res.data.content]);
@@ -332,7 +322,6 @@ const DATA_Statistics = () => {
     if (item === 'name') {
       prams.direction = 'ASC'
     }
-    console.log('打印排序参数：', prams)
     setSearchContent(prams)
     if (index === 0) {
       companyData(prams);
@@ -490,7 +479,6 @@ const DATA_Statistics = () => {
       endDate: values.dateRange.endDate,
       name: values.search,
     });
-    console.log('打印值：', values)
   }
 
   // 刷新
@@ -509,6 +497,12 @@ const DATA_Statistics = () => {
   const selectIndex = (i) => {
     setIndex(i);
     setSearchContent({ ...searchContent, pageNumber: 0, name: '' });
+    if(companyDetails.length){
+      flatListRef?.current?.scrollToIndex({
+        index: 0,
+        viewPosition: 0
+      });
+    }
   };
 
   const tabHead = () => {
@@ -635,7 +629,8 @@ const DATA_Statistics = () => {
       </View>
       <View style={{height: 10, backgroundColor: '#fff'}}></View>
       <View style={styles.flatStyle}>
-        {companyDetails.length ? <FlatList
+        <FlatList
+          ref={flatListRef}
           data={companyDetails}
           style={{backgroundColor: '#fff'}}
           ListHeaderComponent={tabHead()}
@@ -646,11 +641,12 @@ const DATA_Statistics = () => {
           renderItem={(item) => renderItem(item)}
           getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
           initialNumToRender={20}
-          ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+          ListFooterComponent={<Footer showFooter={companyDetails.length} hasNext={originData.hasNext}/>}
+          ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
           onEndReachedThreshold={0.01}
           onScrollEndDrag={() => setLoad(true)}
           stickyHeaderIndices={[0]}
-        /> : <Empty />}
+        />
       </View>
       <NormalDialog
         ref={dialogRef}
@@ -815,8 +811,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   flatStyle: {
-    overflowX: 'scroll',
-    flex: 1
+    flex: 1,
+    overflowX: 'scroll'
   },
   style1: {
     width: 118,
