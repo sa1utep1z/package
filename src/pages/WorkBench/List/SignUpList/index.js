@@ -255,7 +255,7 @@ const SignUpList = () => {
     
   const renderItem = ({item}) => {
     return (
-      <View style={styles.listStyle}>
+      <View style={[(item.name && item.mobile) ? styles.listStyle : styles.listStyle1]}>
         <Text 
           style={[
             styles.itemText,
@@ -343,7 +343,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
-    marginHorizontal: 34
+    marginHorizontal: 34,
+  },
+  listStyle1: {
+    height: 80,
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    flexDirection: 'row', 
+    marginHorizontal: 34,
+    backgroundColor: '#ffcfcf'
   },
   listItem: {
     flex: 1, 

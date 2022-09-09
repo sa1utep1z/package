@@ -253,7 +253,7 @@ const LeavingList = () => {
 
   const renderItem = ({ item }) => {
     return (
-      <View style={styles.listStyle}>
+      <View style={[(item.name && item.mobile) ? styles.listStyle : styles.listStyle1]}>
         <Text 
           style={[
             styles.itemText,
@@ -346,6 +346,20 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
     marginHorizontal: 20
+  },
+  listStyle1: {
+    height: 80,
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    flexDirection: 'row', 
+    marginHorizontal: 20,
+    backgroundColor: '#ffcfcf'
+  },
+  listItem: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   itemText: {
     flex: 1,

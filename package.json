@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.7",
@@ -25,6 +26,7 @@
     "formik": "^2.2.9",
     "md5": "^2.3.0",
     "moment": "^2.29.4",
+    "patch-package": "^6.4.7",
     "react": "18.0.0",
     "react-native": "0.69.0",
     "react-native-chart-kit": "^6.12.0",
