@@ -1,0 +1,16 @@
+diff --git a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/PickerModule.java b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/PickerModule.java
+index a39a0b5..a7ed702 100644
+--- a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/PickerModule.java
++++ b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/PickerModule.java
+@@ -384,8 +384,9 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
+             galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
+             galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+ 
+-            final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pick an image");
+-            activity.startActivityForResult(chooserIntent, IMAGE_PICKER_REQUEST);
++            // final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pick an image");
++            // activity.startActivityForResult(chooserIntent, IMAGE_PICKER_REQUEST);
++            activity.startActivityForResult(galleryIntent, IMAGE_PICKER_REQUEST);
+         } catch (Exception e) {
+             resultCollector.notifyProblem(E_FAILED_TO_SHOW_PICKER, e);
+         }

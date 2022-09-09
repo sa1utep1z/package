@@ -261,7 +261,7 @@ const HeaderSearch = ({
               />}
               <Field
                 name="search"
-                placeholder={placeholder? placeholder : '请输入会员姓名或身份证'}
+                placeholder={placeholder? placeholder : '请输入会员姓名、身份证或手机号码'}
                 borderRadius={8}
                 searchInputStyle={styles.searchInputStyle}
                 component={SearchInput}

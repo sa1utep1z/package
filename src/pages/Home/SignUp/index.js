@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View, Text, Modal, PermissionsAndroid, Platform, Alert, TouchableHighlight } from 'react-native';
 import { Button } from '@rneui/themed';
 import { Formik, Field } from 'formik';
@@ -30,14 +30,19 @@ const SignUp = (props) => {
   var date = now.getDate();
   var deadlineStr = year + "/" + month + "/" + date + " " + "16:00:00";
   var deadline = Date.parse(deadlineStr);
-
+  const today = moment(now).format('YYYY-MM-DD')
   // 当前日期加一
   var dateTime1 = new Date();
   dateTime1 = dateTime1.setDate(dateTime1.getDate() + 1);
   dateTime1 = new Date(dateTime1);
+  // 当前日期加2
+  var dateTime2 = new Date();
+  dateTime2 = dateTime2.setDate(dateTime2.getDate() + 2);
+  dateTime2 = new Date(dateTime2);
 
-  const invalidVal = (nowTime > deadline) ? dateTime1 : new Date();
-  const [orderTime, setOrderTime] = useState(invalidVal); // 日期
+  // const invalidVal = (nowTime > deadline) ? dateTime1 : new Date();
+  const [orderTime, setOrderTime] = useState(new Date()); // 日期
+
   const initialValues = {
     orderDate: orderTime,
     jobName: params.jobName,
@@ -131,20 +136,39 @@ const SignUp = (props) => {
 
   //从图库选择图片
   const openPick = async () => {
-    const pickerImage = await ImagePicker.openPicker({
+    try{
+      const pickerImage = await ImagePicker.openPicker({
+        cropperChooseText: '确定',
+        cropperCancelText: '取消',
+        width: 300,
+        hignt: 400,
+        compressImageMaxWidth: 300,
+        cropping: true,
+      })
+      setModalVisible(false);
+      const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
+      uploadImage(fileName, pickerImage.path);
+      console.log('选择图库照片：', pickerImage)
+      return pickerImage;
+    }catch(err) {
+      console.log('err', err);
+    }
+  }
+
+  const selectImage = async () => {
+    ImagePicker.openPicker({
       cropperChooseText: '确定',
       cropperCancelText: '取消',
       width: 300,
       hignt: 400,
       compressImageMaxWidth: 300,
       cropping: true,
+    }).then(image => {
+      console.log(image);
+    }).catch(err => {
+      console.log("没有选择照片");
     })
-    setModalVisible(false);
-    const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
-    uploadImage(fileName, pickerImage.path);
-    console.log('选择图库照片：', pickerImage)
   }
-
   //调用相机拍照
   const openCamera = async () => {
     const cameraImage = await ImagePicker.openCamera({
@@ -189,6 +213,7 @@ const SignUp = (props) => {
                   disabled
                   startDate={startDate}
                   endDate={endDate}
+                  currentTime={params.currentTime}
                   component={SignUpDate}
                 />
                 <Field

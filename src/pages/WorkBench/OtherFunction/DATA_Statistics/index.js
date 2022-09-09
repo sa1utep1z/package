@@ -37,7 +37,6 @@ const DATA_Statistics = () => {
   const [load, setLoad] = useState(true);
 
   const title = ['企业', '门店', '供应商', '招聘员'];
-  // let timer;
 
   useEffect(() => {
     dispatch(openListSearch());
@@ -50,13 +49,13 @@ const DATA_Statistics = () => {
   const companyTotalData = async (value) => {
     try {
       const prams = {
-        startDate: value.startDate,
-        endDate: value.endDate,
-        name: value.search,
+        ...value,
       }
       const res = await DataStatisticApi.Company(prams)
       if (res.code === 0) {
         setTotalData(res.data);
+        console.log('获取企业总数据数据参数：', prams)
+        console.log('获取企业总数据：', res)
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -247,8 +246,8 @@ const DATA_Statistics = () => {
   const toTalItems = (res) => {
     const renderList = [
       { fieldName: res.total || '0', textStyle: { width: 116, fontSize: 26, } },
-      { fieldName: res.signUp || '0', textStyle: { width: 109 } },
-      // { fieldName: res.signUpIntention || '0', textStyle: { width: 99 } },
+      // { fieldName: res.signUp || '0', textStyle: { width: 109 } },
+      { fieldName: res.signUpIntention || '0', textStyle: { width: 109 } },
       { fieldName: res.interviewNoArrive || '0', textStyle: { width: 78 } },
       { fieldName: res.interviewFail || '0', textStyle: { width: 68 } },
       { fieldName: res.interviewPass || '0', textStyle: { width: 70 } },
@@ -278,7 +277,7 @@ const DATA_Statistics = () => {
       styles: { width: 118, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
     {
-      label: 'signUp',
+      label: 'signUpIntention',
       Icon: <AntDesign
         name='caretdown'
         size={32}
@@ -286,15 +285,6 @@ const DATA_Statistics = () => {
       />,
       styles: { width: 111, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
     },
-    // {
-    //   label: 'signUpIntention',
-    //   Icon: <AntDesign
-    //     name='caretdown'
-    //     size={32}
-    //     color='#409EFF'
-    //   />,
-    //   styles: { width: 101, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    // },
     {
       label: 'interviewNoArrive',
       Icon: <AntDesign
@@ -373,7 +363,7 @@ const DATA_Statistics = () => {
     return (
       <View style={[{ minHeight: 200 }]}>
         <View style={styles.titleBox}>
-          <Text style={styles.status}>{key === 'signUp' ? '报名人数' : key === 'onBoardingFail' ? '未报到人数' : key == 'onBoardingPass' ? '入职人数' : key == 'jobOn' ? '在职人数' : key == 'interviewNoArrive' ? '面试未去' : key == 'interviewFail' ? '面试未过' : '面试通过'}</Text>
+          <Text style={styles.status}>{key === 'signUpIntention' ? '报名有意愿人数' : key === 'onBoardingFail' ? '未报到人数' : key == 'onBoardingPass' ? '入职人数' : key == 'jobOn' ? '在职人数' : key == 'interviewNoArrive' ? '面试未去' : key == 'interviewFail' ? '面试未过' : '面试通过'}</Text>
           <Text style={styles.number}>{value}</Text>
         </View>
         <ScrollView style={{ flex: 1 }}>
@@ -493,8 +483,8 @@ const DATA_Statistics = () => {
           <Text
             style={[styles.itemText, { width: 109 }]}
             numberOfLines={2}
-            onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUp')[0], item.signUp)}
-            ellipsizeMode="tail">{item.signUp || '0'}</Text>
+            onPress={() => record(item, Object.keys(item).filter((key) => key === 'signUpIntention')[0], item.signUpIntention)}
+            ellipsizeMode="tail">{item.signUpIntention || '0'}</Text>
         </View>
         {/* <View style={styles.listItem}>
           <Text
@@ -575,7 +565,7 @@ const DATA_Statistics = () => {
 
   const selectIndex = (i) => {
     setIndex(i);
-    setSearchContent({ ...searchContent, pageNumber: 0 });
+    setSearchContent({ ...searchContent, pageNumber: 0, name: '' });
   };
 
   const tabHead = () => {
@@ -592,8 +582,8 @@ const DATA_Statistics = () => {
               <Text style={[styles.inductionStyle, { borderRightWidth: 0 }]}>有意愿</Text>
             </View>
           </View> */}
-          <View style={[styles.ItemStyle, {width: 100}]}>
-            <Text style={styles.title}>报名邀约</Text>
+          <View style={[styles.ItemStyle, { width: 100, paddingLeft: 0, paddingRight: 0 }]}>
+            <Text style={styles.title}>报名有意愿</Text>
           </View>
           <View style={[styles.centerStyle, { width: 210 }]}>
             <Text style={styles.stageStyle}>面试阶段</Text>

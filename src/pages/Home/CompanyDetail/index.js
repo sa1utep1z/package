@@ -38,7 +38,7 @@ const CompanyDetail = (props) => {
         return;
       }
       setOrderData(res.data);
-      console.log('岗位详情：', res)
+      console.log('岗位详情：', res, params.currentTime)
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -55,7 +55,8 @@ const CompanyDetail = (props) => {
     jobName: params.orderName,
     orderId: params.orderId,
     startDate: startTime,
-    endDate: endTime
+    endDate: endTime,
+    currentTime: params.currentTime,
   });
 
   return (

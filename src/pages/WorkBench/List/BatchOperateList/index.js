@@ -162,7 +162,7 @@ const BatchOperateList = (props) => {
   return (
     <View style={{ flex: 1, alignItems: 'center', paddingTop: 28 }}>
       <SearchInput
-        placeholder='请输入会员姓名或身份证'
+        placeholder='请输入会员姓名、身份证或手机号'
         searchPress={filterFactory}
         fontStyle={{ fontSize: 26 }}
         searchInputStyle={{ marginBottom: 20 }}

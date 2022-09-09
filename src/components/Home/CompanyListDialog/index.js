@@ -34,6 +34,7 @@ const CompanyListDialog = (props, ref) => {
       companyName: item.companyName,
       orderId: item.orderId,
       orderName: item.orderName,
+      currentTime: props.props,
     });
     setShowList(false)
   };

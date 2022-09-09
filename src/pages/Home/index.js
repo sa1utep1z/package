@@ -154,7 +154,8 @@ const Home = (props) => {
         companyName: item.companyName,
         orderId: item.orderId,
         orderName: item.orderName,
-        bannerList
+        bannerList,
+        currentTime: searchContent.recruitStart,
       });
     } catch (error) {
       current?.setShowList(false);
@@ -236,7 +237,7 @@ const Home = (props) => {
         onEndReached={onEndReached}
         onScrollEndDrag={()=>setLoad(true)}
       />
-      <CompanyListDialog ref={listRef}/>
+      <CompanyListDialog ref={listRef} props={searchContent.recruitStart} />
     </View>
 )};
 

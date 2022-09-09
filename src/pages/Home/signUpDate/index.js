@@ -14,6 +14,7 @@ const SignUpDate = ({
   onPress,
   startDate,
   endDate,
+  currentTime,
   ...rest
 }) => {
 
@@ -24,15 +25,19 @@ const SignUpDate = ({
   var date = now.getDate();
   var deadlineStr = year + "/" + month + "/" + date + " " + "16:00:00";
   var deadline = Date.parse(deadlineStr);
-
+  const today = moment(now).format('YYYY-MM-DD');
   // 当前日期加一
   var dateTime1 = new Date();
   dateTime1 = dateTime1.setDate(dateTime1.getDate() + 1);
   dateTime1 = new Date(dateTime1);
+  // 当前日期加2
+  var dateTime2 = new Date();
+  dateTime2 = dateTime2.setDate(dateTime2.getDate() + 2);
+  dateTime2 = new Date(dateTime2);
 
   const toast = useToast();
-  const invalidVal = (nowTime > deadline) ? dateTime1 : new Date();
-  const [dateTime, setDateTime] = useState(invalidVal);
+  // const invalidVal = (nowTime > deadline) ? dateTime1 : new Date();
+  const [dateTime, setDateTime] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
 
   const dateChange = (event, selectedDate) => {
@@ -42,12 +47,31 @@ const SignUpDate = ({
     form.setFieldValue(field.name, selectedDate);
   };
 
+  // useEffect(() => {
+  //   if (nowTime > deadline) {
+  //     form.setFieldValue(field.name, dateTime1);
+  //   }
+  // }, [])
   useEffect(() => {
-    if (nowTime > deadline) {
-      form.setFieldValue(field.name, dateTime1);
+    if (today === currentTime) {
+      if (nowTime > deadline) {
+        form.setFieldValue(field.name, dateTime1);
+        setDateTime(dateTime1);
+      } else {
+        form.setFieldValue(field.name, new Date());
+        setDateTime(new Date());
+      }
+    } else {
+      if (nowTime > deadline) {
+        form.setFieldValue(field.name, dateTime2);
+        setDateTime(dateTime2);
+      } else {
+        form.setFieldValue(field.name, dateTime1);
+        setDateTime(dateTime1);
+        console.log('打印日志：',dateTime1);
+      }
     }
   }, [])
-
 
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>

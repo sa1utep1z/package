@@ -94,8 +94,12 @@ const FormMemberDetail = ({
                 item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF' }}>{item.value}</Text>
                   <Entypo name='phone' size={16} color='#409EFF' />
-                </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> : 
+                </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> : item.type === 'name' ?
                 <View style={styles.memberItem_value}>
+                  <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
+                </View> : item.type === 'idNo' ? <View style={styles.memberItem_value}>
+                  <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
+                </View> : <View style={styles.memberItem_value}>
                   <Text>{item.value || '无'}</Text>
                 </View>}
               </View>
@@ -113,8 +117,12 @@ const FormMemberDetail = ({
                 item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF' }}>{item.value}</Text>
                   <Entypo name='phone' size={16} color='#409EFF' /> 
-                </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> : 
+                </TouchableOpacity> : <Text style={{textAlignVertical: 'center', paddingLeft: 3}}>无</Text> :item.type === 'name' ?
                 <View style={styles.memberItem_value}>
+                  <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
+                </View> : item.type === 'idNo' ? <View style={styles.memberItem_value}>
+                  <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
+                </View> : <View style={styles.memberItem_value}>
                   <Text>{item.value || '无'}</Text>
                 </View>}
               </View>

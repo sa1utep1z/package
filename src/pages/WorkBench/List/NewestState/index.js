@@ -264,7 +264,7 @@ const NewestState = () => {
     const status = checkStatus(item);
 
     return (
-      <View style={styles.listStyle}>
+      <View style={[(item.name && item.mobile) ? styles.listStyle : styles.listStyle1]}>
         <Text 
           style={[
             styles.itemText,
@@ -395,6 +395,14 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
     marginHorizontal: 10
+  },
+  listStyle1: {
+    height: 80,
+    borderBottomWidth: 2, 
+    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    flexDirection: 'row', 
+    marginHorizontal: 10,
+    backgroundColor: '#ffcfcf'
   },
   listItem: {
     flex: 1,
