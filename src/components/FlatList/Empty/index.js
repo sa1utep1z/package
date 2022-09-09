@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const Empty = () => (
-    <View style={styles.pageEmptyStyle}>
+const Empty = ({
+  otherEmptyStyle
+}) => (
+    <View style={[styles.pageEmptyStyle, otherEmptyStyle]}>
       <AntDesign
         name='frowno'
         size={60}

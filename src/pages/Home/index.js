@@ -5,7 +5,8 @@ import { useToast } from "react-native-toast-notifications";
 import { useSelector, useDispatch } from 'react-redux';
 import {CommonActions} from '@react-navigation/native';
 import moment from 'moment';
-import { Header, empty } from "./listComponent";
+
+import { Header } from "./listComponent";
 import CompanyListDialog from "../../components/Home/CompanyListDialog";
 import NAVIGATION_KEYS from "../../navigator/key";
 import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
@@ -13,6 +14,8 @@ import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
 import { setRoleInfo } from "../../redux/features/RoleInfo";
 import { openHomeSearch } from "../../redux/features/homeSearch";
+import Empty from '../../components/FlatList/Empty';
+import Footer from '../../components/FlatList/Footer';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -25,7 +28,6 @@ const Home = (props) => {
   const toast = useToast();
 
   const listRef = useRef(null);
-  const appState = useRef(AppState.currentState);
 
   const [bannerList, setBannerList] = useState([]);
   const [searchContent, setSearchContent] = useState({...firstPage});
@@ -193,8 +195,9 @@ const Home = (props) => {
   };
 
   const renderItem = ({item, index}) => {
+    const isLastIndex = index === showList.length - 1;
     return (
-      <View style={styles.itemArea}>
+      <View style={[styles.itemArea, isLastIndex && {borderBottomRightRadius: 8, borderBottomLeftRadius: 8, borderBottomWidth: 0}]}>
         <Text style={styles.item_flex1}>{index+1}</Text>
         <TouchableOpacity style={isSeacher ? styles.touchItemArea : styles.touchItemArea1} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>
@@ -219,16 +222,23 @@ const Home = (props) => {
     />
   );
 
+  const ListEmptyComponent = (
+    <View style={styles.emptyArea}>
+      <Empty otherEmptyStyle={styles.emptyStyle}/>
+    </View>
+  );
+
   return(
-    <View style={{flex: 1, backgroundColor: '#EEF4F7'}}>
+    <View style={styles.screen}>
       <FlatList
         data={showList}
-        keyExtractor={(item, index) => index}
+        keyExtractor={item => item.orderId}
+        getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
         renderItem={renderItem}
         refreshControl={refreshControl}
         ListHeaderComponent={<Header search={search} isSeacher={isSeacher} range={setRangeDate} bannerList={bannerList}/>}
-        ListEmptyComponent={empty}
-        ListFooterComponent={<Text style={styles.bottomText}>{nextPage ? '加载中...' : '没有更多数据'}</Text>}
+        ListFooterComponent={<Footer showFooter={showList.length} hasNext={originData.hasNext}/>}
+        ListEmptyComponent={ListEmptyComponent}
         removeClippedSubviews
         initialNumToRender={15}
         keyboardShouldPersistTaps='handled'
@@ -241,6 +251,10 @@ const Home = (props) => {
 )};
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1, 
+    backgroundColor: '#EEF4F7'
+  },
   itemArea: {
     height: 80, 
     marginHorizontal: 31, 
@@ -286,10 +300,13 @@ const styles = StyleSheet.create({
     color: '#999999',
     marginRight: 10
   },
-  bottomText: {
-    textAlign: 'center',
-    fontSize: 26,
-    color: '#CCCCCC'
+  emptyArea: {
+    height: 500, 
+    paddingHorizontal: 32
+  },
+  emptyStyle: {
+    borderBottomLeftRadius: 8, 
+    borderBottomRightRadius: 8
   }
 })
 

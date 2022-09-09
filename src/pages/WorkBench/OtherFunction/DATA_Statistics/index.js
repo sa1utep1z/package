@@ -280,90 +280,6 @@ const DATA_Statistics = () => {
     )
   };
 
-  const IconItem = [
-    {
-      label: 'name',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    {
-      label: 'signUp',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    // {
-    //   label: 'signUpIntention',
-    //   Icon: <AntDesign
-    //     name='caretdown'
-    //     size={32}
-    //     color='#409EFF'
-    //   />,
-    //   styles: { width: 101, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    // },
-    {
-      label: 'interviewNoArrive',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 80, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    {
-      label: 'interviewFail',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 70, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    {
-      label: 'interviewPass',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 71, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    {
-      label: 'onBoardingFail',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 91, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    {
-      label: 'onBoardingPass',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 80, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    },
-    {
-      label: 'jobOn',
-      Icon: <AntDesign
-        name='caretdown'
-        size={32}
-        color='#409EFF'
-      />,
-      styles: { width: 116, alignItems: 'center', borderRightWidth: 2, borderColor: '#409EFF' }
-    }
-  ]
-
   const getData = async (prams) => {
     try {
       if (index === 0) {
@@ -770,7 +686,7 @@ const styles = StyleSheet.create({
   ItemStyle: {
     width: 116,
     height: '100%',
-    borderRightWidth: 2,
+    borderRightWidth: 1,
     borderColor: '#409EFF',
     justifyContent: 'center',
     paddingLeft: 15,

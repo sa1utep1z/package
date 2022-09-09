@@ -2,10 +2,11 @@ import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 const Footer = ({
-  hasNext
+  hasNext,
+  showFooter = true //是否显示底部footer
 }) => {
   return (
-    <View style={styles.footerArea}>
+    <View style={[styles.footerArea, !showFooter && {display: 'none'}]}>
       {hasNext ? 
         <ActivityIndicator size={48} color="#409EFF" /> : 
         <Text style={styles.footerText}>没有更多数据</Text>
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   footerText: {
     textAlign: 'center', 
     fontSize: 28, 
-    color: '#333333'
+    color: '#999999'
   }
 })
 

@@ -103,9 +103,11 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
       if(res && res.statusCode === 200){
         var promise = CameraRoll.saveToCameraRoll("file://" + downloadDest);
         promise.then(function(result) {
-          Alert.alert("图片已保存至相册");
+          toast.show('保存成功！', {type: 'success'});
+          closePicture();
         }).catch(function(error) {
-          Alert.alert("保存失败");
+          toast.show('保存失败！', {type: 'danger'});
+          closePicture();
         })
       }
     })
@@ -122,13 +124,13 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
           paginationStyle={styles.paginationStyle}
           defaultSource={require('../../../assets/images/loading.gif')}
           activeDotColor='#409EFF'>
-          {bannerList.length ? bannerList.map((image, index) =>
-                <TouchableOpacity key={index} activeOpacity={1} onPress={() => pressPicture(image)}>
+          {bannerList.length ? bannerList.map((image, index) => (
+            <TouchableOpacity key={index} activeOpacity={1} onPress={() => pressPicture(image)}>
               <Image
                 loadingindicatorsource={require('../../../assets/images/homeImg.png')}
                 style={{ width: '100%', height: '100%', borderRadius: 8 }}
                 source={{ uri: `${image.coverImage.url}` }} />
-            </TouchableOpacity>)
+            </TouchableOpacity>))
             : <>
               <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg.png')} />
               <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={require('../../../assets/images/homeImg2.jpg')} />
@@ -168,19 +170,19 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
         visible={modalVisible}
         onRequestClose={closePicture}>
         <View style={{backgroundColor: 'rgba(0,0,0,.4)', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <View style={{width: '90%', height: '90%', backgroundColor: '#fff', borderRadius: 10, padding: 10}}>
-          <TouchableOpacity style={{position: 'absolute', width: 50, height: 50, right: 0, backgroundColor: 'rgba(0,0,0,0)', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={closePicture}>
-            <Icon
-              type="antdesign"
-              name='close'
-              color='#fff'
-              size={30}
-            />
-          </TouchableOpacity>
-            <ScrollView style={{flex: 1}}>
+          <View style={{width: '90%', maxHeight: '90%', backgroundColor: '#fff', borderRadius: 10, padding: 10}}>
+            <TouchableOpacity style={{position: 'absolute', width: 50, height: 50, right: 0, backgroundColor: 'rgba(0,0,0,0)', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={closePicture}>
+              <Icon
+                type="antdesign"
+                name='close'
+                color='#fff'
+                size={30}
+              />
+            </TouchableOpacity>
+            <ScrollView>
               {showImage.map((image, imageIndex) => {
                 return (
-                  <TouchableWithoutFeedback onLongPress={() => savePicture(image.url)}>
+                  <TouchableWithoutFeedback key={imageIndex} onLongPress={() => savePicture(image.url)}>
                     <FitImage key={imageIndex} source={{uri: `${image.url}`}}/>
                   </TouchableWithoutFeedback>
                 )
