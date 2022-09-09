@@ -27,14 +27,15 @@ let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const NewestState = () => {
+  const flatListRef = useRef(null);
+  const dialogRef = useRef(null);
+
   const dispatch = useDispatch();
 
   const toast = useToast();
+
   const navigation = useNavigation();
 
-  const dialogRef = useRef(null);
-
-  const rangeDate = useSelector(state => state.RangeDateOfList);
   const role = useSelector(state => state.roleSwitch.role);
 
   const [searchContent, setSearchContent] = useState({role, ...firstPage});
@@ -325,7 +326,8 @@ const NewestState = () => {
       <View style={styles.list_head}>
         {NEWEST_STATE_LIST_HEAD.map((item,index) => <Text key={index} style={styles.list_head_text}>{item.title}</Text>)}
       </View>
-      {memoList.length ? <FlatList 
+      <FlatList 
+        ref={flatListRef}
         data={memoList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
@@ -334,10 +336,11 @@ const NewestState = () => {
         refreshing={isLoading}
         onRefresh={refresh}
         initialNumToRender={20}
-        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+        ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext}/>}
+        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.01}
-      /> : <Empty />}
+      />
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -365,8 +368,7 @@ const styles = StyleSheet.create({
   list_head: {
     height: 80, 
     flexDirection: 'row', 
-    backgroundColor: '#fff',
-    paddingHorizontal: 10
+    backgroundColor: '#fff'
   },
   list_head_text: {
     flex: 1, 
@@ -379,15 +381,13 @@ const styles = StyleSheet.create({
     height: 100,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
-    flexDirection: 'row',
-    marginHorizontal: 10
+    flexDirection: 'row'
   },
   listStyle1: {
-    height: 80,
+    height: 100,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
-    marginHorizontal: 10,
     backgroundColor: '#ffcfcf'
   },
   listItem: {

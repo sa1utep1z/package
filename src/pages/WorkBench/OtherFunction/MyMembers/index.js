@@ -23,12 +23,14 @@ let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const MyMembers = () => {
+  const flatListRef = useRef(null);
+  const dialogRef = useRef(null);
+
   const toast = useToast();
+
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-
-  const dialogRef = useRef(null);
 
   const [searchContent, setSearchContent] = useState({...firstPage});
   const [dialogContent, setDialogContent] = useState({});
@@ -229,6 +231,12 @@ const MyMembers = () => {
 
   const selectIndex = (selectIndex) => {
     setIndex(selectIndex);
+    if(showList.length){
+      flatListRef?.current?.scrollToIndex({
+        index: 0,
+        viewPosition: 0
+      });
+    }
     switch(selectIndex){
       case 0:
         searchContent.returnVisitResult = '';
@@ -341,8 +349,9 @@ const MyMembers = () => {
         <Text style={styles.listHead_item}>状态</Text>
         <Text style={styles.listHead_item}>加入报名</Text>
       </View>
-      {memoList.length ? <FlatList 
-        data={memoList}
+      <FlatList 
+        ref={flatListRef}
+        data={showList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
         onRefresh={refresh}
@@ -351,9 +360,10 @@ const MyMembers = () => {
         getItemLayout={(data, index)=>({length: 100, offset: 100 * index, index})}
         refreshing={isLoading}
         initialNumToRender={20}
-        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+        ListFooterComponent={<Footer showFooter={showList.length} hasNext={originData.hasNext}/>}
+        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
         onEndReachedThreshold={0.01}
-      /> : <Empty />}
+      />
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}

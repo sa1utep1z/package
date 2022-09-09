@@ -22,15 +22,20 @@ import Footer from '../../../../components/FlatList/Footer';
 import Empty from '../../../../components/FlatList/Empty';
 
 let timer;
+const firstPage = { pageSize: 20, pageNumber: 0 };
 
 const WaitToEntryList = () => {
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const toast = useToast();
-  const firstPage = { pageSize: 20, pageNumber: 0 };
+  const flatListRef = useRef(null);
   const dialogRef = useRef(null);
-  const rangeDate = useSelector(state => state.RangeDateOfList);
+
+  const dispatch = useDispatch();
+
+  const navigation = useNavigation();
+
+  const toast = useToast();
+
   const role = useSelector(state => state.roleSwitch.role);
+
   const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage });
   const [showList, setShowList] = useState([]);
   const [tabNumberList, setTabNumberList] = useState({});
@@ -164,6 +169,12 @@ const WaitToEntryList = () => {
     const selectItem = TAB_OF_LIST.WAIT_TO_ENTRY_LIST.find((item, index) => index === selectIndex);
     const tabName = selectItem.type;
     dispatch(setTabName(tabName));
+    if(showList.length){
+      flatListRef?.current?.scrollToIndex({
+        index: 0,
+        viewPosition: 0
+      });
+    }
     if(searchContent.startDate && searchContent.endDate){
       switch (selectIndex) {
         case 0:
@@ -343,7 +354,8 @@ const WaitToEntryList = () => {
         <Text style={styles.tab}>状态</Text>
         <Text style={styles.tab}>联系方式</Text>
       </View>  
-      {memoList.length ? <FlatList 
+      <FlatList 
+        ref={flatListRef}
         data={memoList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
@@ -353,9 +365,10 @@ const WaitToEntryList = () => {
         onRefresh={refresh}
         onEndReached={onEndReached}
         initialNumToRender={20}
-        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+        ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext}/>}
+        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
         onEndReachedThreshold={0.01}
-      /> : <Empty />}
+      />
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}
@@ -373,15 +386,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row',
-    marginHorizontal: 20
+    marginHorizontal: 32
   },
   listStyle1: {
     height: 80,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
     flexDirection: 'row', 
-    marginHorizontal: 20,
-    backgroundColor: '#ffcfcf'
+    backgroundColor: '#ffcfcf',
+    marginHorizontal: 32
   },
   listItem: {
     flex: 1,
@@ -399,7 +412,8 @@ const styles = StyleSheet.create({
   tabArea: {
     height: 60,
     backgroundColor: '#fff', 
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingHorizontal: 32
   },
   tab: {
     flex: 1, 

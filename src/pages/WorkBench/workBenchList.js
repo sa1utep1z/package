@@ -54,17 +54,19 @@ export const WORKBENCH_LIST = [
       //   iconSource: require('../../assets/images/MyCommissionIcon.png'),
       //   routeName: NAVIGATION_KEYS.MY_COMMISSION
       // }
-    ]},{
-      key: 'factoryManage',
-      moduleName: '驻厂管理',
-      list: [{
-        key: 'leavingManage',
-        title: '离职审核',
-        imgBackground: require('../../assets/images/blue.png'),
-        iconSource: require('../../assets/images/LeavingManage.png'),
-        routeName: NAVIGATION_KEYS.LEAVING_MANAGE
-      }]
-    }, {
+    ]},
+    // {
+    //   key: 'factoryManage',
+    //   moduleName: '驻厂管理',
+    //   list: [{
+    //     key: 'leavingManage',
+    //     title: '离职审核',
+    //     imgBackground: require('../../assets/images/blue.png'),
+    //     iconSource: require('../../assets/images/LeavingManage.png'),
+    //     routeName: NAVIGATION_KEYS.LEAVING_MANAGE
+    //   }]
+    // },
+     {
       key: 'dataPanel',
       moduleName: '数据看板',
       list: [{
@@ -74,20 +76,20 @@ export const WORKBENCH_LIST = [
         iconSource: require('../../assets/images/DATA_StatisticsIcon.png'),
         routeName: NAVIGATION_KEYS.DATA_STATISTICS
       },
-      {
-        key: 'hire',
-        title: '招聘看板',
-        imgBackground: require('../../assets/images/deepGreen.png'),
-        iconSource: require('../../assets/images/HireReportFormIcon.png'),
-        routeName: NAVIGATION_KEYS.HIRE_REPORT_FORM
-      }, 
-      {
-        key: 'complaint',
-        title: '投诉看板',
-        imgBackground: require('../../assets/images/green.png'),
-        iconSource: require('../../assets/images/ComplaintPlateIcon.png'),
-        routeName: NAVIGATION_KEYS.COMPLAINT_PLATE
-      },
+      // {
+      //   key: 'hire',
+      //   title: '招聘看板',
+      //   imgBackground: require('../../assets/images/deepGreen.png'),
+      //   iconSource: require('../../assets/images/HireReportFormIcon.png'),
+      //   routeName: NAVIGATION_KEYS.HIRE_REPORT_FORM
+      // }, 
+      // {
+      //   key: 'complaint',
+      //   title: '投诉看板',
+      //   imgBackground: require('../../assets/images/green.png'),
+      //   iconSource: require('../../assets/images/ComplaintPlateIcon.png'),
+      //   routeName: NAVIGATION_KEYS.COMPLAINT_PLATE
+      // },
       //  {
       //   title: '裂变看板',
       //   imgBackground: require('../../assets/images/deepPink.png'),
