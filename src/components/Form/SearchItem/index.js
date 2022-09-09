@@ -47,6 +47,7 @@ const SearchItem = ({
           value={search}
           allowFontScaling={false}
           onChangeText={onChangeText}
+          placeholderTextColor="#999999"
           style={[styles.inputStyle, fontStyle]}
         />
         <TouchableOpacity style={styles.pressArea} onPress={searchOnPress}>
