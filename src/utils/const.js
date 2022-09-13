@@ -453,3 +453,9 @@ export const MESSAGE_TYPE = [
   { label: '回访提醒', value: 'INNER_VISIT_NOTIFICATION' },
   { label: '系统消息', value: 'INNER_SYSTEM_MESSAGE' },
 ];
+
+export const AUDIT_TYPE = {
+  'PENDING': '待审核',
+  'PASS': '通过',
+  'FAIL': '拒绝'
+};

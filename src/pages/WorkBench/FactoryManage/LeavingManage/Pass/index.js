@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
 
-import ListApi from "../../../../../request/ListApi";
+import LeavingManageApi from "../../../../../request/LeavingManageApi";
 import { pageEmpty } from "../../../../Home/listComponent";
 import { SUCCESS_CODE, INTERVIEW_STATUS } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
@@ -15,7 +15,7 @@ const Pass = ({
 }) => {
   const toast = useToast();
 
-  const [searchContent, setSearchContent] = useState({status: 'INTERVIEW_FAIL', role: 'RECRUIT', ...firstPage});
+  const [searchContent, setSearchContent] = useState({status: 'PASS', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
@@ -37,7 +37,7 @@ const Pass = ({
     console.log('getList-->params', params);
     setIsLoading(true);
     try{
-      const res = await ListApi.InterViewList(params);
+      const res = await LeavingManageApi.LeavingApplyList(params);
       console.log('getList-->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
@@ -126,7 +126,7 @@ const Pass = ({
         refreshing={isLoading}
         onRefresh={refresh}
         initialNumToRender={20}
-        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+        ListFooterComponent={<Footer showFooter={showList.length} hasNext={originData.hasNext}/>}
         ListEmptyComponent={pageEmpty()}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.01}

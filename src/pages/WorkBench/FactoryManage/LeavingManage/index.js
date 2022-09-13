@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { View, Text, StyleSheet, useWindowDimensions, TouchableOpacity, Animated } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from 'react-redux';
@@ -9,9 +9,10 @@ import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
-import ListApi from "../../../../request/ListApi";
+import LeavingManageApi from "../../../../request/LeavingManageApi";
 import { SUCCESS_CODE } from "../../../../utils/const";
 import { deepCopy } from "../../../../utils";
+import NormalDialog from '../../../../components/NormalDialog';
 
 import Total from "./Total";
 import WaitToAudit from "./WaitToAudit";
@@ -25,14 +26,16 @@ const LeavingManage = () => {
   const navigation = useNavigation();
   const layout = useWindowDimensions();
   const toast = useToast();
+  const dialogRef = useRef(null);
 
   const [index, setIndex] = useState(0);
   const [search, setSearch] = useState({});
+  const [dialogContent, setDialogContent] = useState({});
   const [routes, setRoutes] = useState([
-    { key: 'total', title: '全部', number: 0 },
-    { key: 'pending', title: '待审核', number: 0 },
-    { key: 'noArrive', title: '拒绝', number: 0 },
-    { key: 'fail', title: '通过', number: 0 }
+    { key: 'allNums', title: '全部', number: 0 },
+    { key: 'pendingNums', title: '待审核', number: 0 },
+    { key: 'failNums', title: '拒绝', number: 0 },
+    { key: 'passNums', title: '通过', number: 0 }
   ]);
 
   useEffect(() => {
@@ -50,17 +53,8 @@ const LeavingManage = () => {
   }, [search])
 
   const getTypeList = async() => {
-    const params = {
-      companyIds: search?.companyIds || [],  
-      storeIds: search?.storeIds || [],
-      recruitIds: search?.recruitIds || [],
-      startDate: search?.startDate || '',
-      endDate: search?.endDate || '',
-      str: search?.str || '',
-      role: "RECRUIT"
-    };
     try{
-      const res = await ListApi.GetInterviewTypeList(params);
+      const res = await LeavingManageApi.LeavingApplyNumber(search);
       if(res?.code !== SUCCESS_CODE){ 
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -77,26 +71,26 @@ const LeavingManage = () => {
   };
 
   const filter = values => {
-    const startDate = values.dateRange.startDate;
-    const endDate = values.dateRange.endDate;
-    const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
-    const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
-    const str = values.search;
+    const createDateStart = values.dateRange.startDate;
+    const createDateEnd = values.dateRange.endDate;
+    const companyId = values.enterprise.length ? values.enterprise[0].value : '';
+    const storeId = values.store.length ? values.store[0].storeId : '';
+    const recruitId = values.staff.length ? values.staff[0].value : '';
+    const userNameOrIdNo = values.search;
 
-    setSearch({ startDate, endDate, str, companyIds, storeIds, recruitIds });
+    setSearch({ createDateStart, createDateEnd, companyId, storeId, recruitId, userNameOrIdNo });
   };
 
   const renderScene = ({ route }) => {
     switch (route.key) {
-      case 'total':
-        return <Total search={search} />;
-      case 'pending':
-        return <WaitToAudit search={search} />;
-      case 'noArrive':
-        return <Reject search={search} />;
-      case 'fail':
-        return <Pass search={search} />;
+      case 'allNums':
+        return <Total search={search} dialogRef={dialogRef} setDialogContent={setDialogContent} />;
+      case 'pendingNums':
+        return <WaitToAudit search={search} dialogRef={dialogRef} />;
+      case 'failNums':
+        return <Reject search={search} dialogRef={dialogRef} />;
+      case 'passNums':
+        return <Pass search={search} dialogRef={dialogRef} />;
     }
   };
 
@@ -120,8 +114,8 @@ const LeavingManage = () => {
     <View style={styles.screen}>
       <HeaderSearch 
         filterFun={filter} 
-        // startText="开始："
-        // endText="结束："
+        singleSelect
+        placeholder="请输入会员姓名或身份证"
       />
       <CenterSelectDate />
       <TabView
@@ -132,6 +126,10 @@ const LeavingManage = () => {
         renderTabBar={renderTabBar}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
+      />
+      <NormalDialog 
+        ref={dialogRef}
+        dialogContent={dialogContent}
       />
     </View>
   )

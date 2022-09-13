@@ -11,7 +11,8 @@ import { deepCopy } from '../../../utils';
 
 const FormMemberDetail = ({
   memberInfoList = FAKE_MEMBER_INFO,
-  showDate = false
+  showDate = false,
+  noResignDate = false, //不要显示离职日期
 }) => {
   const [showList, setShowList] = useState([
     { type: 'name', title: '姓名', value: '' },
@@ -72,6 +73,11 @@ const FormMemberDetail = ({
     }else if(memberInfoList.signUpType === 'SUPPLIER' && (copyList.findIndex(item => item.type === 'recruitName') !== -1)){
       const recruiterIndex = copyList.findIndex(item => item.type === 'recruitName');
       copyList.splice(recruiterIndex, 1);
+    }
+    //删除离职日期
+    if(noResignDate){
+      const resignDateIndex = copyList.findIndex(item => item.type === 'resignDate');
+      copyList.splice(resignDateIndex, 1);
     }
     setShowList(copyList);
   }, [memberInfoList])

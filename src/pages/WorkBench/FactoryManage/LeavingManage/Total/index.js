@@ -1,21 +1,27 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Linking } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
+import moment from "moment";
 
-import ListApi from "../../../../../request/ListApi";
+import LeavingManageApi from "../../../../../request/LeavingManageApi";
 import { pageEmpty } from "../../../../Home/listComponent";
-import { SUCCESS_CODE, INTERVIEW_STATUS } from '../../../../../utils/const';
+import { SUCCESS_CODE, INTERVIEW_STATUS, AUDIT_TYPE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
+import CallPhone from "../../../../../components/NormalDialog/CallPhone";
+import FormCompanyDetail from "../../../../../components/NormalDialog/FormCompanyDetail";
+import FormMemberDetail from "../../../../../components/NormalDialog/FormMemberDetail";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const Total = ({
-  search
+  search,
+  dialogRef,
+  setDialogContent
 }) => {
   const toast = useToast();
 
-  const [searchContent, setSearchContent] = useState({status: 'ALL', role: 'RECRUIT', ...firstPage});
+  const [searchContent, setSearchContent] = useState({status: '', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
@@ -37,7 +43,7 @@ const Total = ({
     console.log('getList-->params', params);
     setIsLoading(true);
     try{
-      const res = await ListApi.InterViewList(params);
+      const res = await LeavingManageApi.LeavingApplyList(params);
       console.log('getList-->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
@@ -61,6 +67,75 @@ const Total = ({
     }
   };
 
+  const pressName = (item) => {
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: '温馨提示',
+      confirmOnPress: () => {
+        Linking.openURL(`tel:${item.mobile}`)
+        dialogRef.current.setShowDialog(false);
+      },
+      dialogComponent: <CallPhone message={item}/>
+    });
+  };
+
+  const pressFactory = async(item) => {
+    try{
+      const res = await LeavingManageApi.OrderInfo(item.applyId);
+      if(res?.code !== SUCCESS_CODE){
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '岗位信息',
+        dialogComponent: <FormCompanyDetail message={res.data}/>
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const pressStatus = async(item) => {
+    dialogRef.current.setShowDialog(true);
+    try{
+      const res = await LeavingManageApi.ResignApply(item.applyId);
+      console.log('res', res);
+      // if(res?.code !== SUCCESS_CODE){
+      //   toast.show(`${res?.msg}`, {type: 'danger'});
+      //   return;
+      // }
+      // dialogRef.current.setShowDialog(true);
+      // setDialogContent({
+      //   dialogTitle: '会员信息',
+      //   dialogComponent: <FormMemberDetail memberInfoList={res.data} noResignDate/>
+      // });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const pressDetail = async(item) => {
+    try{
+      const res = await LeavingManageApi.MemberInfo(item.applyId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '会员信息',
+        dialogComponent: <FormMemberDetail memberInfoList={res.data} noResignDate/>
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
 
   const onEndReached = () => {
@@ -75,35 +150,29 @@ const Total = ({
     return (
       <View style={styles.listStyle}>
         <Text 
-          style={[
-            styles.itemText,
-            {color: '#409EFF', textAlign: 'center'}
-          ]}
+          style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
-          // onPress={() => pressFactory(item)}
+          onPress={() => pressName(item)}
+          ellipsizeMode="tail">{item.userName || '无'}</Text>
+        <Text 
+          style={styles.itemText}
+          numberOfLines={2}
+          onPress={() => pressFactory(item)}
           ellipsizeMode="tail">{item.companyShortName || '无'}</Text>
         <Text 
-          style={[
-            styles.itemText
-          ]}
+          style={[styles.itemText, {fontSize: 24}]}
           numberOfLines={2}
-          // onPress={() => pressName(item)}
-          ellipsizeMode="tail">{item.name || '无'}</Text>
+          ellipsizeMode="tail">{moment(item.jobDate).format('YYYY-MM-DD') || '无'}</Text>
         <Text 
-          style={[
-            styles.itemText
-          ]}
+          style={[styles.itemText, styles.pressItem, {color: `${item.status === 'PENDING' ? '#409EFF' : item.status === 'FAIL' ? 'red' : 'green'}`} ]}
           numberOfLines={2}
-          // onPress={() => changeStatus(item)}
-          ellipsizeMode="tail">{INTERVIEW_STATUS[item.interviewStatus] || '无'}</Text>
+          onPress={() => pressStatus(item)}
+          ellipsizeMode="tail">{AUDIT_TYPE[item.status] || '无'}</Text>
         <Text 
-          style={[
-            styles.itemText, 
-            {color: '#409EFF', fontSize: 24}
-          ]}
+          style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
-          // onPress={() => item.mobile && callPhone(item)}
-          ellipsizeMode="tail">{item.mobile || '无'}</Text>
+          onPress={() => pressDetail(item)}
+          ellipsizeMode="tail">查看</Text>
       </View>
     )
   };
@@ -121,12 +190,12 @@ const Total = ({
         data={showList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
-        keyExtractor={(item,index) => item.flowId}
+        keyExtractor={(item,index) => item.applyId}
         getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
         refreshing={isLoading}
         onRefresh={refresh}
         initialNumToRender={20}
-        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+        ListFooterComponent={<Footer showFooter={showList.length} hasNext={originData.hasNext}/>}
         ListEmptyComponent={pageEmpty()}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.01}
@@ -140,8 +209,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
-    flexDirection: 'row', 
-    marginHorizontal: 34
+    flexDirection: 'row'
   },
   itemText: {
     flex: 1,
@@ -149,6 +217,9 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center'
+  },
+  pressItem: {
+    color: '#409EFF'
   },
   tabArea: {
     height: 60,
