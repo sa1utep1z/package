@@ -20,6 +20,7 @@ const CompanyDetailDialog = ({
   
   return (
     <Dialog
+      animationType="fade"
       isVisible={showDetail}
       overlayStyle={styles.dialogStyle}
       onBackdropPress={()=> setShowDetail(!showDetail)}>

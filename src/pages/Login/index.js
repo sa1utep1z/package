@@ -58,6 +58,7 @@ const Login = props => {
   ];
 
   const submit = () => {
+    window.handleUnauthorized = false;
     if(!radio){
       toast.show('请勾选下方按钮', {type: 'warning'});
       return;

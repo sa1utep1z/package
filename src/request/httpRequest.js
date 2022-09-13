@@ -14,6 +14,7 @@ const instance = axios.create({
 });
 
 const handleUnauthorized = () => {
+  if(window.handleUnauthorized) return;
   console.log('httpRequest->response->handleUnauthorized');
   RootNavigation.resetLogin();
 };
@@ -42,7 +43,7 @@ instance.interceptors.response.use((response) => {
   console.log('httpRequest->response->error', error);
   if (error.response && error.response.status === 401) {
     handleUnauthorized();
-    return new Promise(()=>{})
+    return new Promise(()=>{});
   }
   return Promise.reject(error);
 });

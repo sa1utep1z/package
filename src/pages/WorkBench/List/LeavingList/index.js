@@ -164,13 +164,13 @@ const LeavingList = () => {
 
   // 切换状态
   const selectIndex = (selectIndex) => {
+    setIndex(selectIndex);
     if(showList.length){
       flatListRef?.current?.scrollToIndex({
         index: 0,
         viewPosition: 0
       });
     }
-    setIndex(selectIndex);
     switch (selectIndex) {
       case 0:
         searchContent.status = 'ALL';

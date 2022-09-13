@@ -245,26 +245,24 @@ const InterviewList = () => {
         viewPosition: 0
       });
     }
-    if(searchContent.startDate && searchContent.endDate){
-      switch(selectIndex){
-        case 0:
-          searchContent.status = 'ALL';
-          break;
-        case 1:
-          searchContent.status = 'INTERVIEW_PENDING';
-          break;
-        case 2:
-          searchContent.status = 'INTERVIEW_NO_ARRIVE';
-          break;
-        case 3:
-          searchContent.status = 'INTERVIEW_FAIL';
-          break;
-        case 4:
-          searchContent.status = 'INTERVIEW_PASS';
-          break;
-      }
-      setSearchContent({...searchContent, ...firstPage});
+    switch(selectIndex){
+      case 0:
+        searchContent.status = 'ALL';
+        break;
+      case 1:
+        searchContent.status = 'INTERVIEW_PENDING';
+        break;
+      case 2:
+        searchContent.status = 'INTERVIEW_NO_ARRIVE';
+        break;
+      case 3:
+        searchContent.status = 'INTERVIEW_FAIL';
+        break;
+      case 4:
+        searchContent.status = 'INTERVIEW_PASS';
+        break;
     }
+    setSearchContent({...searchContent, ...firstPage});
   };
 
   const refresh = () => setSearchContent({...searchContent, ...firstPage});

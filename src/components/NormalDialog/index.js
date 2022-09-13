@@ -29,6 +29,7 @@ const NormalDialog = ({ dialogContent: {
 
   return (
     <Dialog
+      animationType="fade"
       isVisible={showDialog}
       overlayStyle={styles.dialogStyle}
       onBackdropPress={backOnPress || defaultBackOnPress}>

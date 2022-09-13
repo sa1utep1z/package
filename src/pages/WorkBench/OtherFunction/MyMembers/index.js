@@ -324,8 +324,7 @@ const MyMembers = () => {
         filterFun={filter} 
         canFilterStatus 
         staffSearch
-        companySingleSelect
-        storeSingleSelect
+        singleSelect
         clearRangeDate
         startText="开始日期："
         endText="结束日期："

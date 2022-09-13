@@ -128,23 +128,21 @@ const SignUpList = () => {
         viewPosition: 0
       });
     }
-    if(searchContent.startDate && searchContent.endDate){
-      switch(selectIndex){
-        case 0:
-          searchContent.status = 'ALL';
-          break;
-        case 1:
-          searchContent.status = 'SIGN_UP_PENDING';
-          break;
-        case 2:
-          searchContent.status = 'SIGN_UP_NO_INTENTION';
-          break;
-        case 3:
-          searchContent.status = 'SIGN_UP_INTENTION';
-          break;
-      }
-      setSearchContent({...searchContent, ...firstPage});
+    switch(selectIndex){
+      case 0:
+        searchContent.status = 'ALL';
+        break;
+      case 1:
+        searchContent.status = 'SIGN_UP_PENDING';
+        break;
+      case 2:
+        searchContent.status = 'SIGN_UP_NO_INTENTION';
+        break;
+      case 3:
+        searchContent.status = 'SIGN_UP_INTENTION';
+        break;
     }
+    setSearchContent({...searchContent, ...firstPage});
   };
 
   const filter = (values) => {
@@ -320,7 +318,7 @@ const SignUpList = () => {
         <Text style={styles.tab}>姓名</Text>
         <Text style={styles.tab}>状态</Text>
         <Text style={styles.tab}>联系方式</Text>
-      </View>  
+      </View>
       <FlatList 
         ref={flatListRef}
         data={memoList}

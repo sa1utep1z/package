@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Keyboard} from 'react-native';
 import { SearchBar, Text } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -50,6 +50,11 @@ const SearchInput = ({
   const clearIconPress = () => {
     searchBarRef.current.clear();
     searchPress && searchPress('');
+    if(form){
+      form.setFieldValue(field.name, '');
+      form.handleSubmit();
+      Keyboard.dismiss();
+    }
   };
 
   const btnPress = () => {
@@ -57,6 +62,7 @@ const SearchInput = ({
     if(form){
       form.setFieldValue(field.name, value);
       form.handleSubmit();
+      Keyboard.dismiss();
       return;
     }
     searchPress(value);
@@ -150,9 +156,14 @@ const styles = StyleSheet.create({
   inputStyle: {
     fontSize: 28, 
     marginLeft: 10, 
-    marginRight: 0
+    marginRight: 0,
+    paddingLeft: 0
   },
   leftIconContainerStyle: {
+  },
+  smallLeftArea: {
+    marginLeft: 0,
+    marginRight: 0
   },
   rightIconContainerStyle: {
     paddingRight: 0

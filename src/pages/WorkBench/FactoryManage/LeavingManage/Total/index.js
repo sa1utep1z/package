@@ -10,7 +10,7 @@ import Footer from '../../../../../components/FlatList/Footer';
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
-const All = ({
+const Total = ({
   search
 }) => {
   const toast = useToast();
@@ -25,7 +25,6 @@ const All = ({
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...search, ...searchContent});
-      // getTypeList();
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
@@ -59,27 +58,6 @@ const All = ({
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
-    }
-  };
-  
-  const getTypeList = async() => {
-    const params = {
-      companyIds: searchContent?.companyIds || [],  
-      storeIds: searchContent?.storeIds || [],
-      recruitIds: searchContent?.recruitIds || [],
-      startDate: searchContent?.startDate || '',
-      endDate: searchContent?.endDate || '',
-      str: searchContent?.str || ''
-    };
-    try{
-      const res = await ListApi.GetInterviewTypeList(params);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      setTabNumberList(res.data);
-    }catch(err){
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 
@@ -131,20 +109,29 @@ const All = ({
   };
 
   return (
-    <FlatList 
-      data={showList}
-      style={{backgroundColor: '#fff'}}
-      renderItem={renderItem}
-      keyExtractor={(item,index) => item.flowId}
-      getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
-      refreshing={isLoading}
-      onRefresh={refresh}
-      initialNumToRender={20}
-      ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
-      ListEmptyComponent={pageEmpty()}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={0.01}
-    />
+    <>
+      <View style={styles.tabArea}>
+        <Text style={styles.tab}>姓名</Text>
+        <Text style={styles.tab}>企业</Text>
+        <Text style={styles.tab}>入职日期</Text>
+        <Text style={styles.tab}>状态</Text>
+        <Text style={styles.tab}>招聘来源</Text>
+      </View>
+      <FlatList 
+        data={showList}
+        style={{backgroundColor: '#fff'}}
+        renderItem={renderItem}
+        keyExtractor={(item,index) => item.flowId}
+        getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
+        refreshing={isLoading}
+        onRefresh={refresh}
+        initialNumToRender={20}
+        ListFooterComponent={<Footer hasNext={originData.hasNext}/>}
+        ListEmptyComponent={pageEmpty()}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.01}
+      />
+    </>
   )
 };
 
@@ -163,6 +150,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center'
   },
+  tabArea: {
+    height: 60,
+    backgroundColor: '#fff', 
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  tab: {
+    flex: 1, 
+    fontSize: 30, 
+    textAlign: 'center', 
+    textAlignVertical: 'center',
+    color: '#333333'
+  }
 });
 
-export default All;
+export default Total;

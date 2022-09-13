@@ -55,17 +55,17 @@ export const WORKBENCH_LIST = [
       //   routeName: NAVIGATION_KEYS.MY_COMMISSION
       // }
     ]},
-    // {
-    //   key: 'factoryManage',
-    //   moduleName: '驻厂管理',
-    //   list: [{
-    //     key: 'leavingManage',
-    //     title: '离职审核',
-    //     imgBackground: require('../../assets/images/blue.png'),
-    //     iconSource: require('../../assets/images/LeavingManage.png'),
-    //     routeName: NAVIGATION_KEYS.LEAVING_MANAGE
-    //   }]
-    // },
+    {
+      key: 'factoryManage',
+      moduleName: '驻厂管理',
+      list: [{
+        key: 'leavingManage',
+        title: '离职审核',
+        imgBackground: require('../../assets/images/blue.png'),
+        iconSource: require('../../assets/images/LeavingManage.png'),
+        routeName: NAVIGATION_KEYS.LEAVING_MANAGE
+      }]
+    },
      {
       key: 'dataPanel',
       moduleName: '数据看板',
@@ -76,13 +76,13 @@ export const WORKBENCH_LIST = [
         iconSource: require('../../assets/images/DATA_StatisticsIcon.png'),
         routeName: NAVIGATION_KEYS.DATA_STATISTICS
       },
-      // {
-      //   key: 'hire',
-      //   title: '招聘看板',
-      //   imgBackground: require('../../assets/images/deepGreen.png'),
-      //   iconSource: require('../../assets/images/HireReportFormIcon.png'),
-      //   routeName: NAVIGATION_KEYS.HIRE_REPORT_FORM
-      // }, 
+      {
+        key: 'hire',
+        title: '招聘看板',
+        imgBackground: require('../../assets/images/deepGreen.png'),
+        iconSource: require('../../assets/images/HireReportFormIcon.png'),
+        routeName: NAVIGATION_KEYS.HIRE_REPORT_FORM
+      }, 
       // {
       //   key: 'complaint',
       //   title: '投诉看板',
