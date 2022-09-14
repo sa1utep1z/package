@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from "react";
-import { View, Text, StyleSheet, useWindowDimensions, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions, TouchableOpacity, Linking } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from 'react-redux';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import { TabView } from 'react-native-tab-view';
 import { useToast } from "react-native-toast-notifications";
 
 import HeaderSearch from "../../../../components/List/HeaderSearch";
@@ -13,6 +13,10 @@ import LeavingManageApi from "../../../../request/LeavingManageApi";
 import { SUCCESS_CODE } from "../../../../utils/const";
 import { deepCopy } from "../../../../utils";
 import NormalDialog from '../../../../components/NormalDialog';
+import CallPhone from "../../../../components/NormalDialog/CallPhone";
+import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
+import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
+import StatusAudit from '../../../../components/NormalDialog/StatusAudit';
 
 import Total from "./Total";
 import WaitToAudit from "./WaitToAudit";
@@ -70,6 +74,97 @@ const LeavingManage = () => {
     }
   };
 
+  const audit = async(type, memberInfo) => {
+    const detailId = memberInfo.applyDetailId;
+    try {
+      const res = await LeavingManageApi.Audit(detailId, {pass: type === 'pass'});
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show(`修改成功！`, {type: 'success'});
+      setSearch({...search});
+    } catch (error) {
+      console.log('error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally{
+      dialogRef.current.setShowDialog(false);
+    }
+  };
+
+  const pressName = (item) => {
+    dialogRef.current.setShowDialog(true);
+    setDialogContent({
+      dialogTitle: '温馨提示',
+      confirmOnPress: () => {
+        Linking.openURL(`tel:${item.mobile}`)
+        dialogRef.current.setShowDialog(false);
+      },
+      dialogComponent: <CallPhone message={item}/>
+    });
+  };
+
+  const pressStatus = async(item) => {
+    if(item.status === 'PASS' || item.status === 'FAIL'){
+      toast.show('状态已确定！', {type: 'warning'});
+      return;
+    }
+    try{
+      const res = await LeavingManageApi.ResignApply(item.applyId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '离职审核',
+        bottomButton: false,
+        rightCloseIcon: true,
+        dialogComponent: <StatusAudit memberInfo={res.data} audit={audit} />
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const pressDetail = async(item) => {
+    try{
+      const res = await LeavingManageApi.MemberInfo(item.applyId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '会员信息',
+        dialogComponent: <FormMemberDetail memberInfoList={res.data} noResignDate/>
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const pressFactory = async(item) => {
+    try{
+      const res = await LeavingManageApi.OrderInfo(item.applyId);
+      if(res?.code !== SUCCESS_CODE){
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '岗位信息',
+        dialogComponent: <FormCompanyDetail message={res.data}/>
+      });
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
   const filter = values => {
     const createDateStart = values.dateRange.startDate;
     const createDateEnd = values.dateRange.endDate;
@@ -84,13 +179,13 @@ const LeavingManage = () => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'allNums':
-        return <Total search={search} dialogRef={dialogRef} setDialogContent={setDialogContent} />;
+        return <Total search={search} pressName={pressName} pressStatus={pressStatus} pressDetail={pressDetail} pressFactory={pressFactory}/>;
       case 'pendingNums':
-        return <WaitToAudit search={search} dialogRef={dialogRef} />;
+        return <WaitToAudit search={search} pressName={pressName} pressStatus={pressStatus} pressDetail={pressDetail} pressFactory={pressFactory}/>;
       case 'failNums':
-        return <Reject search={search} dialogRef={dialogRef} />;
+        return <Reject search={search} pressName={pressName} pressStatus={pressStatus} pressDetail={pressDetail} pressFactory={pressFactory} />;
       case 'passNums':
-        return <Pass search={search} dialogRef={dialogRef} />;
+        return <Pass search={search} pressName={pressName} pressStatus={pressStatus} pressDetail={pressDetail} pressFactory={pressFactory} />;
     }
   };
 

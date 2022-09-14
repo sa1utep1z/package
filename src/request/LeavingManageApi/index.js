@@ -12,6 +12,8 @@ const LeavingManageApi = {
   MemberInfo: async(applyId) => await httpRequest.get(`admin/app/resignApply/${applyId}/memberInfo`),
   /**离职申请详情 */
   ResignApply: async(applyId) => await httpRequest.get(`admin/app/resignApply/${applyId}`),
+  /**审批 */
+  Audit: async(detailId, params) => await httpRequest.post(`admin/approve/process/${detailId}`, params)
 };
 
 export default LeavingManageApi;

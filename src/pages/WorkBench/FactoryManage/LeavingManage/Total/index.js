@@ -1,23 +1,22 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, FlatList, Linking } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
 
 import LeavingManageApi from "../../../../../request/LeavingManageApi";
 import { pageEmpty } from "../../../../Home/listComponent";
-import { SUCCESS_CODE, INTERVIEW_STATUS, AUDIT_TYPE } from '../../../../../utils/const';
+import { SUCCESS_CODE, AUDIT_TYPE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
-import CallPhone from "../../../../../components/NormalDialog/CallPhone";
-import FormCompanyDetail from "../../../../../components/NormalDialog/FormCompanyDetail";
-import FormMemberDetail from "../../../../../components/NormalDialog/FormMemberDetail";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const Total = ({
   search,
-  dialogRef,
-  setDialogContent
+  pressName,
+  pressStatus,
+  pressDetail,
+  pressFactory
 }) => {
   const toast = useToast();
 
@@ -40,11 +39,9 @@ const Total = ({
   },[search])
   
   const getList = async(params) => {
-    console.log('getList-->params', params);
     setIsLoading(true);
     try{
       const res = await LeavingManageApi.LeavingApplyList(params);
-      console.log('getList-->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -64,75 +61,6 @@ const Total = ({
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
-    }
-  };
-
-  const pressName = (item) => {
-    dialogRef.current.setShowDialog(true);
-    setDialogContent({
-      dialogTitle: '温馨提示',
-      confirmOnPress: () => {
-        Linking.openURL(`tel:${item.mobile}`)
-        dialogRef.current.setShowDialog(false);
-      },
-      dialogComponent: <CallPhone message={item}/>
-    });
-  };
-
-  const pressFactory = async(item) => {
-    try{
-      const res = await LeavingManageApi.OrderInfo(item.applyId);
-      if(res?.code !== SUCCESS_CODE){
-        if(res?.code === 2){
-          toast.show(`${res?.msg}`, {type: 'warning'});
-          return;
-        }
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      dialogRef.current.setShowDialog(true);
-      setDialogContent({
-        dialogTitle: '岗位信息',
-        dialogComponent: <FormCompanyDetail message={res.data}/>
-      });
-    }catch(err){
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }
-  };
-
-  const pressStatus = async(item) => {
-    dialogRef.current.setShowDialog(true);
-    try{
-      const res = await LeavingManageApi.ResignApply(item.applyId);
-      console.log('res', res);
-      // if(res?.code !== SUCCESS_CODE){
-      //   toast.show(`${res?.msg}`, {type: 'danger'});
-      //   return;
-      // }
-      // dialogRef.current.setShowDialog(true);
-      // setDialogContent({
-      //   dialogTitle: '会员信息',
-      //   dialogComponent: <FormMemberDetail memberInfoList={res.data} noResignDate/>
-      // });
-    }catch(err){
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }
-  };
-
-  const pressDetail = async(item) => {
-    try{
-      const res = await LeavingManageApi.MemberInfo(item.applyId);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      dialogRef.current.setShowDialog(true);
-      setDialogContent({
-        dialogTitle: '会员信息',
-        dialogComponent: <FormMemberDetail memberInfoList={res.data} noResignDate/>
-      });
-    }catch(err){
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 

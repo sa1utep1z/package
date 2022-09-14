@@ -258,7 +258,7 @@ const SignUpList = () => {
       setNextPage(true);
     }
   };
-    
+  
   const renderItem = ({item}) => {
     return (
       <View style={[(item.name && item.mobile) ? styles.listStyle : styles.listStyle1]}>

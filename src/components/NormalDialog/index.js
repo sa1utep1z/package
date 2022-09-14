@@ -1,6 +1,8 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import EmptyArea from '../EmptyArea';
 
 const NormalDialog = ({ dialogContent: {
@@ -10,6 +12,7 @@ const NormalDialog = ({ dialogContent: {
   leftTitleOnPress,
   rightTitle,
   rightClose,
+  rightCloseIcon = false, //关闭按钮
   rightTitleOnPress,
   confirmText,
   confirmOnPress,
@@ -44,6 +47,16 @@ const NormalDialog = ({ dialogContent: {
           <TouchableOpacity style={styles.rightTitle} onPress={rightTitleOnPress}>
             <Text style={styles.rightTitleText}>{rightTitle || '编辑'}</Text>
           </TouchableOpacity>}
+        {rightCloseIcon && 
+        <View style={[styles.rightTitle]}>
+          <AntDesign
+            name='closecircleo'
+            size={26}
+            style={styles.icon}
+            onPress={()=> setShowDialog(!showDialog)}
+          />
+        </View>
+        }
       </View>
       {dialogComponent ? dialogComponent : <EmptyArea />}
       {bottomButton && 
@@ -134,7 +147,7 @@ const styles = StyleSheet.create({
   icon: {
     position: 'absolute', 
     top: 0, 
-    right: 20, 
+    right: 0, 
     color: '#000'
   },
 })

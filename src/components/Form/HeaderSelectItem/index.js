@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ErrorMessage} from 'formik';
@@ -23,7 +23,7 @@ const FlattListItem = ({item, pressItem, isChecked, isLastIndex, selectedItemLis
         uncheckedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue68d'}</Text>}
       />
     </TouchableOpacity>
-  ),[selectedItemList])
+  ),[item.isChecked])
 };
 
 const HeaderSelectItem = ({
@@ -36,20 +36,18 @@ const HeaderSelectItem = ({
     lastButton, //外部表单后部是否要增加按钮
     ...rest
   }) => {
-  const [list, setList] = useState(originList);
+  const [list, setList] = useState([]);
   const [showSelectItems, setShowSelectItems] = useState(false);
   const [selectedItemList, setSelectedItemList] = useState([]);
 
   useEffect(()=>{
     setList(originList);
-  },[originList])
-
-  useEffect(()=>{
-    setSelectedItemList([]);
     if(field.value.length){
       setSelectedItemList(field.value);
     }
   },[showSelectItems])
+
+  useMemo(() => console.log('selectedItemList', selectedItemList), [selectedItemList])
 
   const pressItem = (item) => {
     // 单选
@@ -60,14 +58,21 @@ const HeaderSelectItem = ({
     }
 
     //多选
-    const copySelectList = deepCopy(selectedItemList);
+    const copyList = [...list];  
+    const findOutItem = copyList.find((list) => list.value === item.value);
+    findOutItem.isChecked = !item.isChecked;
+    setList(copyList);
+
+    const copySelectList = [...selectedItemList];
     const findIndex = copySelectList.findIndex(data => data.id === item.id);
-    if(findIndex !== -1){
-      copySelectList.splice(findIndex, 1);
-      setSelectedItemList(copySelectList);
-      return;
-    }
+    console.log('findIndex', findIndex);
+    // if(findIndex !== -1){
+    //   copySelectList.splice(findIndex, 1);
+    //   setSelectedItemList(copySelectList);
+    //   return;
+    // }
     copySelectList.push(item);
+    console.log('copySelectList', copySelectList);
     setSelectedItemList(copySelectList);
   };
 
@@ -172,10 +177,11 @@ const HeaderSelectItem = ({
                 data={list}
                 style={styles.scrollArea}
                 renderItem={({item, index})=>{
-                  const isChecked = selectedItemList.findIndex(selected => selected.id === item.id) !== -1;
+                  const isChecked = item.isChecked === true;
                   const isLastIndex = index === list.length - 1;
                   return <FlattListItem item={item} pressItem={pressItem} isChecked={isChecked} isLastIndex={isLastIndex} selectedItemList={selectedItemList} />
                 }}
+                ListEmptyComponent={<ActivityIndicator size={36} />}
                 keyboardShouldPersistTaps="handled"
                 keyExtractor={item => item.id}
                 getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}

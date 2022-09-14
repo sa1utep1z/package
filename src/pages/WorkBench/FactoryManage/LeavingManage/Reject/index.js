@@ -1,17 +1,22 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
+import moment from "moment";
 
 import LeavingManageApi from "../../../../../request/LeavingManageApi";
 import { pageEmpty } from "../../../../Home/listComponent";
-import { SUCCESS_CODE, INTERVIEW_STATUS } from '../../../../../utils/const';
+import { SUCCESS_CODE, AUDIT_TYPE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
-const Reject = ({
-  search
+const Total = ({
+  search,
+  pressName,
+  pressStatus,
+  pressDetail,
+  pressFactory
 }) => {
   const toast = useToast();
 
@@ -34,11 +39,9 @@ const Reject = ({
   },[search])
   
   const getList = async(params) => {
-    console.log('getList-->params', params);
     setIsLoading(true);
     try{
       const res = await LeavingManageApi.LeavingApplyList(params);
-      console.log('getList-->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -75,35 +78,29 @@ const Reject = ({
     return (
       <View style={styles.listStyle}>
         <Text 
-          style={[
-            styles.itemText,
-            {color: '#409EFF', textAlign: 'center'}
-          ]}
+          style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
-          // onPress={() => pressFactory(item)}
+          onPress={() => pressName(item)}
+          ellipsizeMode="tail">{item.userName || '无'}</Text>
+        <Text 
+          style={styles.itemText}
+          numberOfLines={2}
+          onPress={() => pressFactory(item)}
           ellipsizeMode="tail">{item.companyShortName || '无'}</Text>
         <Text 
-          style={[
-            styles.itemText
-          ]}
+          style={[styles.itemText, {fontSize: 24}]}
           numberOfLines={2}
-          // onPress={() => pressName(item)}
-          ellipsizeMode="tail">{item.name || '无'}</Text>
+          ellipsizeMode="tail">{moment(item.jobDate).format('YYYY-MM-DD') || '无'}</Text>
         <Text 
-          style={[
-            styles.itemText
-          ]}
+          style={[styles.itemText, styles.pressItem, {color: `${item.status === 'PENDING' ? '#409EFF' : item.status === 'FAIL' ? 'red' : 'green'}`} ]}
           numberOfLines={2}
-          // onPress={() => changeStatus(item)}
-          ellipsizeMode="tail">{INTERVIEW_STATUS[item.interviewStatus] || '无'}</Text>
+          onPress={() => pressStatus(item)}
+          ellipsizeMode="tail">{AUDIT_TYPE[item.status] || '无'}</Text>
         <Text 
-          style={[
-            styles.itemText, 
-            {color: '#409EFF', fontSize: 24}
-          ]}
+          style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
-          // onPress={() => item.mobile && callPhone(item)}
-          ellipsizeMode="tail">{item.mobile || '无'}</Text>
+          onPress={() => pressDetail(item)}
+          ellipsizeMode="tail">查看</Text>
       </View>
     )
   };
@@ -121,7 +118,7 @@ const Reject = ({
         data={showList}
         style={{backgroundColor: '#fff'}}
         renderItem={renderItem}
-        keyExtractor={(item,index) => item.flowId}
+        keyExtractor={(item,index) => item.applyId}
         getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
         refreshing={isLoading}
         onRefresh={refresh}
@@ -140,8 +137,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderBottomWidth: 2, 
     borderBottomColor: 'rgba(0, 0, 0, .05)',
-    flexDirection: 'row', 
-    marginHorizontal: 34
+    flexDirection: 'row'
   },
   itemText: {
     flex: 1,
@@ -149,6 +145,9 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center'
+  },
+  pressItem: {
+    color: '#409EFF'
   },
   tabArea: {
     height: 60,
@@ -165,4 +164,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Reject;
+export default Total;
