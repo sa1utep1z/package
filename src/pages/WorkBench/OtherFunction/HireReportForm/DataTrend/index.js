@@ -15,24 +15,24 @@ const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
 const lastWeek = {startDate: LAST_WEEK_START, endDate: LAST_WEEK_END};
 const thisMonth = {startDate: THIS_MONTH_START, endDate: THIS_MONTH_END};
 
-const DataTrend = () => {
+const DataTrend = ({
+  data,
+  loading,
+  getData
+}) => {
   const dispatch = useDispatch();
 
   const [selectedTab, setSelectedTab] = useState('company');
-  const [loading, setLoading] = useState(true);
   const [rangeDate, setRangeDate] = useState(thisWeek);
   const [searchOther, setSearchOther] = useState(false);
   
-  useEffect(() => {
-    timer = setTimeout(()=>{
-      setLoading(false);
-    },250)
-    return () => timer && clearTimeout(timer);
-  }, [])
-
   const tabOnPress = (tab) => {
     setSelectedTab(tab.key);
   };
+
+  useEffect(() => {
+    getData(rangeDate, selectedTab);
+  }, [rangeDate, selectedTab])
 
   const confirm = (search) => {
     const {rangeTime: {startTime, endTime}} = search;
@@ -82,7 +82,7 @@ const DataTrend = () => {
           })}
         </View>
         <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther} />
-        {!loading ? <TrendForm /> : 
+        {!loading ? <TrendForm datas={data}/> : 
           <View style={{flex: 1, justifyContent: 'center'}}>
             <ActivityIndicator size={48} color="#409EFF" />
           </View>}

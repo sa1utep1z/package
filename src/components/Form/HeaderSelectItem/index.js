@@ -8,22 +8,25 @@ import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
 import { deepCopy } from '../../../utils';
 
-const FlattListItem = ({item, pressItem, isChecked, isLastIndex, selectedItemList}) => {
+const FlattListItem = ({item, pressItem, isChecked, isLastIndex}) => {
+
+  const onChange = useCallback(() => pressItem(item),[item]);
+
   return useMemo(()=>(
     <TouchableOpacity 
       style={[styles.scrollItem, isLastIndex && {borderBottomWidth: 0}]} 
-      onPress={() => pressItem(item)}>
+      onPress={onChange}>
       <Text>{item.title}</Text>
       <CheckBox
         center
         checked={isChecked}
-        onPress={() => pressItem(item)}
+        onPress={onChange}
         containerStyle={styles.checkBox_containerStyle}
         checkedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue669'}</Text>}
         uncheckedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue68d'}</Text>}
       />
     </TouchableOpacity>
-  ),[item.isChecked])
+  ),[item])
 };
 
 const HeaderSelectItem = ({
@@ -35,45 +38,40 @@ const HeaderSelectItem = ({
     singleSelect = false, //是否单选
     lastButton, //外部表单后部是否要增加按钮
     ...rest
-  }) => {
+}) => {
   const [list, setList] = useState([]);
   const [showSelectItems, setShowSelectItems] = useState(false);
-  const [selectedItemList, setSelectedItemList] = useState([]);
 
-  useEffect(()=>{
-    setList(originList);
+  useEffect(() => {
+    const copyList = deepCopy(originList);
     if(field.value.length){
-      setSelectedItemList(field.value);
+      const fieldValueIds = field.value.map(item => item.id);
+      copyList.map(item => {
+        if(fieldValueIds.includes(item.id)){
+          item.isChecked = true;
+        }else{
+          item.isChecked = false;
+        }
+      })
     }
-  },[showSelectItems])
-
-  useMemo(() => console.log('selectedItemList', selectedItemList), [selectedItemList])
-
+    setList(copyList);
+  }, [showSelectItems])
+  
   const pressItem = (item) => {
     // 单选
     if(singleSelect){
-      const newList = [item];
-      setSelectedItemList(newList);
+      const copyList = deepCopy(originList);
+      const findOutItem = copyList.find(list => list.id === item.id);
+      findOutItem.isChecked = !item.isChecked;
+      setList(copyList);
       return;
     }
 
     //多选
-    const copyList = [...list];  
-    const findOutItem = copyList.find((list) => list.value === item.value);
+    const copyList = deepCopy(list);
+    const findOutItem = copyList.find(list => list.id === item.id);
     findOutItem.isChecked = !item.isChecked;
     setList(copyList);
-
-    const copySelectList = [...selectedItemList];
-    const findIndex = copySelectList.findIndex(data => data.id === item.id);
-    console.log('findIndex', findIndex);
-    // if(findIndex !== -1){
-    //   copySelectList.splice(findIndex, 1);
-    //   setSelectedItemList(copySelectList);
-    //   return;
-    // }
-    copySelectList.push(item);
-    console.log('copySelectList', copySelectList);
-    setSelectedItemList(copySelectList);
   };
 
   const textContent = () => {
@@ -99,11 +97,13 @@ const HeaderSelectItem = ({
         form.setFieldValue('staff', []);
       }
     }
+    const selectedItemList = list.filter(list => list.isChecked === true);
     form.setFieldValue(field.name, selectedItemList);
     form.handleSubmit();  
   };
 
   const clearFieldValue = () => {
+    setList(originList);
     if(field.name === 'store'){
       form.setFieldValue('staff', []);
     }
@@ -179,7 +179,7 @@ const HeaderSelectItem = ({
                 renderItem={({item, index})=>{
                   const isChecked = item.isChecked === true;
                   const isLastIndex = index === list.length - 1;
-                  return <FlattListItem item={item} pressItem={pressItem} isChecked={isChecked} isLastIndex={isLastIndex} selectedItemList={selectedItemList} />
+                  return <FlattListItem item={item} pressItem={pressItem} isChecked={isChecked} isLastIndex={isLastIndex}/>
                 }}
                 ListEmptyComponent={<ActivityIndicator size={36} />}
                 keyboardShouldPersistTaps="handled"

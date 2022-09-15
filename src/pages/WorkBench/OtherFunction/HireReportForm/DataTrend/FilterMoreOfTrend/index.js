@@ -8,16 +8,10 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import HireReportFormApi from '../../../../../../request/HireReportFormApi';
-import { CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from '../../../../../../utils/const';
+import { CHART_STATUS_LIST, ORIGIN_SELECTED_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from '../../../../../../utils/const';
 import { closeDialog } from '../../../../../../redux/features/HireReport/HireReportDialog';
 import MyMembersApi from '../../../../../../request/MyMembersApi';
 import SearchInput from '../../../../../../components/SearchInput';
-
-const originSelectState = [
-  {value: 'SIGN_UP_INTENTION', title: '已报名'},
-  {value: 'INTERVIEW_PASS', title: '面试通过'},
-  {value: 'ON_BOARDING_PASS', title: '入职'}
-];
 
 const FilterMoreOfTrend = ({
   showType,
@@ -57,7 +51,7 @@ const FilterMoreOfTrend = ({
 
   /** 状态 */
   const [showStatus, setShowStatus] = useState(false);
-  const [selectedState, setSelectedState] = useState(originSelectState);
+  const [selectedState, setSelectedState] = useState(ORIGIN_SELECTED_STATUS_LIST);
 
   /** 来源渠道 */
   const [showWay, setShowWay] = useState(false);

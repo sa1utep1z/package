@@ -1,16 +1,54 @@
-import React, {useContext, useState, useRef, memo} from "react";
+import React, {useState, useEffect, useMemo, memo} from "react";
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Circle, Text, Line } from 'react-native-svg';
-import { useDispatch } from 'react-redux';
+import moment from "moment";
 
-import Tag from "../Tag";
-import { HIRE_DATA_BOX_TAG_LIST } from "../../../../../../utils/const";
-import FilterMoreInCompany from "../FilterMoreOfTrend";
-import { openDialog } from "../../../../../../redux/features/HireReport/HireReportDialog";
+import { ORIGIN_SELECTED_STATUS_LIST, COLOR_LIST } from "../../../../../../utils/const";
 
-const TrendForm = ({}) => {
-  const dispatch = useDispatch();
+const originRenderData = {
+  datasets: [
+    {
+      data: [],
+      color: () => '#409EFF'
+    }
+  ],
+  labels: [],
+  legend: ['']
+};
+
+const TrendForm = ({
+  datas
+}) => {
+  console.log('datas', datas);
+
+  const [renderData, setRenderData] = useState(originRenderData);
+
+  useMemo(() => console.log('renderData',renderData), [renderData])
+
+  useEffect(() => {
+    if(datas?.length){
+      let datasets = [];
+      const selectedStatus = ORIGIN_SELECTED_STATUS_LIST.map(status => status.value);
+      selectedStatus.map((status, statusIndex) => {
+        const data = datas.map(item => item[status]);
+        data.unshift('0');
+        datasets.push({
+          data,
+          color: () => COLOR_LIST[statusIndex]
+        })
+      })
+      const legend = ORIGIN_SELECTED_STATUS_LIST.map(status => status.title);
+      const labels = datas.map(item => moment(item.orderDate).format('MM.DD'));
+      labels.unshift('0');
+      const data = {
+        datasets,
+        legend,
+        labels
+      };
+      setRenderData(data);
+    }
+  }, [datas])
   
   const data = {
     labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
@@ -49,7 +87,7 @@ const TrendForm = ({}) => {
         fontSize="20"
         fontWeight="bold"
       >
-        {indexData}
+        {indexData !== 0 ? indexData : '' }
       </Text>
       <Circle
         cx={x}
@@ -98,8 +136,8 @@ const TrendForm = ({}) => {
         <ScrollView horizontal>
           <LineChart
             data={data}
+            width={data.labels.length * 100}
             chartConfig={chartConfig}
-            width={data.labels.length * 50}
             height={370}
             segments={6}
             bezier
