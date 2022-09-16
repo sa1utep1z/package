@@ -73,21 +73,16 @@ const HireReportForm = () => {
     }
   };
 
-  const getTrendData = async(range, selectedTab) => {
+  const getTrendData = async(range) => {
     setTrendLoading(true);
     console.log('range', range);
     try{
-      let res;
-      switch(selectedTab){
-        case 'company':
-          res = await HireReportFormApi.LineData(range);
-          if(res.code !== SUCCESS_CODE){
-            toast.show(`${res.msg}`, { type: 'danger' });
-            return;
-          }
-          setTrendData(res.data);
-          break;
+      let res = await HireReportFormApi.LineData(range);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`${res.msg}`, { type: 'danger' });
+        return;
       }
+      setTrendData(res.data);
     }catch(error){
       console.log('error', error);
       toast.show(`出现预料之外的错误，请联系管理员处理`, { type: 'danger' });

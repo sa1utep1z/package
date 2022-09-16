@@ -1,65 +1,54 @@
 import React, {useState, useEffect, useMemo, memo} from "react";
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
-import Svg, { Circle, Text, Line } from 'react-native-svg';
+import Svg, { Text, Line } from 'react-native-svg';
 import moment from "moment";
 
-import { ORIGIN_SELECTED_STATUS_LIST, COLOR_LIST } from "../../../../../../utils/const";
+import { COLOR_LIST } from "../../../../../../utils/const";
 
+let arrayIndex = 0;
 const originRenderData = {
   datasets: [
     {
-      data: [],
+      data: [0, 0, 0, 0, 0, 0, 0],
       color: () => '#409EFF'
     }
   ],
-  labels: [],
-  legend: ['']
+  labels: [0, 0, 0, 0, 0, 0, 0],
+  legend: ['未选择']
 };
 
 const TrendForm = ({
-  datas
+  data, //数据源
+  loading, //是否显示加载中
+  selectedState, //已选择的状态
 }) => {
-  console.log('datas', datas);
-
   const [renderData, setRenderData] = useState(originRenderData);
 
-  useMemo(() => console.log('renderData',renderData), [renderData])
-
   useEffect(() => {
-    if(datas?.length){
+    console.log('selectedState',selectedState)
+    if(data?.length){
       let datasets = [];
-      const selectedStatus = ORIGIN_SELECTED_STATUS_LIST.map(status => status.value);
+      const selectedStatus = selectedState.map(status => status.value);
       selectedStatus.map((status, statusIndex) => {
-        const data = datas.map(item => item[status]);
-        data.unshift('0');
+        const newData = data.map(item => item[status]);
+        newData.unshift(0);
         datasets.push({
-          data,
+          data: newData,
           color: () => COLOR_LIST[statusIndex]
         })
       })
-      const legend = ORIGIN_SELECTED_STATUS_LIST.map(status => status.title);
-      const labels = datas.map(item => moment(item.orderDate).format('MM.DD'));
+      const legend = selectedState.map(status => status.title);
+      const labels = data.map(item => moment(item.orderDate).format('M/D'));
       labels.unshift('0');
-      const data = {
+      const renderData = {
         datasets,
         legend,
         labels
       };
-      setRenderData(data);
+      setRenderData({...renderData});
     }
-  }, [datas])
-  
-  const data = {
-    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6",  "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
-    datasets: [
-      {
-        data: ['', 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170, 155, 240, 130, 260, 320, 170], 
-        color: () => '#409EFF'
-      }
-    ],
-    legend: ['已报名']
-  };
+  }, [data])
 
   const chartConfig = {
     color: () => '#333333',
@@ -78,37 +67,27 @@ const TrendForm = ({
   };
 
   const renderDotContent = ({x, y, index, indexData})=> {
+    if(index === 0){
+      arrayIndex ++;
+    }
     return (
-    <View key={index}>
-      <Text
-        x={x-20}
-        y={y-12}
-        fill="#409EFF"
-        fontSize="20"
-        fontWeight="bold"
-      >
-        {indexData !== 0 ? indexData : '' }
-      </Text>
-      <Circle
-        cx={x}
-        cy={y}
-        r= "6"
-        strokeWidth="2"
-        stroke="#409EFF"
-        fill="#fff"
-      />
-    </View>
+      <View key={`${arrayIndex}${index}`}>
+        <Text
+          x={x-17}
+          y={y-12}
+          fill={'rgba(0,0,0,1)'}
+          fontSize="20">
+          {!!indexData ? indexData : '' }
+        </Text>
+      </View>
   )};
 
   const decorator = ({width, height, ...rest})=>{
     return (
       <Svg width={width} height={height}>
-        <Line x1="70" y1={height - 76} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
-        <Line x1={width - 10} y1={height - 85} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
-        <Line x1={width - 10} y1={height - 65} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
-        <Line x1="65" y1={-30} x2="65" y2={height - 82} stroke="#999999" strokeWidth="2" />
-        <Line x1="65" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
-        <Line x1="65" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Line x1="64" y1={-30} x2="64" y2={height - 101} stroke="#999999" strokeWidth="2" />
+        <Line x1="64" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Line x1="64" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
         <Text
           x={5}
           y={-25}
@@ -118,8 +97,8 @@ const TrendForm = ({
             人数
         </Text>
         <Text
-          x={width - 40}
-          y={height - 50}
+          x={width - 45}
+          y={400}
           fontSize="22"
           fontWeight="bold"
           fill="#333333">
@@ -129,16 +108,15 @@ const TrendForm = ({
     )
   };
 
-
   return (
     <View style={{flex: 1}} >
       <View style={styles.bottomArea}>
-        <ScrollView horizontal>
-          <LineChart
-            data={data}
-            width={data.labels.length * 100}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {!loading ? <LineChart
+            data={renderData}
+            width={renderData.labels.length * 100}
             chartConfig={chartConfig}
-            height={370}
+            height={460}
             segments={6}
             bezier
             fromZero
@@ -147,7 +125,9 @@ const TrendForm = ({
             withVerticalLines={false}
             formatYLabel={(num) => Math.trunc(num)}
             renderDotContent={renderDotContent}
-          />
+          /> : <View style={{flex: 1, justifyContent: 'center'}}>
+            <ActivityIndicator size={48} color="#409EFF" />
+          </View>}
         </ScrollView>
       </View>
     </View>

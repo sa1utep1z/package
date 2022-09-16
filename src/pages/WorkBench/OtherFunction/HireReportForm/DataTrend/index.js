@@ -3,14 +3,13 @@ import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity} from 'reac
 import { Shadow } from 'react-native-shadow-2';
 import { useDispatch } from 'react-redux';
 
-import { HIRE_DATA_TREND_TAB_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../utils/const";
+import { HIRE_DATA_TREND_TAB_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, ORIGIN_SELECTED_STATUS_LIST } from "../../../../../utils/const";
 import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 
 import Tag from "./Tag";
 import TrendForm from "./TrendForm";
 import FilterMoreOfTrend from "./FilterMoreOfTrend";
 
-let timer;
 const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
 const lastWeek = {startDate: LAST_WEEK_START, endDate: LAST_WEEK_END};
 const thisMonth = {startDate: THIS_MONTH_START, endDate: THIS_MONTH_END};
@@ -22,31 +21,115 @@ const DataTrend = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [selectedTab, setSelectedTab] = useState('company');
   const [rangeDate, setRangeDate] = useState(thisWeek);
   const [searchOther, setSearchOther] = useState(false);
-  
-  const tabOnPress = (tab) => {
-    setSelectedTab(tab.key);
-  };
+  const [searchContent, setSearchContent] = useState({
+    ...thisWeek
+  });
+  const [selectedState, setSelectedState] = useState(ORIGIN_SELECTED_STATUS_LIST); //状态
+  const [selectedWay, setSelectedWay] = useState({}); //来源渠道
+  const [selectedEnterprise, setSelectedEnterprise] = useState({}); //企业
+  const [selectedStore, setSelectedStore] = useState({}); //门店
+  const [selectedRecruiter, setSelectedRecruiter] = useState({}); //招聘员
+  const [selectedSupplier, setSelectedSupplier] = useState({}); //供应商
 
   useEffect(() => {
-    getData(rangeDate, selectedTab);
-  }, [rangeDate, selectedTab])
+    console.log('searchContent', searchContent);
+    getData(searchContent);
+    //设置是否点亮筛选更多按钮；
+    checkSearchOther();
+  }, [searchContent])
 
-  const confirm = (search) => {
-    const {rangeTime: {startTime, endTime}} = search;
-    if(startTime !== rangeDate.startDate || endTime !== rangeDate.endDate){
+  const checkSearchOther = () => {
+    if(searchContent.companyId || searchContent.recruiterId || searchContent.signUpType || searchContent.storeId || searchContent.supplierId){
       setSearchOther(true);
     }else{
       setSearchOther(false);
     }
+  };
+
+  const confirm = (search) => {
+    const {
+      rangeTime: {startTime, endTime}, 
+      selectState,
+      selectWay,
+      selectEnterprise,
+      selectStore,
+      selectRecruiter,
+      selectSupplier
+    } = search;
+
+    //选择时间
     const changeRange = {startDate: startTime, endDate: endTime};
+    const startDate = startTime;
+    const endDate = endTime;
     setRangeDate(changeRange);
+
+    //选择状态
+    setSelectedState(selectState);
+
+    //选择来源渠道
+    const signUpType = selectWay.value;
+    setSelectedWay(selectWay);
+
+    //选择企业
+    const companyId = selectEnterprise.value;
+    setSelectedEnterprise(selectEnterprise);
+
+    //选择门店
+    const storeId = selectStore.storeId;
+    setSelectedStore(selectStore);
+
+    //选择招聘员
+    const recruiterId = selectRecruiter.value;
+    setSelectedRecruiter(selectRecruiter);
+
+    //选择供应商
+    const supplierId = selectSupplier.value;
+    setSelectedSupplier(selectSupplier);
+
+    //调接口
+    setSearchContent({
+      startDate, 
+      endDate, 
+      signUpType, 
+      companyId, 
+      storeId, 
+      recruiterId, 
+      supplierId
+    })
+  };
+
+  const clearSearch = () => {
+    setSearchOther(false);
+    setSelectedWay({});
+    setSelectedEnterprise({});
+    setSelectedStore({});
+    setSelectedRecruiter({});
+    setSelectedSupplier({});
+    setSearchContent({
+      ...searchContent,
+      signUpType: '',
+      companyId: '', 
+      storeId: '', 
+      recruiterId: '', 
+      supplierId: ''
+    });
   };
 
   const filterMore = () => {
-    dispatch(openDialog(<FilterMoreOfTrend confirm={confirm} rangeDate={rangeDate} showType={selectedTab} />));
+    dispatch(openDialog(
+      <FilterMoreOfTrend 
+        confirm={confirm} 
+        rangeDate={rangeDate} 
+        selectedState={selectedState}
+        selectedWay={selectedWay}
+        selectedEnterprise={selectedEnterprise}
+        selectedStore={selectedStore}
+        selectedRecruiter={selectedRecruiter}
+        selectedSupplier={selectedSupplier}
+      />
+    ));
   };
 
   const setTime = (range) => {
@@ -54,12 +137,15 @@ const DataTrend = ({
     switch(range.value){
       case 'thisWeek': 
         setRangeDate(thisWeek);
+        setSearchContent({...searchContent, ...thisWeek});
         break;
       case 'lastWeek':
         setRangeDate(lastWeek);
+        setSearchContent({...searchContent, ...lastWeek});
         break;
       case 'thisMonth':
         setRangeDate(thisMonth);
+        setSearchContent({...searchContent, ...thisMonth});
         break;
     }
   };
@@ -71,21 +157,8 @@ const DataTrend = ({
           <View style={styles.titleLine}></View>
           <Text style={styles.title}>数据趋势</Text>
         </View>
-        <View style={{height: 60, flexDirection: 'row'}}>
-          {HIRE_DATA_TREND_TAB_LIST.map(tab => {
-            const isSelected = tab.key === selectedTab;
-            return (
-              <TouchableOpacity activeOpacity={1} key={tab.key} style={[styles.touchArea, isSelected && {borderBottomColor: '#409EFF'}]} onPress={() => tabOnPress(tab)}>
-                <Text style={[styles.touchArea_text, isSelected && {color: '#409EFF'}]}>{tab.title}</Text>
-              </TouchableOpacity>
-            )
-          })}
-        </View>
-        <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther} />
-        {!loading ? <TrendForm datas={data}/> : 
-          <View style={{flex: 1, justifyContent: 'center'}}>
-            <ActivityIndicator size={48} color="#409EFF" />
-          </View>}
+        <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther} clearSearch={clearSearch} />
+        <TrendForm data={data} loading={loading} selectedState={selectedState}/>
       </View>
     </Shadow>
   )
@@ -101,7 +174,6 @@ const styles = StyleSheet.create({
     padding: 30
   },
   titleArea: {
-    marginBottom: 20, 
     flexDirection: 'row', 
     alignItems: 'center'
   },
@@ -117,16 +189,6 @@ const styles = StyleSheet.create({
     fontSize: 36, 
     color: '#000', 
     fontWeight: 'bold'
-  },
-  touchArea: {
-    flex: 1, 
-    justifyContent: 'center',
-    borderBottomWidth: 2,
-    borderColor: '#EEEEEE'
-  },
-  touchArea_text: {
-    textAlign: 'center', 
-    fontSize: 28
   }
 });
 
