@@ -1,10 +1,7 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSelector, useDispatch } from "react-redux";
-import moment from "moment";
 
-import {setRangeDateType} from '../../../../../../redux/features/HireReport/RangeDateOfTrend';
-import { THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../../utils/const";
+import { THIS_WEEK_START, THIS_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, TODAY } from "../../../../../../utils/const";
 
 const Tag = ({
   lastButton = false,
@@ -15,11 +12,7 @@ const Tag = ({
   setTime,
   searchOther = false //是否筛选了更多
 }) => {
-  const dispatch = useDispatch();
-
-  // const rangeDate = useSelector(state => state.RangeDateOfTrend);
-
-  const [selectTag, setSelectTag] = useState('thisWeek');
+  const [selectTag, setSelectTag] = useState('today');
 
   useEffect(()=>{
     rangeDate && setSelectedTag();
@@ -28,11 +21,11 @@ const Tag = ({
   const setSelectedTag = () => {
     const startDate = rangeDate.startDate;
     const endDate = rangeDate.endDate;
-    if(startDate === THIS_WEEK_START && endDate === THIS_WEEK_END){
-      setSelectTag('thisWeek');
+    if(startDate === TODAY && endDate === TODAY){
+      setSelectTag('today');
       return;
-    }else if (startDate === LAST_WEEK_START && endDate === LAST_WEEK_END){
-      setSelectTag('lastWeek');
+    }else if (startDate === THIS_WEEK_START && endDate === THIS_WEEK_END){
+      setSelectTag('thisWeek');
       return;
     }else if (startDate === THIS_MONTH_START && endDate === THIS_MONTH_END){
       setSelectTag('thisMonth');

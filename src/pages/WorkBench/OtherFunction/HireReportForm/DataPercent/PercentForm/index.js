@@ -8,7 +8,7 @@ const PercentForm = () => {
   const data = [
     {
       name: "Seoul",
-      population: 21500000,
+      population: 10000000,
       color: "rgba(131, 167, 234, 1)",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15

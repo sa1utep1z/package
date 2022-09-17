@@ -11,6 +11,7 @@ import "moment/locale/zh-cn";
 import store from './redux/store';
 import Navigator from './navigator';
 import _updateConfig from '../update.json';
+import PageDialog from './components/PageDialog';
 
 moment.locale('zh-cn');
 
@@ -54,6 +55,7 @@ const App = () => {
           <Provider store={store}>
             <Navigator/>
             <StatusBar/>
+            <PageDialog/>
           </Provider>
         </ToastProvider>
       </QueryClientProvider>

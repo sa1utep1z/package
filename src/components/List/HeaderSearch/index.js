@@ -15,6 +15,7 @@ import DateRangePicker from './DateRangePicker';
 import DateRangePickerInLeavingList from './DateRangePickerInLeavingList';
 import MyMembersApi from '../../../request/MyMembersApi';
 import { setStartDate, setEndDate } from "../../../redux/features/RangeDateOfList";
+import HeaderSelectItem from '../../Form/HeaderSelectItem';
 
 let restForm;
 
@@ -33,8 +34,7 @@ const initialValues = {
 const HeaderSearch = ({
   filterFun,
   staffSearch,
-  companySingleSelect,
-  storeSingleSelect,
+  singleSelect = false,
   noStoreAndStaff = false,
   canFilterStatus = false,
   placeholder= '',
@@ -62,10 +62,13 @@ const HeaderSearch = ({
   useEffect(()=>{
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
-    getCompaniesList();
-    getStoreList();
     setRangeDate();
   },[showSearch])
+
+  useEffect(() => {
+    getCompaniesList();
+    getStoreList();
+  }, [])
 
   const setRangeDate = () => {
     if(rangeDate.startDate && rangeDate.endDate) return;
@@ -170,51 +173,29 @@ const HeaderSearch = ({
                   title="企业"
                   name="enterprise"
                   placeholder={canFilterStatus ? '请选择企业' : '请点击选择企业或手动输入筛选'}
-                  showLittleTitle
-                  canSearch
-                  bottomButton
-                  noBorder
-                  autoSubmit
-                  formalLabel={false}
                   lastButton={batch}
-                  selectAreaTextStyle={{fontSize: 28}}
-                  singleSelect={companySingleSelect}
-                  selectList={companyList}
-                  component={SelectItem}
-                />
-                }
+                  singleSelect={singleSelect}
+                  originList={companyList}
+                  component={HeaderSelectItem}
+                />}
+                {canFilterStatus && <View style={{width: 40}}></View>}
                 {canFilterStatus && <Field
                   title="状态"
                   name="status"
                   placeholder="请选择状态"
-                  showLittleTitle
-                  canSearch
-                  bottomButton
-                  singleSelect
-                  noBorder
-                  autoSubmit
-                  formalLabel={false}
                   lastButton={batch}
-                  selectAreaTextStyle={{fontSize: 28}}
-                  selectContainerStyle={{marginLeft: 40}}
-                  selectList={STATUS_LIST}
-                  component={SelectItem}
+                  singleSelect={singleSelect}
+                  originList={STATUS_LIST}
+                  component={HeaderSelectItem}
                 />}
               </View>
               {!noStoreAndStaff && <View style={{flexDirection: 'row', marginBottom: 20}}>
                 <Field
                   title="门店"
                   name="store"
-                  showLittleTitle
-                  canSearch
-                  bottomButton
-                  noBorder
-                  autoSubmit
-                  selectAreaTextStyle={{fontSize: 28}}
-                  singleSelect={storeSingleSelect}
-                  formalLabel={false}
-                  selectList={storeList}
-                  component={SelectItem}
+                  singleSelect={singleSelect}
+                  originList={storeList}
+                  component={HeaderSelectItem}
                 />
                 <View style={{width: 40}}></View>
                 {staffSearch ? <Field
@@ -231,15 +212,8 @@ const HeaderSearch = ({
                 /> : <Field
                   title="招聘员"
                   name="staff"
-                  showLittleTitle
-                  canSearch
-                  bottomButton
-                  noBorder
-                  autoSubmit
-                  selectAreaTextStyle={{fontSize: 28}}
-                  formalLabel={false}
-                  selectList={staffList}
-                  component={SelectItem}
+                  originList={staffList}
+                  component={HeaderSelectItem}
                 />}
               </View>}
               {leavingList && <>

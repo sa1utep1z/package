@@ -4,6 +4,9 @@ export const SUCCESS_CODE = 0;
 
 //今天
 export const today = moment().format('YYYY-MM-DD');
+export const TODAY = moment().format('YYYY-MM-DD');
+//昨日
+export const YESTERDAY = moment().subtract(1,'day').format('YYYY-MM-DD');
 //本周开始
 export const THIS_WEEK_START = moment().weekday(0).format('YYYY-MM-DD');
 //本周结束
@@ -372,43 +375,49 @@ export const NEWEST_STATE_LIST_HEAD = [
   {title: '来源'}
 ];
 
-export const FAKE_HIRE_DATA_BOX_LIST = [
+export const ORIGIN_HIRE_REPORT_OVERVIEW_LIST = [
   {
     title: '报名人数',
     type: 'SIGN_UP',
-    num: 102,
-    trendNumber: -6
+    num: 0,
+    trendNumber: 0
   },
   {
     title: '面试人数',
     type: 'INTERVIEW',
-    num: 55,
-    trendNumber: +3
+    num: 0,
+    trendNumber: 0
   },
   {
     title: '待入职人数',
     type: 'WAIT_TO_ENTRY',
-    num: 25,
-    trendNumber: +3
+    num: 0,
+    trendNumber: 0
   },
   {
     title: '入职人数',
     type: 'JOB_IN',
-    num: 62,
-    trendNumber: -6
+    num: 0,
+    trendNumber: 0
   },
   {
     title: '离职人数',
     type: 'LEAVING',
-    num: 95,
-    trendNumber: +3
+    num: 0,
+    trendNumber: 0
   },
   {
     title: '在职人数',
     type: 'NOW',
-    num: 6428,
-    trendNumber: -6
+    num: 0,
+    trendNumber: 0
   }
+];
+
+export const HIRE_OVERVIEW_TAG_LIST = [
+  { title: '今日', value: 'today' },
+  { title: '本周', value: 'thisWeek' },
+  { title: '本月', value: 'thisMonth' }
 ];
 
 export const HIRE_DATA_BOX_TAG_LIST = [
@@ -436,15 +445,21 @@ export const ROLE_INFO = {
   'FINANCE': '财务'
 };
 
+export const ORIGIN_SELECTED_STATUS_LIST = [
+  {value: 'signUpIntention', title: '已报名'},
+  {value: 'interviewPass', title: '面试通过'},
+  {value: 'onBoardingPass', title: '入职'}
+];
+
 export const CHART_STATUS_LIST = [
-  {value: 'SIGN_UP_INVITED', title: '报名邀约'},
-  {value: 'SIGN_UP_INTENTION', title: '已报名'},
-  {value: 'INTERVIEW_NO_ARRIVE', title: '面试未去'},
-  {value: 'INTERVIEW_FAIL', title: '面试未过'},
-  {value: 'INTERVIEW_PASS', title: '面试通过'},
-  {value: 'ON_BOARDING_FAIL', title: '未报到'},
-  {value: 'ON_BOARDING_PASS', title: '入职'},
-  {value: 'JOB_RESIGN', title: '离职'}
+  {value: 'signUp', title: '报名邀约'},
+  {value: 'signUpIntention', title: '已报名'},
+  {value: 'interviewNoArrive', title: '面试未去'},
+  {value: 'interviewFail', title: '面试未过'},
+  {value: 'interviewPass', title: '面试通过'},
+  {value: 'onBoardingFail', title: '未报到'},
+  {value: 'onBoardingPass', title: '入职'},
+  {value: 'resignNum', title: '离职'}
 ];
 export const MESSAGE_TYPE = [
   { label: '公告', value: 'ANNOUNCEMENT' },
@@ -452,4 +467,18 @@ export const MESSAGE_TYPE = [
   { label: '离职提醒', value: 'INNER_JOB_NOTIFICATION' },
   { label: '回访提醒', value: 'INNER_VISIT_NOTIFICATION' },
   { label: '系统消息', value: 'INNER_SYSTEM_MESSAGE' },
+];
+
+export const AUDIT_TYPE = {
+  'PENDING': '待审核',
+  'PASS': '通过',
+  'FAIL': '拒绝'
+};
+
+/**颜色列表 */
+export const COLOR_LIST = [
+  '#409EFF',
+  '#7640FF',
+  '#FFA800',
+  '#1cd66c'
 ];

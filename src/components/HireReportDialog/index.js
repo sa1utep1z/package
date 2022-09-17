@@ -15,6 +15,7 @@ const HireReportDialog = () => {
 
   return (
     <Dialog
+      animationType='fade'
       isVisible={dialogSwitch}
       overlayStyle={styles.dialogStyle}
       onBackdropPress={defaultBackOnPress}>

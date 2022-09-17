@@ -175,23 +175,21 @@ const WaitToEntryList = () => {
         viewPosition: 0
       });
     }
-    if(searchContent.startDate && searchContent.endDate){
-      switch (selectIndex) {
-        case 0:
-          searchContent.status = 'ALL';
-          break;
-        case 1:
-          searchContent.status = 'ON_BOARDING_PENDING';
-          break;
-        case 2:
-          searchContent.status = 'ON_BOARDING_FAIL';
-          break;
-        case 3:
-          searchContent.status = 'ON_BOARDING_PASS';
-          break;
-      }
-      setSearchContent({ ...searchContent, ...firstPage });
+    switch (selectIndex) {
+      case 0:
+        searchContent.status = 'ALL';
+        break;
+      case 1:
+        searchContent.status = 'ON_BOARDING_PENDING';
+        break;
+      case 2:
+        searchContent.status = 'ON_BOARDING_FAIL';
+        break;
+      case 3:
+        searchContent.status = 'ON_BOARDING_PASS';
+        break;
     }
+    setSearchContent({ ...searchContent, ...firstPage });
   };
 
   // 跳转编辑会员信息页面

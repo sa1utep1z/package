@@ -8,6 +8,7 @@ import {
 import {useToast} from 'react-native-toast-notifications';
 import {Text, Button, CheckBox} from '@rneui/themed';
 import { TabView, TabBar } from 'react-native-tab-view';
+import FitImage from 'react-native-fit-image';
 
 import NAVIGATION_KEYS from '../../navigator/key';
 import AccountLoginRoute from './AccountLoginRoute';
@@ -58,6 +59,7 @@ const Login = props => {
   ];
 
   const submit = () => {
+    window.handleUnauthorized = false;
     if(!radio){
       toast.show('请勾选下方按钮', {type: 'warning'});
       return;
@@ -75,7 +77,7 @@ const Login = props => {
   };
 
   return (
-    <ImageBackground style={styles.totalArea} source={require('../../assets/images/Login.jpg')}>
+    <ImageBackground style={styles.totalArea} source={require('../../assets/images/login.png')}>
       <View style={{flex: 4}}></View>
       <View style={{flex: 6}}>
         <View style={{paddingHorizontal: 92, minHeight: 500}}>

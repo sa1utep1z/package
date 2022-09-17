@@ -51,6 +51,7 @@ const CompanyListDialog = (props, ref) => {
   return (
     <>
       <Dialog
+        animationType="fade"
         isVisible={showList}
         overlayStyle={styles.dialogStyle}
         onBackdropPress={()=> setShowList(!showList)}>

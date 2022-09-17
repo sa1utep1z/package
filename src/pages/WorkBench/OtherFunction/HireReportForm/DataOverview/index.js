@@ -1,33 +1,41 @@
-import React, {useState} from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch } from 'react-redux';
 
-import { FAKE_HIRE_DATA_BOX_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../utils/const";
+import { HIRE_OVERVIEW_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, TODAY } from "../../../../../utils/const";
 import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 
 import Tag from "./Tag";
 import FilterMoreOfOverview from "./FilterMoreOfOverview";
 
+const today = {startDate: TODAY, endDate: TODAY};
 const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
-const lastWeek = {startDate: LAST_WEEK_START, endDate: LAST_WEEK_END};
 const thisMonth = {startDate: THIS_MONTH_START, endDate: THIS_MONTH_END};
 
-const DataOverview = () => {
+const DataOverview = ({
+  data, //获取概览数据
+  getData, //获取概览数据函数
+  loading
+}) => {
   const dispatch = useDispatch();
 
-  const [rangeDate, setRangeDate] = useState(thisWeek);
+  const [rangeDate, setRangeDate] = useState(today);
   const [searchOther, setSearchOther] = useState(false);
+
+  useEffect(() => {
+    getData(rangeDate);
+  }, [rangeDate])
 
   const setTime = (range) => {
     setSearchOther(false);
     switch(range.value){
-      case 'thisWeek': 
-        setRangeDate(thisWeek);
+      case 'today': 
+        setRangeDate(today);
         break;
-      case 'lastWeek':
-        setRangeDate(lastWeek);
+      case 'thisWeek':
+        setRangeDate(thisWeek);
         break;
       case 'thisMonth':
         setRangeDate(thisMonth);
@@ -49,6 +57,19 @@ const DataOverview = () => {
     dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
   };
 
+  const compareText = () => {
+    const {startDate, endDate} = rangeDate;
+    if(startDate === TODAY && endDate === TODAY){
+      return '较昨日';
+    }else if(startDate === THIS_WEEK_START && endDate === THIS_WEEK_END){
+      return '较上周';
+    }else if(startDate === THIS_MONTH_START && endDate === THIS_MONTH_END){
+      return '较上月';
+    }else{
+      return '较上周期';
+    }
+  };
+
   return (
     <View style={styles.totalArea}>
       <View style={styles.titleArea}>
@@ -56,37 +77,41 @@ const DataOverview = () => {
         <Text style={styles.title}>数据概览</Text>
       </View>
       <View style={styles.bottomArea}>
-        <Tag tagAreaStyle={{paddingHorizontal: 20}} lastButton tagList={HIRE_DATA_BOX_TAG_LIST} filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther}/>
+        <Tag tagAreaStyle={{paddingHorizontal: 20}} lastButton tagList={HIRE_OVERVIEW_TAG_LIST} filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther}/>
         <View style={styles.dataArea}>
-          {FAKE_HIRE_DATA_BOX_LIST.map((data, dataIndex) => {
-            return (
-              <View key={dataIndex} style={styles.data}>
-                <Shadow distance={15} startColor={'#f5f8fa'} endColor={'#fff'}>
-                  <View style={styles.dataBox}>
-                    <View style={styles.dataBox_top}>
-                      <Text style={styles.dataBox_top_text}>{data.title}</Text>
+          {!loading ? <>
+            {data.map((data, dataIndex) => {
+              return (
+                <View key={dataIndex} style={styles.data}>
+                  <Shadow distance={15} startColor={'#f5f8fa'} endColor={'#fff'}>
+                    <View style={styles.dataBox}>
+                      <View style={styles.dataBox_top}>
+                        <Text style={styles.dataBox_top_text}>{data.title}</Text>
+                      </View>
+                      <View style={styles.dataBox_center}>
+                        <Text style={styles.dataBox_center_text}>{data.num}</Text>
+                      </View>
+                      <View style={styles.dataBox_bottom}>
+                        <Text style={styles.dataBox_bottom_text}>{`${compareText()}${data.trendNumber > 0 ? `+${data.trendNumber}` : `${data.trendNumber}`}`}</Text>
+                        <Entypo 
+                          size={30} 
+                          name={data.trendNumber > 0 ? 'arrow-up' : 'arrow-down'}
+                          color={data.trendNumber > 0 ? '#FF4040' : '#409EFF'}
+                        />
+                      </View>
                     </View>
-                    <View style={styles.dataBox_center}>
-                      <Text style={styles.dataBox_center_text}>{data.num}</Text>
-                    </View>
-                    <View style={styles.dataBox_bottom}>
-                      <Text style={styles.dataBox_bottom_text}>{`较昨日${data.trendNumber > 0 ? `+${data.trendNumber}` : `${data.trendNumber}`}`}</Text>
-                      <Entypo 
-                        size={30} 
-                        name={data.trendNumber < 0 ? 'arrow-up' : 'arrow-down'}
-                        color={data.trendNumber < 0 ? '#FF4040' : '#409EFF'}
-                      />
-                    </View>
-                  </View>
-                </Shadow>
-              </View>
-            )
-          })}
+                  </Shadow>
+                </View>
+              )
+            })}
+          </>: <View style={styles.loadingArea}>
+            <ActivityIndicator size={48} color="#409EFF"/>
+          </View>}
         </View>
       </View>
     </View>
   )
-}
+};
 
 const styles = StyleSheet.create({
   totalArea: {
@@ -132,7 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   dataBox: {
-    width: 160, 
+    minWidth: 160, 
     height: 160, 
     borderRadius: 6
   },
@@ -156,14 +181,19 @@ const styles = StyleSheet.create({
   },
   dataBox_bottom: {
     flex: 1, 
+    alignItems: 'center',
     justifyContent: 'center', 
-    flexDirection: 'row', 
-    marginLeft: 10
+    flexDirection: 'row'
   },
   dataBox_bottom_text: {
+    paddingLeft: 5,
     textAlign: 'center', 
     fontSize: 22, 
     color: '#000'
+  },
+  loadingArea: {
+    flex: 1, 
+    justifyContent: 'center'
   }
 });
 

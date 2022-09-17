@@ -50,7 +50,8 @@ const AccountLoginRoute = ({props}, ref) => {
         const {account, password} = userMsg;
         setFieldValue('user', account);
         setFieldValue('password', password);
-        if(props.route?.params?.handleUnauthorized){
+        //防止多次弹窗
+        if(window.handleUnauthorized){
           toast.show('登录信息失效', {type: 'danger'});
           return;
         }

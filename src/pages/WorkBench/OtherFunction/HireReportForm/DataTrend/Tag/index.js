@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import moment from "moment";
 
 import {setRangeDateType} from '../../../../../../redux/features/HireReport/RangeDateOfTrend';
@@ -13,7 +14,8 @@ const Tag = ({
   filterMore,
   rangeDate,
   setTime,
-  searchOther = false //是否筛选了更多
+  searchOther = false, //是否筛选了更多
+  clearSearch //清除筛选
 }) => {
   const dispatch = useDispatch();
 
@@ -59,11 +61,20 @@ const Tag = ({
               </TouchableOpacity>
           )})}
         </View>
-        {lastButton && (
-          <TouchableOpacity style={[styles.lastButtonStyle, searchOther && {backgroundColor: '#409EFF', borderColor: '#fff'}]} onPress={filterMore}>
-            <Text style={[styles.lastButtonText, searchOther && {color: '#fff'}]}>筛选更多</Text>
-          </TouchableOpacity>
-        )}
+        <View style={{flexDirection: 'row'}}>
+          {lastButton && (
+            <TouchableOpacity style={[styles.lastButtonStyle, searchOther && {backgroundColor: '#409EFF', borderColor: '#fff'}]} onPress={filterMore}>
+              <Text style={[styles.lastButtonText, searchOther && {color: '#fff'}]}>筛选更多</Text>
+            </TouchableOpacity>
+          )}
+          {searchOther && <TouchableOpacity style={styles.clearIcon} onPress={clearSearch}>
+            <AntDesign
+              name='closecircle' 
+              size={30}
+              color='#999999'
+            />    
+          </TouchableOpacity>}
+        </View>
       </View>
     </>
   )
@@ -110,6 +121,10 @@ const styles = StyleSheet.create({
   lastButtonText: {
     fontSize: 26, 
     color: '#999999'
+  },
+  clearIcon: {
+    justifyContent: 'center', 
+    paddingLeft: 5
   }
 });
 
