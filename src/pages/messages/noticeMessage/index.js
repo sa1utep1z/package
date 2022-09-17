@@ -13,6 +13,7 @@ const NoticeMessage = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [nextPage, setNextPage] = useState(false);
   const [originData, setOriginData] = useState({});
+  const [messageId, setMessageId] = useState('');
   //滑动到底部的时候会有多次触发底部函数，防抖作用；
   const [load, setLoad] = useState(true);
 
@@ -38,7 +39,8 @@ const NoticeMessage = (props) => {
           console.log('打印已读消息数据：', res, isOpen)
         }
       }
-      setIsOpen(!isOpen)
+      setIsOpen(!isOpen);
+      setMessageId(value);
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -64,7 +66,7 @@ const NoticeMessage = (props) => {
   const renderItem = ({ item }) => {
     return (
       <>
-        <TouchableOpacity style={isOpen ? styles.contentBox1 : styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
+        <TouchableOpacity style={(isOpen && item.messageId === messageId) ? styles.contentBox1 : styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
           <AntDesign
             name='notification'
             color='#409EFF'
@@ -74,12 +76,12 @@ const NoticeMessage = (props) => {
           <View style={styles.content}>
             <Text style={styles.title}>{item.title}</Text>
             {
-              isOpen ? <Text style={styles.tips}>{item.content}</Text> : <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.content}</Text>
+              (isOpen && item.messageId === messageId) ? <Text style={styles.tips}>{item.content}</Text> : <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.content}</Text>
 
             }
           </View>
           <View style={styles.right}>
-            <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:SS') : ''}</Text>
+            <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:mm') : ''}</Text>
             {
               !item.hasRead && <View style={styles.border}></View>
             }
@@ -96,7 +98,7 @@ const NoticeMessage = (props) => {
         refreshing={isLoading}
         onRefresh={refresh}
         onEndReached={onEndReached}
-        keyExtractor={(item) => item.type}
+        keyExtractor={(item) => item.messageId}
         renderItem={(item) => renderItem(item)}
         getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
         initialNumToRender={15}
