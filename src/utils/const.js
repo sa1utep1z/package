@@ -451,6 +451,10 @@ export const ORIGIN_SELECTED_STATUS_LIST = [
   {value: 'onBoardingPass', title: '入职'}
 ];
 
+export const ORIGIN_COMPARE_STATUS_LIST = [
+  {value: 'onBoardingPass', title: '入职'}
+];
+
 export const CHART_STATUS_LIST = [
   {value: 'signUp', title: '报名邀约'},
   {value: 'signUpIntention', title: '已报名'},

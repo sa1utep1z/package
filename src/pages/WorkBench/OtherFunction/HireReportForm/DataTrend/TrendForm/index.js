@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo, memo} from "react";
+import React, {useState, useEffect} from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Text, Line } from 'react-native-svg';
@@ -26,7 +26,6 @@ const TrendForm = ({
   const [renderData, setRenderData] = useState(originRenderData);
 
   useEffect(() => {
-    console.log('selectedState',selectedState)
     if(data?.length){
       let datasets = [];
       const selectedStatus = selectedState.map(status => status.value);
@@ -75,7 +74,7 @@ const TrendForm = ({
         <Text
           x={x-17}
           y={y-12}
-          fill={'rgba(0,0,0,1)'}
+          fill={'rgba(0,0,0,0.5)'}
           fontSize="20">
           {!!indexData ? indexData : '' }
         </Text>
@@ -109,34 +108,32 @@ const TrendForm = ({
   };
 
   return (
-    <View style={{flex: 1}} >
-      <View style={styles.bottomArea}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {!loading ? <LineChart
-            data={renderData}
-            width={renderData.labels.length * 100}
-            chartConfig={chartConfig}
-            height={460}
-            segments={6}
-            bezier
-            fromZero
-            decorator={decorator}
-            withOuterLines={false}
-            withVerticalLines={false}
-            formatYLabel={(num) => Math.trunc(num)}
-            renderDotContent={renderDotContent}
-          /> : <View style={{flex: 1, justifyContent: 'center'}}>
-            <ActivityIndicator size={48} color="#409EFF" />
-          </View>}
-        </ScrollView>
-      </View>
+    <View style={styles.bottomArea}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {!loading ? <LineChart
+          data={renderData}
+          width={renderData.labels.length * 100}
+          chartConfig={chartConfig}
+          height={460}
+          segments={6}
+          bezier
+          fromZero
+          decorator={decorator}
+          withOuterLines={false}
+          withVerticalLines={false}
+          formatYLabel={(num) => Math.trunc(num)}
+          renderDotContent={renderDotContent}
+        /> : <View style={{flex: 1, justifyContent: 'center'}}>
+          <ActivityIndicator size={48} color="#409EFF" />
+        </View>}
+      </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   bottomArea: {
-    flex: 1, 
+    height: 500,
     justifyContent: 'flex-end', 
     alignItems: 'center'
   }

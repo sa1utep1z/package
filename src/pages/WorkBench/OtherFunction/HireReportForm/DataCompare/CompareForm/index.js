@@ -1,27 +1,58 @@
-import React from "react";
-import { View, StyleSheet } from 'react-native';
+import React, {useState, useEffect, useMemo} from "react";
+import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
-import Svg, { Circle, Text, Line } from 'react-native-svg';
+import Svg, { Text, Line } from 'react-native-svg';
+import moment from "moment";
 
-import Tag from "../../DataTrend/Tag";
-import { HIRE_DATA_COMPARE_TAB_LIST } from "../../../../../../utils/const";
+import { COLOR_LIST } from "../../../../../../utils/const";
 
-const CompareForm = () => {
+let arrayIndex = 0;
+const originRenderData = {
+  datasets: [
+    {
+      data: [0, 0, 0, 0, 0, 0, 0],
+      color: () => '#409EFF'
+    }
+  ],
+  labels: [0, 0, 0, 0, 0, 0, 0],
+  legend: ['未选择']
+};
 
-  const data = {
-    labels: ["", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"],
-    datasets: [
-      {
-        data: ['', 155, 240, 130, 260, 320, 170], 
-        color: () => '#7640FF'
-      },
-      {
-        data: ['', 65, 95, 300, 320, 235, 190], 
-        color: () => '#FFA800'
-      }
-    ],
-    legend: ['本周', '上周']
-  };
+const CompareForm = ({
+  data, //数据源
+  loading, //是否显示加载中
+  rangeList, //图表上部判断显示是什么时间段
+  selectedState, //已选择的状态
+}) => {
+  const [renderData, setRenderData] = useState(originRenderData);
+
+  useMemo(() => console.log('renderData', renderData), [renderData])
+
+  useEffect(() => {
+    if(data?.length){
+      let datasets = [], labels = [];
+      const selectedStatus = selectedState[0].value;
+      data.map((list, listIndex) => {
+        const newData = list.map(item => item[selectedStatus]);
+        newData.unshift(0);
+        datasets.push({
+          data: newData,
+          color: () => COLOR_LIST[listIndex]
+        });
+        list.map((item, itemIndex) => {
+          labels[itemIndex] = labels[itemIndex] ? labels[itemIndex] + 'VS' + moment(item.orderDate).format('M/D') : moment(item.orderDate).format('M/D');
+        });
+      })
+      const legend = rangeList;
+      labels.unshift('');
+      const renderData = {
+        datasets,
+        legend,
+        labels
+      };
+      setRenderData({...renderData});
+    }
+  }, [data])
 
   const chartConfig = {
     color: () => '#333333',
@@ -38,30 +69,18 @@ const CompareForm = () => {
   };
 
   const renderDotContent = ({x, y, index, indexData})=> {
-    let belong = '';
-    const dataIndex = data.datasets[0].data.findIndex(data => data === indexData);
-    if(dataIndex === index){
-      belong = 'first';
+    if(index === 0){
+      arrayIndex ++;
     }
     return (
-      <View>
+      <View key={`${arrayIndex}${index}`}>
         <Text
           x={x-20}
           y={y-10}
-          fill={belong === 'first' ? "#7640FF" : "#FFA800"}
-          fontSize="20"
-          fontWeight="bold"
-        >
-          {indexData}
+          fill={'rgba(0,0,0,0.5)'}
+          fontSize="20">
+          {!!indexData ? indexData : '' }
         </Text>
-        <Circle
-          cx={x}
-          cy={y}
-          r="6"
-          strokeWidth="2"
-          stroke={belong === 'first' ? "#7640FF" : "#FFA800"}
-          fill="#fff"
-        />
       </View>
     )
   };
@@ -69,12 +88,9 @@ const CompareForm = () => {
   const decorator = ({width, height, ...rest})=>{
     return (
       <Svg width={width} height={height}>
-        <Line x1="70" y1={height - 76} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
-        <Line x1={width - 10} y1={height - 85} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
-        <Line x1={width - 10} y1={height - 65} x2={width} y2={height - 76} stroke="#999999" strokeWidth="2" />
-        <Line x1="65" y1={-30} x2="65" y2={height - 82} stroke="#999999" strokeWidth="2" />
-        <Line x1="65" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
-        <Line x1="65" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Line x1="64" y1={-30} x2="64" y2={height - 101} stroke="#999999" strokeWidth="2" />
+        <Line x1="64" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
+        <Line x1="64" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
         <Text
           x={5}
           y={-25}
@@ -84,8 +100,8 @@ const CompareForm = () => {
             人数
         </Text>
         <Text
-          x={width - 50}
-          y={height - 40}
+          x={width - 45}
+          y={400}
           fontSize="22"
           fontWeight="bold"
           fill="#333333">
@@ -96,14 +112,13 @@ const CompareForm = () => {
   };
 
   return (
-    <View style={{flex: 1}} >
-      <View style={styles.LineArea}>
-        <LineChart
-          style={styles.LineStyle}
-          data={data}
+    <View style={styles.bottomArea}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {!loading ? <LineChart
+          data={renderData}
           chartConfig={chartConfig}
-          width={620}
-          height={370}
+          width={renderData.labels.length * 150}
+          height={460}
           segments={6}
           bezier
           fromZero
@@ -113,21 +128,19 @@ const CompareForm = () => {
           withVerticalLines={false}
           formatYLabel={(num) => Math.trunc(num)}
           renderDotContent={renderDotContent}
-        />
-      </View>
+        /> : <View style={{flex: 1, justifyContent: 'center'}}>
+        <ActivityIndicator size={48} color="#409EFF" />
+      </View>}
+      </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  LineArea: {
-    flex: 1, 
+  bottomArea: {
+    height: 500,
     justifyContent: 'flex-end', 
     alignItems: 'center'
-  },
-  LineStyle: {
-    position: 'absolute',
-    bottom: -30
   }
 });
 
