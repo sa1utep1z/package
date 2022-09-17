@@ -34,7 +34,6 @@ const DataTrend = ({
   const [selectedSupplier, setSelectedSupplier] = useState({}); //供应商
 
   useEffect(() => {
-    console.log('searchContent', searchContent);
     getData(searchContent);
     //设置是否点亮筛选更多按钮；
     checkSearchOther();
@@ -117,21 +116,6 @@ const DataTrend = ({
     });
   };
 
-  const filterMore = () => {
-    dispatch(openDialog(
-      <FilterMoreOfTrend 
-        confirm={confirm} 
-        rangeDate={rangeDate} 
-        selectedState={selectedState}
-        selectedWay={selectedWay}
-        selectedEnterprise={selectedEnterprise}
-        selectedStore={selectedStore}
-        selectedRecruiter={selectedRecruiter}
-        selectedSupplier={selectedSupplier}
-      />
-    ));
-  };
-
   const setTime = (range) => {
     setSearchOther(false);
     switch(range.value){
@@ -149,6 +133,21 @@ const DataTrend = ({
         break;
     }
   };
+
+  const filterMore = () => {
+    dispatch(openDialog(
+      <FilterMoreOfTrend 
+        confirm={confirm} 
+        rangeDate={rangeDate} 
+        selectedState={selectedState}
+        selectedWay={selectedWay}
+        selectedEnterprise={selectedEnterprise}
+        selectedStore={selectedStore}
+        selectedRecruiter={selectedRecruiter}
+        selectedSupplier={selectedSupplier}
+      />
+    ));
+  };
   
   return (
     <Shadow>
@@ -157,8 +156,50 @@ const DataTrend = ({
           <View style={styles.titleLine}></View>
           <Text style={styles.title}>数据趋势</Text>
         </View>
-        <Tag tagList={HIRE_DATA_BOX_TAG_LIST} lastButton filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther} clearSearch={clearSearch} />
-        <TrendForm data={data} loading={loading} selectedState={selectedState}/>
+        <Tag 
+          tagList={HIRE_DATA_BOX_TAG_LIST} 
+          lastButton 
+          filterMore={filterMore} 
+          setTime={setTime} 
+          rangeDate={rangeDate} 
+          searchOther={searchOther} 
+          clearSearch={clearSearch} 
+        />
+        <TrendForm 
+          data={data} 
+          loading={loading} 
+          selectedState={selectedState}
+        />
+        <View style={styles.bottomMoreSearchArea}>
+          {/* <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选时间：</Text>
+            <Text style={styles.moreSearchText}>{rangeList[0]+'VS'+rangeList[1]}</Text>
+          </View> */}
+          <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选状态：</Text>
+            <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
+          </View>
+          {selectedWay.value && <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选渠道：</Text>
+            <Text style={styles.moreSearchText}>{selectedWay.title}</Text>
+          </View>}
+          {selectedStore.storeId && <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选门店：</Text>
+            <Text style={styles.moreSearchText}>{selectedStore.storeName}</Text>
+          </View>}
+          {selectedRecruiter.value && <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选招聘员：</Text>
+            <Text style={styles.moreSearchText}>{selectedRecruiter.label}</Text>
+          </View>}
+          {selectedSupplier.value && <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选供应商：</Text>
+            <Text style={styles.moreSearchText}>{selectedSupplier.label}</Text>
+          </View>}
+          {selectedEnterprise.value && <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选企业：</Text>
+            <Text style={styles.moreSearchText}>{selectedEnterprise.label}</Text>
+          </View>}
+        </View>
       </View>
     </Shadow>
   )
@@ -166,7 +207,6 @@ const DataTrend = ({
 
 const styles = StyleSheet.create({
   totalArea: {
-    height: 655,
     width: 686,
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -189,6 +229,28 @@ const styles = StyleSheet.create({
     fontSize: 36, 
     color: '#000', 
     fontWeight: 'bold'
+  },
+  bottomMoreSearchArea: {
+    flexDirection: 'row', 
+    flexWrap: 'wrap'
+  },
+  moreSearchArea: {
+    width: '50%', 
+    flexDirection: 'row', 
+    paddingRight: 20, 
+    paddingBottom: 10
+  },
+  moreSearchTitle: {
+    fontSize: 26, 
+    color: '#000000'
+  },
+  moreSearchText: {
+    flex: 1, 
+    fontSize: 26, 
+    borderBottomWidth: 1, 
+    borderColor: '#EFEFEF', 
+    color: '#409EFF', 
+    paddingLeft: 5
   }
 });
 

@@ -13,16 +13,15 @@ import { closeDialog } from '../../../../../../redux/features/HireReport/HireRep
 import MyMembersApi from '../../../../../../request/MyMembersApi';
 import SearchInput from '../../../../../../components/SearchInput';
 
-const originSelectState = [
-  {value: 'SIGN_UP_INTENTION', title: '已报名'},
-  {value: 'INTERVIEW_PASS', title: '面试通过'},
-  {value: 'ON_BOARDING_PASS', title: '入职'}
-];
-
 const FilterMoreOfCompare = ({
-  showType,
   rangeDate,
-  confirm
+  confirm,
+  selectedState = [], //已选状态
+  selectedWay = {}, //已选来源渠道
+  selectedEnterprise = {}, //已选企业
+  selectedStore = {}, //已选门店
+  selectedRecruiter = {}, //已选招聘员
+  selectedSupplier = {}, //已选供应商
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
@@ -57,37 +56,30 @@ const FilterMoreOfCompare = ({
 
   /** 状态 */
   const [showStatus, setShowStatus] = useState(false);
-  const [selectedState, setSelectedState] = useState(originSelectState);
+  const [selectState, setSelectState] = useState(selectedState);
 
   /** 来源渠道 */
   const [showWay, setShowWay] = useState(false);
-  const [selectWay, setSelectWay] = useState({});
+  const [selectWay, setSelectWay] = useState(selectedWay);
 
   /** 企业 */
   const [showEnterprise, setShowEnterprise] = useState(false);
-  const [selectEnterprise, setSelectEnterprise] = useState({});
+  const [selectEnterprise, setSelectEnterprise] = useState(selectedEnterprise);
 
   /** 门店 */
   const [showStore, setShowStore] = useState(false);
-  const [selectStore, setSelectStore] = useState({});
+  const [selectStore, setSelectStore] = useState(selectedStore);
 
   /** 招聘员 */
   const [showRecruiter, setShowRecruiter] = useState(false);
-  const [selectRecruiter, setSelectRecruiter] = useState({});
+  const [selectRecruiter, setSelectRecruiter] = useState(selectedRecruiter);
 
   /** 供应商 */
   const [showSupplier, setShowSupplier] = useState(false);
-  const [selectSupplier, setSelectSupplier] = useState({});
+  const [selectSupplier, setSelectSupplier] = useState(selectedSupplier);
 
   /**加载中 */
   const [loading, setLoading] = useState(false);
-
-
-  useEffect(()=>{
-    console.log('rangeTime', rangeTime)
-  },[
-    rangeTime
-  ])
 
   //获取企业列表
   const getCompanyList = async() => {
@@ -205,6 +197,9 @@ const FilterMoreOfCompare = ({
     setShowWay(!showWay);
     dateRangePicker && setDateRangePicker(false);
     showStatus && setShowStatus(false);
+    showStore && setShowStore(false);
+    showRecruiter && setShowRecruiter(false);
+    showSupplier && setShowSupplier(false);
     showEnterprise && setShowEnterprise(false);
   };
 
@@ -215,6 +210,9 @@ const FilterMoreOfCompare = ({
     dateRangePicker && setDateRangePicker(false);
     showStatus && setShowStatus(false);
     showEnterprise && setShowEnterprise(false);
+    showWay && setShowWay(false);
+    showRecruiter && setShowRecruiter(false);
+    showSupplier && setShowSupplier(false);
   };
 
   /**打开选择招聘员 */
@@ -224,6 +222,9 @@ const FilterMoreOfCompare = ({
     dateRangePicker && setDateRangePicker(false);
     showStatus && setShowStatus(false);
     showEnterprise && setShowEnterprise(false);
+    showWay && setShowWay(false);
+    showStore && setShowStore(false);
+    showSupplier && setShowSupplier(false);
   };
 
   /**打开选择供应商 */
@@ -233,6 +234,9 @@ const FilterMoreOfCompare = ({
     dateRangePicker && setDateRangePicker(false);
     showStatus && setShowStatus(false);
     showEnterprise && setShowEnterprise(false);
+    showWay && setShowWay(false);
+    showStore && setShowStore(false);
+    showRecruiter && setShowRecruiter(false);
   };
 
   const showDate = (type) => {
@@ -293,21 +297,15 @@ const FilterMoreOfCompare = ({
 
   //选择状态
   const stateOnPress = (state) => {
-    const copyList = [...selectedState];
-    const findItemIndex = selectedState.findIndex(select => select.value === state.value);
+    const copyList = [...selectState];
+    const findItemIndex = selectState.findIndex(select => select.value === state.value);
     if(findItemIndex !== -1){
       copyList.splice(findItemIndex, 1);
-      setSelectedState(copyList);
+      setSelectState(copyList);
       return;
     }
-    if(selectedState.length === 3){
-      toast.show('最多选择3个状态', {type: 'warning'});
-      let newArrList = [state];
-      setSelectedState(newArrList);
-      return;
-    }
-    copyList.push(state);
-    setSelectedState(copyList);
+    let newArrList = [state];
+    setSelectState(newArrList);
   };
 
   //选择渠道
@@ -367,7 +365,12 @@ const FilterMoreOfCompare = ({
     dispatch(closeDialog());
     const searchContent = {
       rangeTime,
-      selectedState
+      selectState,
+      selectWay,
+      selectStore,
+      selectRecruiter,
+      selectSupplier,
+      selectEnterprise
     };
     confirm(searchContent);
   };
@@ -412,10 +415,26 @@ const FilterMoreOfCompare = ({
     return `${startText} VS ${endText}`
   };
 
+  const stickyHeaderIndices = () => {
+    if(showStatus){
+      return [1];
+    }else if(showStore){
+      return [3];
+    }else if(showRecruiter){
+      return [4];
+    }else if(showSupplier){
+      return [5];
+    }else if(showEnterprise){
+      return [6];
+    }
+  };
+
   return (
     <>
-      <View style={{maxHeight: 450, paddingHorizontal: 10}}>
-        <>
+      <ScrollView 
+        style={{maxHeight: 450, paddingHorizontal: 10}}
+        stickyHeaderIndices={stickyHeaderIndices()}>
+        <View style={{marginBottom: 10}}>
           <TouchableOpacity style={[styles.touchArea, dateRangePicker && styles.selectedTouchArea]} onPress={changeDateRangePicker}>
             <Text style={[styles.title, dateRangePicker && styles.fontBold]}>
               {`时间范围：${getRangeDate()}`}
@@ -469,36 +488,34 @@ const FilterMoreOfCompare = ({
             value={dateTime} 
             onChange={dateChange} 
           />}
-        </>
-        <>
-          <TouchableOpacity style={[styles.touchArea, showStatus && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeStatus}>
+        </View>
+        <View style={[{backgroundColor: '#fff'}, !showStatus && {marginBottom: 10}]}>
+          <TouchableOpacity style={[styles.touchArea, showStatus && styles.selectedTouchArea]} onPress={changeStatus}>
             <Text numberOfLines={1} style={[styles.title, showStatus && styles.fontBold]}>
-              {`${selectedState.length ? `已选状态：${selectedState.map(select => select.title).join('、')}` : '请选择状态'}`}
+              {`${selectState.length ? `已选状态：${selectState.map(select => select.title).join('、')}` : '请选择状态'}`}
             </Text>
           </TouchableOpacity>
-          {showStatus && (
-            <ScrollView style={styles.listArea}>
-              {CHART_STATUS_LIST.map((state, stateIndex) => {
-                const isLastIndex = stateIndex === (CHART_STATUS_LIST.length - 1);
-                const isSelected = selectedState.length ? selectedState.findIndex(select => select.value === state.value) !== -1 : false;
-                return (
-                  <TouchableOpacity style={[styles.itemArea, isLastIndex && {borderBottomWidth: 0}]} onPress={() => stateOnPress(state)} key={stateIndex}>
-                    <Text style={{color: '#333333'}}>{state.title}</Text>
-                    <CheckBox
-                      checked={isSelected}
-                      size={18}
-                      containerStyle={{padding: 0}}
-                      checkedIcon={"dot-circle-o"}
-                      uncheckedIcon={"circle-o"}
-                    />
-                  </TouchableOpacity>
-                )
-              })}
-            </ScrollView>
-          )}
-        </>
-        {showType === 'company' && <>
-          <TouchableOpacity style={[styles.touchArea, showWay && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeWay}>
+        </View>
+        {showStatus && <View style={[styles.listArea, {marginBottom: 10}]}>
+          {CHART_STATUS_LIST.map((state, stateIndex) => {
+            const isLastIndex = stateIndex === (CHART_STATUS_LIST.length - 1);
+            const isSelected = selectState.length ? selectState.findIndex(select => select.value === state.value) !== -1 : false;
+            return (
+              <TouchableOpacity style={[styles.itemArea, isLastIndex && {borderBottomWidth: 0}]} onPress={() => stateOnPress(state)} key={stateIndex}>
+                <Text style={{color: '#333333'}}>{state.title}</Text>
+                <CheckBox
+                  checked={isSelected}
+                  size={18}
+                  containerStyle={{padding: 0}}
+                  checkedIcon={"dot-circle-o"}
+                  uncheckedIcon={"circle-o"}
+                />
+              </TouchableOpacity>
+            )
+          })}
+        </View>}
+        <View style={{marginBottom: 10}}>
+          <TouchableOpacity style={[styles.touchArea, showWay && styles.selectedTouchArea]} onPress={changeWay}>
             <Text numberOfLines={1} style={[styles.title, showWay && styles.fontBold]}>
               {`${selectWay.value ? `已选来源渠道：${selectWay.title}` : '请选择来源渠道'}`}
             </Text>
@@ -523,177 +540,168 @@ const FilterMoreOfCompare = ({
               })}
             </View>
           )}
-        </>}
-        {showType === 'store' && <>
-          <TouchableOpacity style={[styles.touchArea, showStore && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeStore}>
+        </View>
+        <View style={[{backgroundColor: '#fff'}, !showStore && {marginBottom: 10}]}>
+          <TouchableOpacity style={[styles.touchArea, showStore && styles.selectedTouchArea]} onPress={changeStore}>
             <Text numberOfLines={1} style={[styles.title, showStore && styles.fontBold]}>
               {`${selectStore.storeId ? `已选门店：${selectStore.storeName}` : '请选择门店'}`}
             </Text>
           </TouchableOpacity>
-          {showStore && <>
-            {!loading ? 
-              <>
-                <SearchInput
-                  placeholder='请输入门店名称'
-                  smallSize
-                  withoutButton
-                  keyboardType='default'
-                  onChange={storeOnChanging}
-                  fontStyle={{fontSize: 14}}
-                  searchInputStyle={styles.searchInputStyle}
-                  inputContainerStyle={{paddingLeft: 0}}
-                />
-                <ScrollView style={styles.listArea} ref={storeScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
-                  {storeList.map((store, storeIndex) => {
-                    const isSelected = selectStore.storeId === store.storeId;
-                    const isLastIndex = storeIndex === storeList.length - 1;
-                    return (
-                      <TouchableOpacity key={store.storeId} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectStoreOnPress(store)}>
-                      <Text style={{color: '#333333'}}>{store.storeName}</Text>
-                      <CheckBox
-                        checked={isSelected}
-                        size={18}
-                        onPress={() => selectStoreOnPress(store)}
-                        containerStyle={{padding: 0}}
-                        checkedIcon={"dot-circle-o"}
-                        uncheckedIcon={"circle-o"}
-                      />
-                    </TouchableOpacity>
-                    )})}
-                  </ScrollView>
-              </> : <View style={styles.emptyArea}>
-              <ActivityIndicator size={20} color="#409EFF"/>
-            </View>}
-          </>}
-        </>}
-        {showType === 'recruiter' && <>
-          <TouchableOpacity style={[styles.touchArea, showRecruiter && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeRecruiter}>
+          {showStore && <SearchInput
+            placeholder='请输入门店名称'
+            smallSize
+            withoutButton
+            keyboardType='default'
+            onChange={storeOnChanging}
+            fontStyle={{fontSize: 14}}
+            searchInputStyle={styles.searchInputStyle}
+            inputContainerStyle={{paddingLeft: 0}}
+          />}
+        </View>
+        {showStore && <View style={{marginBottom: 10}}>
+          {!loading ? 
+            <ScrollView style={styles.listArea} ref={storeScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
+                {storeList.map((store, storeIndex) => {
+                  const isSelected = selectStore.storeId === store.storeId;
+                  const isLastIndex = storeIndex === storeList.length - 1;
+                  return (
+                    <TouchableOpacity key={store.storeId} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectStoreOnPress(store)}>
+                    <Text style={{color: '#333333'}}>{store.storeName}</Text>
+                    <CheckBox
+                      checked={isSelected}
+                      size={18}
+                      onPress={() => selectStoreOnPress(store)}
+                      containerStyle={{padding: 0}}
+                      checkedIcon={"dot-circle-o"}
+                      uncheckedIcon={"circle-o"}
+                    />
+                  </TouchableOpacity>
+                  )})}
+              </ScrollView> : <View style={styles.emptyArea}>
+            <ActivityIndicator size={20} color="#409EFF"/>
+          </View>}
+        </View>}
+        <View style={[{backgroundColor: '#fff'}, !showRecruiter && {marginBottom: 10}]}>
+          <TouchableOpacity style={[styles.touchArea, showRecruiter && styles.selectedTouchArea]} onPress={changeRecruiter}>
             <Text numberOfLines={1} style={[styles.title, showRecruiter && styles.fontBold]}>
               {`${selectRecruiter.value ? `已选招聘员：${selectRecruiter.label}` : '请选择招聘员'}`}
             </Text>
           </TouchableOpacity>
-          {showRecruiter && <>
-            {!loading ? 
-              <>
-                <SearchInput
-                  placeholder='请输入招聘员名称'
-                  smallSize
-                  withoutButton
-                  keyboardType='default'
-                  onChange={recruiterOnChanging}
-                  fontStyle={{fontSize: 14}}
-                  searchInputStyle={styles.searchInputStyle}
-                  inputContainerStyle={{paddingLeft: 0}}
-                />
-                <ScrollView style={styles.listArea} ref={recruiterScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
-                  {recruiterList.map((recruiter, recruiterIndex) => {
-                    const isSelected = selectRecruiter.value === recruiter.value;
-                    const isLastIndex = recruiterIndex === recruiterList.length - 1;
-                    return (
-                      <TouchableOpacity key={recruiter.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => recruiterOnPress(recruiter)}>
-                      <Text style={{color: '#333333'}}>{recruiter.label}</Text>
-                      <CheckBox
-                        checked={isSelected}
-                        size={18}
-                        onPress={() => recruiterOnPress(recruiter)}
-                        containerStyle={{padding: 0}}
-                        checkedIcon={"dot-circle-o"}
-                        uncheckedIcon={"circle-o"}
-                      />
-                    </TouchableOpacity>
-                    )})}
-                  </ScrollView>
-              </> : <View style={styles.emptyArea}>
-              <ActivityIndicator size={20} color="#409EFF"/>
-            </View>}
-          </>}
-        </>}
-        {showType === 'supplier' && <>
-          <TouchableOpacity style={[styles.touchArea, showSupplier && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeSupplier}>
+          {showRecruiter && <SearchInput
+            placeholder='请输入招聘员名称'
+            smallSize
+            withoutButton
+            keyboardType='default'
+            onChange={recruiterOnChanging}
+            fontStyle={{fontSize: 14}}
+            searchInputStyle={styles.searchInputStyle}
+            inputContainerStyle={{paddingLeft: 0}}
+          />}
+        </View>
+        {showRecruiter && <View style={{marginBottom: 10}}>
+          {!loading ? 
+            <ScrollView style={styles.listArea} ref={recruiterScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
+              {recruiterList.map((recruiter, recruiterIndex) => {
+                const isSelected = selectRecruiter.value === recruiter.value;
+                const isLastIndex = recruiterIndex === recruiterList.length - 1;
+                return (
+                  <TouchableOpacity key={recruiter.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => recruiterOnPress(recruiter)}>
+                  <Text style={{color: '#333333'}}>{recruiter.label}</Text>
+                  <CheckBox
+                    checked={isSelected}
+                    size={18}
+                    onPress={() => recruiterOnPress(recruiter)}
+                    containerStyle={{padding: 0}}
+                    checkedIcon={"dot-circle-o"}
+                    uncheckedIcon={"circle-o"}
+                  />
+                </TouchableOpacity>
+                )})}
+              </ScrollView>  : <View style={styles.emptyArea}>
+            <ActivityIndicator size={20} color="#409EFF"/>
+          </View>}
+        </View>}
+        <View style={[{backgroundColor: '#fff'}, !showSupplier && {marginBottom: 10}]}>
+          <TouchableOpacity style={[styles.touchArea, showSupplier && styles.selectedTouchArea]} onPress={changeSupplier}>
             <Text numberOfLines={1} style={[styles.title, showSupplier && styles.fontBold]}>
               {`${selectSupplier.value ? `已选供应商：${selectSupplier.label}` : '请选择供应商'}`}
             </Text>
           </TouchableOpacity>
-          {showSupplier && <>
-            {!loading ? 
-              <>
-                <SearchInput
-                  placeholder='请输入供应商'
-                  smallSize
-                  withoutButton
-                  keyboardType='default'
-                  onChange={supplierOnChanging}
-                  fontStyle={{fontSize: 14}}
-                  searchInputStyle={styles.searchInputStyle}
-                  inputContainerStyle={{paddingLeft: 0}}
-                />
-                <ScrollView style={styles.listArea} ref={supplierScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
-                  {supplierList.map((supplier, supplierIndex) => {
-                    const isSelected = selectSupplier.value === supplier.value;
-                    const isLastIndex = supplierIndex === supplierList.length - 1;
-                    return (
-                      <TouchableOpacity key={supplier.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => supplierOnPress(supplier)}>
-                      <Text style={{color: '#333333'}}>{supplier.label}</Text>
-                      <CheckBox
-                        checked={isSelected}
-                        size={18}
-                        onPress={() => supplierOnPress(supplier)}
-                        containerStyle={{padding: 0}}
-                        checkedIcon={"dot-circle-o"}
-                        uncheckedIcon={"circle-o"}
-                      />
-                    </TouchableOpacity>
-                    )})}
-                  </ScrollView>
-              </> : <View style={styles.emptyArea}>
-              <ActivityIndicator size={20} color="#409EFF"/>
-            </View>}
-          </>}
-        </>}
-        <>
-          <TouchableOpacity style={[styles.touchArea, showEnterprise && styles.selectedTouchArea, {marginTop: 10}]} onPress={changeEnterprise}>
+          {showSupplier && <SearchInput
+            placeholder='请输入供应商'
+            smallSize
+            withoutButton
+            keyboardType='default'
+            onChange={supplierOnChanging}
+            fontStyle={{fontSize: 14}}
+            searchInputStyle={styles.searchInputStyle}
+            inputContainerStyle={{paddingLeft: 0}}
+          />}
+        </View>
+        {showSupplier && <View style={{marginBottom: 10}}>
+          {!loading ? 
+            <ScrollView style={styles.listArea} ref={supplierScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
+              {supplierList.map((supplier, supplierIndex) => {
+                const isSelected = selectSupplier.value === supplier.value;
+                const isLastIndex = supplierIndex === supplierList.length - 1;
+                return (
+                  <TouchableOpacity key={supplier.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => supplierOnPress(supplier)}>
+                  <Text style={{color: '#333333'}}>{supplier.label}</Text>
+                  <CheckBox
+                    checked={isSelected}
+                    size={18}
+                    onPress={() => supplierOnPress(supplier)}
+                    containerStyle={{padding: 0}}
+                    checkedIcon={"dot-circle-o"}
+                    uncheckedIcon={"circle-o"}
+                  />
+                </TouchableOpacity>
+                )})}
+              </ScrollView> : <View style={styles.emptyArea}>
+            <ActivityIndicator size={20} color="#409EFF"/>
+          </View>}
+        </View>}
+        <View style={{backgroundColor: '#fff'}}>
+          <TouchableOpacity style={[styles.touchArea, showEnterprise && styles.selectedTouchArea]} onPress={changeEnterprise}>
             <Text numberOfLines={1} style={[styles.title, showEnterprise && styles.fontBold]}>
               {`${selectEnterprise.value ? `已选企业：${selectEnterprise.label}` : '请选择企业'}`}
             </Text>
           </TouchableOpacity>
-          {showEnterprise && 
-            <>
-              {!loading ? 
-                <>
-                  <SearchInput
-                    placeholder='请输入企业名称'
-                    smallSize
-                    withoutButton
-                    keyboardType='default'
-                    onChange={onChanging}
-                    fontStyle={{fontSize: 14}}
-                    searchInputStyle={styles.searchInputStyle}
-                    inputContainerStyle={{paddingLeft: 0}}
+          {showEnterprise && <SearchInput
+            placeholder='请输入企业名称'
+            smallSize
+            withoutButton
+            keyboardType='default'
+            onChange={onChanging}
+            fontStyle={{fontSize: 14}}
+            searchInputStyle={styles.searchInputStyle}
+            inputContainerStyle={{paddingLeft: 0}}
+          />}
+        </View>
+        {showEnterprise && <>
+          {!loading ? 
+            <ScrollView style={styles.listArea} ref={companyScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
+              {enterpriseList.map((company, companyIndex) => {
+                const isSelected = selectEnterprise.value === company.value;
+                const isLastIndex = companyIndex === enterpriseList.length - 1;
+                return (
+                  <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectCompanyOnPress(company)}>
+                  <Text style={{color: '#333333'}}>{company.label}</Text>
+                  <CheckBox
+                    checked={isSelected}
+                    size={18}
+                    onPress={() => selectCompanyOnPress(company)}
+                    containerStyle={{padding: 0}}
+                    checkedIcon={"dot-circle-o"}
+                    uncheckedIcon={"circle-o"}
                   />
-                  <ScrollView style={styles.listArea} ref={companyScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
-                    {enterpriseList.map((company, companyIndex) => {
-                      const isSelected = selectEnterprise.value === company.value;
-                      const isLastIndex = companyIndex === enterpriseList.length - 1;
-                      return (
-                        <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectCompanyOnPress(company)}>
-                        <Text style={{color: '#333333'}}>{company.label}</Text>
-                        <CheckBox
-                          checked={isSelected}
-                          size={18}
-                          onPress={() => selectCompanyOnPress(company)}
-                          containerStyle={{padding: 0}}
-                          checkedIcon={"dot-circle-o"}
-                          uncheckedIcon={"circle-o"}
-                        />
-                      </TouchableOpacity>
-                      )})}
-                    </ScrollView>
-                </> : <View style={styles.emptyArea}>
-                <ActivityIndicator size={20} color="#409EFF"/>
-              </View>}
-            </>}
-        </>
-      </View>
+                </TouchableOpacity>
+                )})}
+              </ScrollView>  : <View style={styles.emptyArea}>
+            <ActivityIndicator size={20} color="#409EFF"/>
+          </View>}
+        </>}
+      </ScrollView>
       <View style={styles.bottomButtonArea}>
         <TouchableOpacity style={styles.bottomLeft} onPress={()=>dispatch(closeDialog())}>
           <Text style={styles.leftText}>取消</Text>

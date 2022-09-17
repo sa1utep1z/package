@@ -8,7 +8,6 @@ import {
 import {useToast} from 'react-native-toast-notifications';
 import {Text, Button, CheckBox} from '@rneui/themed';
 import { TabView, TabBar } from 'react-native-tab-view';
-import FitImage from 'react-native-fit-image';
 
 import NAVIGATION_KEYS from '../../navigator/key';
 import AccountLoginRoute from './AccountLoginRoute';
@@ -94,25 +93,12 @@ const Login = props => {
           onPress={submit}
           titleStyle={{fontSize: 48}}
           buttonStyle={[
-            styles.buttonStyle,
-            // loading && {backgroundColor: '#CCCCCC'}
+            styles.buttonStyle
           ]}
           containerStyle={styles.buttonContainerStyle}
         />
       </View>
         
-      {/* <View style={styles.underButtonArea}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(NAVIGATION_KEYS.VERIFICATION_LOGIN)
-          }>
-          <Text style={{fontSize: 30}}>验证码登录</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate(NAVIGATION_KEYS.FORGET_PSW)}>
-          <Text style={{fontSize: 30}}>忘记密码？</Text>
-        </TouchableOpacity>
-      </View> */}
       <View style={styles.bottomArea}>
         <CheckBox
           center

@@ -16,8 +16,10 @@ const HireReportForm = () => {
 
   const [overViewData, setOverViewData] = useState(ORIGIN_HIRE_REPORT_OVERVIEW_LIST);
   const [loading, setLoading] = useState(false);
-  const [trendData, setTrendData] = useState();
+  const [trendData, setTrendData] = useState({});
   const [trendLoading, setTrendLoading] = useState(false);
+  const [compareData, setCompareData] = useState([]);
+  const [compareLoading, setCompareLoading] = useState(false);
 
   const getOverView = async(range) => {
     setLoading(true);
@@ -73,11 +75,10 @@ const HireReportForm = () => {
     }
   };
 
-  const getTrendData = async(range) => {
+  const getTrendData = async(search) => {
     setTrendLoading(true);
-    console.log('range', range);
     try{
-      let res = await HireReportFormApi.LineData(range);
+      let res = await HireReportFormApi.LineData(search);
       if(res.code !== SUCCESS_CODE){
         toast.show(`${res.msg}`, { type: 'danger' });
         return;
@@ -88,6 +89,27 @@ const HireReportForm = () => {
       toast.show(`出现预料之外的错误，请联系管理员处理`, { type: 'danger' });
     }finally{
       setTrendLoading(false);
+    }
+  };
+
+  const getCompareData = async(search) => {
+    console.log('search', search)
+    setCompareLoading(true);
+    const range1 = search[0];
+    const range2 = search[1];
+    try{
+      let res1 = await HireReportFormApi.LineData(range1);
+      let res2 = await HireReportFormApi.LineData(range2);
+      if(res1.code !== SUCCESS_CODE || res2.code !== SUCCESS_CODE){
+        toast.show(`${res1.msg}`, { type: 'danger' });
+        return;
+      }
+      setCompareData([res1.data, res2.data]);
+    }catch(error){
+      console.log('error', error);
+      toast.show(`出现预料之外的错误，请联系管理员处理`, { type: 'danger' });
+    }finally{
+      setCompareLoading(false);
     }
   };
 
@@ -104,7 +126,11 @@ const HireReportForm = () => {
           loading={trendLoading}
           getData={getTrendData} 
         />
-        <DataCompare />
+        <DataCompare 
+          data={compareData}
+          loading={compareLoading}
+          getData={getCompareData}
+        />
         <DataPercent />
       </View>
       <HireReportDialog/>
