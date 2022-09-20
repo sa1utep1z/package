@@ -16,6 +16,9 @@ const HireReportFormApi = {
   LineData: async(params) => await httpRequest.post(`admin/app/board/detail`, params),
   /**企业数据 */
   Company: async(params) => await httpRequest.post(`admin/app/board/proportion/company`, params),
+  Store: async(params) => await httpRequest.post(`admin/app/board/proportion/store`, params),
+  Recruiter: async(params) => await httpRequest.post(`admin/app/board/proportion/recruiter`, params),
+  Supplier: async(params) => await httpRequest.post(`admin/app/board/proportion/supplier`, params)
 }
 
 export default HireReportFormApi;

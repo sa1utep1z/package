@@ -191,7 +191,7 @@ const DataCompare = ({
   };
   
   return (
-    <Shadow>
+    <Shadow style={{marginBottom: 32}}>
       <View style={styles.totalArea}>
         <View style={styles.titleArea}>
           <View style={styles.titleLine}></View>
@@ -216,12 +216,12 @@ const DataCompare = ({
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{rangeList[0]+'VS'+rangeList[1]}</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5)}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5)} VS ${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5)}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5)}`}</Text>
           </View>
-          <View style={styles.moreSearchArea}>
+          {!!selectedState.length && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选状态：</Text>
             <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
-          </View>
+          </View>}
           {selectedWay.value && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选渠道：</Text>
             <Text style={styles.moreSearchText}>{selectedWay.title}</Text>
@@ -253,7 +253,6 @@ const styles = StyleSheet.create({
     width: 686,
     backgroundColor: '#fff',
     borderRadius: 10,
-    marginBottom: 32,
     padding: 30
   },
   titleArea: {
@@ -288,7 +287,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   moreSearchArea: {
-    width: '50%', 
     flexDirection: 'row', 
     paddingRight: 20, 
     paddingBottom: 10
@@ -298,7 +296,6 @@ const styles = StyleSheet.create({
     color: '#000000'
   },
   moreSearchText: {
-    flex: 1, 
     fontSize: 26, 
     borderBottomWidth: 1, 
     borderColor: '#EFEFEF', 
