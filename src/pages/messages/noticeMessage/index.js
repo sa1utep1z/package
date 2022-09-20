@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, Image } from "react-native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { empty } from "../../Home/listComponent";
 import MessageApi from "../../../request/MessageApi";
@@ -65,29 +65,29 @@ const NoticeMessage = (props) => {
 
   const renderItem = ({ item }) => {
     return (
-      <>
-        <TouchableOpacity style={(isOpen && item.messageId === messageId) ? styles.contentBox1 : styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
-          <AntDesign
-            name='notification'
-            color='#409EFF'
-            size={60}
+      <ScrollView>
+        <TouchableOpacity style={styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
+          <Image
             style={styles.iconStyle}
+            source={require('../../../assets/images/notice.png')}
           />
           <View style={styles.content}>
-            <Text style={styles.title}>{item.title}</Text>
-            {
+            <View style={styles.topTitle}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:mm') : ''}</Text>
+            </View>
+            {/* {
               (isOpen && item.messageId === messageId) ? <Text style={styles.tips}>{item.content}</Text> : <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.content}</Text>
-
-            }
-          </View>
-          <View style={styles.right}>
-            <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:mm') : ''}</Text>
-            {
-              !item.hasRead && <View style={styles.border}></View>
-            }
+            } */}
+            <Text style={styles.tips}>{item.content}</Text>
+            <View style={styles.right}>
+              {
+                !item.hasRead && <View style={styles.border}></View>
+              }
+            </View>
           </View>
         </TouchableOpacity>
-      </>
+      </ScrollView>
     )
   };
 
@@ -136,21 +136,25 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   iconStyle: {
+    width: 70,
+    height: 70,
     textAlign: 'center',
+    marginTop: 15,
+    marginRight: 15,
   },
   box: {
     textAlign: 'center',
   },
   contentBox: {
     width: 686,
-    height: 130,
+    minHeight: 130,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     margin: 30,
     marginBottom: 0,
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     padding: 15
   },
@@ -162,14 +166,20 @@ const styles = StyleSheet.create({
     margin: 30,
     marginBottom: 0,
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     flexDirection: 'row',
     padding: 15
   },
   content: {
-    width: '65%',
+    width: 550,
     height: '100%',
+    display: 'flex',
+  },
+  topTitle: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 32,
@@ -177,17 +187,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   tips: {
+    width: '95%',
     fontSize: 28,
     color: '#333',
     marginTop: 10,
   },
   right: {
-    minWidth: 100,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
   },
   time: {
     fontSize: 24,

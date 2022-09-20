@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useReducer, useRef } from 'react';
-import { StyleSheet, ScrollView, Image, View, Text } from 'react-native';
+import { StyleSheet, ScrollView, Image, View, Text, TouchableOpacity } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { Button } from '@rneui/themed';
 import { WebView } from 'react-native-webview';
 import Swiper from 'react-native-swiper';
@@ -28,8 +29,8 @@ const CompanyDetail = (props) => {
   const recruitRange = date + date2;
   const startTime = String(orderData.recruitRange).substring(0, 10); //开始日期
   const endTime = String(orderData.recruitRange).substring(11, 21);// 结束日期
-  
- 
+
+
   const getDetail = async () => {
     try {
       const res = await HomeApi.orderDetail(orderId);
@@ -58,6 +59,19 @@ const CompanyDetail = (props) => {
     endDate: endTime,
     currentTime: params.currentTime,
   });
+
+  //复制文本
+  const _handleClipboardContent = async () => {
+    //设置内容到剪贴板
+    Clipboard.setString(orderPolicyDetail);
+    //从剪贴板获取内容
+    Clipboard.getString().then((content) => {
+      // alert(content)
+      toast.show('复制成功');
+    }, (error) => {
+      console.log('error:' + error);
+    })
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -120,14 +134,19 @@ const CompanyDetail = (props) => {
           </View>
           <View style={styles.rowStyles}>
             <Text style={styles.quotaStyle}>已报名人数：</Text>
-            <Text style={styles.workStyle}>{parseInt(orderData.male)+parseInt(orderData.female)}</Text>
+            <Text style={styles.workStyle}>{parseInt(orderData.male) + parseInt(orderData.female)}</Text>
             <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.male}</Text> 女：<Text style={styles.workStyle}>{orderData.female}</Text>】</Text>
           </View>
         </View>
         <View style={styles.boxStyle}>
-          <View style={styles.boxTopStyle}>
-            <View style={styles.iconStyle}></View>
-            <Text style={styles.titlesStyle}>发单详情</Text>
+          <View style={[styles.boxTopStyle, { display: 'flex', justifyContent: 'space-between'}]}>
+            <View style={{ display: 'flex', flexDirection: 'row'}}>
+              <View style={styles.iconStyle}></View>
+              <Text style={styles.titlesStyle}>发单详情</Text>
+            </View>
+            <TouchableOpacity onPress={_handleClipboardContent}>
+              <Text style={{ color: '#409EFF', fontSize: 30, marginRight: 15 }}>一键复制</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.contentStyle}>
             <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
@@ -370,7 +389,8 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     backgroundColor: '#409EFF',
-    width: 8, height: 36,
+    width: 8,
+    height: 36,
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
     marginRight: 10
@@ -446,7 +466,16 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     letterSpacing: 10,
-  }
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  copiedText: {
+    marginTop: 10,
+    color: 'red',
+  },
 })
 
 export default CompanyDetail;

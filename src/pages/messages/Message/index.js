@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -63,50 +63,40 @@ const Message = () => {
 
   useFocusEffect(React.useCallback(() => {
     messageData();
-	}, []));
+  }, []));
 
   return (
     <ScrollView style={styles.index}>
       {
         messageInfo.map((item) => {
           return (
-            <TouchableOpacity key={item.type} style={styles.contentBox} onPress={item.type === 'INNER_JOB_NOTIFICATION' ? () =>toResignation(item.type) : item.type === 'INNER_VISIT_NOTIFICATION' ? () =>toReVisit(item.type) : item.type === 'INNER_SYSTEM_MESSAGE' ? () =>toSystems(item.type) : item.type === 'ANNOUNCEMENT' ? () =>toNotice(item.type) : () =>toAdvise(item.type)}>
-              {item.type === 'INNER_JOB_NOTIFICATION' ? <AntDesign
-                name='exclamationcircleo'
-                color='#409EFF'
-                size={60}
-                style={styles.iconStyle}
-              /> : item.type === 'INNER_VISIT_NOTIFICATION' ? <AntDesign
-                name='message1'
-                color='#409EFF'
-                size={60}
-                style={styles.iconStyle}
-              /> : item.type === 'INNER_SYSTEM_MESSAGE' ? <FontAwesome
-                name='bell-o'
-                color='#409EFF'
-                size={60}
-                style={styles.iconStyle}
-              /> : item.type === 'ANNOUNCEMENT' ? <AntDesign
-                name='notification'
-                color='#409EFF'
-                size={60}
-                style={styles.iconStyle}
-              /> : <EvilIcons
-                name='comment'
-                color='#409EFF'
-                size={90}
-                style={styles.iconStyle}
+            <TouchableOpacity key={item.type} style={styles.contentBox} onPress={item.type === 'INNER_JOB_NOTIFICATION' ? () => toResignation(item.type) : item.type === 'INNER_VISIT_NOTIFICATION' ? () => toReVisit(item.type) : item.type === 'INNER_SYSTEM_MESSAGE' ? () => toSystems(item.type) : item.type === 'ANNOUNCEMENT' ? () => toNotice(item.type) : () => toAdvise(item.type)}>
+              {item.type === 'INNER_JOB_NOTIFICATION' ? <Image
+                style={{ width: 70, height: 70 }}
+                source={require('../../../assets/images/resignation.png')}
+              /> : item.type === 'INNER_VISIT_NOTIFICATION' ? <Image
+                style={{ width: 70, height: 70 }}
+                source={require('../../../assets/images/revisit.png')}
+              /> : item.type === 'INNER_SYSTEM_MESSAGE' ? <Image
+                style={{ width: 70, height: 70 }}
+                source={require('../../../assets/images/system.png')}
+              /> : item.type === 'ANNOUNCEMENT' ? <Image
+                style={{ width: 70, height: 70 }}
+                source={require('../../../assets/images/notice.png')}
+              /> : <Image
+                style={{ width: 70, height: 70 }}
+                source={require('../../../assets/images/advice.png')}
               />}
               <View style={styles.content}>
                 <Text style={styles.title}>{item.type === 'INNER_JOB_NOTIFICATION' ? '离职提醒' : item.type === 'INNER_VISIT_NOTIFICATION' ? '回访提醒' : item.type === 'INNER_SYSTEM_MESSAGE' ? '系统消息' : item.type === 'ANNOUNCEMENT' ? '公告' : '通知'}</Text>
-                <Text style={styles.tips}>{item.lastMessageContent ? item.lastMessageContent : '暂无新消息'}</Text>
+                <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.lastMessageContent ? item.lastMessageContent : '暂无新消息'}</Text>
               </View>
               <View style={styles.right}>
                 <Text style={styles.time}>{item.lastMessageTime ? moment(item.lastMessageTime).format('MM-DD hh:mm') : ''}</Text>
                 {
                   item.unReadMessageCount ? <View style={styles.border}>
-                      <Text style={styles.number}>{item.unReadMessageCount}</Text>
-                    </View> : ''
+                    <Text style={styles.number}>{item.unReadMessageCount}</Text>
+                  </View> : ''
                 }
               </View>
             </TouchableOpacity>
@@ -149,7 +139,7 @@ const styles = StyleSheet.create({
   },
   contentBox: {
     width: 686,
-    minHeight: 150,
+    height: 150,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     margin: 30,
