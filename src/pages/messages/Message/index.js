@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -7,6 +7,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import NAVIGATION_KEYS from "../../../navigator/key";
 import MessageApi from "../../../request/MessageApi"
 import moment from 'moment';
+// import { ScrollView } from "react-native";
 
 const Message = () => {
   const navigation = useNavigation();
@@ -65,7 +66,7 @@ const Message = () => {
 	}, []));
 
   return (
-    <View style={styles.index}>
+    <ScrollView style={styles.index}>
       {
         messageInfo.map((item) => {
           return (
@@ -112,14 +113,14 @@ const Message = () => {
           )
         })
       }
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   index: {
     width: '100%',
-    // flex: 1,
+    flex: 1,
     backgroundColor: '#EEF4F7',
     paddingTop: 30
   },
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
   contentBox: {
     width: 686,
-    height: 150,
+    minHeight: 150,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     margin: 30,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '65%',
-    height: '100%',
+    // height: '100%',
   },
   title: {
     fontSize: 32,
