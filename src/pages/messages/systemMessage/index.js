@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { empty } from "../../Home/listComponent";
 import MessageApi from "../../../request/MessageApi";
@@ -65,7 +65,7 @@ const SystemMessage = (props) => {
 
   const renderItem = ({ item }) => {
     return (
-      <>
+      <ScrollView>
         <TouchableOpacity style={styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
           <Image
             style={styles.iconStyle}
@@ -87,7 +87,7 @@ const SystemMessage = (props) => {
             </View>
           </View>
         </TouchableOpacity>
-      </>
+      </ScrollView>
     )
   };
 
