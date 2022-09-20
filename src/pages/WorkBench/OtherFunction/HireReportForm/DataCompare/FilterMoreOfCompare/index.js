@@ -300,6 +300,8 @@ const FilterMoreOfCompare = ({
     const copyList = [...selectState];
     const findItemIndex = selectState.findIndex(select => select.value === state.value);
     if(findItemIndex !== -1){
+      //如果只剩下一个状态，则不支持取消；
+      if(selectState.length === 1)return;
       copyList.splice(findItemIndex, 1);
       setSelectState(copyList);
       return;

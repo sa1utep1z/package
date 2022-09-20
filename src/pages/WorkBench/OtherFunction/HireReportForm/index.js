@@ -15,14 +15,19 @@ const HireReportForm = () => {
   const toast = useToast();
 
   const [overViewData, setOverViewData] = useState(ORIGIN_HIRE_REPORT_OVERVIEW_LIST);
-  const [loading, setLoading] = useState(false);
+  const [overViewLoading, setOverViewLoading] = useState(false);
+
   const [trendData, setTrendData] = useState({});
   const [trendLoading, setTrendLoading] = useState(false);
+  
   const [compareData, setCompareData] = useState([]);
   const [compareLoading, setCompareLoading] = useState(false);
 
+  const [percentData, setPercentData] = useState([]);
+  const [percentLoading, setPercentLoading] = useState(false);
+
   const getOverView = async(range) => {
-    setLoading(true);
+    setOverViewLoading(true);
     try {
       const res = await HireReportFormApi.Overview(range);
       if(res.code !== SUCCESS_CODE){
@@ -71,7 +76,7 @@ const HireReportForm = () => {
     } catch (error) {
       toast.show(`出现预料之外的错误，请联系管理员处理`, { type: 'danger' });
     }finally{
-      setLoading(false);
+      setOverViewLoading(false);
     }
   };
 
@@ -93,7 +98,6 @@ const HireReportForm = () => {
   };
 
   const getCompareData = async(search) => {
-    console.log('search', search)
     setCompareLoading(true);
     const range1 = search[0];
     const range2 = search[1];
@@ -113,12 +117,47 @@ const HireReportForm = () => {
     }
   };
 
+  const getPercentData = async(type, search) => {
+    console.log('search', search);
+    let res;
+    setPercentLoading(true);
+    try{
+      switch(type){
+        case 'company':
+          res = await HireReportFormApi.Company(search);
+          break;
+        case 'store':
+          res = await HireReportFormApi.Store(search);
+          break;
+        case 'recruiter':
+          console.log('招聘员')
+          res = await HireReportFormApi.Recruiter(search);
+          break;
+        case 'supplier':
+          console.log('供应商')
+          res = await HireReportFormApi.Supplier(search);
+          break;
+      }
+      console.log('res', res);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setPercentData(res.data);
+    }catch(error){
+      console.log('error', error);
+      toast.show(`出现预料之外的错误，请联系管理员处理`, { type: 'danger' });
+    }finally{
+      setPercentLoading(false);
+    }
+  }
+
   return (
     <ScrollView style={styles.screen}>
       <View style={styles.allComponents}>
         <DataOverview
           data={overViewData} 
-          loading={loading}
+          loading={overViewLoading}
           getData={getOverView} 
         />
         <DataTrend
@@ -131,7 +170,11 @@ const HireReportForm = () => {
           loading={compareLoading}
           getData={getCompareData}
         />
-        <DataPercent />
+        <DataPercent 
+          data={percentData}
+          loading={percentLoading}
+          getData={getPercentData}
+        />
       </View>
       <HireReportDialog/>
     </ScrollView>

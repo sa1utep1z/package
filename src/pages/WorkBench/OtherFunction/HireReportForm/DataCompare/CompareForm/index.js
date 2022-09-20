@@ -26,8 +26,6 @@ const CompareForm = ({
 }) => {
   const [renderData, setRenderData] = useState(originRenderData);
 
-  useMemo(() => console.log('renderData', renderData), [renderData])
-
   useEffect(() => {
     if(data?.length){
       let datasets = [], labels = [];

@@ -150,7 +150,7 @@ const DataTrend = ({
   };
   
   return (
-    <Shadow>
+    <Shadow style={{marginBottom: 32}}>
       <View style={styles.totalArea}>
         <View style={styles.titleArea}>
           <View style={styles.titleLine}></View>
@@ -171,16 +171,16 @@ const DataTrend = ({
           selectedState={selectedState}
         />
         <View style={styles.bottomMoreSearchArea}>
-          {/* <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{rangeList[0]+'VS'+rangeList[1]}</Text>
-          </View> */}
           <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选状态：</Text>
-            <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
+            <Text style={styles.moreSearchTitle}>已选时间：</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.startDate} ~ ${rangeDate.endDate}`}</Text>
           </View>
+          {!!selectedState.length && <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选状态：</Text>
+            <Text style={styles.moreSearchText}>{selectedState.map(item => item.title).join('、')}</Text>
+          </View>}
           {selectedWay.value && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选渠道：</Text>
+            <Text style={styles.moreSearchTitle}>已选来源渠道：</Text>
             <Text style={styles.moreSearchText}>{selectedWay.title}</Text>
           </View>}
           {selectedStore.storeId && <View style={styles.moreSearchArea}>
@@ -210,7 +210,6 @@ const styles = StyleSheet.create({
     width: 686,
     backgroundColor: '#fff',
     borderRadius: 10,
-    marginBottom: 32,
     padding: 30
   },
   titleArea: {
@@ -235,7 +234,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   moreSearchArea: {
-    width: '50%', 
     flexDirection: 'row', 
     paddingRight: 20, 
     paddingBottom: 10
@@ -245,7 +243,6 @@ const styles = StyleSheet.create({
     color: '#000000'
   },
   moreSearchText: {
-    flex: 1, 
     fontSize: 26, 
     borderBottomWidth: 1, 
     borderColor: '#EFEFEF', 

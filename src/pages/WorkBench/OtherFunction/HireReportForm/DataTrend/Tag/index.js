@@ -1,10 +1,7 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSelector, useDispatch } from "react-redux";
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import moment from "moment";
 
-import {setRangeDateType} from '../../../../../../redux/features/HireReport/RangeDateOfTrend';
 import { THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../../utils/const";
 
 const Tag = ({
@@ -17,10 +14,6 @@ const Tag = ({
   searchOther = false, //是否筛选了更多
   clearSearch //清除筛选
 }) => {
-  const dispatch = useDispatch();
-
-  // const rangeDate = useSelector(state => state.RangeDateOfTrend);
-
   const [selectTag, setSelectTag] = useState('thisWeek');
 
   useEffect(()=>{

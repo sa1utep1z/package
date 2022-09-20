@@ -465,6 +465,26 @@ export const CHART_STATUS_LIST = [
   {value: 'onBoardingPass', title: '入职'},
   {value: 'resignNum', title: '离职'}
 ];
+
+export const PERCENT_CHART_STATUS_LIST = [
+  /**报名 */
+  {value: 'SIGN_UP_PENDING', title: '报名-待处理'},
+  {value: 'SIGN_UP_NO_INTENTION', title: '报名-无意愿'},
+
+  /**面试 */
+  {value: 'INTERVIEW_PENDING', title: '面试-待处理'},
+  {value: 'INTERVIEW_NO_ARRIVE', title: '面试-未去面试'},
+  {value: 'INTERVIEW_FAIL', title: '面试-未通过'},
+
+  /**入职 */
+  {value: 'ON_BOARDING_PENDING', title: '入职-待处理'},
+  {value: 'ON_BOARDING_FAIL', title: '入职-未报到'},
+
+  /**在离职 */
+  {value: 'JOB_ON', title: '在职'},
+  {value: 'JOB_RESIGN', title: '离职'}
+];
+
 export const MESSAGE_TYPE = [
   { label: '公告', value: 'ANNOUNCEMENT' },
   { label: '通知', value: 'ADMIN' },
@@ -483,6 +503,20 @@ export const AUDIT_TYPE = {
 export const COLOR_LIST = [
   '#409EFF',
   '#7640FF',
-  '#FFA800',
+  '#FF4348',
   '#1cd66c'
+];
+
+export const PERCENT_COLOR_LIST = [
+  '#FFB20E',
+  '#FD8F52',
+  '#FF4348',
+  '#B665DB',
+  '#FAC9D3',
+  '#DEDDFF',
+  '#918EFF',
+  '#20D5DA',
+  '#1EA2F0',
+  '#00F294',
+  '#FFCC69'
 ];

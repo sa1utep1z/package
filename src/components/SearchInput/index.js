@@ -143,7 +143,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0)',
     paddingTop: 0, 
-    paddingBottom: 0
+    paddingBottom: 0,
+    paddingLeft: 10
   },
   inputContainerStyle: {
     margin: 0,

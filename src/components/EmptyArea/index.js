@@ -6,15 +6,17 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 const EmptyArea = ({
     color = '#999999', 
     content = '暂无数据',
+    size = 35,
+    otherStyle,
     withSearch,
     ...rest
   }) => {
 
   return (
-    <View style={[styles.emptyArea, withSearch && styles.searchBorder]}>
+    <View style={[styles.emptyArea, withSearch && styles.searchBorder, otherStyle]}>
       <AntDesign
         name='frowno'
-        size={35}
+        size={size}
         color={color}
       />
       <Text style={styles.emptyText}>{content}</Text>
