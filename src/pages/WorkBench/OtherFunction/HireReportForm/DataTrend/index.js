@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity} from 'reac
 import { Shadow } from 'react-native-shadow-2';
 import { useDispatch } from 'react-redux';
 
-import { HIRE_DATA_TREND_TAB_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, ORIGIN_SELECTED_STATUS_LIST } from "../../../../../utils/const";
+import { COLOR_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, ORIGIN_SELECTED_STATUS_LIST } from "../../../../../utils/const";
 import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 
 import Tag from "./Tag";
@@ -170,6 +170,15 @@ const DataTrend = ({
           loading={loading} 
           selectedState={selectedState}
         />
+        <View style={styles.bottomColorList}>
+          {!!selectedState.length && selectedState.map((status, statusIndex) => {
+            return (
+              <View style={styles.colorArea}>
+                <View style={[styles.circle, {backgroundColor: `${COLOR_LIST[statusIndex]}`}]}></View>
+                <Text style={{fontSize: 22, color: `${COLOR_LIST[statusIndex]}`}}>{status.title}</Text>
+              </View>
+          )})}
+        </View>
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
@@ -228,6 +237,22 @@ const styles = StyleSheet.create({
     fontSize: 36, 
     color: '#000', 
     fontWeight: 'bold'
+  },
+  bottomColorList: {
+    marginBottom: 40, 
+    flexDirection: 'row'
+  },
+  colorArea: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  circle: {
+    width: 15, 
+    height: 15, 
+    borderRadius: 50, 
+    marginRight: 10,
   },
   bottomMoreSearchArea: {
     flexDirection: 'row', 

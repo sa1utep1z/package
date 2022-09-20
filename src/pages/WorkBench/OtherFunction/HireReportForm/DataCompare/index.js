@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'rea
 import { Shadow } from 'react-native-shadow-2';
 import { useDispatch } from 'react-redux';
 
-import { HIRE_DATA_TREND_TAB_LIST, HIRE_DATA_COMPARE_TAB_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, LAST_MONTH_START, LAST_MONTH_END, ORIGIN_COMPARE_STATUS_LIST } from "../../../../../utils/const";
+import { COLOR_LIST, HIRE_DATA_COMPARE_TAB_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, LAST_MONTH_START, LAST_MONTH_END, ORIGIN_COMPARE_STATUS_LIST } from "../../../../../utils/const";
 import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 
 import Tag from "./Tag";
@@ -59,7 +59,6 @@ const DataCompare = ({
   const [selectedSupplier, setSelectedSupplier] = useState({}); //供应商
 
   useEffect(() => {
-    console.log('searchContent', searchContent);
     getData(searchContent);
     //设置是否点亮筛选更多按钮；
     checkSearchOther();
@@ -74,7 +73,6 @@ const DataCompare = ({
   };
   
   const confirm = (search) => {
-    console.log('确定的search', search);
     const {
       selectState,
       selectWay,
@@ -213,6 +211,16 @@ const DataCompare = ({
           loading={loading} 
           selectedState={selectedState} 
         /> 
+        <View style={styles.bottomColorList}>
+          {rangeList.map((range, rangeNameIndex) => {
+            const rangeName = range.length ? range : `${rangeNameIndex === 0 ? `${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5)}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5)}` : `${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5)}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5)}`}`;
+            return (
+              <View key={rangeNameIndex} style={styles.colorArea}>
+                <View style={[styles.circle, {backgroundColor: `${COLOR_LIST[rangeNameIndex]}`}]}></View>
+                <Text style={{fontSize: 22, color: `${COLOR_LIST[rangeNameIndex]}`}}>{rangeName}</Text>
+              </View>
+          )})}
+        </View>
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
@@ -281,6 +289,22 @@ const styles = StyleSheet.create({
   touchArea_text: {
     textAlign: 'center', 
     fontSize: 28
+  },
+  bottomColorList: {
+    marginBottom: 40, 
+    flexDirection: 'row'
+  },
+  colorArea: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  circle: {
+    width: 15, 
+    height: 15, 
+    borderRadius: 50, 
+    marginRight: 10,
   },
   bottomMoreSearchArea: {
     flexDirection: 'row', 

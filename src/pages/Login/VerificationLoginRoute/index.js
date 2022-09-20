@@ -1,11 +1,10 @@
 import React, {useState, useEffect, forwardRef, useImperativeHandle} from "react";
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
-import {CheckBox, Button} from '@rneui/themed';
+import {Button} from '@rneui/themed';
 import {Formik, Field} from 'formik';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import * as Yup from 'yup';
-import md5 from 'md5';
 
 import storage from '../../../utils/storage';
 import httpRequest from '../../../utils/httpRequest';
@@ -22,8 +21,7 @@ const initialValues = {
 };
 
 const LoginSchema = Yup.object().shape({
-  mobile: Yup.string().required('请输入手机号'),
-  verifyCode: Yup.string().required('请输入验证码')
+  mobile: Yup.string().required('请输入手机号')
 });
 
 const VerificationLoginRoute = ({props}, ref) => {
@@ -33,6 +31,10 @@ const VerificationLoginRoute = ({props}, ref) => {
   const [time, setTime] = useState(0);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [btnContent, setBtnContent] = useState('获取验证码');
+
+  useEffect(()=>{
+    getUserMsg();
+  },[])
 
   useEffect(()=>{
     if(time <= 0) {
@@ -56,14 +58,82 @@ const VerificationLoginRoute = ({props}, ref) => {
   useImperativeHandle(ref, () => {
     return { restForm };
   }, []);
+    
+  const getUserMsg = async () => {
+    try {
+      const userMsg = await storage.load({key: 'userMsg'});
+      if (userMsg) {
+        const {setFieldValue} = restForm;
+        const {account} = userMsg;
+        setFieldValue('mobile', account);
+      }
+    } catch (err) {
+      console.log('getUserMsg_err -->Not Found Account&&Password', err);
+    }
+  };
 
-  const login = values => {
-    console.log('submit -> values', values);
+  const login = async(values) => {
+    if(!values.verifyCode){
+      toast.show('请输入验证码！', {type: 'danger'});
+      return;
+    }else if(values.verifyCode.length !== 6){
+      toast.show('请输入正确的验证码！', {type: 'danger'});
+      return;
+    }
+    const params = {
+      loginType: 'sms',
+      account: values.mobile,
+      smsValidCode: values.verifyCode
+    };
+    try {
+      const res = await httpRequest.post('admin/login/app', params);
+      console.log('login->res', res);
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`${res.msg}`, {type: 'danger'});
+        return;
+      }
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: NAVIGATION_KEYS.TABBAR,
+            },
+          ],
+        }),
+      );
+
+      //保存token
+      storage.save({
+        key: 'token',
+        data: res.data,
+        expires: null,
+      });
+    } catch (err) {
+      console.log('err', err);
+      toast.show(`请确认网络是否开启，或稍后重试。`, { type: 'danger' });
+      return;
+    }
   };
 
   const onSubmit = values => login(values);
 
-  const getVerificationCode = () => setTime(5);
+  const getVerificationCode = async() => {
+    const {mobile} = restForm.values;
+    try{
+      const res = await httpRequest.get(`sms/sendSmsCode/login/${mobile}`);
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`${res.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('验证码短信已发送，请注意查收！',{type: 'success'});
+      setTime(60);
+    }catch(err){
+      console.log('code->err', err);
+      toast.show('验证码短信发送失败，请联系管理员处理',{type: 'danger'});
+    }
+  };
 
   return (
     <Formik

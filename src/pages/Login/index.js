@@ -68,7 +68,6 @@ const Login = props => {
       restForm.submitForm();
     }
     if(index === 1){
-      toast.show('敬请期待...', {type: 'warning'});
       const {current: {restForm}} = VerificationLoginRef;
       restForm.submitForm();
       return;

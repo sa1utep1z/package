@@ -1,4 +1,4 @@
-import React, {useState, useRef, useMemo} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, TextInput, Keyboard} from 'react-native';
 import {Text, Input} from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
@@ -28,7 +28,7 @@ const VerifyCode = ({
 
   const [focus, setFocus] = useState('focus1');
   
-  useMemo(() => {
+  useEffect(() => {
     if(!value1 && !value2 && !value3 && !value4 && !value5 && !value6){
       setFocus('');
       Keyboard.dismiss();
@@ -36,11 +36,32 @@ const VerifyCode = ({
     if((value1 && value2 && value3 && value4 && value5 && value6) && focus === ''){
       Keyboard.dismiss();
     }
+    const code = `${value1}${value2}${value3}${value4}${value5}${value6}`;
+    form.setFieldValue(field.name, code);
   }, [value1, value2, value3, value4, value5, value6])
 
   const onChangeText = (value) => {
     const nowInputIndex = Number(focus.charAt(focus.length - 1));
-    eval(`setValue${nowInputIndex}('${value}')`);
+    switch(nowInputIndex){
+      case 1:
+        setValue1(value);
+        break;
+      case 2:
+        setValue2(value);
+        break;
+      case 3:
+        setValue3(value);
+        break;
+      case 4:
+        setValue4(value);
+        break;
+      case 5:
+        setValue5(value);
+        break;
+      case 6:
+        setValue6(value);
+        break;
+    }
   };
 
   const onChange = ({nativeEvent: {text}}) => {
@@ -49,14 +70,46 @@ const VerifyCode = ({
     if(text.length){
       if(nextFocusNumber < 7){
         setFocus(`focus${nextFocusNumber}`);
-        eval(`input${nextFocusNumber}Ref?.current?.focus()`);
+        switch(nextFocusNumber){
+          case 2:
+            input2Ref?.current?.focus();
+            break;
+          case 3:
+            input3Ref?.current?.focus();
+            break;
+          case 4:
+            input4Ref?.current?.focus();
+            break;
+          case 5:
+            input5Ref?.current?.focus();
+            break;
+          case 6:
+            input6Ref?.current?.focus();
+            break;
+        }
       }else if(nextFocusNumber === 7){
         setFocus('');
       }
     }else{
         if(previousFocusNumber > 0){
           setFocus(`focus${previousFocusNumber}`);
-          eval(`input${previousFocusNumber}Ref?.current?.focus()`);
+          switch(previousFocusNumber){
+            case 1:
+              input1Ref?.current?.focus();
+              break;
+            case 2:
+              input2Ref?.current?.focus();
+              break;
+            case 3:
+              input3Ref?.current?.focus();
+              break;
+            case 4:
+              input4Ref?.current?.focus();
+              break;
+            case 5:
+              input5Ref?.current?.focus();
+              break;
+          }
         }
     }
   };

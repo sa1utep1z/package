@@ -37,13 +37,12 @@ const TrendForm = ({
           color: () => COLOR_LIST[statusIndex]
         })
       })
-      const legend = selectedState.map(status => status.title);
       const labels = data.map(item => moment(item.orderDate).format('M/D'));
       labels.unshift('0');
       const renderData = {
         datasets,
-        legend,
-        labels
+        labels,
+        legend: []
       };
       setRenderData({...renderData});
     }
@@ -133,7 +132,7 @@ const TrendForm = ({
 
 const styles = StyleSheet.create({
   bottomArea: {
-    height: 500,
+    height: 480,
     justifyContent: 'flex-end', 
     alignItems: 'center'
   }

@@ -14,10 +14,11 @@ const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
 const lastWeek = {startDate: LAST_WEEK_START, endDate: LAST_WEEK_END};
 const thisMonth = {startDate: THIS_MONTH_START, endDate: THIS_MONTH_END};
 
-const DataCompare = ({
+const DataPercent = ({
   data,
   loading,
-  getData
+  getData,
+  scrollViewRef
 }) => {
   const dispatch = useDispatch();
 
@@ -75,6 +76,8 @@ const DataCompare = ({
   };
 
   const confirm = (search) => {
+    //当在数据占比中点击筛选更多的时候自动划到最底部；方便查看
+    scrollViewRef?.current?.scrollToEnd();
     const {
       rangeTime: {startTime, endTime}, 
       selectState,
@@ -304,4 +307,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DataCompare;
+export default DataPercent;

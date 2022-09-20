@@ -16,6 +16,7 @@ const handleUnauthorized = () => {
 };
 
 instance.interceptors.request.use(async(config) => {
+  console.log('config', config)
   config.headers['X-Device'] = 'app';
   try{
     const token = await storage.load({ key: 'token' });
