@@ -224,7 +224,7 @@ const DataCompare = ({
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{`${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5)}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5)} VS ${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5)}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5)}`}</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5).replace(/\-/g,"/")}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5).replace(/\-/g,"/")} VS ${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5).replace(/\-/g,"/")}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5).replace(/\-/g,"/")}`}</Text>
           </View>
           {!!selectedState.length && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选状态：</Text>

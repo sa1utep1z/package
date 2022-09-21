@@ -182,7 +182,7 @@ const DataTrend = ({
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{`${rangeDate.startDate} ~ ${rangeDate.endDate}`}</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.startDate.replace(/\-/g,"/")} ~ ${rangeDate.endDate.replace(/\-/g,"/")}`}</Text>
           </View>
           {!!selectedState.length && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选状态：</Text>

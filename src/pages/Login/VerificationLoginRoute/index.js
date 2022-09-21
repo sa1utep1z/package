@@ -1,10 +1,10 @@
 import React, {useState, useEffect, forwardRef, useImperativeHandle} from "react";
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
-import {Button} from '@rneui/themed';
 import {Formik, Field} from 'formik';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import * as Yup from 'yup';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import storage from '../../../utils/storage';
 import httpRequest from '../../../utils/httpRequest';
@@ -89,7 +89,8 @@ const VerificationLoginRoute = ({props}, ref) => {
       const res = await httpRequest.post('admin/login/app', params);
       console.log('login->res', res);
       if (res.code !== SUCCESS_CODE) {
-        toast.show(`${res.msg}`, {type: 'danger'});
+        toast.show(`${res.msg}，请重新输入`, {type: 'danger'});
+        restForm.setFieldValue('verifyCode', '');
         return;
       }
 
@@ -135,6 +136,8 @@ const VerificationLoginRoute = ({props}, ref) => {
     }
   };
 
+  const clearMobile = () => restForm.setFieldValue('mobile', '');
+
   return (
     <Formik
       initialValues={initialValues}
@@ -151,16 +154,20 @@ const VerificationLoginRoute = ({props}, ref) => {
               keyboardType="number-pad"
               selectTextOnFocus={true}
               component={LoginInput} 
-              validate={(value)=>setBtnDisabled(value.length !== 11 ? true : false)}
+              validate={(value)=>setBtnDisabled(value.length !== 11)}
               rightIcon={
-                <Button 
-                  type="clear"
-                  title={btnContent}
-                  disabled={btnDisabled}
-                  onPress={getVerificationCode}
-                  titleStyle={[styles.titleStyle, btnDisabled && styles.disabledBorderBottomColor]}
-                  disabledTitleStyle={styles.disabledTitleStyle}
-                />
+                <View style={{flexDirection: 'row'}}>
+                  {!!restForm.values.mobile.length &&<TouchableOpacity onPress={clearMobile} style={styles.clearIcon}>
+                    <AntDesign
+                      name='closecircle'
+                      size={30}
+                      color='#999999'
+                    />
+                  </TouchableOpacity>}
+                  <TouchableOpacity activeOpacity={btnDisabled ? 1 : 0.2} onPress={!btnDisabled ? () => getVerificationCode() : () => console.log('禁止点击')} style={[styles.btnArea, btnDisabled && styles.btnArea_disabled]}>
+                    <Text style={[styles.btnText, btnDisabled && styles.btnText_disabled]}>{btnContent}</Text>
+                  </TouchableOpacity>
+                </View>
               }
             />
             <Field
@@ -181,11 +188,28 @@ const styles = StyleSheet.create({
     borderBottomColor: 'grey', 
     color: 'grey'
   },
-  disabledTitleStyle : {
-    color: '#E3E3E3'
+  clearIcon: {
+    justifyContent: 'center', 
+    marginTop: 10, 
+    paddingRight: 10
   },
-  disabledBorderBottomColor: {
-    borderBottomColor: '#E3E3E3'
+  btnArea: {
+    marginTop: 10, 
+    backgroundColor: '#409EFF', 
+    padding: 10, 
+    borderRadius: 6
+  },
+  btnArea_disabled: {
+    backgroundColor: '#E3E3E3'
+  },
+  btnText: {
+    fontSize: 26, 
+    color: '#ffffff',
+    fontWeight: 'bold'
+  },
+  btnText_disabled: {
+    color: '#999999', 
+    fontWeight: 'normal'
   }
 });
 

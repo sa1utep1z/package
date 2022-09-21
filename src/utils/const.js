@@ -514,9 +514,9 @@ export const PERCENT_COLOR_LIST = [
   '#B665DB',
   '#FAC9D3',
   '#DEDDFF',
-  '#918EFF',
-  '#20D5DA',
   '#1EA2F0',
+  '#20D5DA',
   '#00F294',
+  '#ACFCFF',
   '#FFCC69'
 ];

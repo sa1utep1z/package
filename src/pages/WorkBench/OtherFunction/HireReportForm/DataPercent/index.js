@@ -22,6 +22,7 @@ const DataPercent = ({
 }) => {
   const dispatch = useDispatch();
 
+  const [allNum, setAllNum] = useState(0);
   const [selectedTab, setSelectedTab] = useState('company');
   const [rangeDate, setRangeDate] = useState(thisWeek);
   const [searchOther, setSearchOther] = useState(false);
@@ -55,6 +56,8 @@ const DataPercent = ({
     }else{
       setBottomText('');
     }
+    const allNum = data.length ? data.map(item => item.num).reduce((prev, curr) => prev + curr) : 0;
+    setAllNum(allNum);
   }, [data])
 
   useEffect(()=>{
@@ -215,8 +218,12 @@ const DataPercent = ({
         />
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>总人数：</Text>
+            <Text style={styles.moreSearchText}>{allNum}人</Text>
+          </View>
+          <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{`${rangeDate.startDate} ~ ${rangeDate.endDate}`}</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.startDate.replace(/\-/g,"/")} ~ ${rangeDate.endDate.replace(/\-/g,"/")}`}</Text>
           </View>
           {!!selectedState.length && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选状态：</Text>
