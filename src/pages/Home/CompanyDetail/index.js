@@ -6,15 +6,18 @@ import { WebView } from 'react-native-webview';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
+import { useSelector } from 'react-redux';
 
 import HomeApi from "../../../request/HomeApi";
 import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
-import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE, PROFESSION } from '../../../utils/const';
+import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE, PROFESSION, WATERMARK_LIST, WATERMARK_LIST_SMALLEST } from '../../../utils/const';
 
 const CompanyDetail = (props) => {
   const webRef = useRef(null);
   const toast = useToast();
+
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const navigation = useNavigation();
   const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
@@ -113,45 +116,59 @@ const CompanyDetail = (props) => {
               </>}
           </Swiper>
         </View>
-        <View style={styles.jobBoxStyle}>
-          <Text style={styles.textStyle}>{params.companyName}</Text>
-          <View style={styles.jobBoxLeft}>
+        <View>
+          <View style={styles.jobBoxStyle}>
+            <Text style={styles.textStyle}>{params.companyName}</Text>
+            <View style={styles.jobBoxLeft}>
+              <View style={styles.rowStyles}>
+                <Text style={styles.salaryStyle}>综合薪资</Text>
+                <Text style={styles.amountStyle}>{orderData.salary}</Text>
+              </View>
+              <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26 }}>{recruitRange}</Text>
+              </View>
+            </View>
             <View style={styles.rowStyles}>
-              <Text style={styles.salaryStyle}>综合薪资</Text>
-              <Text style={styles.amountStyle}>{orderData.salary}</Text>
+              {
+                orderData.tags?.map((item) => (
+                    <Text style={styles.tagsStyle}>{item}</Text>
+                ))
+              }
             </View>
-            <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ fontSize: 26 }}>{recruitRange}</Text>
+            <View style={styles.rowStyles}>
+              <Text style={styles.workBox}>{getEnumValue(PROFESSION, orderData.typeOfWork)}</Text>
+            </View>
+            <View style={styles.rowStyles}>
+              <Text style={styles.quotaStyle}>招聘人数：</Text>
+              <Text style={styles.workStyle}>{orderData.total}</Text>
+              {
+                orderData.genderLimit && (
+                  <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.maleTotal}</Text> 女：<Text style={styles.workStyle}>{orderData.femaleTotal}</Text>】</Text>
+                )
+              }
+              {
+                !orderData.genderLimit && (
+                  <Text style={styles.quotaStyle}>【男女不限】</Text>
+                )
+              }
+            </View>
+            <View style={styles.rowStyles}>
+              <Text style={styles.quotaStyle}>已报名人数：</Text>
+              <Text style={styles.workStyle}>{parseInt(orderData.male) + parseInt(orderData.female)}</Text>
+              <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.male}</Text> 女：<Text style={styles.workStyle}>{orderData.female}</Text>】</Text>
             </View>
           </View>
-          <View style={styles.rowStyles}>
-            {
-              orderData.tags?.map((item) => (
-                <Text style={styles.tagsStyle}>{item}</Text>
-              ))
-            }
-          </View>
-          <View style={styles.rowStyles}>
-            <Text style={styles.workBox}>{getEnumValue(PROFESSION, orderData.typeOfWork)}</Text>
-          </View>
-          <View style={styles.rowStyles}>
-            <Text style={styles.quotaStyle}>招聘人数：</Text>
-            <Text style={styles.workStyle}>{orderData.total}</Text>
-            {
-              orderData.genderLimit && (
-                <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.maleTotal}</Text> 女：<Text style={styles.workStyle}>{orderData.femaleTotal}</Text>】</Text>
+          <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+            {[1,2,3,4,5,6,7,8].map((item, itemIndex) => {
+              const isSingle1 = itemIndex < 4 && itemIndex % 2 === 0;
+              const isSingle2 = itemIndex > 4 && itemIndex < 8 && itemIndex % 2 === 1;
+              return (
+                <View key={itemIndex} style={[{width: '25%', height: '50%', transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, ]}>
+                  {isSingle1 && <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>}
+                  {isSingle2 && <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>}
+                </View>
               )
-            }
-            {
-              !orderData.genderLimit && (
-                <Text style={styles.quotaStyle}>【男女不限】</Text>
-              )
-            }
-          </View>
-          <View style={styles.rowStyles}>
-            <Text style={styles.quotaStyle}>已报名人数：</Text>
-            <Text style={styles.workStyle}>{parseInt(orderData.male) + parseInt(orderData.female)}</Text>
-            <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.male}</Text> 女：<Text style={styles.workStyle}>{orderData.female}</Text>】</Text>
+            })}
           </View>
         </View>
         <View style={styles.boxStyle}>
@@ -166,133 +183,195 @@ const CompanyDetail = (props) => {
           </View>
           <View style={styles.contentStyle}>
             <Text style={styles.fontStyle}>{orderTextDetail || '无'}</Text>
+            <View>
+              <View style={styles.contentStyle}>
+                <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
+              </View>
+              <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+              {WATERMARK_LIST.map((item, itemIndex) => {
+                return (
+                  <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                  </View>
+                )
+              })}
+              </View>
+            </View>
           </View>
         </View>
+
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
             <Text style={styles.titlesStyle}>薪资待遇</Text>
           </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>发薪日</Text>
+          <View>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>发薪日</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.payDay}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.payDay}</Text>
+            <View style={styles.rowStyle}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>薪资详情</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.salaryDetail}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.rowStyle}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>薪资详情</Text>
-            </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.salaryDetail}</Text>
+            <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+              {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
+                return (
+                  <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                  </View>
+                )
+              })}
             </View>
           </View>
         </View>
+        
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
             <Text style={styles.titlesStyle}>工作环境</Text>
           </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>班别</Text>
+          <View>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>班别</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{getEnumValue(COMPANY_SHIFT, orderData.shiftCategory)}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{getEnumValue(COMPANY_SHIFT, orderData.shiftCategory)}</Text>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>着装</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{getEnumValue(DRESS, orderData.dress)}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>着装</Text>
+            <View style={styles.rowStyle}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>站坐</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{getEnumValue(SITSTAND, orderData.sitStand)}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{getEnumValue(DRESS, orderData.dress)}</Text>
-            </View>
-          </View>
-          <View style={styles.rowStyle}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>站坐</Text>
-            </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{getEnumValue(SITSTAND, orderData.sitStand)}</Text>
+            <View style={{paddingHorizontal: 30, paddingBottom: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+              {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
+                return (
+                  <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                  </View>
+                )
+              })}
             </View>
           </View>
         </View>
+        
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
             <Text style={styles.titlesStyle}>录用要求</Text>
           </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>年龄</Text>
+          <View>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>年龄</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.ageRequire}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.ageRequire}</Text>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>身份证</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{getEnumValue(COMPANY_IDCARD, orderData.idCard)}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>身份证</Text>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>纹身烟疤</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{getEnumValue(TATTOOSMOKE, orderData.tattooSmoke)}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{getEnumValue(COMPANY_IDCARD, orderData.idCard)}</Text>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>英文字母</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{getEnumValue(COMPANY_ENGLISH, orderData.english)}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>纹身烟疤</Text>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>行程码</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.itineraryCode}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{getEnumValue(TATTOOSMOKE, orderData.tattooSmoke)}</Text>
+            <View style={styles.row1Style}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>核酸</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.nucleicAcid}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>英文字母</Text>
+            <View style={styles.rowStyle}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>疫苗接种</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.vaccination}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{getEnumValue(COMPANY_ENGLISH, orderData.english)}</Text>
-            </View>
-          </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>行程码</Text>
-            </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.itineraryCode}</Text>
-            </View>
-          </View>
-          <View style={styles.row1Style}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>核酸</Text>
-            </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.nucleicAcid}</Text>
-            </View>
-          </View>
-          <View style={styles.rowStyle}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>疫苗接种</Text>
-            </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.vaccination}</Text>
+            <View style={{paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+              {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
+                return (
+                  <View key={itemIndex} style={[{width: '25%', height: 150, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                  </View>
+                )
+              })}
             </View>
           </View>
         </View>
+        
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
             <Text style={styles.titlesStyle}>工厂地址</Text>
           </View>
-          <View style={styles.rowStyle}>
-            <View style={styles.boxContent}>
-              <Text style={styles.fontStyle}>厂址</Text>
+          <View>
+            <View style={styles.rowStyle}>
+              <View style={styles.boxContent}>
+                <Text style={styles.fontStyle}>厂址</Text>
+              </View>
+              <View style={styles.boxText}>
+                <Text style={styles.fontStyle}>{orderData.address || '无'}</Text>
+              </View>
             </View>
-            <View style={styles.boxText}>
-              <Text style={styles.fontStyle}>{orderData.address}</Text>
+            <View style={{paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+              {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
+                return (
+                  <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                  </View>
+                )
+              })}
             </View>
           </View>
         </View>
@@ -329,7 +408,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginBottom: 30,
     padding: 20,
-
   },
   jobBoxLeft: {
     flex: 7,
@@ -360,7 +438,7 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
     marginRight: 10,
     borderRadius: 3,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   workBox: {
     color: '#409EFF',

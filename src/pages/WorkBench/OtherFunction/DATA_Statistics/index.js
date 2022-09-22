@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
@@ -9,13 +9,14 @@ import DataStatisticApi from "../../../../request/DataStatisticApi"
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NormalDialog from "../../../../components/NormalDialog";
 import { useToast } from 'react-native-toast-notifications';
-import { SUCCESS_CODE } from "../../../../utils/const";
+import { SUCCESS_CODE, WATERMARK_LIST_SMALL } from "../../../../utils/const";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import Footer from '../../../../components/FlatList/Footer';
 import Empty from '../../../../components/FlatList/Empty';
 
 const DATA_Statistics = () => {
   const dispatch = useDispatch();
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
   const flatListRef = useRef(null);
   const dialogRef = useRef(null);
   const navigation = useNavigation();
@@ -647,6 +648,15 @@ const DATA_Statistics = () => {
           onScrollEndDrag={() => setLoad(true)}
           stickyHeaderIndices={[0]}
         />
+        <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, flex: 1, width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+          {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+            return (
+              <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+              </View>
+            )
+          })}
+        </View>
       </View>
       <NormalDialog
         ref={dialogRef}

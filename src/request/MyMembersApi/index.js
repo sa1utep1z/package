@@ -26,7 +26,9 @@ const MyMembersApi = {
   // 编辑回访记录里的会员标签；
   MemberTagList: async() => await httpRequest.get('admin/member/tag'),
   // 编辑回访记录中的选择意向报名企业列表；
-  CompanyList: async() => await httpRequest.get('common/companies/forSelect')
+  CompanyList: async() => await httpRequest.get('common/companies/forSelect'),
+  //从回访消息跳转到【新增回访记录】查找的回访记录信息；
+  GetRevisitInfo: async(poolId) => await httpRequest.get(`admin/app/memberPool/${poolId}/info/byReturnVisit`),
 }
 
 export default MyMembersApi;

@@ -1,13 +1,16 @@
 import React, {useState, useImperativeHandle, forwardRef} from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { WebView } from 'react-native-webview';
+import { useSelector } from 'react-redux';
+
+import { WATERMARK_LIST_SMALL } from '../../../utils/const';
 
 const CompanyDetailDialog = ({
     message = {},
     transferFactory
   }, ref) => {
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
+
   const [showDetail, setShowDetail] = useState(false);
 
   useImperativeHandle(ref, () => {
@@ -43,6 +46,15 @@ const CompanyDetailDialog = ({
           <ScrollView style={styles.message} showsVerticalScrollIndicator={false}>
             <Text style={styles.fontStyle}>{message.orderPolicyDetail ? String(message.orderPolicyDetail).replace(/<br\/>/g,"\n") : '无'}</Text>
           </ScrollView>
+          <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+            {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+              return (
+                <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                  <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 10 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                </View>
+              )
+            })}
+          </View>
         </View>
         <TouchableOpacity style={styles.bottomBtn} onPress={()=>setShowDetail(!showDetail)}>
           <Text style={styles.btnText}>确定</Text>

@@ -53,6 +53,7 @@
     "react-native-toast-notifications": "^3.3.0",
     "react-native-update": "^8.0.1",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-watermark-component": "^0.1.0",
     "react-native-webview": "^11.22.5",
     "react-redux": "^8.0.2",
     "yup": "^0.32.11"

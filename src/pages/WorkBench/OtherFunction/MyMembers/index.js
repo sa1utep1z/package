@@ -1,11 +1,11 @@
 import React, {useRef, useEffect, useState, useMemo} from "react";
 import { View, StyleSheet, TouchableOpacity, Text, FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE } from "../../../../utils/const";
+import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE, WATERMARK_LIST_SMALL } from "../../../../utils/const";
 import MyMembersApi from "../../../../request/MyMembersApi";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
@@ -31,6 +31,8 @@ const MyMembers = () => {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
+
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const [searchContent, setSearchContent] = useState({...firstPage});
   const [dialogContent, setDialogContent] = useState({});
@@ -193,6 +195,7 @@ const MyMembers = () => {
     const poolId = msg?.poolId;
     try{
       const res = await MyMembersApi.ReviewRecord(poolId);
+      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${data?.msg}`, {type: 'danger'});
         return;
@@ -316,8 +319,6 @@ const MyMembers = () => {
     )
   };
 
-  const memoList = useMemo(() => showList, [showList])
-
   return (
     <View style={styles.screen}>
       <HeaderSearch 
@@ -348,21 +349,32 @@ const MyMembers = () => {
         <Text style={styles.listHead_item}>状态</Text>
         <Text style={styles.listHead_item}>加入报名</Text>
       </View>
-      <FlatList 
-        ref={flatListRef}
-        data={showList}
-        style={{backgroundColor: '#fff'}}
-        renderItem={renderItem}
-        onRefresh={refresh}
-        onEndReached={onEndReached}
-        keyExtractor={(item,index) => item.poolId}
-        getItemLayout={(data, index)=>({length: 100, offset: 100 * index, index})}
-        refreshing={isLoading}
-        initialNumToRender={20}
-        ListFooterComponent={<Footer showFooter={showList.length} hasNext={originData.hasNext}/>}
-        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
-        onEndReachedThreshold={0.01}
-      />
+      <View style={{flex: 1}}>
+        <FlatList 
+          ref={flatListRef}
+          data={showList}
+          style={{backgroundColor: '#fff'}}
+          renderItem={renderItem}
+          onRefresh={refresh}
+          onEndReached={onEndReached}
+          keyExtractor={(item,index) => item.poolId}
+          getItemLayout={(data, index)=>({length: 100, offset: 100 * index, index})}
+          refreshing={isLoading}
+          initialNumToRender={20}
+          ListFooterComponent={<Footer showFooter={showList.length} hasNext={originData.hasNext}/>}
+          ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
+          onEndReachedThreshold={0.01}
+        />
+        <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, flex: 1, width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+          {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+            return (
+              <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+              </View>
+            )
+          })}
+        </View>
+      </View>
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}

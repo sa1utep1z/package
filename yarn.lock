@@ -6565,6 +6565,11 @@ react-native-vector-icons@^9.2.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
+react-native-watermark-component@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmmirror.com/react-native-watermark-component/-/react-native-watermark-component-0.1.0.tgz#d8c2b1d307cf0ee22773ca5e35e1e9b33a84d514"
+  integrity sha512-LGi+bTe7SsRsDOAEASu3XO5fo1RiSBWPPdDqrpkTqwKuU04+CkMEXCbMGP2t0WY+gnwBFCZqAakPG7SO7lBkUw==
+
 react-native-webview@^11.22.5:
   version "11.23.0"
   resolved "https://registry.npmmirror.com/react-native-webview/-/react-native-webview-11.23.0.tgz#603a584236da2e993906e6a094f165dcac3a1fdb"

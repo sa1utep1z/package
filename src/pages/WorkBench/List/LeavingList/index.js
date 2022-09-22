@@ -13,7 +13,7 @@ import JobResignStatus from "../../../../components/NormalDialog/JobResignStatus
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import ListApi from "../../../../request/ListApi";
-import { SUCCESS_CODE, TAB_OF_LIST, JOB_ON_STATUS } from "../../../../utils/const";
+import { SUCCESS_CODE, TAB_OF_LIST, JOB_ON_STATUS, WATERMARK_LIST_SMALL } from "../../../../utils/const";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
@@ -34,6 +34,7 @@ const LeavingList = () => {
   const toast = useToast();
 
   const role = useSelector(state => state.roleSwitch.role);
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
   
   const [searchContent, setSearchContent] = useState({ role, ...firstPage });
   const [showList, setShowList] = useState([]);
@@ -325,21 +326,32 @@ const LeavingList = () => {
         <Text style={styles.tab}>状态</Text>
         <Text style={styles.tab}>联系方式</Text>
       </View>
-      <FlatList 
-        ref={flatListRef}
-        data={memoList}
-        style={{backgroundColor: '#fff'}}
-        renderItem={renderItem}
-        onRefresh={refresh}
-        onEndReached={onEndReached}
-        keyExtractor={(item,index) => item.flowId}
-        getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
-        refreshing={isLoading}
-        initialNumToRender={20}
-        ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext}/>}
-        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
-        onEndReachedThreshold={0.01}
-      />
+      <View style={{flex: 1}}>
+        <FlatList 
+          ref={flatListRef}
+          data={memoList}
+          style={{backgroundColor: '#fff'}}
+          renderItem={renderItem}
+          onRefresh={refresh}
+          onEndReached={onEndReached}
+          keyExtractor={(item,index) => item.flowId}
+          getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
+          refreshing={isLoading}
+          initialNumToRender={20}
+          ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext}/>}
+          ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
+          onEndReachedThreshold={0.01}
+        />
+        <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, flex: 1, width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+          {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+            return (
+              <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+              </View>
+            )
+          })}
+        </View>
+      </View>
       <NormalDialog
         ref={dialogRef}
         dialogContent={dialogContent}

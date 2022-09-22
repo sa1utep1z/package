@@ -42,11 +42,39 @@ const EditReturnView = (props) => {
   const navigation = useNavigation();
 
   const [companyList, setCompanyList] = useState([]);
+  const [messageInfo, setMessageInfo] = useState({});
 
   useEffect(() => {
     getCompanyList();
     setFieldValue();
   }, [])
+
+  useEffect(()=>{
+    //从回访消息那跳转过来
+    if(params.fromMessage){
+      getReviewInfo(params?.findPoolId?.param.memberPoolId);
+    }else {
+      setFieldValue();
+    }
+    getCompanyList();
+  },[])
+
+  const getReviewInfo = async(poolId) => {
+    if(!poolId) return;
+    try{
+      const res = await MyMembersApi.GetRevisitInfo(poolId);
+      console.log('res!!!', res)
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`请求失败，请稍后重试。${res.msg}`, {type: 'danger'});
+      }
+      restForm.setFieldValue('memberName', res.data.userName);
+      restForm.setFieldValue('memberPhone', res.data.mobile);
+      restForm.setFieldValue('memberTags', res.data.tags);
+      setMessageInfo(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   const setFieldValue = () => {
     const { formList: { userName, mobile, tags } } = params;
@@ -66,10 +94,15 @@ const EditReturnView = (props) => {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
-  console.log('params的值：', params.formList.mobile);
-  const onSubmit = async (values) => {
-    const { params: { formList: { poolId } } } = props.route;
-    const params = {
+
+  const onSubmit = async(values) => {
+    let poolId;
+    if(params.fromMessage){
+      poolId = params?.findPoolId?.param.memberPoolId;
+    }else{
+      poolId = props.route.params.formList.poolId;
+    }
+    const parameters = {
       returnVisitResult: values.memberDecision ? 'HAVE_WILL' : 'NO_WILL',
       tags: values.memberTags,
       nextReturnVisitDate: values.nextTimeReviewDate,
@@ -77,9 +110,10 @@ const EditReturnView = (props) => {
       willSignUpDate: values.intendSignUpDate,
       content: values.thisTimeReviewRecord
     };
-    try {
-      const res = await MyMembersApi.IncreaseReviewRecord(poolId, params);
-      if (res.code !== SUCCESS_CODE) {
+
+    try{
+      const res = await MyMembersApi.IncreaseReviewRecord(poolId, parameters);
+      if(res.code !== SUCCESS_CODE){
         toast.show(`新增回访记录失败，${res.msg}`, { type: 'danger' });
         return;
       }
@@ -177,7 +211,7 @@ const EditReturnView = (props) => {
                   title="下次回访日期"
                   component={SelectDate}
                 />
-                {params.historyList.length > 0 ?
+                {params?.historyList && params.historyList.length > 0 ? 
                   <>
                     <View style={{ height: 91, paddingHorizontal: 28, justifyContent: 'center' }}>
                       <Text style={{ fontSize: 32, color: '#333333' }}>历史回访记录</Text>
@@ -200,10 +234,34 @@ const EditReturnView = (props) => {
                         }
                       })}
                     </View>
-                  </> : <View style={{ height: 91, alignItems: 'center', paddingHorizontal: 28, flexDirection: 'row' }}>
-                    <Text style={{ fontSize: 32, color: '#333333' }}>历史回访记录：</Text>
-                    <Text style={{ fontSize: 32, color: '#333333' }}>暂无历史回访记录</Text>
+                  </> : <>
+                  {messageInfo.visitInfos && messageInfo.visitInfos.length > 0 ? <>
+                      <View style={{height: 91, paddingHorizontal: 28, justifyContent: 'center'}}>
+                        <Text style={{fontSize: 32, color: '#333333'}}>历史回访记录</Text>
+                      </View>
+                      <View style={styles.bottomList}>
+                        <View style={styles.recordTitle_head}>
+                          <Text style={styles.recordTitle_item}>回访人</Text>
+                          <Text style={[styles.recordTitle_item, {width: 220}]}>回访日期</Text>
+                          <Text style={{paddingLeft: 10, fontSize: 28, color: '#333333'}}>回访详情</Text>
+                        </View>
+                        {messageInfo.visitInfos.map((renderItem, renderIndex)=>{
+                          if(renderIndex < 3){
+                            return (
+                              <View key={renderIndex} style={[styles.bottomListItem, renderIndex%2 === 0 && {backgroundColor: '#ecf5ff'}]}>
+                                <Text style={styles.recordItem}>{renderItem.lastModifiedByName}</Text>
+                                <Text style={[styles.recordItem, {width: 220}]}>{moment(renderItem.lastModifiedDate).format('YY/MM/DD HH:mm')}</Text>
+                                <Text style={{paddingLeft: 10, fontSize: 28, color: '#333333', flex: 1, paddingVertical: 10}}>{renderItem.content}</Text>
+                              </View>
+                            )
+                          }
+                        })}
+                      </View>
+                    </> : <View style={{height: 91, alignItems: 'center', paddingHorizontal: 28, flexDirection: 'row' }}>
+                    <Text style={{fontSize: 32, color: '#333333'}}>历史回访记录：</Text>
+                    <Text style={{fontSize: 32, color: '#333333'}}>暂无历史回访记录</Text>
                   </View>}
+                </>}
               </View>
             </ScrollView>
             <Button

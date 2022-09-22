@@ -15,13 +15,14 @@ const FormItem = ({
   onPress,
   maxLength,
   formValue, //主动传值进去。做展示用。
+  errInputStyle,
   ...rest
 }) => {
 
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
       {rest.isRequired && <Text style={styles.required}>*</Text>}
-      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}: </Text>
+      <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}：</Text>
     </View>
   );
 
@@ -56,7 +57,7 @@ const FormItem = ({
       <ErrorMessage
         name={field.name}
         component={Text}
-        style={styles.errorInput}
+        style={[styles.errorInput, errInputStyle]}
       />
     </>
   )

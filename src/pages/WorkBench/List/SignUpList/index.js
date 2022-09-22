@@ -1,8 +1,7 @@
 import React, {useRef, useEffect, useState, useMemo, useCallback} from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
@@ -10,7 +9,7 @@ import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { TAB_OF_LIST, SUCCESS_CODE, SIGN_UP_STATUS } from "../../../../utils/const";
+import { TAB_OF_LIST, SUCCESS_CODE, SIGN_UP_STATUS, WATERMARK_LIST_SMALL } from "../../../../utils/const";
 import ListApi from "../../../../request/ListApi";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
@@ -36,6 +35,7 @@ const SignUpList = () => {
   const dispatch = useDispatch();
 
   const role = useSelector(state => state.roleSwitch.role);
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage});
   const [showList, setShowList] = useState([]);
@@ -319,21 +319,32 @@ const SignUpList = () => {
         <Text style={styles.tab}>状态</Text>
         <Text style={styles.tab}>联系方式</Text>
       </View>
-      <FlatList 
-        ref={flatListRef}
-        data={memoList}
-        style={{backgroundColor: '#fff'}}
-        renderItem={renderItem}
-        keyExtractor={(item,index) => item.flowId}
-        getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
-        refreshing={isLoading}
-        onRefresh={refresh}
-        onEndReached={onEndReached}
-        initialNumToRender={20}
-        ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext}/>}
-        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
-        onEndReachedThreshold={0.01}
-      />
+      <View style={{flex: 1}}>
+        <FlatList 
+          ref={flatListRef}
+          data={memoList}
+          style={{backgroundColor: '#fff'}}
+          renderItem={renderItem}
+          keyExtractor={(item,index) => item.flowId}
+          getItemLayout={(data, index)=>({length: 80, offset: 80 * index, index})}
+          refreshing={isLoading}
+          onRefresh={refresh}
+          onEndReached={onEndReached}
+          initialNumToRender={20}
+          ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext}/>}
+          ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
+          onEndReachedThreshold={0.01}
+        />
+        <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, flex: 1, width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+          {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+            return (
+              <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+              </View>
+            )
+          })}
+        </View>
+      </View>
       <NormalDialog 
         ref={dialogRef}
         dialogContent={dialogContent}

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, Image } from "react-native";
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useToast } from "react-native-toast-notifications";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { empty } from "../../Home/listComponent";
 import NAVIGATION_KEYS from "../../../navigator/key";
@@ -9,6 +9,7 @@ import moment from 'moment';
 
 const ReVisitMessage = (props) => {
   const navigation = useNavigation();
+  const toast = useToast();
   const { route: { params } } = props;
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0, type: params.type });
   const [messageInfo, setMessageInfo] = useState([]); // 消息数据
@@ -44,8 +45,13 @@ const ReVisitMessage = (props) => {
       }
       setIsOpen(!isOpen);
       setMessageId(value);
-      navigation.navigate(NAVIGATION_KEYS.MY_MEMBERS);
+      const findPoolId = messageInfo.length ? messageInfo.find(item => item.messageId === value) : '';
+      navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
+        fromMessage: true,
+        findPoolId
+      });
     } catch (error) {
+      console.log('err', error)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };

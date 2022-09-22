@@ -8,6 +8,7 @@ import NowSelectTabNameInListReducer from './features/NowSelectTabNameInList';
 import RoleInfoReducer from './features/RoleInfo';
 import HireReportDialogReducer from './features/HireReport/HireReportDialog';
 import PageDialogReducer from './features/PageDialog';
+import MemberInfoReducer from './features/MemberInfo';
 
 export default configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export default configureStore({
     roleInfo: RoleInfoReducer, //登录应用保存的角色信息
     HireReportDialog: HireReportDialogReducer, //招聘看板中的悬浮窗
     PageDialog: PageDialogReducer, //所有页面的悬浮窗
+    MemberInfo: MemberInfoReducer, //登陆人信息
   },
   
   //解决redux更新数据无法传入Moment的问题；

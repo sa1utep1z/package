@@ -32,8 +32,8 @@ const AccountLoginRoute = ({props}, ref) => {
   const [remember, setRemember] = useState(false);
 
   useEffect(() => {
-    getUserMsg();
     storage.remove({key: 'token'});
+    getUserMsg();
   }, []);
 
   //将这个表单暴露给父组件
@@ -49,6 +49,9 @@ const AccountLoginRoute = ({props}, ref) => {
         const {setFieldValue} = restForm;
         const {account, password} = userMsg;
         setFieldValue('user', account);
+        if(props.route.params === 'reset'){
+          return;
+        }
         setFieldValue('password', password);
         //防止多次弹窗
         if(window.handleUnauthorized){

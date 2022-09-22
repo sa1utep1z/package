@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
-
-import { MEMBER_INFO_KEY, FAKE_MEMBER_INFO, GENDER, SEAS_SOURCE_TYPE } from '../../../utils/const';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
+
 import EmptyArea from '../../EmptyArea';
-import { CHANEL_SOURCE_LIST, MEMBERS_STATUS, WAY_TO_GO } from '../../../utils/const';
+import { CHANEL_SOURCE_LIST, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, FAKE_MEMBER_INFO } from '../../../utils/const';
 import { deepCopy } from '../../../utils';
 
 const FormMemberDetail = ({
@@ -14,6 +14,8 @@ const FormMemberDetail = ({
   showDate = false,
   noResignDate = false, //不要显示离职日期
 }) => {
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
+
   const [showList, setShowList] = useState([
     { type: 'name', title: '姓名', value: '' },
     { type: 'idNo', title: '身份证', value: '' },
@@ -136,6 +138,15 @@ const FormMemberDetail = ({
           }) : <EmptyArea />}
         </View>
       }
+      <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+        {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+          return (
+            <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+              <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 10 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+            </View>
+          )
+        })}
+      </View>
     </ScrollView>
   )
 };

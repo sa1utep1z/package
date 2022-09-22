@@ -12,7 +12,9 @@ import NAVIGATION_KEYS from "../../navigator/key";
 import HeaderCenterSearch from "../../components/Header/HeaderCenterSearch";
 import { SUCCESS_CODE } from "../../utils/const";
 import HomeApi from "../../request/HomeApi";
+import MineApi from "../../request/MineApi";
 import { setRoleInfo } from "../../redux/features/RoleInfo";
+import { setMemberInfo } from "../../redux/features/MemberInfo";
 import { openHomeSearch } from "../../redux/features/homeSearch";
 import Empty from '../../components/FlatList/Empty';
 import Footer from '../../components/FlatList/Footer';
@@ -22,6 +24,8 @@ const firstPage = {pageSize: 20, pageNumber: 0};
 
 const Home = (props) => {
   const dispatch = useDispatch();
+
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const {navigation} = props;
 
@@ -43,6 +47,7 @@ const Home = (props) => {
   useEffect(() => {
     dispatch(openHomeSearch());
     getBannerList();
+    getMemberMessage();
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
@@ -58,6 +63,24 @@ const Home = (props) => {
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
+
+  //获取个人信息（姓名·部门·手机号）
+  const getMemberMessage = async() => {
+    try{
+      const res = await MineApi.MineMessage();
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      const msg = {
+        name: res.data.userName,
+        store: res.data.storeName
+      };
+      dispatch(setMemberInfo(msg));
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   //这里是作为一个监听程序，监听该页面是否在前台，如果切换桌面再返回页面，则将页面reload一下，防止组件还保留以前的状态（时间）；
   const handleChange = (state) => {
@@ -75,6 +98,7 @@ const Home = (props) => {
     }
   };
 
+  //获取用户权限
   const getRoleInfo = async() => {
     try{
       const res = await HomeApi.getRoleInfo();
@@ -197,8 +221,16 @@ const Home = (props) => {
 
   const renderItem = ({item, index}) => {
     const isLastIndex = index === showList.length - 1;
+    const isSingleNumber = index % 2;
     return (
       <View style={[styles.itemArea, isLastIndex && {borderBottomRightRadius: 8, borderBottomLeftRadius: 8, borderBottomWidth: 0}]}>
+        <View style={{position: 'absolute', flexDirection: 'row', width: '100%'}} pointerEvents={'none'}>
+          {[1,2,3,4].map((item, itemIndex) => (
+            <View key={itemIndex} style={[{flex: 1, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, isSingleNumber && itemIndex % 2 === 0 && {opacity: 0}, !isSingleNumber && itemIndex % 2 !== 0 && {opacity: 0}]}>
+              <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+            </View>
+          ))}
+        </View>
         <Text style={styles.item_flex1}>{index+1}</Text>
         <TouchableOpacity style={isSeacher ? styles.touchItemArea : styles.touchItemArea1} onPress={()=>gotoList(item)}>
           <Text style={styles.itemPress} numberOfLines={1} ellipsizeMode='tail'>{item.companyName}</Text>

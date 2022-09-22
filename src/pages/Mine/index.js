@@ -62,21 +62,24 @@ const Mine = () => {
       const res = await AccountApi.SendCodeOfReset(message.loginAccount);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
+        navigation.navigate(NAVIGATION_KEYS.RESET, {
+          startCounting: false,
+          mobile: message.loginAccount
+        });
         return;
       }
-      // navigation.navigate(NAVIGATION_KEYS.RESET, {
-      //   startCounting: true,
-      //   mobile: message.loginAccount
-      // });
-    }catch(err){
-      console.log('err', err);
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }finally{
-      console.log('message.loginAccount', message.loginAccount);
+      toast.show('验证码发送成功，请注意查收', {type: 'success'});
       navigation.navigate(NAVIGATION_KEYS.RESET, {
         startCounting: true,
         mobile: message.loginAccount
       });
+    }catch(err){
+      console.log('err', err);
+      navigation.navigate(NAVIGATION_KEYS.RESET, {
+        startCounting: false,
+        mobile: message.loginAccount
+      });
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 

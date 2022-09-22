@@ -3,8 +3,9 @@ import {StyleSheet, View, ScrollView, TouchableOpacity, Linking} from 'react-nat
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
-import { MEMBER_INFO_KEY, FAKE_MEMBER_INFO, GENDER, SEAS_SOURCE_TYPE } from '../../../utils/const'; 
+import { MEMBER_INFO_KEY, FAKE_MEMBER_INFO, GENDER, SEAS_SOURCE_TYPE, WATERMARK_LIST_SMALL } from '../../../utils/const'; 
 import EmptyArea from '../../EmptyArea';
 import { moveArray } from '../../../utils';
 
@@ -12,6 +13,8 @@ const MemberDetail = ({
   memberInfoList = FAKE_MEMBER_INFO
 }) => {
   const[showList, setShowList] = useState([]);
+  
+  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   useEffect(()=>{
     let list = [];
@@ -63,6 +66,15 @@ const MemberDetail = ({
             </View>
           )
         }) : <EmptyArea />}
+      </View>
+      <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+        {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
+          return (
+            <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+              <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 10 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+            </View>
+          )
+        })}
       </View>
     </ScrollView>
   )
