@@ -65,29 +65,24 @@ const NoticeMessage = (props) => {
 
   const renderItem = ({ item }) => {
     return (
-      <ScrollView>
-        <TouchableOpacity style={styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
-          <Image
-            style={styles.iconStyle}
-            source={require('../../../assets/images/notice.png')}
-          />
-          <View style={styles.content}>
-            <View style={styles.topTitle}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:mm') : ''}</Text>
-            </View>
-            {/* {
-              (isOpen && item.messageId === messageId) ? <Text style={styles.tips}>{item.content}</Text> : <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.content}</Text>
-            } */}
-            <Text style={styles.tips}>{item.content}</Text>
-            <View style={styles.right}>
-              {
-                !item.hasRead && <View style={styles.border}></View>
-              }
-            </View>
+      <TouchableOpacity style={styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
+        <Image
+          style={styles.iconStyle}
+          source={require('../../../assets/images/notice.png')}
+        />
+        <View style={styles.content}>
+          <View style={styles.topTitle}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:mm') : ''}</Text>
           </View>
-        </TouchableOpacity>
-      </ScrollView>
+          <Text style={styles.tips}>{item.content}</Text>
+          <View style={styles.right}>
+            {
+              !item.hasRead && <View style={styles.border}></View>
+            }
+          </View>
+        </View>
+      </TouchableOpacity>
     )
   };
 

@@ -17,6 +17,7 @@ const FormItem = ({
   formValue, //主动传值进去。做展示用。
   ...rest
 }) => {
+
   const label = (
     <View style={[styles.labelArea, labelAreaStyle]}>
       {rest.isRequired && <Text style={styles.required}>*</Text>}

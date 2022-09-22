@@ -20,6 +20,7 @@ const CompanyDetail = (props) => {
   const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.label;
   const { route: { params } } = props;
   const [orderId, setOrderId] = useState(params?.orderId); // 订单id
+  const [orderTextDetail, setorderTextDetail] = useState(''); // 工价详情
   const [orderData, setOrderData] = useState({
     orderPolicyDetail: ''
   }); // 岗位详情数据
@@ -45,11 +46,26 @@ const CompanyDetail = (props) => {
     }
   };
 
+  const getOrderDetail = async () => {
+    try {
+      const res = await HomeApi.orderTextDetail(orderId);
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setorderTextDetail(res.data);
+      console.log('发单详情：', res)
+    } catch (err) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerTitle: params.orderName,
     });
     getDetail();
+    getOrderDetail();
   }, [orderId])
 
   const signUpPress = () => navigation.navigate(NAVIGATION_KEYS.SIGN_UP, {
@@ -63,7 +79,7 @@ const CompanyDetail = (props) => {
   //复制文本
   const _handleClipboardContent = async () => {
     //设置内容到剪贴板
-    Clipboard.setString(orderPolicyDetail);
+    Clipboard.setString(orderTextDetail);
     //从剪贴板获取内容
     Clipboard.getString().then((content) => {
       // alert(content)
@@ -149,7 +165,7 @@ const CompanyDetail = (props) => {
             </TouchableOpacity>
           </View>
           <View style={styles.contentStyle}>
-            <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
+            <Text style={styles.fontStyle}>{orderTextDetail || '无'}</Text>
           </View>
         </View>
         <View style={styles.boxStyle}>

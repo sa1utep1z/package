@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import {StyleSheet, ScrollView, View, Text} from 'react-native';
-import {Button} from '@rneui/themed';
-import {Formik, Field} from 'formik';
+import React, { useState } from 'react';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Linking } from 'react-native';
+import { Button } from '@rneui/themed';
+import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
+import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useToast } from "react-native-toast-notifications";
 
@@ -36,38 +37,38 @@ const initialValues = {
 let restForm;
 
 const EditReturnView = (props) => {
-  const {route: {params}} = props;
+  const { route: { params } } = props;
   const toast = useToast();
   const navigation = useNavigation();
 
   const [companyList, setCompanyList] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     getCompanyList();
     setFieldValue();
-  },[])
+  }, [])
 
   const setFieldValue = () => {
-    const {formList: {userName, mobile, tags}} = params;
+    const { formList: { userName, mobile, tags } } = params;
     restForm.setFieldValue('memberName', userName);
     restForm.setFieldValue('memberPhone', mobile);
     restForm.setFieldValue('memberTags', tags);
   };
 
-  const getCompanyList = async() => {
-    try{
+  const getCompanyList = async () => {
+    try {
       const res = await MyMembersApi.CompanyList();
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`请求失败，请稍后重试。${res.msg}`, {type: 'danger'});
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，请稍后重试。${res.msg}`, { type: 'danger' });
       }
       setCompanyList(res.data);
-    }catch(err){
+    } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
-
-  const onSubmit = async(values) => {
-    const {params: {formList: {poolId}}} = props.route;
+  console.log('params的值：', params.formList.mobile);
+  const onSubmit = async (values) => {
+    const { params: { formList: { poolId } } } = props.route;
     const params = {
       returnVisitResult: values.memberDecision ? 'HAVE_WILL' : 'NO_WILL',
       tags: values.memberTags,
@@ -76,18 +77,22 @@ const EditReturnView = (props) => {
       willSignUpDate: values.intendSignUpDate,
       content: values.thisTimeReviewRecord
     };
-    try{
+    try {
       const res = await MyMembersApi.IncreaseReviewRecord(poolId, params);
-      if(res.code !== SUCCESS_CODE){
+      if (res.code !== SUCCESS_CODE) {
         toast.show(`新增回访记录失败，${res.msg}`, { type: 'danger' });
         return;
       }
-      toast.show('新增回访记录成功！',{type: 'success'});
+      toast.show('新增回访记录成功！', { type: 'success' });
       navigation.goBack();
       props?.route?.params?.refresh && props.route.params.refresh();
-    }catch(err){
+    } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
+  };
+
+  const callPhone = (item) => {
+    Linking.openURL(`tel:${item}`);
   };
 
   return (
@@ -95,10 +100,10 @@ const EditReturnView = (props) => {
       initialValues={initialValues}
       validationSchema={SignUpValidationSchema}
       onSubmit={onSubmit}>
-        {({handleSubmit, values, ...rest}) => {
-          restForm = rest;
-          return (
-          <View style={{flex: 1, backgroundColor: '#EEF4F7', paddingTop: 31}}>
+      {({ handleSubmit, values, ...rest }) => {
+        restForm = rest;
+        return (
+          <View style={{ flex: 1, backgroundColor: '#EEF4F7', paddingTop: 31 }}>
             <ScrollView style={styles.scrollArea}>
               <View style={[styles.cardArea]}>
                 <Field
@@ -111,10 +116,10 @@ const EditReturnView = (props) => {
                   title="会员姓名"
                   editable={false}
                   placeholder="无"
-                  inputStyle={{color: '#CCCCCC'}}
+                  inputStyle={{ color: '#CCCCCC' }}
                   component={FormItem}
                 />
-                <Field
+                {/* <Field
                   name="memberPhone"
                   title="会员手机号"
                   maxLength={11}
@@ -122,13 +127,20 @@ const EditReturnView = (props) => {
                   placeholder="无"
                   inputStyle={{color: '#CCCCCC'}}
                   component={FormItem}
-                />
+                /> */}
+                <View style={styles.phoneStyle}>
+                  <Text style={styles.label}>手机号码: </Text>
+                  <TouchableOpacity style={[styles.listItem_item, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(params.formList.mobile)}>
+                    <Text style={[styles.listItem_text, { color: '#409EFF' }]}>{params.formList.mobile}</Text>
+                    <Entypo name='phone' size={26} color='#409EFF' />
+                  </TouchableOpacity>
+                </View>
                 <Field
                   name="memberDecision"
                   title="会员意愿"
                   component={TwoRadio}
                 />
-                {values.memberDecision && 
+                {values.memberDecision &&
                   <>
                     <Field
                       name="intendCompany"
@@ -137,7 +149,7 @@ const EditReturnView = (props) => {
                       noBorder
                       bottomButton
                       selectList={[]}
-                      pageOnPress={()=>navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
+                      pageOnPress={() => navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
                         list: companyList,
                         confirm: (list) => {
                           rest.setFieldValue('intendCompany', list[0]);
@@ -150,7 +162,7 @@ const EditReturnView = (props) => {
                     <Field
                       name="intendSignUpDate"
                       title="意向报名日期"
-  
+
                       component={SelectDate}
                     />
                   </>
@@ -165,33 +177,33 @@ const EditReturnView = (props) => {
                   title="下次回访日期"
                   component={SelectDate}
                 />
-                {params.historyList.length > 0 ? 
+                {params.historyList.length > 0 ?
                   <>
-                    <View style={{height: 91, paddingHorizontal: 28, justifyContent: 'center'}}>
-                      <Text style={{fontSize: 32, color: '#333333'}}>历史回访记录</Text>
+                    <View style={{ height: 91, paddingHorizontal: 28, justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 32, color: '#333333' }}>历史回访记录</Text>
                     </View>
                     <View style={styles.bottomList}>
                       <View style={styles.recordTitle_head}>
                         <Text style={styles.recordTitle_item}>回访人</Text>
-                        <Text style={[styles.recordTitle_item, {width: 220}]}>回访日期</Text>
-                        <Text style={{paddingLeft: 10, fontSize: 28, color: '#333333'}}>回访详情</Text>
+                        <Text style={[styles.recordTitle_item, { width: 220 }]}>回访日期</Text>
+                        <Text style={{ paddingLeft: 10, fontSize: 28, color: '#333333' }}>回访详情</Text>
                       </View>
-                      {params.historyList.map((renderItem, renderIndex)=>{
-                        if(renderIndex < 3){
+                      {params.historyList.map((renderItem, renderIndex) => {
+                        if (renderIndex < 3) {
                           return (
-                            <View key={renderIndex} style={[styles.bottomListItem, renderIndex%2 === 0 && {backgroundColor: '#ecf5ff'}]}>
+                            <View key={renderIndex} style={[styles.bottomListItem, renderIndex % 2 === 0 && { backgroundColor: '#ecf5ff' }]}>
                               <Text style={styles.recordItem}>{renderItem.lastModifiedByName}</Text>
-                              <Text style={[styles.recordItem, {width: 220}]}>{moment(renderItem.lastModifiedDate).format('YY/MM/DD HH:mm')}</Text>
-                              <Text style={{paddingLeft: 10, fontSize: 28, color: '#333333', flex: 1, paddingVertical: 10}}>{renderItem.content}</Text>
+                              <Text style={[styles.recordItem, { width: 220 }]}>{moment(renderItem.lastModifiedDate).format('YY/MM/DD HH:mm')}</Text>
+                              <Text style={{ paddingLeft: 10, fontSize: 28, color: '#333333', flex: 1, paddingVertical: 10 }}>{renderItem.content}</Text>
                             </View>
                           )
                         }
                       })}
                     </View>
-                  </> : <View style={{height: 91, alignItems: 'center', paddingHorizontal: 28, flexDirection: 'row' }}>
-                  <Text style={{fontSize: 32, color: '#333333'}}>历史回访记录：</Text>
-                  <Text style={{fontSize: 32, color: '#333333'}}>暂无历史回访记录</Text>
-                </View>}
+                  </> : <View style={{ height: 91, alignItems: 'center', paddingHorizontal: 28, flexDirection: 'row' }}>
+                    <Text style={{ fontSize: 32, color: '#333333' }}>历史回访记录：</Text>
+                    <Text style={{ fontSize: 32, color: '#333333' }}>暂无历史回访记录</Text>
+                  </View>}
               </View>
             </ScrollView>
             <Button
@@ -202,7 +214,8 @@ const EditReturnView = (props) => {
               titleStyle={styles.titleStyle}
             />
           </View>
-        )}}
+        )
+      }}
     </Formik>
   )
 }
@@ -227,51 +240,51 @@ const styles = StyleSheet.create({
     fontSize: 35
   },
   theWayToGo: {
-    color: '#000', 
-    fontSize: 15, 
-    fontWeight: 'bold', 
+    color: '#000',
+    fontSize: 15,
+    fontWeight: 'bold',
     marginLeft: 10,
     marginBottom: 10
   },
   cardArea: {
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 10
   },
   historyList: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    borderBottomWidth: 2, 
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)'
   },
   longTextItem: {
-    flex: 1, 
+    flex: 1,
     fontSize: 28,
     minHeight: 60
   },
   recordTitle_head: {
-    height: 60, 
-    flexDirection: 'row', 
-    borderBottomWidth: 1, 
-    borderBottomColor: '#409EFF', 
+    height: 60,
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#409EFF',
     alignItems: 'center'
   },
   recordTitle_item: {
     width: 120,
-    height: '100%', 
-    borderRightWidth: 1, 
-    borderRightColor: '#409EFF', 
-    textAlignVertical: 'center', 
+    height: '100%',
+    borderRightWidth: 1,
+    borderRightColor: '#409EFF',
+    textAlignVertical: 'center',
     paddingLeft: 4,
     fontSize: 28,
     color: '#333333'
   },
   recordItem: {
-    height: '100%', 
-    width: 120, 
-    borderRightWidth: 1, 
-    borderRightColor: '#409EFF', 
-    textAlignVertical: 'center', 
+    height: '100%',
+    width: 120,
+    borderRightWidth: 1,
+    borderRightColor: '#409EFF',
+    textAlignVertical: 'center',
     paddingLeft: 4,
     fontSize: 28,
     color: '#333333'
@@ -285,10 +298,34 @@ const styles = StyleSheet.create({
   },
   bottomListItem: {
     minHeight: 60,
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1, 
+    borderBottomWidth: 1,
     borderBottomColor: '#409EFF'
+  },
+  phoneStyle: {
+    flex: 1,
+    minHeight: 91,
+    flexDirection: 'row',
+    paddingHorizontal: 30,
+    borderBottomWidth: 1,
+    textAlign: 'center',
+    borderColor: 'rgba(0, 0, 0, .05)'
+  },
+  label: {
+    // paddingVertical: 40,
+    fontSize: 32,
+    color: '#000',
+    lineHeight: 91
+  },
+  listItem_text: {
+    color: '#409EFF',
+    fontSize: 32,
+  },
+  listItem_item: {
+    flex: 1,
+    paddingLeft: 5,
+    justifyContent: 'center'
   },
 });
 
