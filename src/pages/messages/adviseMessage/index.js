@@ -76,9 +76,6 @@ const AdviseMessage = (props) => {
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.time}>{item.time ? moment(item.time).format('MM-DD HH:mm') : ''}</Text>
           </View>
-          {/* {
-              (isOpen && item.messageId === messageId) ? <Text style={styles.tips}>{item.content}</Text> : <Text style={styles.tips} numberOfLines={1} ellipsizeMode={'tail'}>{item.content}</Text>
-            } */}
           <Text style={styles.tips}>{item.content}</Text>
           <View style={styles.right}>
             {
