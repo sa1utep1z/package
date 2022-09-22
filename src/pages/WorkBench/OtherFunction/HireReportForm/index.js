@@ -1,18 +1,23 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
+import { useDispatch } from 'react-redux';
 
 import DataOverview from "./DataOverview";
 import DataTrend from "./DataTrend";
 import DataCompare from "./DataCompare";
 import DataPercent from "./DataPercent";
-import HireReportFormApi from "../../../../request/HireReportFormApi";
 
+import HireReportFormApi from "../../../../request/HireReportFormApi";
 import HireReportDialog from "../../../../components/HireReportDialog";
+import { closeDialog } from "../../../../redux/features/HireReport/HireReportDialog";
 import { SUCCESS_CODE, ORIGIN_HIRE_REPORT_OVERVIEW_LIST } from "../../../../utils/const";
 
 const HireReportForm = () => {
+  const dispatch = useDispatch();
   const toast = useToast();
+
+  const scrollViewRef = useRef(null);
 
   const [overViewData, setOverViewData] = useState(ORIGIN_HIRE_REPORT_OVERVIEW_LIST);
   const [overViewLoading, setOverViewLoading] = useState(false);
@@ -25,6 +30,10 @@ const HireReportForm = () => {
 
   const [percentData, setPercentData] = useState([]);
   const [percentLoading, setPercentLoading] = useState(false);
+
+  useEffect(() => {
+    return () => dispatch(closeDialog());
+  }, [])
 
   const getOverView = async(range) => {
     setOverViewLoading(true);
@@ -153,7 +162,7 @@ const HireReportForm = () => {
   }
 
   return (
-    <ScrollView style={styles.screen}>
+    <ScrollView ref={scrollViewRef} style={styles.screen}>
       <View style={styles.allComponents}>
         <DataOverview
           data={overViewData} 
@@ -174,6 +183,7 @@ const HireReportForm = () => {
           data={percentData}
           loading={percentLoading}
           getData={getPercentData}
+          scrollViewRef={scrollViewRef}
         />
       </View>
       <HireReportDialog/>

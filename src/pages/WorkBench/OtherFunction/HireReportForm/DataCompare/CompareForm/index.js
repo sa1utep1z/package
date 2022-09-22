@@ -21,7 +21,6 @@ const originRenderData = {
 const CompareForm = ({
   data, //数据源
   loading, //是否显示加载中
-  rangeList, //图表上部判断显示是什么时间段
   selectedState, //已选择的状态
 }) => {
   const [renderData, setRenderData] = useState(originRenderData);
@@ -41,11 +40,10 @@ const CompareForm = ({
           labels[itemIndex] = labels[itemIndex] ? labels[itemIndex] + 'VS' + moment(item.orderDate).format('M/D') : moment(item.orderDate).format('M/D');
         });
       })
-      const legend = rangeList;
       labels.unshift('');
       const renderData = {
         datasets,
-        legend,
+        legend: [],
         labels
       };
       setRenderData({...renderData});
@@ -136,7 +134,7 @@ const CompareForm = ({
 
 const styles = StyleSheet.create({
   bottomArea: {
-    height: 500,
+    height: 480,
     justifyContent: 'flex-end', 
     alignItems: 'center'
   }

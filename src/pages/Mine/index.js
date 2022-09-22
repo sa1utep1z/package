@@ -10,6 +10,7 @@ import NAVIGATION_KEYS from '../../navigator/key';
 import NormalDialog from '../../components/NormalDialog';
 import MineApi from '../../request/MineApi';
 import { SUCCESS_CODE } from '../../utils/const';
+import AccountApi from '../../request/AccountApi';
 
 const height = Dimensions.get('window').height;
 
@@ -28,6 +29,7 @@ const Mine = () => {
 
   useEffect(()=>{
     getMessage();
+    return () => dialogRef?.current.setShowDialog(false);
   },[])
 
   const getMessage = async() => {
@@ -55,9 +57,27 @@ const Mine = () => {
     );
   };
 
-  const reset = () => {
-    // TODO这里还要调取发送验证码接口
-    navigation.navigate(NAVIGATION_KEYS.RESET);
+  const reset = async() => {
+    try{
+      const res = await AccountApi.SendCodeOfReset(message.loginAccount);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      // navigation.navigate(NAVIGATION_KEYS.RESET, {
+      //   startCounting: true,
+      //   mobile: message.loginAccount
+      // });
+    }catch(err){
+      console.log('err', err);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      console.log('message.loginAccount', message.loginAccount);
+      navigation.navigate(NAVIGATION_KEYS.RESET, {
+        startCounting: true,
+        mobile: message.loginAccount
+      });
+    }
   };
 
   const showDialog = (type) => {
@@ -67,8 +87,8 @@ const Mine = () => {
         setDialogContent({
           dialogTitle: '温馨提示',
           dialogComponent: (
-            <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
-              <Text>将向您绑定的手机发送验证码</Text>
+            <View style={styles.dialogContent}>
+              <Text selectable>将向您绑定的手机号<Text selectable style={{color: '#409EFF'}}>{message.loginAccount}</Text>发送验证码</Text>
             </View>
           ),
           confirmText: '找回密码',
@@ -79,7 +99,7 @@ const Mine = () => {
         setDialogContent({
           dialogTitle: '温馨提示',
           dialogComponent: (
-            <View style={{height: 80, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={styles.dialogContent}>
               <Text>确定退出当前账号？</Text>
             </View>
           ),
@@ -107,8 +127,8 @@ const Mine = () => {
           key={1}
         />
         <View style={styles.titleArea}>
-          <Text style={styles.title_large}>{`${message.storeName} · ${message.userName}`}</Text>
-          <Text style={styles.title_small}>手机号：{message.loginAccount}</Text>
+          <Text selectable style={styles.title_large}>{`${message.storeName} · ${message.userName}`}</Text>
+          <Text selectable style={styles.title_small}>手机号：{message.loginAccount}</Text>
         </View>
       </View>
       <View style={styles.bottomArea}>
@@ -205,6 +225,12 @@ const styles = StyleSheet.create({
     fontSize: 22, 
     marginBottom: 10,
     color: '#999999'
+  },
+  dialogContent: {
+    height: 80, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    paddingHorizontal: 30
   }
 });
 

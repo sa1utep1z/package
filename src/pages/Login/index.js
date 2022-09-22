@@ -1,9 +1,10 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
+  Keyboard
 } from 'react-native';
 import {useToast} from 'react-native-toast-notifications';
 import {Text, Button, CheckBox} from '@rneui/themed';
@@ -23,6 +24,23 @@ const Login = props => {
   
   const [index, setIndex] = useState(0);
   const [radio, setRadio] = useState(true);
+  const [keyBoardBottomHeight, setKeyBoardBottomHeight] = useState(0);
+
+  useEffect(()=>{
+    Keyboard.addListener('keyboardDidShow', keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", keyboardDidHide);
+    return () => {
+      Keyboard.removeAllListeners('keyboardDidShow', 'keyboardDidHide');
+    };
+  },[])
+
+  const keyboardDidShow = (e) => {
+    setKeyBoardBottomHeight(e.endCoordinates.height);
+  };
+
+  const keyboardDidHide = () => {
+    setKeyBoardBottomHeight(0);
+  };
 
   const renderLabel = ({ route, focused, color }) => (
     <Text style={[{fontSize: 36, color}, focused && {fontWeight: 'bold'}]}>
@@ -68,7 +86,6 @@ const Login = props => {
       restForm.submitForm();
     }
     if(index === 1){
-      toast.show('敬请期待...', {type: 'warning'});
       const {current: {restForm}} = VerificationLoginRef;
       restForm.submitForm();
       return;
@@ -76,7 +93,7 @@ const Login = props => {
   };
 
   return (
-    <ImageBackground style={styles.totalArea} source={require('../../assets/images/login.png')}>
+    <ImageBackground style={[styles.totalArea, {marginBottom: keyBoardBottomHeight}]} source={require('../../assets/images/login.png')}>
       <View style={{flex: 4}}></View>
       <View style={{flex: 6}}>
         <View style={{paddingHorizontal: 92, minHeight: 500}}>
@@ -138,23 +155,7 @@ const Login = props => {
 const styles = StyleSheet.create({
   totalArea: {
     flex: 1,
-    justifyContent: 'center',
-  },
-  registerArea: {
-    width: 60,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  registerArea_text: {
-    color: '#409EFF',
-    fontSize: 18,
-  },
-  checkBox_fieldContainerStyle: {
-    backgroundColor: 'rgba(0,0,0,0)',
-    padding: 0,
-    justifyContent: 'center',
-    paddingTop:10
+    justifyContent: 'center'
   },
   buttonStyle: {
     height: 100,

@@ -14,13 +14,15 @@ const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
 const lastWeek = {startDate: LAST_WEEK_START, endDate: LAST_WEEK_END};
 const thisMonth = {startDate: THIS_MONTH_START, endDate: THIS_MONTH_END};
 
-const DataCompare = ({
+const DataPercent = ({
   data,
   loading,
-  getData
+  getData,
+  scrollViewRef
 }) => {
   const dispatch = useDispatch();
 
+  const [allNum, setAllNum] = useState(0);
   const [selectedTab, setSelectedTab] = useState('company');
   const [rangeDate, setRangeDate] = useState(thisWeek);
   const [searchOther, setSearchOther] = useState(false);
@@ -54,6 +56,8 @@ const DataCompare = ({
     }else{
       setBottomText('');
     }
+    const allNum = data.length ? data.map(item => item.num).reduce((prev, curr) => prev + curr) : 0;
+    setAllNum(allNum);
   }, [data])
 
   useEffect(()=>{
@@ -75,6 +79,8 @@ const DataCompare = ({
   };
 
   const confirm = (search) => {
+    //当在数据占比中点击筛选更多的时候自动划到最底部；方便查看
+    scrollViewRef?.current?.scrollToEnd();
     const {
       rangeTime: {startTime, endTime}, 
       selectState,
@@ -212,8 +218,12 @@ const DataCompare = ({
         />
         <View style={styles.bottomMoreSearchArea}>
           <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>总人数：</Text>
+            <Text style={styles.moreSearchText}>{allNum}人</Text>
+          </View>
+          <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{`${rangeDate.startDate} ~ ${rangeDate.endDate}`}</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.startDate.replace(/\-/g,"/")} ~ ${rangeDate.endDate.replace(/\-/g,"/")}`}</Text>
           </View>
           {!!selectedState.length && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选状态：</Text>
@@ -304,4 +314,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DataCompare;
+export default DataPercent;

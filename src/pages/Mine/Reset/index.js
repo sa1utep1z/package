@@ -16,11 +16,12 @@ const initialValues = {
   verificationCode: ''
 };
 
-const Reset = () => {
+const Reset = ({props: {params}}) => {
   let timer;
   const [time, setTime] = useState(0);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [btnContent, setBtnContent] = useState('获取验证码');
+  console.log('params', params);
   
   useEffect(()=>{
     if(time <= 0) {
@@ -54,7 +55,7 @@ const Reset = () => {
             return (
               <>
                 <View style={{flex: 1}}>
-                  <Text style={{margin: 32, color: 'grey', fontSize: 32}}>已向您绑定的176***9417的手机发送验证码，请及时查收！</Text>
+                  <Text style={{margin: 32, color: 'grey', fontSize: 32}}>已向您绑定的<Text>{mobile}</Text>的手机发送验证码，请及时查收！</Text>
                   <View style={styles.formArea}>
                     <Field
                       name="newPassword"
@@ -72,16 +73,6 @@ const Reset = () => {
                       labelAreaStyle={styles.labelAreaStyle}
                       containerStyle={{borderBottomWidth: 0}}
                       component={FormItem}
-                      rightIcon={
-                        <Button 
-                          type="clear"
-                          title={btnContent}
-                          disabled={btnDisabled}
-                          onPress={getVerificationCode}
-                          titleStyle={[styles.smallTitleStyle, btnDisabled && styles.disabledBorderBottomColor]}
-                          disabledTitleStyle={styles.disabledTitleStyle}
-                        />
-                      }
                     />
                   </View>
                 </View>

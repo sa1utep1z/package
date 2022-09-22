@@ -1,4 +1,4 @@
-import React, {useState, useRef, useMemo} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, TextInput, Keyboard} from 'react-native';
 import {Text, Input} from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
@@ -27,37 +27,105 @@ const VerifyCode = ({
   const [value6, setValue6] = useState('');
 
   const [focus, setFocus] = useState('focus1');
+
+  //当请求失败时，自动清空表单；
+  useEffect(()=>{
+    if(!field.value.length){
+      setValue1('');
+      setValue2('');
+      setValue3('');
+      setValue4('');
+      setValue5('');
+      setValue6('');
+    }
+  },[field.value])
   
-  useMemo(() => {
+  //监听6个输入框的值，不填及填满都把键盘关掉；
+  useEffect(() => {
     if(!value1 && !value2 && !value3 && !value4 && !value5 && !value6){
       setFocus('');
       Keyboard.dismiss();
     }
     if((value1 && value2 && value3 && value4 && value5 && value6) && focus === ''){
       Keyboard.dismiss();
+      form.submitForm();
     }
+    const code = `${value1}${value2}${value3}${value4}${value5}${value6}`;
+    form.setFieldValue(field.name, code);
   }, [value1, value2, value3, value4, value5, value6])
 
-  const onChangeText = (value) => {
+  //只支持在软键盘上键入内容；开发环境中键盘输入无效，因为只有内容改变才会更新内容，不会实时监听到键入的内容实行跳转下一个输入框的操作。
+  const onKeyPress = ({nativeEvent: {key: keyValue}}) => {
+    //修改输入的值
     const nowInputIndex = Number(focus.charAt(focus.length - 1));
-    eval(`setValue${nowInputIndex}('${value}')`);
-  };
+    switch(nowInputIndex){
+      case 1:
+        setValue1(keyValue);
+        break;
+      case 2:
+        setValue2(keyValue);
+        break;
+      case 3:
+        setValue3(keyValue);
+        break;
+      case 4:
+        setValue4(keyValue);
+        break;
+      case 5:
+        setValue5(keyValue);
+        break;
+      case 6:
+        setValue6(keyValue);
+        break;
+    }
 
-  const onChange = ({nativeEvent: {text}}) => {
+    //跳转到下一个输入框
     const nextFocusNumber = Number(focus.charAt(focus.length - 1)) + 1;
     const previousFocusNumber = Number(focus.charAt(focus.length - 1)) - 1;
-    if(text.length){
+    if(keyValue.length){
       if(nextFocusNumber < 7){
         setFocus(`focus${nextFocusNumber}`);
-        eval(`input${nextFocusNumber}Ref?.current?.focus()`);
+        switch(nextFocusNumber){
+          case 2:
+            input2Ref?.current?.focus();
+            break;
+          case 3:
+            input3Ref?.current?.focus();
+            break;
+          case 4:
+            input4Ref?.current?.focus();
+            break;
+          case 5:
+            input5Ref?.current?.focus();
+            break;
+          case 6:
+            input6Ref?.current?.focus();
+            break;
+        }
       }else if(nextFocusNumber === 7){
         setFocus('');
       }
     }else{
-        if(previousFocusNumber > 0){
-          setFocus(`focus${previousFocusNumber}`);
-          eval(`input${previousFocusNumber}Ref?.current?.focus()`);
+      if(previousFocusNumber > 0){
+        setFocus(`focus${previousFocusNumber}`);
+        switch(previousFocusNumber){
+          case 1:
+            input1Ref?.current?.focus();
+            break;
+          case 2:
+            input2Ref?.current?.focus();
+            break;
+          case 3:
+            input3Ref?.current?.focus();
+            break;
+          case 4:
+            input4Ref?.current?.focus();
+            break;
+          case 5:
+            input5Ref?.current?.focus();
+            break;
         }
+      }
     }
   };
 
@@ -78,8 +146,7 @@ const VerifyCode = ({
           selection={{start: 0, end: 1}}
           maxLength={1}
           value={value1}
-          onChange={onChange}
-          onChangeText={onChangeText}
+          onKeyPress={onKeyPress}
           onFocus={()=>setFocus('focus1')}
         />
       </View>
@@ -98,8 +165,7 @@ const VerifyCode = ({
           selection={{start: 0, end: 1}}
           maxLength={1}
           value={value2}
-          onChange={onChange}
-          onChangeText={onChangeText}
+          onKeyPress={onKeyPress}
           onFocus={()=>setFocus('focus2')}
         />
       </View>
@@ -118,8 +184,7 @@ const VerifyCode = ({
           selection={{start: 0, end: 1}}
           maxLength={1}
           value={value3}
-          onChange={onChange}
-          onChangeText={onChangeText}
+          onKeyPress={onKeyPress}
           onFocus={()=>setFocus('focus3')}
         />
       </View>
@@ -138,8 +203,7 @@ const VerifyCode = ({
           selection={{start: 0, end: 1}}
           maxLength={1}
           value={value4}
-          onChange={onChange}
-          onChangeText={onChangeText}
+          onKeyPress={onKeyPress}
           onFocus={()=>setFocus('focus4')}
         />
       </View>
@@ -158,8 +222,7 @@ const VerifyCode = ({
           selection={{start: 0, end: 1}}
           maxLength={1}
           value={value5}
-          onChange={onChange}
-          onChangeText={onChangeText}
+          onKeyPress={onKeyPress}
           onFocus={()=>setFocus('focus5')}
         />
       </View>
@@ -178,8 +241,7 @@ const VerifyCode = ({
           selection={{start: 0, end: 1}}
           maxLength={1}
           value={value6}
-          onChange={onChange}
-          onChangeText={onChangeText}
+          onKeyPress={onKeyPress}
           onFocus={()=>setFocus('focus6')}
         />
       </View>

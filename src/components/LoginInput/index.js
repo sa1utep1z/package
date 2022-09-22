@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   inputContainerStyle: {
     flex: 1, 
     padding: 0,
+    marginRight: 0,
     alignItems: 'flex-end',
     borderBottomWidth: 0
   },
