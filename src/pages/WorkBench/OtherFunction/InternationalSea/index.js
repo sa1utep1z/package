@@ -1,21 +1,20 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useMemo} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import moment from "moment";
-import { useSelector } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import InternationalSeaApi from "../../../../request/InternationalSeaApi";
 import EmptyArea from "../../../../components/EmptyArea";
 import NormalDialog from "../../../../components/NormalDialog";
-import { SEAS_SOURCE_TYPE, SUCCESS_CODE, WATERMARK_LIST_SMALL } from "../../../../utils/const";
+import { SEAS_SOURCE_TYPE, SUCCESS_CODE } from "../../../../utils/const";
 import { replaceMobile } from "../../../../utils";
+import WaterMark from "../../../../components/WaterMark";
 
 const InternationalSea = () => {
   const toast = useToast();
 
   const dialogRef = useRef(null);
-  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const [dialogContent, setDialogContent] = useState({});
   const [list, setList] = useState([]);
@@ -29,7 +28,7 @@ const InternationalSea = () => {
     toast.show(`${data?.msg}`, { type: 'danger' });
   }
 
-  useEffect(() => {
+  useMemo(() => {
     if(data && data?.data.length){
       data.data.map(item => item.selected = false);
       setList(data.data);
@@ -62,7 +61,7 @@ const InternationalSea = () => {
       confirmOnPress: () => receiveOnPress(item)
     });
   };
-
+  console.log('isLoading', isLoading) ;
   const refreshControl = (
     <RefreshControl
       refreshing={isLoading}
@@ -133,15 +132,7 @@ const InternationalSea = () => {
                 <Text style={styles.btnText}>{item.selected ? '已领取':'领取'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={{paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
-              {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
-                return (
-                  <View key={itemIndex} style={[{width: '25%', height: 150, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
-                  </View>
-                )
-              })}
-            </View>
+            <WaterMark />
           </View>
         )
       }) : <EmptyArea />}

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE, WATERMARK_LIST_SMALL } from "../../../../utils/const";
+import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE } from "../../../../utils/const";
 import MyMembersApi from "../../../../request/MyMembersApi";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
@@ -18,6 +18,7 @@ import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOf
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import Footer from '../../../../components/FlatList/Footer';
 import Empty from '../../../../components/FlatList/Empty';
+import WaterMark from "../../../../components/WaterMark";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -31,8 +32,6 @@ const MyMembers = () => {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-
-  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const [searchContent, setSearchContent] = useState({...firstPage});
   const [dialogContent, setDialogContent] = useState({});
@@ -365,15 +364,7 @@ const MyMembers = () => {
           ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
           onEndReachedThreshold={0.01}
         />
-        <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, flex: 1, width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
-          {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
-            return (
-              <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
-              </View>
-            )
-          })}
-        </View>
+        <WaterMark />
       </View>
       <NormalDialog 
         ref={dialogRef}

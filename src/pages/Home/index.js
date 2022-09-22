@@ -227,7 +227,8 @@ const Home = (props) => {
         <View style={{position: 'absolute', flexDirection: 'row', width: '100%'}} pointerEvents={'none'}>
           {[1,2,3,4].map((item, itemIndex) => (
             <View key={itemIndex} style={[{flex: 1, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, isSingleNumber && itemIndex % 2 === 0 && {opacity: 0}, !isSingleNumber && itemIndex % 2 !== 0 && {opacity: 0}]}>
-              <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+              <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
+              <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
             </View>
           ))}
         </View>

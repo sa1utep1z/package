@@ -12,6 +12,7 @@ import HomeApi from "../../../request/HomeApi";
 import { getYMD } from '../../../utils';
 import NAVIGATION_KEYS from '../../../navigator/key';
 import { SITSTAND, DRESS, COMPANY_SHIFT, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, SUCCESS_CODE, PROFESSION, WATERMARK_LIST, WATERMARK_LIST_SMALLEST } from '../../../utils/const';
+import WaterMark from '../../../components/WaterMark';
 
 const CompanyDetail = (props) => {
   const webRef = useRef(null);
@@ -182,20 +183,16 @@ const CompanyDetail = (props) => {
             </TouchableOpacity>
           </View>
           <View style={styles.contentStyle}>
-            <Text style={styles.fontStyle}>{orderTextDetail || '无'}</Text>
+            {/* <View>
+              <Text style={styles.fontStyle}>{orderTextDetail || '无'}</Text>
+              <WaterMark list={WATERMARK_LIST}/>
+            </View> */}
             <View>
               <View style={styles.contentStyle}>
-                <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
+                <Text style={styles.fontStyle}>{orderTextDetail || '无'}</Text>
+                {/* <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text> */}
               </View>
-              <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
-              {WATERMARK_LIST.map((item, itemIndex) => {
-                return (
-                  <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
-                  </View>
-                )
-              })}
-              </View>
+              <WaterMark list={WATERMARK_LIST}/>
             </View>
           </View>
         </View>
@@ -226,7 +223,8 @@ const CompanyDetail = (props) => {
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
                   <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
                   </View>
                 )
               })}
@@ -268,7 +266,8 @@ const CompanyDetail = (props) => {
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
                   <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
                   </View>
                 )
               })}
@@ -342,7 +341,8 @@ const CompanyDetail = (props) => {
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
                   <View key={itemIndex} style={[{width: '25%', height: 150, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
                   </View>
                 )
               })}
@@ -368,7 +368,9 @@ const CompanyDetail = (props) => {
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
                   <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
+                    <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
+                    
                   </View>
                 )
               })}

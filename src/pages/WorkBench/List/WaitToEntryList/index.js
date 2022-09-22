@@ -14,12 +14,13 @@ import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDeta
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import ListApi from "../../../../request/ListApi";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { SUCCESS_CODE, TAB_OF_LIST, ON_BOARDING_STATUS, WATERMARK_LIST_SMALL } from "../../../../utils/const";
+import { SUCCESS_CODE, TAB_OF_LIST, ON_BOARDING_STATUS } from "../../../../utils/const";
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { setTabName } from "../../../../redux/features/NowSelectTabNameInList";
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import Footer from '../../../../components/FlatList/Footer';
 import Empty from '../../../../components/FlatList/Empty';
+import WaterMark from "../../../../components/WaterMark";
 
 let timer;
 const firstPage = { pageSize: 20, pageNumber: 0 };
@@ -35,7 +36,6 @@ const WaitToEntryList = () => {
   const toast = useToast();
 
   const role = useSelector(state => state.roleSwitch.role);
-  const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
 
   const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage });
   const [showList, setShowList] = useState([]);
@@ -369,15 +369,7 @@ const WaitToEntryList = () => {
           ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
           onEndReachedThreshold={0.01}
         />
-        <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, flex: 1, width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
-          {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
-            return (
-              <View key={itemIndex} style={[{width: '25%', height: 200, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
-                <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 22 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>
-              </View>
-            )
-          })}
-        </View>
+        <WaterMark />
       </View>
       <NormalDialog
         ref={dialogRef}
