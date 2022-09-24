@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)',
     paddingRight: 0,
-    paddingLeft: 28
+    paddingLeft: 28,
   },
   noBorder: {
     flex: 1,

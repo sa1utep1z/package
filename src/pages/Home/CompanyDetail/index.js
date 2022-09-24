@@ -132,7 +132,7 @@ const CompanyDetail = (props) => {
             <View style={styles.rowStyles}>
               {
                 orderData.tags?.map((item) => (
-                    <Text style={styles.tagsStyle}>{item}</Text>
+                  <Text style={styles.tagsStyle}>{item}</Text>
                 ))
               }
             </View>
@@ -159,12 +159,12 @@ const CompanyDetail = (props) => {
               <Text style={styles.quotaStyle}>【男：<Text style={styles.workStyle}>{orderData.male}</Text> 女：<Text style={styles.workStyle}>{orderData.female}</Text>】</Text>
             </View>
           </View>
-          <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
-            {[1,2,3,4,5,6,7,8].map((item, itemIndex) => {
+          <View style={{ paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden' }} pointerEvents={'none'}>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((item, itemIndex) => {
               const isSingle1 = itemIndex < 4 && itemIndex % 2 === 0;
               const isSingle2 = itemIndex > 4 && itemIndex < 8 && itemIndex % 2 === 1;
               return (
-                <View key={itemIndex} style={[{width: '25%', height: '50%', transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, ]}>
+                <View key={itemIndex} style={[{ width: '25%', height: '50%', transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)' },]}>
                   {isSingle1 && <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>}
                   {isSingle2 && <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{`${memberInfo.store} · ${memberInfo.name}`}</Text>}
                 </View>
@@ -173,8 +173,8 @@ const CompanyDetail = (props) => {
           </View>
         </View>
         <View style={styles.boxStyle}>
-          <View style={[styles.boxTopStyle, { display: 'flex', justifyContent: 'space-between'}]}>
-            <View style={{ display: 'flex', flexDirection: 'row'}}>
+          <View style={[styles.boxTopStyle, { display: 'flex', justifyContent: 'space-between' }]}>
+            <View style={{ display: 'flex', flexDirection: 'row' }}>
               <View style={styles.iconStyle}></View>
               <Text style={styles.titlesStyle}>发单详情</Text>
             </View>
@@ -190,13 +190,13 @@ const CompanyDetail = (props) => {
             <View>
               <View style={styles.contentStyle}>
                 <Text style={styles.fontStyle}>{orderTextDetail || '无'}</Text>
-                {/* <Text style={styles.fontStyle}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text> */}
+                <Text style={{fontSize: 30, color: '#409EFF', textAlign: 'center'}}>///////////////////////////////////////////////////////////////////</Text>
+                <Text style={[styles.fontStyle, {marginTop: 20 }]}>{orderData.orderPolicyDetail ? orderPolicyDetail : '无'}</Text>
               </View>
-              <WaterMark list={WATERMARK_LIST}/>
+              <WaterMark list={WATERMARK_LIST} />
             </View>
           </View>
         </View>
-
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
@@ -219,10 +219,10 @@ const CompanyDetail = (props) => {
                 <Text style={styles.fontStyle}>{orderData.salaryDetail}</Text>
               </View>
             </View>
-            <View style={{paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+            <View style={{ paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden' }} pointerEvents={'none'}>
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
-                  <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                  <View key={itemIndex} style={[{ width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)' }, { opacity: item }]}>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
                   </View>
@@ -231,7 +231,7 @@ const CompanyDetail = (props) => {
             </View>
           </View>
         </View>
-        
+
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
@@ -262,10 +262,10 @@ const CompanyDetail = (props) => {
                 <Text style={styles.fontStyle}>{getEnumValue(SITSTAND, orderData.sitStand)}</Text>
               </View>
             </View>
-            <View style={{paddingHorizontal: 30, paddingBottom: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+            <View style={{ paddingHorizontal: 30, paddingBottom: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden' }} pointerEvents={'none'}>
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
-                  <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                  <View key={itemIndex} style={[{ width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)' }, { opacity: item }]}>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
                   </View>
@@ -274,7 +274,7 @@ const CompanyDetail = (props) => {
             </View>
           </View>
         </View>
-        
+
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
@@ -337,10 +337,10 @@ const CompanyDetail = (props) => {
                 <Text style={styles.fontStyle}>{orderData.vaccination}</Text>
               </View>
             </View>
-            <View style={{paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+            <View style={{ paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden' }} pointerEvents={'none'}>
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
-                  <View key={itemIndex} style={[{width: '25%', height: 150, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                  <View key={itemIndex} style={[{ width: '25%', height: 150, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)' }, { opacity: item }]}>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
                   </View>
@@ -349,7 +349,7 @@ const CompanyDetail = (props) => {
             </View>
           </View>
         </View>
-        
+
         <View style={styles.boxStyle}>
           <View style={styles.boxTopStyle}>
             <View style={styles.iconStyle}></View>
@@ -364,13 +364,13 @@ const CompanyDetail = (props) => {
                 <Text style={styles.fontStyle}>{orderData.address || '无'}</Text>
               </View>
             </View>
-            <View style={{paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden'}} pointerEvents={'none'}>
+            <View style={{ paddingHorizontal: 30, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden' }} pointerEvents={'none'}>
               {WATERMARK_LIST_SMALLEST.map((item, itemIndex) => {
                 return (
-                  <View key={itemIndex} style={[{width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)'}, {opacity: item} ]}>
+                  <View key={itemIndex} style={[{ width: '25%', height: 100, transform: [{ rotateZ: '-15deg' }], justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0)' }, { opacity: item }]}>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.store}</Text>
                     <Text style={{ color: 'rgba(0,0,0,0.15)', fontSize: 20 }}>{memberInfo.name}</Text>
-                    
+
                   </View>
                 )
               })}

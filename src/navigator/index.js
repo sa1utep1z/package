@@ -188,6 +188,20 @@ export default Navigator = () => {
           headerTitle: '离职管理',
         }}
       />
+       <Stack.Screen
+        name={NAVIGATION_KEYS.BUSINESS_MANAGE}
+        component={NAVIGATION_PAGES.BUSINESS_MANAGE}
+        options={{
+          headerTitle: '商务企业管理',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.BUSINESS_ADD}
+        component={NAVIGATION_PAGES.BUSINESS_ADD}
+        options={{
+          headerTitle: '新增企业',
+        }}
+      />
       <Stack.Screen
         name={NAVIGATION_KEYS.MEMBER_REVIEW}
         component={NAVIGATION_PAGES.MEMBER_REVIEW}

@@ -275,9 +275,9 @@ export const STATUS_LIST = [
 ];
  
 export const COMPANY_SHIFT = [
-  { label: '长白班', value: 'SHIFT_CATEGORY_LONG' },
-  { label: '两班倒', value: 'SHIFT_CATEGORY_TWO' },
-  { label: '三班倒', value: 'SHIFT_CATEGORY_THREE' },
+  { label: '长白班', value: 'SHIFT_CATEGORY_LONG', checked: false },
+  { label: '两班倒', value: 'SHIFT_CATEGORY_TWO', checked: false },
+  { label: '三班倒', value: 'SHIFT_CATEGORY_THREE', checked: false },
 ];
 export const PROFESSION = [
   { label: '正式工', value: 'FORMAL_WORKER' },
@@ -292,7 +292,7 @@ export const SITSTAND = [
 export const DRESS = [
   { label: '普通工衣', value: 'DRESS_ORDINARY' },
   { label: '无尘服', value: 'DRESS_DUST_FREE' },
-  { label: '穿自己衣服', value: 'DRESS_OWN' },
+  { label: '自己衣服', value: 'DRESS_OWN' },
 ];
 export const COMPANY_LINE = [
   { label: '流水线', value: 'LINE_WATER' },
@@ -314,6 +314,11 @@ export const COMPANY_PHONE = [
   { label: '可以带', value: 'PHONE_CARRY' },
   { label: '不能带', value: 'PHONE_NOT_CARRY' },
 ];
+export const MICROSCOPE = [
+  { label: '看', value: 'MICROSCOPE_SEE' },
+  { label: '不看', value: 'MICROSCOPE_NOT_SEE' },
+  { label: '都有', value: 'ALL_HAVE' },
+];
 export const COMPANY_IDCARD = [
   { label: '必须有磁有效', value: 'ID_CARD_MAGNETIC' },
   { label: '临时身份证可去', value: 'ID_CARD_TEMP' },
@@ -327,6 +332,24 @@ export const TATTOOSMOKE = [
   { label: '严查', value: 'TATTOO_SMOKE_CHECK' },
   { label: '不查', value: 'TATTOO_SMOKE_NOT_CHECK' },
   { label: '不可外露', value: 'TATTOO_SMOKE_NOT_EXPOSED' },
+];
+export const RETURNFACTORY = [
+  { label: '不要返厂', value: 'RETURN_FACTORY_NOT' },
+  { label: '返厂可去', value: 'RETURN_FACTORY' },
+  { label: '有条件返厂可去', value: 'RETURN_FACTORY_CONDITION' },
+];
+export const COMPANYNATIONALITY = [
+  { label: '不限', value: 'NATIONALITY_UNLIMITED' },
+  { label: '只要汉族', value: 'NATIONALITY_ONLY_HAN' },
+  { label: '除四大名族可去', value: 'NATIONALITY_EXCLUDE_FOUR' },
+];
+export const BACKGROUND = [
+  { label: '案底能去', value: 'BACKGROUND_UNLIMITED' },
+  { label: '案底不能去', value: 'BACKGROUND_LIMIT' },
+];
+export const STUDENTPROVE = [
+  { label: '不查证明', value: 'STUDENT_PROVE_NOT_CHECK' },
+  { label: '严查证明', value: 'STUDENT_PROVE_SEVERE_CHECK' },
 ];
 export const STATUS_LISTS = [
   {title: '报名-无意向', value: 'sign_up_no_intention', id: 1},

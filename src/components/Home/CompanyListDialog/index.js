@@ -43,8 +43,10 @@ const CompanyListDialog = (props, ref) => {
   const orderDetail = async (item) => {
     detailRef.current.setShowDetail(true);
     const res = await HomeApi.orderDetail(item.orderId);
+    const res1 = await HomeApi.orderTextDetail(item.orderId);
     const data = res.data;
-    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail});
+    const data1 = res1.data;
+    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail, orderTextDetail: data1});
     setOrderMsg(orderData);
   };
 

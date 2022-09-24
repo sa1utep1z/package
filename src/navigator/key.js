@@ -18,7 +18,7 @@ const NAVIGATION_KEYS = {
   NEWEST_STATE: 'newest_state',
   TRANSFER_FACTORY: 'transfer_factory',
   EDIT_MEMBER: 'edit_member', //编辑会员信息（最新状态）
-  BATCH_OPERATE_LIST: 'batch_operate_list', 
+  BATCH_OPERATE_LIST: 'batch_operate_list',
   RECORD_OF_WORKING: 'record_of_working',
   COMPLETE_MEMBER: 'complete_member', //完善报名三要素
 
@@ -36,6 +36,9 @@ const NAVIGATION_KEYS = {
   PAY_MANAGEMENT: 'pay_management',
   //驻厂管理
   LEAVING_MANAGE: 'leaving_manage',
+  //商务企业管理
+  BUSINESS_MANAGE: 'business_manage',
+  BUSINESS_ADD: 'business_add',
 
   //我的会员
   EDIT_RETURN_VISIT: 'edit_return_visit',
