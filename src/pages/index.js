@@ -25,20 +25,22 @@ const NAVIGATION_PAGES_LIST = {
   COMPLETE_MEMBER: require('./WorkBench/List/CompleteMember'),
   LEAVING_MANAGE: require('./WorkBench/FactoryManage/LeavingManage'),
 
-  //工作台（其他功能）
-  AGREEMENT_MANAGEMENT: require('./WorkBench/OtherFunction/AgreementManagement'),
-  APPLY_DORMITORY: require('./WorkBench/OtherFunction/ApplyDormitory'),
-  COMPLAINT_PLATE: require('./WorkBench/OtherFunction/ComplaintPlate'),
-  DATA_STATISTICS: require('./WorkBench/OtherFunction/DATA_Statistics'),
-  HIRE_REPORT_FORM: require('./WorkBench/OtherFunction/HireReportForm'),
-  INTERNATIONAL_SEA: require('./WorkBench/OtherFunction/InternationalSea'),
-  LEAVE_EXAMINE: require('./WorkBench/OtherFunction/LeaveExamine'),
-  MEMBER_REVIEW: require('./WorkBench/OtherFunction/MemberReview'),
-  MY_COMMISSION: require('./WorkBench/OtherFunction/MyCommission'),
-  MY_MEMBERS: require('./WorkBench/OtherFunction/MyMembers'),
-  PAY_MANAGEMENT: require('./WorkBench/OtherFunction/PayManagement'),
-  BUSINESS_MANAGE: require('./WorkBench/OtherFunction/BusinessManage'),
-  BUSINESS_ADD: require('./WorkBench/OtherFunction/BusinessManage/BusinessAdd'),
+  /**工作台（其他功能）*/
+  AGREEMENT_MANAGEMENT: require('./WorkBench/OtherFunction/AgreementManagement'), //合同管理
+  APPLY_DORMITORY: require('./WorkBench/OtherFunction/ApplyDormitory'), //宿舍申请
+  COMPLAINT_PLATE: require('./WorkBench/OtherFunction/ComplaintPlate'), //投诉看板
+  DATA_STATISTICS: require('./WorkBench/OtherFunction/DATA_Statistics'), //数据统计
+  HIRE_REPORT_FORM: require('./WorkBench/OtherFunction/HireReportForm'), //招聘看板
+  INTERNATIONAL_SEA: require('./WorkBench/OtherFunction/InternationalSea'), //公海
+  LEAVE_EXAMINE: require('./WorkBench/OtherFunction/LeaveExamine'), //离职管理
+  MEMBER_REVIEW: require('./WorkBench/OtherFunction/MemberReview'), //裂变回访
+  MY_COMMISSION: require('./WorkBench/OtherFunction/MyCommission'), //我的提成
+  MY_MEMBERS: require('./WorkBench/OtherFunction/MyMembers'), //我的会员
+  PAY_MANAGEMENT: require('./WorkBench/OtherFunction/PayManagement'), //借支管理
+  BUSINESS_MANAGE: require('./WorkBench/OtherFunction/BusinessManage'), //企业管理
+  BUSINESS_ADD: require('./WorkBench/OtherFunction/BusinessManage/BusinessAdd'), //新增企业
+  ORDER_MANAGE: require('./WorkBench/OtherFunction/OrderManage'), //订单管理
+  CERATE_ORDER: require('./WorkBench/OtherFunction/OrderManage/CreateOrder'), //新建订单
 
   //我的会员
   EDIT_RETURN_VISIT: require('./WorkBench/OtherFunction/MyMembers/EditReturnView'),

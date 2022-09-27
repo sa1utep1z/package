@@ -188,20 +188,6 @@ export default Navigator = () => {
           headerTitle: '离职管理',
         }}
       />
-       <Stack.Screen
-        name={NAVIGATION_KEYS.BUSINESS_MANAGE}
-        component={NAVIGATION_PAGES.BUSINESS_MANAGE}
-        options={{
-          headerTitle: '商务企业管理',
-        }}
-      />
-      <Stack.Screen
-        name={NAVIGATION_KEYS.BUSINESS_ADD}
-        component={NAVIGATION_PAGES.BUSINESS_ADD}
-        options={{
-          headerTitle: '新增企业',
-        }}
-      />
       <Stack.Screen
         name={NAVIGATION_KEYS.MEMBER_REVIEW}
         component={NAVIGATION_PAGES.MEMBER_REVIEW}
@@ -235,6 +221,34 @@ export default Navigator = () => {
         component={NAVIGATION_PAGES.LEAVING_MANAGE}
         options={{
           headerTitle: '离职审核',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.BUSINESS_MANAGE}
+        component={NAVIGATION_PAGES.BUSINESS_MANAGE}
+        options={{
+          headerTitle: '企业管理',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.BUSINESS_ADD}
+        component={NAVIGATION_PAGES.BUSINESS_ADD}
+        options={{
+          headerTitle: '新增企业',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ORDER_MANAGE}
+        component={NAVIGATION_PAGES.ORDER_MANAGE}
+        options={{
+          headerTitle: '订单管理',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.CERATE_ORDER}
+        component={NAVIGATION_PAGES.CERATE_ORDER}
+        options={{
+          headerTitle: '新建订单',
         }}
       />
     </>

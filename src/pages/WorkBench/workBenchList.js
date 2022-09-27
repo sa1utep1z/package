@@ -64,14 +64,7 @@ export const WORKBENCH_LIST = [
         imgBackground: require('../../assets/images/blue.png'),
         iconSource: require('../../assets/images/LeavingManage.png'),
         routeName: NAVIGATION_KEYS.LEAVING_MANAGE
-      },
-      // {
-      //   key: 'businessManage',
-      //   title: '商务企业管理',
-      //   imgBackground: require('../../assets/images/blue.png'),
-      //   iconSource: require('../../assets/images/LeavingManage.png'),
-      //   routeName: NAVIGATION_KEYS.BUSINESS_MANAGE
-      // }
+      }
     ]
     },
      {
@@ -83,8 +76,7 @@ export const WORKBENCH_LIST = [
         imgBackground: require('../../assets/images/lightBlue.png'),
         iconSource: require('../../assets/images/DATA_StatisticsIcon.png'),
         routeName: NAVIGATION_KEYS.DATA_STATISTICS
-      },
-      {
+      }, {
         key: 'hire',
         title: '招聘看板',
         imgBackground: require('../../assets/images/deepGreen.png'),
@@ -105,5 +97,22 @@ export const WORKBENCH_LIST = [
       //   routeName: NAVIGATION_KEYS.INTERNATIONAL_SEA
       // }
     ]
-    }
+    }, {
+      key: 'businessManage',
+      moduleName: '商务管理',
+      list: [{
+        key: 'businessManage',
+        title: '企业管理',
+        imgBackground: require('../../assets/images/blue.png'),
+        iconSource: require('../../assets/images/LeavingManage.png'),
+        routeName: NAVIGATION_KEYS.BUSINESS_MANAGE
+      }, {
+        key: 'orderManage',
+        title: '订单管理',
+        imgBackground: require('../../assets/images/blue.png'),
+        iconSource: require('../../assets/images/LeavingManage.png'),
+        routeName: NAVIGATION_KEYS.ORDER_MANAGE
+      }
+    ]
+    },
   ];

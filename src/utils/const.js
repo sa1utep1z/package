@@ -131,6 +131,11 @@ export const TAB_OF_LIST = {
     {title: '待回访', type: 'preparingNums'},
     {title: '有意愿', type: 'haveWillNums'},
     {title: '无意愿', type: 'noWillNums'}
+  ],
+  ORDER_MANAGE: [
+    {title: '全部', type: 'total'},
+    {title: '招聘中', type: 'hiring'},
+    {title: '停招', type: 'stopHiring'}
   ]
 };
 
@@ -453,7 +458,8 @@ export const HIRE_DATA_TREND_TAB_LIST = [
   { key: 'company', title: '企业' },
   { key: 'store', title: '门店' },
   { key: 'recruiter', title: '招聘员' },
-  { key: 'supplier', title: '供应商' }
+  { key: 'supplier', title: '供应商' },
+  { key: 'way', title: '渠道' }
 ];
 
 export const HIRE_DATA_COMPARE_TAB_LIST = [
@@ -519,7 +525,8 @@ export const MESSAGE_TYPE = [
 export const AUDIT_TYPE = {
   'PENDING': '待审核',
   'PASS': '通过',
-  'FAIL': '拒绝'
+  'FAIL': '拒绝',
+  'CANCEL': '撤销'
 };
 
 /**颜色列表 */

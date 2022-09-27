@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import HireReportFormApi from '../../../../../../request/HireReportFormApi';
-import { PERCENT_CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from '../../../../../../utils/const';
+import { CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from '../../../../../../utils/const';
 import { closeDialog } from '../../../../../../redux/features/HireReport/HireReportDialog';
 import MyMembersApi from '../../../../../../request/MyMembersApi';
 import SearchInput from '../../../../../../components/SearchInput';
@@ -521,8 +521,8 @@ const FilterMoreOfPercent = ({
           </TouchableOpacity>
         </View>
         {showStatus && <View style={[styles.listArea, {marginBottom: 10}]}>
-          {PERCENT_CHART_STATUS_LIST.map((state, stateIndex) => {
-            const isLastIndex = stateIndex === (PERCENT_CHART_STATUS_LIST.length - 1);
+          {CHART_STATUS_LIST.map((state, stateIndex) => {
+            const isLastIndex = stateIndex === (CHART_STATUS_LIST.length - 1);
             const isSelected = selectState.length ? selectState.findIndex(select => select.value === state.value) !== -1 : false;
             return (
               <TouchableOpacity style={[styles.itemArea, isLastIndex && {borderBottomWidth: 0}]} onPress={() => stateOnPress(state)} key={stateIndex}>

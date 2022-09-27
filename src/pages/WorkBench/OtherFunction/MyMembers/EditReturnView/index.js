@@ -26,7 +26,6 @@ const SignUpValidationSchema = Yup.object().shape({
 const initialValues = {
   memberTags: '',
   memberName: '',
-  memberPhone: '',
   memberDecision: true,
   intendCompany: '',
   intendSignUpDate: '',
@@ -44,11 +43,6 @@ const EditReturnView = (props) => {
   const [companyList, setCompanyList] = useState([]);
   const [messageInfo, setMessageInfo] = useState({});
 
-  useEffect(() => {
-    getCompanyList();
-    setFieldValue();
-  }, [])
-
   useEffect(()=>{
     //从回访消息那跳转过来
     if(params.fromMessage){
@@ -63,12 +57,11 @@ const EditReturnView = (props) => {
     if(!poolId) return;
     try{
       const res = await MyMembersApi.GetRevisitInfo(poolId);
-      console.log('res!!!', res)
+      console.log('res!!!', res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`请求失败，请稍后重试。${res.msg}`, {type: 'danger'});
       }
       restForm.setFieldValue('memberName', res.data.userName);
-      restForm.setFieldValue('memberPhone', res.data.mobile);
       restForm.setFieldValue('memberTags', res.data.tags);
       setMessageInfo(res.data);
     }catch(err){
@@ -78,9 +71,8 @@ const EditReturnView = (props) => {
 
   const setFieldValue = () => {
     const { formList: { userName, mobile, tags } } = params;
-    restForm.setFieldValue('memberName', userName);
-    restForm.setFieldValue('memberPhone', mobile);
     restForm.setFieldValue('memberTags', tags);
+    restForm.setFieldValue('memberName', userName);
   };
 
   const getCompanyList = async () => {
@@ -125,8 +117,9 @@ const EditReturnView = (props) => {
     }
   };
 
-  const callPhone = (item) => {
-    Linking.openURL(`tel:${item}`);
+  const callPhone = () => {
+    const mobile = messageInfo.mobile ? messageInfo.mobile : params.formList.mobile;
+    Linking.openURL(`tel:${mobile}`);
   };
 
   return (
@@ -153,19 +146,10 @@ const EditReturnView = (props) => {
                   inputStyle={{ color: '#CCCCCC' }}
                   component={FormItem}
                 />
-                {/* <Field
-                  name="memberPhone"
-                  title="会员手机号"
-                  maxLength={11}
-                  editable={false}
-                  placeholder="无"
-                  inputStyle={{color: '#CCCCCC'}}
-                  component={FormItem}
-                /> */}
                 <View style={styles.phoneStyle}>
-                  <Text style={styles.label}>手机号码: </Text>
-                  <TouchableOpacity style={[styles.listItem_item, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(params.formList.mobile)}>
-                    <Text style={[styles.listItem_text, { color: '#409EFF' }]}>{params.formList.mobile}</Text>
+                  <Text style={styles.label}>手机号码：</Text>
+                  <TouchableOpacity style={[styles.listItem_item, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={callPhone}>
+                    <Text style={[styles.listItem_text, { color: '#409EFF' }]}>{messageInfo?.mobile ? messageInfo.mobile : params?.formList?.mobile}</Text>
                     <Entypo name='phone' size={26} color='#409EFF' />
                   </TouchableOpacity>
                 </View>
@@ -366,8 +350,8 @@ const styles = StyleSheet.create({
     minHeight: 91,
     flexDirection: 'row',
     paddingHorizontal: 30,
-    borderBottomWidth: 1,
     textAlign: 'center',
+    borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)'
   },
   label: {

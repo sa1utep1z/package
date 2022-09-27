@@ -74,6 +74,21 @@ const Total = ({
     }
   };
 
+  const returnColor = (status) => {
+    switch(status){
+      case 'PENDING':
+        return '#409EFF';
+      case 'FAIL':
+        return 'red';
+      case 'PASS':
+        return 'green';
+      case 'CANCEL':
+        return '#FFBF00';
+      default: 
+        return '#409EFF';
+    }
+  };
+
   const renderItem = ({item}) => {
     return (
       <View style={styles.listStyle}>
@@ -92,7 +107,7 @@ const Total = ({
           numberOfLines={2}
           ellipsizeMode="tail">{moment(item.jobDate).format('YYYY-MM-DD') || '无'}</Text>
         <Text 
-          style={[styles.itemText, styles.pressItem, {color: `${item.status === 'PENDING' ? '#409EFF' : item.status === 'FAIL' ? 'red' : 'green'}`} ]}
+          style={[styles.itemText, styles.pressItem, {color: returnColor(item.status)}]}
           numberOfLines={2}
           onPress={() => pressStatus(item)}
           ellipsizeMode="tail">{AUDIT_TYPE[item.status] || '无'}</Text>

@@ -21,9 +21,14 @@ const PageDialog = () => {
 
   const dialogSwitch = useSelector((state) => state.PageDialog.showDialog);
   const dialogContent = useSelector((state) => state.PageDialog.dialogComponent);
-  const dialogTitle = useSelector((state) => state.PageDialog.setTitle);
+  const dialogTitle = useSelector((state) => state.PageDialog.dialogTitle);
+  console.log('dialogContent', dialogContent)
+  console.log('dialogSwitch', dialogSwitch)
 
-  const close = () => dispatch(closeDialog());
+  const close = () => {
+    console.log('按下');
+    dispatch(closeDialog())
+  };
 
   return (
     <Modal
@@ -32,9 +37,9 @@ const PageDialog = () => {
       visible={dialogSwitch}>
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
-          <TouchableOpacity style={styles.backPress} activeOpacity={0} onPress={close}/>
+          <TouchableOpacity style={styles.backPress} activeOpacity={1} onPress={close}/>
           <View style={styles.showArea}>
-            {dialogTitle || <DefaultTitle />}
+            <DefaultTitle title={dialogTitle}/>
             {dialogContent || <DefaultEmptyArea />}
           </View>
         </View>
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
   },
   backPress: {
     flex: 1, 
-    backgroundColor: 'rgba(0,0,0,0.1)'
+    backgroundColor: 'rgba(0,0,0,0.2)'
   },
   showArea: {
     width: '80%', 

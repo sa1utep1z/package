@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 
 /**状态审核弹框 */
@@ -8,36 +10,58 @@ const StatusAudit = ({
   audit
 }) => {
 
+  const [pickerShow, setPickerShow] = useState(false);
+  const [dateTime, setDateTime] = useState(new Date());
+
+  const dateChange = (event, selectedDate) => {
+    setPickerShow(false);
+    if (event.type !== 'set') return;
+    setDateTime(selectedDate);
+  };
+
   return (
     <>
       <ScrollView style={styles.msgArea}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>会员姓名：</Text>
           <Text selectable style={styles.font}>{memberInfo.userName}</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>会员手机号：</Text>
           <Text selectable style={styles.font}>{memberInfo.mobile}</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>会员身份证号：</Text>
           <Text selectable style={styles.font}>{memberInfo.idNo}</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>所在企业：</Text>
           <Text selectable style={styles.font}>{memberInfo.companyShortName}</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>订单名称：</Text>
           <Text selectable style={styles.font}>{memberInfo.orderName}</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>入职日期：</Text>
           <Text selectable style={styles.font}>{moment(memberInfo.jobDate).format('YYYY-MM-DD')}</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.lineItem}>
           <Text style={styles.font}>预离职日期：</Text>
           <Text selectable style={styles.font}>{moment(memberInfo.expectResignDate).format('YYYY-MM-DD')}</Text>
+        </View>
+        <View style={styles.lineItem}>
+          <Text style={styles.font}>确认离职日期：</Text>
+          <View style={{height: 30}}>
+            <TouchableOpacity style={styles.btnArea} onPress={()=>setPickerShow(true)}>
+              <AntDesign
+                name='calendar' 
+                size={15}
+                color='#999999'
+              />
+              <Text style={{marginLeft: 10}}>{moment(dateTime).format('YYYY-MM-DD')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.font}>离职原因：</Text>
@@ -51,13 +75,18 @@ const StatusAudit = ({
         </View>
       </ScrollView>
       <View style={styles.bottomButtonArea}>
-        <TouchableOpacity style={styles.bottomLeft} onPress={() => audit('reject', memberInfo)}>
+        <TouchableOpacity style={styles.bottomLeft} onPress={() => audit('reject', memberInfo, moment(dateTime).format('YYYY-MM-DD'))}>
           <Text style={styles.leftText}>拒绝</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomRight} onPress={() => audit('pass', memberInfo)}>
+        <TouchableOpacity style={styles.bottomRight} onPress={() => audit('pass', memberInfo, moment(dateTime).format('YYYY-MM-DD'))}>
           <Text style={styles.rightText}>通过</Text>
         </TouchableOpacity>
       </View>
+      {pickerShow && <DateTimePicker 
+        value={dateTime} 
+        onChange={dateChange} 
+        maximumDate={new Date()}
+      />}
     </>
   )
 };
@@ -66,9 +95,12 @@ const styles = StyleSheet.create({
   msgArea: {
     paddingHorizontal: 20
   },
+  lineItem: {
+    flexDirection: 'row',
+    paddingBottom: 10
+  },
   font: {
-    color: '#333333', 
-    marginBottom: 10
+    color: '#333333'
   },
   reasonArea: {
     flex: 1, 
@@ -118,6 +150,15 @@ const styles = StyleSheet.create({
   rightText: {
     fontSize: 16,
     color: 'green'
+  },
+  btnArea: {
+    flex: 1, 
+    borderWidth: 1, 
+    borderColor: '#409EFF', 
+    borderRadius: 5, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 10
   }
 })
 

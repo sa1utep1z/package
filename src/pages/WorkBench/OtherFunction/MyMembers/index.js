@@ -65,7 +65,7 @@ const MyMembers = () => {
   };
 
   const getList = async(params) => {
-    // console.log('getList --> params', params);
+    console.log('getList --> params', params);
     setIsLoading(true);
     try{
       const res = await MyMembersApi.MyMemberList(params);
@@ -214,6 +214,7 @@ const MyMembers = () => {
   const filter = (values) => {
     const willSignUpCompanyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].storeId : '';
+    const recruiterId = values.staff.length ? values.staff[0].value : '';
     const memberStatus = values.status.length ? values.status[0].value.toUpperCase() : '';
     const nextReturnVisitDateStart = values.dateRange.startDate;
     const nextReturnVisitDateEnd = values.dateRange.endDate;
@@ -222,11 +223,11 @@ const MyMembers = () => {
       ...searchContent,
       ...firstPage,
       willSignUpCompanyId,
-      recruiterName: values.staffSearch, 
       nameOrIdNo: values.search, 
       nextReturnVisitDateStart,
       nextReturnVisitDateEnd,
       storeId,
+      recruiterId,
       memberStatus
     });
   };
@@ -323,7 +324,7 @@ const MyMembers = () => {
       <HeaderSearch 
         filterFun={filter} 
         canFilterStatus 
-        staffSearch
+        // staffSearch
         singleSelect
         clearRangeDate
         startText="开始日期："

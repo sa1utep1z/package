@@ -74,10 +74,16 @@ const LeavingManage = () => {
     }
   };
 
-  const audit = async(type, memberInfo) => {
+  const audit = async(type, memberInfo, time) => {
     const detailId = memberInfo.applyDetailId;
+    const params = {
+      pass: type === 'pass',
+      approveData: {
+        resignDate: time
+      }
+    };
     try {
-      const res = await LeavingManageApi.Audit(detailId, {pass: type === 'pass'});
+      const res = await LeavingManageApi.Audit(detailId, params);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -105,7 +111,7 @@ const LeavingManage = () => {
   };
 
   const pressStatus = async(item) => {
-    if(item.status === 'PASS' || item.status === 'FAIL'){
+    if(item.status !== 'PENDING'){
       toast.show('状态已确定！', {type: 'warning'});
       return;
     }
@@ -170,10 +176,10 @@ const LeavingManage = () => {
     const createDateEnd = values.dateRange.endDate;
     const companyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].storeId : '';
-    const recruitId = values.staff.length ? values.staff[0].value : '';
+    const recruiterId = values.staff.length ? values.staff[0].value : '';
     const userNameOrIdNo = values.search;
 
-    setSearch({ createDateStart, createDateEnd, companyId, storeId, recruitId, userNameOrIdNo });
+    setSearch({ createDateStart, createDateEnd, companyId, storeId, recruiterId, userNameOrIdNo });
   };
 
   const renderScene = ({ route }) => {
@@ -211,6 +217,8 @@ const LeavingManage = () => {
         filterFun={filter} 
         singleSelect
         placeholder="请输入会员姓名或身份证"
+        startText="申请开始："
+        endText="申请结束："
       />
       <CenterSelectDate />
       <TabView

@@ -51,6 +51,7 @@ const WorkBench = (props) => {
         <Card
           key={index}
           title={item.moduleName}
+          style={index === showList.length - 1 && styles.cardStyle}
           content={
             <View style={styles.cardContent}>
               {item?.list?.length && item.list.map((box, index) => (
@@ -82,6 +83,9 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#EEF4F7',
     paddingTop: 32
+  },
+  cardStyle: {
+    marginBottom: 64
   },
   cardContent: {
     flex: 1, 
