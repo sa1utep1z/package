@@ -71,10 +71,6 @@ const DataTrend = ({
     clearSearch();
   }, [selectedTab])
 
-  useEffect(() => {
-    console.log('trendData', trendData);
-  }, [trendData])
-
   const checkSearchOther = () => {
     if(searchContent.companyIds.length || searchContent.recruiterIds.length || searchContent.signUpTypes.length || searchContent.storeIds.length || searchContent.supplierIds.length){
       setSearchOther(true);
@@ -96,6 +92,7 @@ const DataTrend = ({
             return;
           }
           if(res.data.length){
+            if(!companyList.length) return;
             res.data.map(item => {
               item.label = companyList.filter(company => company.value === item.id)[0].label;
             });
@@ -262,6 +259,10 @@ const DataTrend = ({
         selectedStore={selectedStore}
         selectedRecruiter={selectedRecruiter}
         selectedSupplier={selectedSupplier}
+        getCompanyList={companyList}
+        getStoreList={storeList}
+        getRecruiterList={recruiterList}
+        getSupplierList={supplierList}
       />
     ));
   };

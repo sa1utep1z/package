@@ -22,6 +22,7 @@ import {
 import { closeDialog } from '../../../../../../redux/features/HireReport/HireReportDialog';
 import MyMembersApi from '../../../../../../request/MyMembersApi';
 import SearchInput from '../../../../../../components/SearchInput';
+import {deepCopy} from '../../../../../../utils';
 
 let timer;
 
@@ -74,13 +75,15 @@ const SupplierItem = ({isSelected, supplier, isLastIndex, supplierOnPress}) => {
 };
 
 const EnterpriseItem = ({isSelected, company, isLastIndex, selectCompanyOnPress}) => {
+  const onChange = useCallback(()=> selectCompanyOnPress(company), [company]);
+
   return useMemo(() => (
-    <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectCompanyOnPress(company)}>
+    <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={onChange}>
       <Text style={{color: '#333333'}}>{company.label}</Text>
       <CheckBox
         checked={isSelected}
         size={18}
-        onPress={() => selectCompanyOnPress(company)}
+        onPress={onChange}
         containerStyle={{padding: 0}}
         checkedIcon={"dot-circle-o"}
         uncheckedIcon={"circle-o"}
@@ -92,6 +95,7 @@ const EnterpriseItem = ({isSelected, company, isLastIndex, selectCompanyOnPress}
 const FilterMoreOfTrend = ({
   rangeDate,
   confirm,
+  showType,
   selectedState = [], //已选状态
   selectedWay = [], //已选来源渠道
   selectedEnterprise = [], //已选企业
@@ -383,7 +387,7 @@ const FilterMoreOfTrend = ({
       setSelectWay(copyList);
       return;
     }
-    if(selectWay.length === 3){
+    if(selectWay.length === 3 || showType !== 'way'){
       let newArrList = [way];
       setSelectWay(newArrList);
       return;
@@ -406,7 +410,7 @@ const FilterMoreOfTrend = ({
       setSelectStore(copyList);
       return;
     }
-    if(selectStore.length === 3){
+    if(selectStore.length === 3 || showType !== 'store'){
       let newArrList = [store];
       setSelectStore(newArrList);
       return;
@@ -429,7 +433,7 @@ const FilterMoreOfTrend = ({
       setSelectRecruiter(copyList);
       return;
     }
-    if(selectRecruiter.length === 3){
+    if(selectRecruiter.length === 3 || showType !== 'recruiter'){
       let newArrList = [recruiter];
       setSelectRecruiter(newArrList);
       return;
@@ -452,7 +456,7 @@ const FilterMoreOfTrend = ({
       setSelectSupplier(copyList);
       return;
     }
-    if(selectSupplier.length === 3){
+    if(selectSupplier.length === 3 || showType !== 'supplier'){
       let newArrList = [supplier];
       setSelectSupplier(newArrList);
       return;

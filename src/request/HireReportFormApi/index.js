@@ -30,7 +30,8 @@ const HireReportFormApi = {
   Company: async(params) => await httpRequest.post(`admin/app/board/proportion/company`, params),
   Store: async(params) => await httpRequest.post(`admin/app/board/proportion/store`, params),
   Recruiter: async(params) => await httpRequest.post(`admin/app/board/proportion/recruiter`, params),
-  Supplier: async(params) => await httpRequest.post(`admin/app/board/proportion/supplier`, params)
+  Supplier: async(params) => await httpRequest.post(`admin/app/board/proportion/supplier`, params),
+  SignUpType: async(params) => await httpRequest.post(`admin/app/board/proportion/signUpType`, params)
 }
 
 export default HireReportFormApi;

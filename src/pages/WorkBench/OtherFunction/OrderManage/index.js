@@ -138,7 +138,7 @@ const OrderManage = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity style={{width: 110, height: 110, position: 'absolute', right: 0, paddingHorizontal: 30, paddingTop: 30}}>
+          <TouchableOpacity style={{width: 110, height: 110, position: 'absolute', right: 0, paddingHorizontal: 30, paddingTop: 30}} onPress={createOrder}>
             <View style={{width: 50, height: 50, backgroundColor: '#3F9EFE', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}>
               <AntDesign
                 name='right'

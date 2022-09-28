@@ -1,9 +1,19 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { useDispatch } from 'react-redux';
 
-import { HIRE_DATA_TREND_TAB_LIST, HIRE_DATA_BOX_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from "../../../../../utils/const";
+import { 
+  HIRE_DATA_TREND_TAB_LIST, 
+  HIRE_DATA_BOX_TAG_LIST, 
+  THIS_WEEK_START, 
+  THIS_WEEK_END, 
+  LAST_WEEK_START, 
+  LAST_WEEK_END, 
+  THIS_MONTH_START, 
+  THIS_MONTH_END, 
+  ORIGIN_COMPARE_STATUS_LIST
+} from "../../../../../utils/const";
 import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 
 import Tag from "./Tag";
@@ -27,10 +37,10 @@ const DataPercent = ({
   const [rangeDate, setRangeDate] = useState(thisWeek);
   const [searchOther, setSearchOther] = useState(false);
   const [searchContent, setSearchContent] = useState({
-    ...thisWeek
+    ...thisWeek, status: 'onBoardingPass'
   });
   const [bottomText, setBottomText] = useState(''); //底部显示的top10内容
-  const [selectedState, setSelectedState] = useState([]); //状态
+  const [selectedState, setSelectedState] = useState(ORIGIN_COMPARE_STATUS_LIST); //状态
   const [selectedWay, setSelectedWay] = useState({}); //来源渠道
   const [selectedEnterprise, setSelectedEnterprise] = useState({}); //企业
   const [selectedStore, setSelectedStore] = useState({}); //门店
@@ -184,7 +194,7 @@ const DataPercent = ({
       />
     ));
   };
-  
+
   return (
     <Shadow style={{marginBottom: 32}}>
       <View style={styles.totalArea}>
@@ -221,14 +231,14 @@ const DataPercent = ({
             <Text style={styles.moreSearchTitle}>总人数：</Text>
             <Text style={styles.moreSearchText}>{allNum}人</Text>
           </View>
-          <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{`${rangeDate.startDate.replace(/\-/g,"/")} ~ ${rangeDate.endDate.replace(/\-/g,"/")}`}</Text>
-          </View>
           {!!selectedState.length && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选状态：</Text>
             <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
           </View>}
+          <View style={styles.moreSearchArea}>
+            <Text style={styles.moreSearchTitle}>已选时间：</Text>
+            <Text style={styles.moreSearchText}>{`${rangeDate.startDate.replace(/\-/g,"/")} ~ ${rangeDate.endDate.replace(/\-/g,"/")}`}</Text>
+          </View>
           {selectedWay.value && <View style={styles.moreSearchArea}>
             <Text style={styles.moreSearchTitle}>已选来源渠道：</Text>
             <Text style={styles.moreSearchText}>{selectedWay.title}</Text>

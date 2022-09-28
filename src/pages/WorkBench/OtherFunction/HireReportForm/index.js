@@ -97,8 +97,6 @@ const HireReportForm = () => {
     }
   };
 
-
-
   const getCompareData = async(search) => {
     setCompareLoading(true);
     const range1 = search[0];
@@ -120,8 +118,8 @@ const HireReportForm = () => {
   };
 
   const getPercentData = async(type, search) => {
-    let res;
     setPercentLoading(true);
+    let res;
     try{
       switch(type){
         case 'company':
@@ -131,15 +129,18 @@ const HireReportForm = () => {
           res = await HireReportFormApi.Store(search);
           break;
         case 'recruiter':
-          console.log('招聘员')
           res = await HireReportFormApi.Recruiter(search);
           break;
         case 'supplier':
-          console.log('供应商')
           res = await HireReportFormApi.Supplier(search);
           break;
+        case 'supplier':
+          res = await HireReportFormApi.Supplier(search);
+          break;
+        case 'way':
+          res = await HireReportFormApi.SignUpType(search);
+          break;
       }
-      console.log('res', res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`${res.msg}`, { type: 'danger' });
         return;
@@ -225,18 +226,13 @@ const HireReportForm = () => {
           loading={overViewLoading}
           getData={getOverView} 
         />
-        <DataTrend
+        {companyList.length ? <DataTrend
           companyList={companyList}
           storeList={storeList}
           recruiterList={recruiterList}
           supplierList={supplierList}
-        />
-        {/* <DataTrend
-          data={trendData} 
-          loading={trendLoading}
-          getData={getTrendData} 
-        /> */}
-        {/* <DataCompare 
+        /> : <></>}
+        <DataCompare 
           data={compareData}
           loading={compareLoading}
           getData={getCompareData}
@@ -246,7 +242,7 @@ const HireReportForm = () => {
           loading={percentLoading}
           getData={getPercentData}
           scrollViewRef={scrollViewRef}
-        /> */}
+        />
       </View>
       <HireReportDialog/>
     </ScrollView>
