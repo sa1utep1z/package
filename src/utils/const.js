@@ -351,6 +351,23 @@ export const STUDENTPROVE = [
   { label: '不查证明', value: 'STUDENT_PROVE_NOT_CHECK' },
   { label: '严查证明', value: 'STUDENT_PROVE_SEVERE_CHECK' },
 ];
+export const COMPANY_SCALE = [
+  { id: 1, title: '0-500人', value: 'SCALE_FIRST' },
+  { id: 2, title: '501-1000人', value: 'SCALE_SECOND' },
+  { id: 3, title: '1001-3000人', value: 'SCALE_THIRD' },
+  { id: 4, title: '3001-5000人', value: 'SCALE_FOURTH' },
+  { id: 5, title: '5000人以上', value: 'SCALE_FIFTH' },
+];
+export const COMPANY_TYPE = [
+  { id: 1, title: 'A', value: 'TYPE_A' },
+  { id: 2, title: 'B', value: 'TYPE_B' },
+  { id: 3, title: 'C', value: 'TYPE_C' },
+];
+export const COMPANY_INDUSTRY = [
+  { id: 1, title: '制造业', value: 'INDUSTRY_MANUFACTURE' },
+  { id: 2, title: '食品业', value: 'INDUSTRY_FOOD' },
+  { id: 3, title: '服务业', value: 'INDUSTRY_SERVE' },
+];
 export const STATUS_LISTS = [
   {title: '报名-无意向', value: 'sign_up_no_intention', id: 1},
   {title: '面试-未去面试', value: 'interview_no_arrive', id: 2},

@@ -67,7 +67,7 @@ const SelectItem = ({
       return;
     }
     //默认多选，那就需要根据表单传的id回来找并且打勾；
-    const fieldValueList = field.value.map(item => item.value);
+    const fieldValueList = field.value? field.value.map(item => item.value) : '';
     selectList.map(item => item.isChecked = fieldValueList.includes(item.value));
     setList(selectList);
   },[showSelectItems])
@@ -182,8 +182,8 @@ const SelectItem = ({
         }
         {formalLabel && 
           <View style={[styles.labelArea, labelAreaStyle]}>
-            <Text style={styles.label}>{title}：</Text>
             {rest.isRequired && <Text style={styles.required}>*</Text>}
+            <Text style={styles.label}>{title}：</Text>
           </View>
         }
         <View style={styles.rightArea}>
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   selectText: {
     flex: 1,
     color: 'black',
-    fontSize: 32
+    fontSize: 28,
   },
   noItem: {
     color: '#999999'
@@ -428,7 +428,8 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     textAlignVertical: 'top', 
     alignSelf: 'flex-start', 
-    marginTop: 7
+    marginTop: 25,
+    fontSize: 25
   },
 })
 

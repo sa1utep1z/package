@@ -11,13 +11,12 @@ import Radio from '../../../../../components/Form/Radio';
 import RadioGroup from '../../../../../components/Form/RadioGroup';
 import ImagePicker from 'react-native-image-crop-picker';
 import CompanyApi from '../../../../../request/companyApi';
-import { deepCopy, getYMD } from '../../../../../utils';
 import { SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
 // const data = require('@bang88/china-city-data')
 
 
 let restForm;
-const BusinessAdd = (props) => {
+const BusinessEdit = (props) => {
   const { navigation, route: { params } } = props;
   // const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [modalVisible, setModalVisible] = useState(false); // 图库选择、拍照弹框
@@ -34,14 +33,14 @@ const BusinessAdd = (props) => {
   const [addTags, setAddTags] = useState(true); // 添加标签显隐
   const [selected, setSelected] = useState([]); //地区选择数组
   const [contactFields, setContactFields] = useState([
-    // {
-    //   label: '姓名',
-    //   phone: '手机号',
-    // },
-    // {
-    //   label: '姓名',
-    //   phone: '手机号',
-    // },
+    {
+      label: '姓名',
+      phone: '手机号',
+    },
+    {
+      label: '姓名',
+      phone: '手机号',
+    },
   ]); // 选择的城市数据
 
   const initialValues = {
@@ -61,12 +60,10 @@ const BusinessAdd = (props) => {
     itineraryCode: '',
     nucleicAcid: '',
     vaccination: '',
-    contactResidents: [],
-    contactBusiness: [],
-    contactFinances: [],
+    contactResidents: '',
+    contactBusiness: '',
     idCard: '',
     introduction: '',
-    addressDetail: '',
     payDay: '',
     payStart: '',
     payEnd: '',
@@ -157,6 +154,7 @@ const BusinessAdd = (props) => {
         cropping: true,
       })
       const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
+      // uploadImage(fileName, pickerImage.path);
       const data = new FormData();
       const file = {
         uri: pickerImage.path, type: 'multipart/form-data', name: fileName,
@@ -170,52 +168,18 @@ const BusinessAdd = (props) => {
     }
   }
 
-  // 添加
   const addField = () => {
-    if (contactFields.length === 0) {
-      setContactFields([{ index: 0, label: '姓名', phone: '手机号' }])
-    } else {
-      const arryData = contactFields.map((permiData, index) => {
-        const permiData1 = Object.assign(permiData, { index: index + 1 })
-        return permiData1
-      })
-      setContactFields([...contactFields, { index: arryData.length + 1, label: '姓名', phone: '手机号' }])
-      console.log('添加数组:', arryData)
-    }
+    const arryData = contactFields.map((permiData, index) => {
+      const permiData1 = Object.assign(permiData, { index: index + 1 })
+      return permiData1
+    })
+    setContactFields([...arryData, { index: arryData.index + 1, label: '姓名', phone: '手机号' }])
+    console.log('添加数组:', arryData)
   }
-
-  // 删除
-  const delField = (value) => {
-    const newArr = deepCopy(contactFields);
-    const findIndex = newArr.findIndex(item => item.index === value);
-    if (findIndex > -1) {
-      newArr.splice(findIndex, 1);
-      setContactFields(newArr);
-      return;
-    }
-    console.log('删除按钮11:', newArr)
-  }
-
+ 
   // 提交报名表单
   const onSubmit = async (values) => {
-    try {
-      console.log('提交参数11：', values)
-      const params = {
-        ...values,
-        companyType: values.companyType ? values.companyType[0].value : '',
-        industry: values.industry ? values.industry[0].value : '',
-        scale: values.scale ? values.scale[0].value : '',
-      }
-      console.log('打印上上传参数：', params);
-      const res = await CompanyApi.AddCompany(params); 
-      if (res.code === 0) {
-         toast.show('保存提交成功');
-         console.log('保存提交成功：', params);
-      }
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
-    }
-   
+    console.log('提交参数11：', values)
   }
 
   useEffect(() => {
@@ -303,7 +267,7 @@ const BusinessAdd = (props) => {
                   component={FormItem}
                 />
                 <Field
-                  name="addressDetail"
+                  name="address"
                   title="工厂位置"
                   isRequired
                   placeholder="请输入工厂位置"
@@ -748,7 +712,7 @@ const BusinessAdd = (props) => {
                                 placeholderTextColor="#999999"
                               />
                             </View>
-                            <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => delField(item.index)}>
+                            <TouchableOpacity style={{ marginLeft: 10 }}>
                               <AntDesign
                                 name='minuscircle'
                                 color='#409EFE'
@@ -1037,4 +1001,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default BusinessAdd;
+export default BusinessEdit;

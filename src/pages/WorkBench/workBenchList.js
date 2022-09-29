@@ -65,13 +65,13 @@ export const WORKBENCH_LIST = [
         iconSource: require('../../assets/images/LeavingManage.png'),
         routeName: NAVIGATION_KEYS.LEAVING_MANAGE
       },
-      // {
-      //   key: 'businessManage',
-      //   title: '商务企业管理',
-      //   imgBackground: require('../../assets/images/blue.png'),
-      //   iconSource: require('../../assets/images/LeavingManage.png'),
-      //   routeName: NAVIGATION_KEYS.BUSINESS_MANAGE
-      // }
+      {
+        key: 'businessManage',
+        title: '商务企业管理',
+        imgBackground: require('../../assets/images/blue.png'),
+        iconSource: require('../../assets/images/LeavingManage.png'),
+        routeName: NAVIGATION_KEYS.BUSINESS_MANAGE
+      },
     ]
     },
      {

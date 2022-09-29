@@ -9,10 +9,18 @@ const RadioGroup = ({
   title,
   labelAreaStyle,
   arryDate,
+  label,
   ...rest
 }) => {
   const [radio, setRadio] = useState(false);
   const [groupDate, setGroupDate] = useState(arryDate);
+
+  // const label = (
+  //   <View style={[styles.labelArea, labelAreaStyle]}>
+  //     {rest.isRequired && <Text style={styles.required}>*</Text>}
+  //     <Text style={[styles.label, rest.isRequired && {marginRight: 4}, labelStyle]}>{rest.title}：</Text>
+  //   </View>
+  // );
 
   const pressCheck = (value) => {
     const res = arryDate.map((item) => {
@@ -24,13 +32,24 @@ const RadioGroup = ({
       return item;
     })
     setGroupDate(res);
+    form.setFieldValue(field.name, value);
     console.log('打印选择的值：', value, arryDate)
+  };
+
+  const onChangeText = (value) => {
+    console.log('打印值：', value)
+    form.setFieldValue(label, value);
   };
 
   return (
     <View style={styles.selectItemArea}>
       <View style={[styles.titleArea, labelAreaStyle]}>
-        <Text style={{ fontSize: 32 }}>{title}: </Text>
+        {/* {rest.isRequired && <Text style={styles.required}>*</Text>} */}
+        {/* <Text style={{ fontSize: 32 }}>{title}: </Text> */}
+        <View style={[styles.labelArea, labelAreaStyle]}>
+          {rest.isRequired && <Text style={styles.required}>*</Text>}
+          <Text style={[styles.label, rest.isRequired && { marginRight: 4 }]}>{title}：</Text>
+        </View>
       </View>
       <View style={styles.radioArea}>
         {
@@ -53,11 +72,12 @@ const RadioGroup = ({
           })
         }
         <Input
-        inputStyle={styles.input}
-        placeholder="请输入备注说明"
-        placeholderTextColor="#999999"
-        containerStyle={styles.inputStyle}
-        inputContainerStyle={styles.noBorder}
+          inputStyle={styles.input}
+          placeholder="请输入备注说明"
+          placeholderTextColor="#999999"
+          containerStyle={styles.inputStyle}
+          inputContainerStyle={styles.noBorder}
+          onChangeText={text => onChangeText(text)}
         />
       </View>
     </View>
@@ -121,18 +141,40 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#333',
     borderColor: '#E5E5E5',
-    marginRight: 15
+    marginRight: 15,
+    paddingLeft: 20,
+    padding: 0,
   },
   inputStyle: {
     // width: 250,
     height: 60,
     marginTop: 10,
     borderWidth: 0,
+    padding: 10
   },
   noBorder: {
     // paddingVertical: 0,
     borderBottomWidth: 0
-  }
+  },
+  labelArea: {
+    height: '100%',
+    flexDirection: 'row',  
+    alignItems: 'center', 
+    justifyContent: 'center',
+    marginRight: 10
+  },
+  label: {
+    textAlign: 'center',
+    fontSize: 32
+  },
+  required: {
+    color: 'red', 
+    textAlign: 'center', 
+    textAlignVertical: 'top', 
+    alignSelf: 'flex-start', 
+    marginTop: 25,
+    fontSize: 25
+  },
 })
 
 export default RadioGroup;

@@ -203,8 +203,8 @@ const JoinInSignUp = (props) => {
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {
         restForm = rest;
-        const selectStoreList = rest.values.store.length ? rest.values.store[0].members : [];
-        if (selectStoreList.length) {
+        const selectStoreList = rest.values.store.length > 0 ? rest.values.store[0].members : [];
+        if (selectStoreList.length > 0) {
           selectStoreList.map((item, index) => {
             item.title = item.label;
             item.id = index + 1;

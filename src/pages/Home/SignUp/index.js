@@ -97,7 +97,6 @@ const SignUp = (props) => {
 
   // 上传图片
   const uploadImage = async (fileName, localFilePath) => {
-
     const data = new FormData();
     const file = {
       uri: localFilePath, type: 'multipart/form-data', name: fileName,
@@ -129,7 +128,6 @@ const SignUp = (props) => {
       }
     } catch (error) {
       toast.show('识别失败，出现异常请联系管理员处理')
-      console.log('识别失败：', error)
     }
 
   }
