@@ -6,21 +6,38 @@ import * as Yup from 'yup';
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
+import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
+import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
+import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
 import MyMembersApi from "../../../../../../request/MyMembersApi";
-import { SUCCESS_CODE } from "../../../../../../utils/const";
+import { SUCCESS_CODE, CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE } from "../../../../../../utils/const";
 
 const validationSchema = Yup.object().shape({
   orderName: Yup.string().required('请输入订单名称'),
-  job: Yup.string().required('请输入订单名称'),
+  factory: Yup.array().min(1, '请选择用工企业'),
+  job: Yup.array().min(1, '请选择岗位'),
+  jobType: Yup.array().min(1, '请选择工种'),
+  orderRangeDate: Yup.object({
+    startDate: Yup.string().required('请选择订单开始日期'),
+    endDate: Yup.string().required('请选择订单结束日期')
+  }),
+  orderDuration: Yup.string().required('请选择订单工期'),
 });
 
 const initialValues = {
   orderName: '',
-  job: []
+  factory: [],
+  job: [],
+  jobType: [],
+  orderRangeDate: {
+    startDate: '',
+    endDate: ''
+  },
+  orderDuration: ''
 };
 
 const OrderInfo = () => {
-  const [showDetail, setShowDetail] = useState(false);
+  const [showDetail, setShowDetail] = useState(true);
   const [companyList, setCompanyList] = useState([]);
 
   useEffect(() => {
@@ -78,10 +95,32 @@ const OrderInfo = () => {
                 }
               />
               <Field
-                name="job"
-                label="岗位"
+                name="factory"
+                label="用工企业"
                 selectList={companyList}
                 component={SingleSelect}
+              />
+              <Field
+                name="job"
+                label="岗位"
+                radioList={CREATE_ORDER_JOB_ORDER}
+                component={RadioSelect}
+              />
+              <Field
+                name="jobType"
+                label="工种"
+                radioList={CREATE_ORDER_JOB_TYPE}
+                component={RadioSelect}
+              />
+              <Field
+                name="orderRangeDate"
+                label="订单日期"
+                component={OrderRangeDate}
+              />
+              <Field
+                name="orderDuration"
+                label="订单工期"
+                component={OrderSingleDate}
               />
             </View>
           )
