@@ -14,7 +14,6 @@ export const PageDialog = createSlice({
     },
     closeDialog: (state) => {
       state.showDialog = false;
-      state.dialogComponent = '';
     },
     setTitle: (state, {payload}) => {
       state.dialogTitle = payload;

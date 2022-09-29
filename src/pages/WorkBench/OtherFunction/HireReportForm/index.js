@@ -9,6 +9,7 @@ import DataCompare from "./DataCompare";
 import DataPercent from "./DataPercent";
 
 import HireReportFormApi from "../../../../request/HireReportFormApi";
+import MyMembersApi from "../../../../request/MyMembersApi";
 import HireReportDialog from "../../../../components/HireReportDialog";
 import { closeDialog } from "../../../../redux/features/HireReport/HireReportDialog";
 import { SUCCESS_CODE, ORIGIN_HIRE_REPORT_OVERVIEW_LIST } from "../../../../utils/const";
@@ -22,8 +23,6 @@ const HireReportForm = () => {
   const [overViewData, setOverViewData] = useState(ORIGIN_HIRE_REPORT_OVERVIEW_LIST);
   const [overViewLoading, setOverViewLoading] = useState(false);
 
-  const [trendData, setTrendData] = useState({});
-  const [trendLoading, setTrendLoading] = useState(false);
   
   const [compareData, setCompareData] = useState([]);
   const [compareLoading, setCompareLoading] = useState(false);
@@ -31,7 +30,16 @@ const HireReportForm = () => {
   const [percentData, setPercentData] = useState([]);
   const [percentLoading, setPercentLoading] = useState(false);
 
+  const [companyList, setCompanyList] = useState([]);
+  const [storeList, setStoreList] = useState([]);
+  const [recruiterList, setRecruiterList] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
+
   useEffect(() => {
+    getCompanyList();
+    getStoreList();
+    getRecruiterList();
+    getSupplierList();
     return () => dispatch(closeDialog());
   }, [])
 
@@ -89,23 +97,6 @@ const HireReportForm = () => {
     }
   };
 
-  const getTrendData = async(search) => {
-    setTrendLoading(true);
-    try{
-      let res = await HireReportFormApi.LineData(search);
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`${res.msg}`, { type: 'danger' });
-        return;
-      }
-      setTrendData(res.data);
-    }catch(error){
-      console.log('error', error);
-      toast.show(`出现预料之外的错误，请联系管理员处理`, { type: 'danger' });
-    }finally{
-      setTrendLoading(false);
-    }
-  };
-
   const getCompareData = async(search) => {
     setCompareLoading(true);
     const range1 = search[0];
@@ -127,9 +118,8 @@ const HireReportForm = () => {
   };
 
   const getPercentData = async(type, search) => {
-    console.log('search', search);
-    let res;
     setPercentLoading(true);
+    let res;
     try{
       switch(type){
         case 'company':
@@ -139,15 +129,18 @@ const HireReportForm = () => {
           res = await HireReportFormApi.Store(search);
           break;
         case 'recruiter':
-          console.log('招聘员')
           res = await HireReportFormApi.Recruiter(search);
           break;
         case 'supplier':
-          console.log('供应商')
           res = await HireReportFormApi.Supplier(search);
           break;
+        case 'supplier':
+          res = await HireReportFormApi.Supplier(search);
+          break;
+        case 'way':
+          res = await HireReportFormApi.SignUpType(search);
+          break;
       }
-      console.log('res', res);
       if(res.code !== SUCCESS_CODE){
         toast.show(`${res.msg}`, { type: 'danger' });
         return;
@@ -161,6 +154,70 @@ const HireReportForm = () => {
     }
   }
 
+  //获取企业列表
+  const getCompanyList = async() => {
+    try{  
+      const res = await MyMembersApi.CompaniesList();
+      console.log('getCompanyList -->res', res);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setCompanyList(res.data);
+    }catch(err){
+      toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
+      console.log('getCompanyList --> err', err);
+    }
+  };
+
+  //获取门店列表
+  const getStoreList = async() => {
+    try{  
+      const res = await HireReportFormApi.StoreList();
+      console.log('getStoreList --> res', res);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setStoreList(res.data);
+    }catch(err){
+      toast.show(`获取门店列表失败，请稍后重试`, { type: 'danger' });
+      console.log('getStoreList --> err', err);
+    }
+  };
+
+  //获取招聘员列表
+  const getRecruiterList = async() => {
+    try{  
+      const res = await HireReportFormApi.RecruiterList();
+      console.log('getRecruiterList --> res', res)
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取招聘员列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setRecruiterList(res.data);
+    }catch(err){
+      toast.show(`获取招聘员列表失败，请稍后重试`, { type: 'danger' });
+      console.log('getRecruiterList --> err', err);
+    }
+  };
+
+  //获取供应商列表
+  const getSupplierList = async() => {
+    try{  
+      const res = await HireReportFormApi.SupplierList();
+      console.log('getSupplierList --> res', res)
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取供应商列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setSupplierList(res.data);
+    }catch(err){
+      toast.show(`获取供应商列表失败，请稍后重试`, { type: 'danger' });
+      console.log('getSupplierList --> err', err);
+    }
+  };
+
   return (
     <ScrollView ref={scrollViewRef} style={styles.screen}>
       <View style={styles.allComponents}>
@@ -169,11 +226,12 @@ const HireReportForm = () => {
           loading={overViewLoading}
           getData={getOverView} 
         />
-        <DataTrend
-          data={trendData} 
-          loading={trendLoading}
-          getData={getTrendData} 
-        />
+        {companyList.length ? <DataTrend
+          companyList={companyList}
+          storeList={storeList}
+          recruiterList={recruiterList}
+          supplierList={supplierList}
+        /> : <></>}
         <DataCompare 
           data={compareData}
           loading={compareLoading}

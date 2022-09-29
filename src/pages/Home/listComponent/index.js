@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { StyleSheet, View, Image, Animated, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback, Alert, Platform} from 'react-native';
+import { StyleSheet, View, Image, Animated, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback, Alert, ActivityIndicator} from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,6 +25,7 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
   const [activeButton, setActiveButton] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showImage, setShowImage] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [rangeDate, setRangeDate] = useState({startDate: today, endDate: today, ifShelf: true});
 
   const showSearch = useSelector((state) => state.homeSearch.canSearch);
@@ -80,7 +81,11 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
       return;
     }
     setModalVisible(true);
-    setShowImage(image.contentImage);
+    setLoading(true);
+    timer = setTimeout(()=>{
+      setLoading(false);
+      setShowImage(image.contentImage);
+    },500)
   };
 
   const closePicture = () => setModalVisible(!modalVisible);
@@ -159,9 +164,7 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
         <Text style={isSeacher ? styles.listHeader_flex4 : styles.listHeader_flex3}>企业名称</Text>
         <Text style={[styles.listHeader_flex2]}>招聘人数</Text>
         {
-          isSeacher && (
-            <Text style={styles.listHeader_flex2}>招聘时段</Text>
-          )
+          isSeacher && <Text style={styles.listHeader_flex2}>招聘时段</Text>
         }
       </View>
       <Modal
@@ -170,24 +173,28 @@ export const Header = ({ search, isSeacher, range, bannerList }) => {
         visible={modalVisible}
         onRequestClose={closePicture}>
         <View style={{backgroundColor: 'rgba(0,0,0,.4)', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <View style={{width: '90%', maxHeight: '90%', backgroundColor: '#fff', borderRadius: 10, padding: 10}}>
-            <TouchableOpacity style={{position: 'absolute', width: 50, height: 50, right: 0, backgroundColor: 'rgba(0,0,0,0)', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={closePicture}>
-              <Icon
-                type="antdesign"
-                name='close'
-                color='#fff'
-                size={30}
-              />
-            </TouchableOpacity>
-            <ScrollView>
-              {showImage.map((image, imageIndex) => {
-                return (
-                  <TouchableWithoutFeedback key={imageIndex} onLongPress={() => savePicture(image.url)}>
-                    <FitImage key={imageIndex} source={{uri: `${image.url}`}}/>
-                  </TouchableWithoutFeedback>
-                )
-              })}
-            </ScrollView>
+          <View style={{width: '90%', maxHeight: '90%', minHeight: 50, backgroundColor: '#fff', borderRadius: 10, padding: 10}}>
+            {!loading ? <>
+              <TouchableOpacity style={{position: 'absolute', width: 50, height: 50, right: 0, backgroundColor: 'rgba(0,0,0,0)', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={closePicture}>
+                <Icon
+                  type="antdesign"
+                  name='close'
+                  color='#fff'
+                  size={30}
+                />
+              </TouchableOpacity>
+              <ScrollView>
+                {showImage.map((image, imageIndex) => {
+                  return (
+                    <TouchableWithoutFeedback key={imageIndex} onLongPress={() => savePicture(image.url)}>
+                      <FitImage key={imageIndex} source={{uri: `${image.url}`}}/>
+                    </TouchableWithoutFeedback>
+                  )
+                })}
+              </ScrollView>
+            </> : <View style={{flex: 1, justifyContent: 'center'}}>
+              <ActivityIndicator color="#409EFF" size={24} />
+            </View>}
           </View>
         </View>
       </Modal>

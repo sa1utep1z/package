@@ -44,7 +44,11 @@ const ResignationMessage = (props) => {
       }
       setIsOpen(!isOpen);
       setMessageId(value);
-      navigation.navigate(NAVIGATION_KEYS.LEAVING_LIST);
+      const findPoolId = messageInfo.length ? messageInfo.find(item => item.messageId === value) : '';
+      navigation.navigate(NAVIGATION_KEYS.EDIT_RETURN_VISIT, {
+        fromMessage: true,
+        findPoolId
+      });
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }

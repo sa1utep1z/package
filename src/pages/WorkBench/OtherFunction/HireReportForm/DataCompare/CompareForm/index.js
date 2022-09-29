@@ -30,13 +30,13 @@ const CompareForm = ({
       let datasets = [], labels = [];
       const selectedStatus = selectedState[0].value;
       data.map((list, listIndex) => {
-        const newData = list.map(item => item[selectedStatus]);
+        const newData = list.content.map(item => item[selectedStatus]);
         newData.unshift(0);
         datasets.push({
           data: newData,
           color: () => COLOR_LIST[listIndex]
         });
-        list.map((item, itemIndex) => {
+        list.content.map((item, itemIndex) => {
           labels[itemIndex] = labels[itemIndex] ? labels[itemIndex] + 'VS' + moment(item.orderDate).format('M/D') : moment(item.orderDate).format('M/D');
         });
       })

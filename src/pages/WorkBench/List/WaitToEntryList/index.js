@@ -6,9 +6,9 @@ import { useToast } from "react-native-toast-notifications";
 
 import NormalDialog from "../../../../components/NormalDialog";
 import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButtonOfList';
+import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
-import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import OnBoardingStatus from "../../../../components/NormalDialog/OnBoardingStatus";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";

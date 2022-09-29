@@ -5,6 +5,7 @@ import Svg, { Text, Line } from 'react-native-svg';
 import moment from "moment";
 
 import { COLOR_LIST } from "../../../../../../utils/const";
+import EmptyArea from '../../../../../../components/EmptyArea';
 
 let arrayIndex = 0;
 const originRenderData = {
@@ -15,36 +16,36 @@ const originRenderData = {
     }
   ],
   labels: [0, 0, 0, 0, 0, 0, 0],
-  legend: ['未选择']
+  legend: ['无数据']
 };
 
 const TrendForm = ({
   data, //数据源
   loading, //是否显示加载中
-  selectedState, //已选择的状态
 }) => {
   const [renderData, setRenderData] = useState(originRenderData);
 
   useEffect(() => {
-    if(data?.length){
-      let datasets = [];
-      const selectedStatus = selectedState.map(status => status.value);
-      selectedStatus.map((status, statusIndex) => {
-        const newData = data.map(item => item[status]);
-        newData.unshift(0);
-        datasets.push({
-          data: newData,
-          color: () => COLOR_LIST[statusIndex]
-        })
-      })
-      const labels = data.map(item => moment(item.orderDate).format('M/D'));
+    if(data.length){
+      const labels = data[0].content.map(item => moment(item.orderDate).format('M/D'));
       labels.unshift('0');
+      let datasets = [];
+      data.map((item, index) => {
+        if(item.content.length){
+          const itemArr = item.content.map(data => data.num);
+          itemArr.unshift(0);
+          datasets.push({
+            data: itemArr,
+            color: () => COLOR_LIST[index]
+          })
+        }
+      })
       const renderData = {
         datasets,
         labels,
         legend: []
       };
-      setRenderData({...renderData});
+      setRenderData(renderData);
     }
   }, [data])
 
@@ -109,20 +110,24 @@ const TrendForm = ({
   return (
     <View style={styles.bottomArea}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {!loading ? <LineChart
-          data={renderData}
-          width={renderData.labels.length * 100}
-          chartConfig={chartConfig}
-          height={460}
-          segments={6}
-          bezier
-          fromZero
-          decorator={decorator}
-          withOuterLines={false}
-          withVerticalLines={false}
-          formatYLabel={(num) => Math.trunc(num)}
-          renderDotContent={renderDotContent}
-        /> : <View style={{flex: 1, justifyContent: 'center'}}>
+        {!loading ? <>
+          {data.length ? <LineChart
+            data={renderData}
+            width={renderData.labels.length * 100}
+            chartConfig={chartConfig}
+            height={460}
+            segments={6}
+            bezier
+            fromZero
+            decorator={decorator}
+            withOuterLines={false}
+            withVerticalLines={false}
+            formatYLabel={(num) => Math.trunc(num)}
+            renderDotContent={renderDotContent}
+          /> : <View style={{flex: 1, justifyContent: 'center'}}>
+            <EmptyArea />
+          </View>}
+        </> : <View style={{flex: 1, justifyContent: 'center'}}>
           <ActivityIndicator size={48} color="#409EFF" />
         </View>}
       </ScrollView>

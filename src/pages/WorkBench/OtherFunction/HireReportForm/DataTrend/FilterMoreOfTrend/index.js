@@ -8,10 +8,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import HireReportFormApi from '../../../../../../request/HireReportFormApi';
-import { CHART_STATUS_LIST, CHANEL_SOURCE_LIST, SUCCESS_CODE, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from '../../../../../../utils/const';
+import { 
+  SUCCESS_CODE, 
+  CHART_STATUS_LIST, 
+  CHANEL_SOURCE_LIST, 
+  THIS_WEEK_START, 
+  THIS_WEEK_END, 
+  LAST_WEEK_START, 
+  LAST_WEEK_END, 
+  THIS_MONTH_START, 
+  THIS_MONTH_END
+} from '../../../../../../utils/const';
 import { closeDialog } from '../../../../../../redux/features/HireReport/HireReportDialog';
 import MyMembersApi from '../../../../../../request/MyMembersApi';
 import SearchInput from '../../../../../../components/SearchInput';
+import {deepCopy} from '../../../../../../utils';
 
 let timer;
 
@@ -64,13 +75,15 @@ const SupplierItem = ({isSelected, supplier, isLastIndex, supplierOnPress}) => {
 };
 
 const EnterpriseItem = ({isSelected, company, isLastIndex, selectCompanyOnPress}) => {
+  const onChange = useCallback(()=> selectCompanyOnPress(company), [company]);
+
   return useMemo(() => (
-    <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectCompanyOnPress(company)}>
+    <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={onChange}>
       <Text style={{color: '#333333'}}>{company.label}</Text>
       <CheckBox
         checked={isSelected}
         size={18}
-        onPress={() => selectCompanyOnPress(company)}
+        onPress={onChange}
         containerStyle={{padding: 0}}
         checkedIcon={"dot-circle-o"}
         uncheckedIcon={"circle-o"}
@@ -82,12 +95,13 @@ const EnterpriseItem = ({isSelected, company, isLastIndex, selectCompanyOnPress}
 const FilterMoreOfTrend = ({
   rangeDate,
   confirm,
+  showType,
   selectedState = [], //已选状态
-  selectedWay = {}, //已选来源渠道
-  selectedEnterprise = {}, //已选企业
-  selectedStore = {}, //已选门店
-  selectedRecruiter = {}, //已选招聘员
-  selectedSupplier = {}, //已选供应商
+  selectedWay = [], //已选来源渠道
+  selectedEnterprise = [], //已选企业
+  selectedStore = [], //已选门店
+  selectedRecruiter = [], //已选招聘员
+  selectedSupplier = [], //已选供应商
 }) => {
   const showDialog = useSelector((state) => state.HireReportDialog.showDialog);
 
@@ -354,66 +368,128 @@ const FilterMoreOfTrend = ({
     const copyList = [...selectState];
     const findItemIndex = selectState.findIndex(select => select.value === state.value);
     if(findItemIndex !== -1){
+      //如果只剩下一个状态，则不支持取消；
+      if(selectState.length === 1)return;
       copyList.splice(findItemIndex, 1);
       setSelectState(copyList);
       return;
     }
-    if(selectState.length === 3){
-      let newArrList = [state];
-      setSelectState(newArrList);
-      return;
-    }
-    copyList.push(state);
-    setSelectState(copyList);
+    let newArrList = [state];
+    setSelectState(newArrList);
   };
 
   //选择渠道
   const wayOnPress = (way) => {
-    setSelectWay(way);
+    const copyList = [...selectWay];
+    const findItemIndex = selectWay.findIndex(select => select.value === way.value);
+    if(findItemIndex !== -1){
+      copyList.splice(findItemIndex, 1);
+      setSelectWay(copyList);
+      return;
+    }
+    if(selectWay.length === 3 || showType !== 'way'){
+      let newArrList = [way];
+      setSelectWay(newArrList);
+      return;
+    }
+    copyList.push(way);
+    setSelectWay(copyList);
   };
 
   const clearWay = () => {
-    selectWay.value && setSelectWay({});
+    selectWay.length && setSelectWay([]);
   };
   
   //选择门店
   const selectStoreOnPress = (store) => {
     storeScrollViewRef?.current?.flashScrollIndicators();
-    setSelectStore(store);
+    const copyList = [...selectStore];
+    const findItemIndex = selectStore.findIndex(select => select.storeId === store.storeId);
+    if(findItemIndex !== -1){
+      copyList.splice(findItemIndex, 1);
+      setSelectStore(copyList);
+      return;
+    }
+    if(selectStore.length === 3 || showType !== 'store'){
+      let newArrList = [store];
+      setSelectStore(newArrList);
+      return;
+    }
+    copyList.push(store);
+    setSelectStore(copyList);
   };
 
   const clearStore = () => {
-    selectStore.storeId && setSelectStore({});
+    selectStore.length && setSelectStore([]);
   };
 
   //选择招聘员
   const recruiterOnPress = (recruiter) => {
     recruiterScrollViewRef?.current?.flashScrollIndicators();
-    setSelectRecruiter(recruiter);
+    const copyList = [...selectRecruiter];
+    const findItemIndex = selectRecruiter.findIndex(select => select.value === recruiter.value);
+    if(findItemIndex !== -1){
+      copyList.splice(findItemIndex, 1);
+      setSelectRecruiter(copyList);
+      return;
+    }
+    if(selectRecruiter.length === 3 || showType !== 'recruiter'){
+      let newArrList = [recruiter];
+      setSelectRecruiter(newArrList);
+      return;
+    }
+    copyList.push(recruiter);
+    setSelectRecruiter(copyList);
   };
 
   const clearRecruiter = () => {
-    selectRecruiter.value && setSelectRecruiter({});
+    selectRecruiter.length && setSelectRecruiter([]);
   };
 
   //选择供应商
   const supplierOnPress = (supplier) => {
     supplierScrollViewRef?.current?.flashScrollIndicators();
-    setSelectSupplier(supplier);
+    const copyList = [...selectSupplier];
+    const findItemIndex = selectSupplier.findIndex(select => select.value === supplier.value);
+    if(findItemIndex !== -1){
+      copyList.splice(findItemIndex, 1);
+      setSelectSupplier(copyList);
+      return;
+    }
+    if(selectSupplier.length === 3 || showType !== 'supplier'){
+      let newArrList = [supplier];
+      setSelectSupplier(newArrList);
+      return;
+    }
+    copyList.push(supplier);
+    setSelectSupplier(copyList);
   };
 
   const clearSupplier = () => {
-    selectSupplier.value && setSelectSupplier({});
+    selectSupplier.length && setSelectSupplier([]);
   };
 
   //选择企业
-  const selectCompanyOnPress = useCallback((value) => {
+  const selectCompanyOnPress = (company) => {
     companyScrollViewRef?.current?.flashScrollIndicators();
-    setSelectEnterprise(value);
-  }, []);
+    const copyList = [...selectEnterprise];
+    const findItemIndex = selectEnterprise.findIndex(select => select.value === company.value);
+    if(findItemIndex !== -1){
+      copyList.splice(findItemIndex, 1);
+      setSelectEnterprise(copyList);
+      return;
+    }
+    if(selectEnterprise.length === 3){
+      let newArrList = [company];
+      setSelectEnterprise(newArrList);
+      return;
+    }
+    copyList.push(company);
+    setSelectEnterprise(copyList);
+  };
 
   const clearEnterprise = () => {
-    selectEnterprise.value && setSelectEnterprise({});
+    selectEnterprise.length && setSelectEnterprise([]);
   };
 
   //筛选企业
@@ -549,10 +625,10 @@ const FilterMoreOfTrend = ({
           <View style={[styles.touchAreaWithDelete, showWay && styles.selectedTouchArea]}>
             <TouchableOpacity style={styles.touchTitleArea} onPress={changeWay}>
               <Text numberOfLines={1} style={[styles.title, showWay && styles.fontBold]}>
-                {`${selectWay.value ? `已选来源渠道：${selectWay.title}` : '请选择来源渠道'}`}
+                {`${selectWay.length ? `已选来源渠道：${selectWay.map(select => select.title).join('、')}` : '请选择来源渠道'}`}
               </Text>
             </TouchableOpacity>
-            {!!selectWay.value && <TouchableOpacity style={styles.clearIcon} onPress={clearWay}>
+            {!!selectWay.length && <TouchableOpacity style={styles.clearIcon} onPress={clearWay}>
               <AntDesign
                 name='closecircle' 
                 size={15}
@@ -564,7 +640,7 @@ const FilterMoreOfTrend = ({
             <View style={[styles.selectArea, {flexDirection: 'column'}]}>
               {CHANEL_SOURCE_LIST.map((way, wayIndex) => {
                 const isLastIndex = wayIndex === (CHANEL_SOURCE_LIST.length - 1);
-                const isSelected = selectWay.value === way.value;
+                const isSelected = selectWay.length ? selectWay.findIndex(select => select.value === way.value) !== -1 : false;
                 return (
                   <TouchableOpacity style={[styles.itemArea, isLastIndex && {borderBottomWidth: 0}]} onPress={() => wayOnPress(way)} key={wayIndex}>
                     <Text style={{color: '#333333'}}>{way.title}</Text>
@@ -585,10 +661,10 @@ const FilterMoreOfTrend = ({
           <View style={[styles.touchAreaWithDelete, showStore && styles.selectedTouchArea]}>
             <TouchableOpacity style={styles.touchTitleArea} onPress={changeStore}>
               <Text numberOfLines={1} style={[styles.title, showStore && styles.fontBold]}>
-                {`${selectStore.storeId ? `已选门店：${selectStore.storeName}` : '请选择门店'}`}
+                {`${selectStore.length ? `已选门店：${selectStore.map(select => select.storeName).join('、')}` : '请选择门店'}`}
               </Text>
             </TouchableOpacity>
-            {!!selectStore.storeId && <TouchableOpacity style={styles.clearIcon} onPress={clearStore}>
+            {!!selectStore.length && <TouchableOpacity style={styles.clearIcon} onPress={clearStore}>
               <AntDesign
                 name='closecircle' 
                 size={15}
@@ -611,15 +687,20 @@ const FilterMoreOfTrend = ({
           {!loading ? 
             <ScrollView style={styles.listArea} ref={storeScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
               {storeList.map((store, storeIndex) => {
-                const isSelected = selectStore.storeId === store.storeId;
+                const isSelected = selectStore.length ? selectStore.findIndex(select => select.storeId === store.storeId) !== -1 : false;
                 const isLastIndex = storeIndex === storeList.length - 1;
                 return (
-                  <StoreItem 
-                    isSelected={isSelected} 
-                    store={store} 
-                    isLastIndex={isLastIndex} 
-                    selectStoreOnPress={selectStoreOnPress} 
-                  />
+                  <TouchableOpacity key={store.storeId} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectStoreOnPress(store)}>
+                    <Text style={{color: '#333333'}}>{store.storeName}</Text>
+                    <CheckBox
+                      checked={isSelected}
+                      size={18}
+                      onPress={() => selectStoreOnPress(store)}
+                      containerStyle={{padding: 0}}
+                      checkedIcon={"dot-circle-o"}
+                      uncheckedIcon={"circle-o"}
+                    />
+                  </TouchableOpacity>
                 )})}
               </ScrollView> : <View style={styles.emptyArea}>
             <ActivityIndicator size={20} color="#409EFF"/>
@@ -629,10 +710,10 @@ const FilterMoreOfTrend = ({
           <View style={[styles.touchAreaWithDelete, showRecruiter && styles.selectedTouchArea]}>
             <TouchableOpacity style={styles.touchTitleArea} onPress={changeRecruiter}>
               <Text numberOfLines={1} style={[styles.title, showRecruiter && styles.fontBold]}>
-                {`${selectRecruiter.value ? `已选招聘员：${selectRecruiter.label}` : '请选择招聘员'}`}
+                {`${selectRecruiter.length ? `已选招聘员：${selectRecruiter.map(select => select.label).join('、')}` : '请选择招聘员'}`}
               </Text>
             </TouchableOpacity>
-            {!!selectRecruiter.value && <TouchableOpacity style={styles.clearIcon} onPress={clearRecruiter}>
+            {!!selectRecruiter.length && <TouchableOpacity style={styles.clearIcon} onPress={clearRecruiter}>
               <AntDesign
                 name='closecircle' 
                 size={15}
@@ -655,15 +736,20 @@ const FilterMoreOfTrend = ({
           {!loading ? 
             <ScrollView style={styles.listArea} ref={recruiterScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
               {recruiterList.map((recruiter, recruiterIndex) => {
-                const isSelected = selectRecruiter.value === recruiter.value;
+                const isSelected = selectRecruiter.length ? selectRecruiter.findIndex(select => select.value === recruiter.value) !== -1 : false;
                 const isLastIndex = recruiterIndex === recruiterList.length - 1;
                 return (
-                  <RecruiterItem 
-                    isSelected={isSelected} 
-                    recruiter={recruiter} 
-                    isLastIndex={isLastIndex} 
-                    recruiterOnPress={recruiterOnPress} 
-                  />
+                  <TouchableOpacity key={recruiter.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => recruiterOnPress(recruiter)}>
+                    <Text style={{color: '#333333'}}>{recruiter.label}</Text>
+                    <CheckBox
+                      checked={isSelected}
+                      size={18}
+                      onPress={() => recruiterOnPress(recruiter)}
+                      containerStyle={{padding: 0}}
+                      checkedIcon={"dot-circle-o"}
+                      uncheckedIcon={"circle-o"}
+                    />
+                  </TouchableOpacity>
                 )})}
               </ScrollView>: <View style={styles.emptyArea}>
             <ActivityIndicator size={20} color="#409EFF"/>
@@ -673,10 +759,10 @@ const FilterMoreOfTrend = ({
           <View style={[styles.touchAreaWithDelete, showSupplier && styles.selectedTouchArea]}>
             <TouchableOpacity style={styles.touchTitleArea} onPress={changeSupplier}>
               <Text numberOfLines={1} style={[styles.title, showSupplier && styles.fontBold]}>
-                {`${selectSupplier.value ? `已选供应商：${selectSupplier.label}` : '请选择供应商'}`}
+                {`${selectSupplier.length ? `已选供应商：${selectSupplier.map(select => select.label).join('、')}` : '请选择供应商'}`}
               </Text>
             </TouchableOpacity>
-            {!!selectSupplier.value && <TouchableOpacity style={styles.clearIcon} onPress={clearSupplier}>
+            {!!selectSupplier.length && <TouchableOpacity style={styles.clearIcon} onPress={clearSupplier}>
               <AntDesign
                 name='closecircle' 
                 size={15}
@@ -697,20 +783,25 @@ const FilterMoreOfTrend = ({
         </View>
         {showSupplier && <View style={{marginBottom: 10}}>
           {!loading ? 
-              <ScrollView style={styles.listArea} ref={supplierScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
-                {supplierList.map((supplier, supplierIndex) => {
-                  const isSelected = selectSupplier.value === supplier.value;
-                  const isLastIndex = supplierIndex === supplierList.length - 1;
-                  return (
-                    <SupplierItem 
-                      isSelected={isSelected} 
-                      supplier={supplier} 
-                      isLastIndex={isLastIndex} 
-                      supplierOnPress={supplierOnPress} 
+            <ScrollView style={styles.listArea} ref={supplierScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
+              {supplierList.map((supplier, supplierIndex) => {
+                const isSelected = selectSupplier.length ? selectSupplier.findIndex(select => select.value === supplier.value) !== -1 : false;
+                const isLastIndex = supplierIndex === supplierList.length - 1;
+                return (
+                  <TouchableOpacity key={supplier.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => supplierOnPress(supplier)}>
+                    <Text style={{color: '#333333'}}>{supplier.label}</Text>
+                    <CheckBox
+                      checked={isSelected}
+                      size={18}
+                      onPress={() => supplierOnPress(supplier)}
+                      containerStyle={{padding: 0}}
+                      checkedIcon={"dot-circle-o"}
+                      uncheckedIcon={"circle-o"}
                     />
-                  )
-                })}
-                </ScrollView> : <View style={styles.emptyArea}>
+                  </TouchableOpacity>
+                )
+              })}
+              </ScrollView> : <View style={styles.emptyArea}>
             <ActivityIndicator size={20} color="#409EFF"/>
           </View>}
         </View>}
@@ -718,10 +809,10 @@ const FilterMoreOfTrend = ({
           <View style={[styles.touchAreaWithDelete, showEnterprise && styles.selectedTouchArea]}>
             <TouchableOpacity style={styles.touchTitleArea} onPress={changeEnterprise}>
               <Text numberOfLines={1} style={[styles.title, showEnterprise && styles.fontBold]}>
-                {`${selectEnterprise.value ? `已选企业：${selectEnterprise.label}` : '请选择企业'}`}
+                {`${selectEnterprise.length ? `已选企业：${selectEnterprise.map(select => select.label).join('、')}` : '请选择企业'}`}
               </Text>
             </TouchableOpacity>
-            {!!selectEnterprise.value && <TouchableOpacity style={styles.clearIcon} onPress={clearEnterprise}>
+            {!!selectEnterprise.length && <TouchableOpacity style={styles.clearIcon} onPress={clearEnterprise}>
               <AntDesign
                 name='closecircle' 
                 size={15}
@@ -744,15 +835,20 @@ const FilterMoreOfTrend = ({
           {!loading ? 
             <ScrollView style={styles.listArea} ref={companyScrollViewRef} keyboardShouldPersistTaps="handled" removeClippedSubviews>
               {enterpriseList.map((company, companyIndex) => {
-                const isSelected = selectEnterprise.value === company.value;
+                const isSelected = selectEnterprise.length ? selectEnterprise.findIndex(select => select.value === company.value) !== -1 : false;
                 const isLastIndex = companyIndex === enterpriseList.length - 1;
                 return (
-                  <EnterpriseItem
-                    isSelected={isSelected} 
-                    company={company} 
-                    isLastIndex={isLastIndex} 
-                    selectCompanyOnPress={selectCompanyOnPress} 
-                  />
+                  <TouchableOpacity key={company.value} style={[styles.renderItemStyle, isLastIndex && {borderBottomWidth: 0}]} onPress={() => selectCompanyOnPress(company)}>
+                    <Text style={{color: '#333333'}}>{company.label}</Text>
+                    <CheckBox
+                      checked={isSelected}
+                      size={18}
+                      onPress={() => selectCompanyOnPress(company)}
+                      containerStyle={{padding: 0}}
+                      checkedIcon={"dot-circle-o"}
+                      uncheckedIcon={"circle-o"}
+                    />
+                  </TouchableOpacity>
                 )})}
               </ScrollView> : <View style={styles.emptyArea}>
             <ActivityIndicator size={20} color="#409EFF"/>

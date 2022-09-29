@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { useDispatch } from 'react-redux';
 
@@ -217,7 +217,7 @@ const DataCompare = ({
             return (
               <View key={rangeNameIndex} style={styles.colorArea}>
                 <View style={[styles.circle, {backgroundColor: `${COLOR_LIST[rangeNameIndex]}`}]}></View>
-                <Text style={{fontSize: 22, color: `${COLOR_LIST[rangeNameIndex]}`}}>{rangeName}</Text>
+                <Text style={{fontSize: 22, color: `${COLOR_LIST[rangeNameIndex]}`}}>{rangeName}({data.length ? data[rangeNameIndex].total[selectedState[0].value] : 0})</Text> 
               </View>
           )})}
         </View>

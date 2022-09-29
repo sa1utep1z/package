@@ -35,6 +35,7 @@ const HeaderSearch = ({
   filterFun,
   staffSearch,
   singleSelect = false,
+  noCompanyAndStatus = false,
   noStoreAndStaff = false,
   canFilterStatus = false,
   placeholder= '',
@@ -167,7 +168,7 @@ const HeaderSearch = ({
           }
           return (
             <Animated.View style={[styles.topView, {opacity: fadeAnim}, !showSearch && {display: 'none'}]}>
-              <View style={[{flexDirection: 'row', marginBottom: 20}, withoutCompanyFilter && {marginBottom: 0}]}>
+              {!noCompanyAndStatus && <View style={[{flexDirection: 'row', marginBottom: 20}, withoutCompanyFilter && {marginBottom: 0}]}>
                 {
                   companyShow && <Field
                   title="企业"
@@ -188,7 +189,7 @@ const HeaderSearch = ({
                   originList={STATUS_LIST}
                   component={HeaderSelectItem}
                 />}
-              </View>
+              </View>}
               {!noStoreAndStaff && <View style={{flexDirection: 'row', marginBottom: 20}}>
                 <Field
                   title="门店"
@@ -212,6 +213,7 @@ const HeaderSearch = ({
                 /> : <Field
                   title="招聘员"
                   name="staff"
+                  singleSelect={singleSelect}
                   originList={staffList}
                   component={HeaderSelectItem}
                 />}

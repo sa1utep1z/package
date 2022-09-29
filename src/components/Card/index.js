@@ -3,10 +3,14 @@ import { View, Text, StyleSheet } from 'react-native';
 
 import WaterMark from "../WaterMark";
 
-const Card = ({title, content}) => {
+const Card = ({
+  title, 
+  content,
+  style
+}) => {
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, style]}>
       <View style={styles.titleArea}>
         <View style={styles.titleIcon}></View>
         <Text style={styles.title}>{title}</Text>
