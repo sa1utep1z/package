@@ -18,6 +18,7 @@ const SingleInput = ({
           <TextInput
             value={field.value}
             placeholder={`请输入${label}`}
+            placeholderTextColor="#999999"
             onChangeText={form.handleChange(field.name)}
             style={{fontSize: 26}}
             {...rest}
@@ -46,6 +47,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   labelText: {
+    minWidth: 150,
     fontSize: 28,
     color: '#333333'
   },

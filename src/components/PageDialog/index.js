@@ -22,13 +22,8 @@ const PageDialog = () => {
   const dialogSwitch = useSelector((state) => state.PageDialog.showDialog);
   const dialogContent = useSelector((state) => state.PageDialog.dialogComponent);
   const dialogTitle = useSelector((state) => state.PageDialog.dialogTitle);
-  console.log('dialogContent', dialogContent)
-  console.log('dialogSwitch', dialogSwitch)
 
-  const close = () => {
-    console.log('按下');
-    dispatch(closeDialog())
-  };
+  const close = () => dispatch(closeDialog());
 
   return (
     <Modal

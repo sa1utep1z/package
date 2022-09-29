@@ -19,17 +19,25 @@ const SingleSelect = ({
 
   const [showDialog, setShowDialog] = useState(false);
 
+  const confirm = (list) => {
+    form.setFieldValue(field.name, list);
+  };
+
   const selectOnPress = () => {
-    dispatch(setTitle('请选择企业'));
-    dispatch(openDialog(<SingleSelectList selectList={selectList}/>));
+    dispatch(setTitle('请选择用工企业'));
+    dispatch(openDialog(<SingleSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
   };
 
   return (
     <View style={!form.errors[field.name] && styles.selectArea}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
-        <TouchableOpacity style={styles.inputContainer} onPress={selectOnPress}>
-          <Text numberOfLines={1} style={styles.itemText}>{'哈哈哈'}</Text>
+        <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
+          {field.value && <>
+            <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
+              {!!field.value.length ? field.value[0].label : `请选择${label}`}
+            </Text>
+          </>}
           <AntDesign
             name={showDialog ? 'up' : 'down'}
             size={36}
@@ -58,12 +66,17 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   labelText: {
+    minWidth: 150,
     fontSize: 28,
     color: '#333333'
   },
   itemText: {
     fontSize: 26,
     color: '#333333'
+  },
+  itemText_none: {
+    fontSize: 26,
+    color: '#999999'
   },
   inputContainer: {
     flex: 1,
@@ -79,6 +92,9 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: 'red',
     fontSize: 22
+  },
+  errorBorder: {
+    borderColor: 'red'
   }
 })
 

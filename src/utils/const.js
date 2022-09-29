@@ -594,3 +594,17 @@ export const WATERMARK_LIST_SMALL = [
 export const WATERMARK_LIST_SMALLEST = [
   1, 0, 1, 0, 0, 1, 0, 1
 ];
+
+//新建订单-岗位枚举值：
+export const CREATE_ORDER_JOB_ORDER = [
+  { label: '普工', value: 'GENERAL_WORKER' },
+  { label: '技工', value: 'TECH_WORKER' },
+  { label: '工程师', value: 'ENGINEER_WORKER' },
+];
+
+//新建订单-工种枚举值：
+export const CREATE_ORDER_JOB_TYPE = [
+  { label: '正式工', value: 'FORMAL_WORKER' },
+  { label: '派遣工-小时工', value: 'DISPATH_HOURLY_WORKER' },
+  { label: '派遣工-同工同酬', value: 'DISPATH_EQUAL_PAY' },
+];
