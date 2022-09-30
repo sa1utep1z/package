@@ -29,7 +29,7 @@ const SingleSelect = ({
   };
 
   return (
-    <View style={!form.errors[field.name] && styles.selectArea}>
+    <View style={[{flex: 1}, !form.errors[field.name] && styles.selectArea]}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
         <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>

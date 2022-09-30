@@ -5,9 +5,11 @@ import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
+import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
+import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
 import MyMembersApi from "../../../../../../request/MyMembersApi";
 import { SUCCESS_CODE, CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE } from "../../../../../../utils/const";
@@ -22,18 +24,34 @@ const validationSchema = Yup.object().shape({
     endDate: Yup.string().required('请选择订单结束日期')
   }),
   orderDuration: Yup.string().required('请选择订单工期'),
+  jobOrder: Yup.string().required('请输入职位顺序'),
+  complexSalary: Yup.object({
+    start: Yup.string().required('请输入起始薪资'),
+    end: Yup.string().required('请输入结束薪资')
+  }),
+  pictureList: Yup.array().min(1, '请选择职位展示图片'),
+  littleProgramTitle: Yup.string().required('请输入小程序职位标题'),
+  littleProgramSalaryDetail: Yup.string().required('请输入小程序薪资详情文本'),
 });
 
 const initialValues = {
   orderName: '',
   factory: [],
+  jobOrder: '',
   job: [],
   jobType: [],
   orderRangeDate: {
     startDate: '',
     endDate: ''
   },
-  orderDuration: ''
+  orderDuration: '',
+  complexSalary: {
+    start: '',
+    end: ''
+  },
+  pictureList: [],
+  littleProgramTitle: '',
+  littleProgramSalaryDetail: ''
 };
 
 const OrderInfo = () => {
@@ -88,18 +106,32 @@ const OrderInfo = () => {
                 name="orderName"
                 label="订单名称"
                 component={SingleInput}
+                selectTextOnFocus
                 rightButton={
                   <TouchableOpacity style={{backgroundColor: '#409EFF', height: 50, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
                   </TouchableOpacity>
                 }
               />
-              <Field
-                name="factory"
-                label="用工企业"
-                selectList={companyList}
-                component={SingleSelect}
-              />
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <Field
+                  name="factory"
+                  label="用工企业"
+                  selectList={companyList}
+                  component={SingleSelect}
+                />
+                <Field
+                  name="jobOrder"
+                  label="职位顺序"
+                  placeholder="输入"
+                  keyboardType="numeric"
+                  multiline={false}
+                  numberOfLines={1}
+                  maxLength={2}
+                  inputStyle={{width: 260, marginLeft: 10}}
+                  component={SingleInput}
+                />
+              </View>
               <Field
                 name="job"
                 label="岗位"
@@ -121,6 +153,31 @@ const OrderInfo = () => {
                 name="orderDuration"
                 label="订单工期"
                 component={OrderSingleDate}
+              />
+              <Field
+                name="complexSalary"
+                label="综合薪资"
+                keyboardType="numeric"
+                component={OrderRangeInput}
+              />
+              <Field
+                name="pictureList"
+                label="职位展示图片"
+                component={SelectPhotos}
+              />
+              <Field
+                name="littleProgramTitle"
+                label="小程序职位标题"
+                selectTextOnFocus
+                component={SingleInput}
+              />
+              <Field
+                name="littleProgramSalaryDetail"
+                label="小程序薪资详情"
+                placeholder="请输入小程序薪资详情文本"
+                multiline
+                inputContainerStyle={{minHeight: 120}}
+                component={SingleInput}
               />
             </View>
           )

@@ -28,11 +28,8 @@ const OrderSingleDate = ({
     form.setFieldValue(field.name, moment(selectedDate).format('YYYY-MM-DD'));
   };
 
-  console.log('field.name', field.name);
-  console.log('form', form);
-
   return (
-    <View style={{marginBottom: form.errors[field.name] ? 10 : 20}}>
+    <View style={{flex: 1, marginBottom: form.errors[field.name] ? 10 : 20}}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
         <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && styles.errorBorder]}>

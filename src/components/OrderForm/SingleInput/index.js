@@ -8,19 +8,23 @@ const SingleInput = ({
   form, 
   label,
   rightButton,
+  placeholder,
+  inputStyle,
+  inputContainerStyle,
   ...rest
 }) => {
   return (
-    <View style={!form.errors[field.name] && styles.inputArea}>
+    <View style={[!form.errors[field.name] && styles.inputArea, inputStyle]}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
-        <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]}>
+        <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder, inputContainerStyle]}>
           <TextInput
             value={field.value}
-            placeholder={`请输入${label}`}
+            placeholder={placeholder || `请输入${label}`}
             placeholderTextColor="#999999"
             onChangeText={form.handleChange(field.name)}
             style={{fontSize: 26}}
+            selectionColor="#409EFF"
             {...rest}
           />
         </View>
@@ -53,7 +57,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    height: 60,
+    minHeight: 60,
     borderWidth: 2,
     borderColor: '#E5E5E5',
     borderRadius: 6,
