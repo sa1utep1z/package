@@ -92,97 +92,101 @@ const OrderInfo = () => {
           color={showDetail ? '#000000' : '#999999'}
         />
       </TouchableOpacity>
-      {showDetail && <View style={{minHeight: 400, backgroundColor: '#ffffff'}}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        handleChange={(e) => console.log('e', e)}
-        onSubmit={onSubmit}>
-        {({ handleSubmit, ...rest }) => {
-          console.log('rest', rest);
-          return (
-            <View style={{ flex: 1, paddingHorizontal: 28}}>
-              <Field
-                name="orderName"
-                label="订单名称"
-                component={SingleInput}
-                selectTextOnFocus
-                rightButton={
-                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 50, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
+      {showDetail && <View style={{backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#999999', paddingTop: 20}}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          handleChange={(e) => console.log('e', e)}
+          onSubmit={onSubmit}>
+          {({ handleSubmit, ...rest }) => {
+            console.log('rest', rest);
+            return (
+              <View style={{ flex: 1, paddingHorizontal: 28}}>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                  <Field
+                    name="orderName"
+                    label="订单名称"
+                    component={SingleInput}
+                    inputStyle={{flex: 1}}
+                    selectTextOnFocus
+                  />
+                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
                   </TouchableOpacity>
-                }
-              />
-              <View style={{flex: 1, flexDirection: 'row'}}>
+                </View>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                  <Field
+                    name="factory"
+                    label="用工企业"
+                    selectList={companyList}
+                    component={SingleSelect}
+                  />
+                  <Field
+                    name="jobOrder"
+                    label="职位顺序"
+                    placeholder="输入"
+                    keyboardType="numeric"
+                    multiline={false}
+                    numberOfLines={1}
+                    maxLength={2}
+                    inputStyle={{maxWidth: 260, marginLeft: 20}}
+                    component={SingleInput}
+                  />
+                </View>
                 <Field
-                  name="factory"
-                  label="用工企业"
-                  selectList={companyList}
-                  component={SingleSelect}
+                  name="job"
+                  label="岗位"
+                  radioList={CREATE_ORDER_JOB_ORDER}
+                  component={RadioSelect}
                 />
                 <Field
-                  name="jobOrder"
-                  label="职位顺序"
-                  placeholder="输入"
+                  name="jobType"
+                  label="工种"
+                  radioList={CREATE_ORDER_JOB_TYPE}
+                  component={RadioSelect}
+                />
+                <Field
+                  name="orderRangeDate"
+                  label="订单日期"
+                  component={OrderRangeDate}
+                />
+                <Field
+                  name="orderDuration"
+                  label="订单工期"
+                  component={OrderSingleDate}
+                />
+                <Field
+                  name="complexSalary"
+                  label="综合薪资"
                   keyboardType="numeric"
-                  multiline={false}
-                  numberOfLines={1}
-                  maxLength={2}
-                  inputStyle={{width: 260, marginLeft: 10}}
+                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>¥</Text>}
+                  component={OrderRangeInput}
+                />
+                <Field
+                  name="pictureList"
+                  label="职位展示图片"
+                  component={SelectPhotos}
+                />
+                <Field
+                  name="littleProgramTitle"
+                  label="小程序职位标题"
+                  selectTextOnFocus
+                  component={SingleInput}
+                />
+                <Field
+                  name="littleProgramSalaryDetail"
+                  label="小程序薪资详情"
+                  placeholder="请输入小程序薪资详情文本"
+                  maxLength={200}
+                  multiline
+                  lengthLimit
+                  inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
                 />
               </View>
-              <Field
-                name="job"
-                label="岗位"
-                radioList={CREATE_ORDER_JOB_ORDER}
-                component={RadioSelect}
-              />
-              <Field
-                name="jobType"
-                label="工种"
-                radioList={CREATE_ORDER_JOB_TYPE}
-                component={RadioSelect}
-              />
-              <Field
-                name="orderRangeDate"
-                label="订单日期"
-                component={OrderRangeDate}
-              />
-              <Field
-                name="orderDuration"
-                label="订单工期"
-                component={OrderSingleDate}
-              />
-              <Field
-                name="complexSalary"
-                label="综合薪资"
-                keyboardType="numeric"
-                component={OrderRangeInput}
-              />
-              <Field
-                name="pictureList"
-                label="职位展示图片"
-                component={SelectPhotos}
-              />
-              <Field
-                name="littleProgramTitle"
-                label="小程序职位标题"
-                selectTextOnFocus
-                component={SingleInput}
-              />
-              <Field
-                name="littleProgramSalaryDetail"
-                label="小程序薪资详情"
-                placeholder="请输入小程序薪资详情文本"
-                multiline
-                inputContainerStyle={{minHeight: 120}}
-                component={SingleInput}
-              />
-            </View>
-          )
-        }}
-      </Formik>
+            )
+          }}
+        </Formik>
       </View>}
     </View>
   )

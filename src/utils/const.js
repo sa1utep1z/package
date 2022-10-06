@@ -599,12 +599,30 @@ export const WATERMARK_LIST_SMALLEST = [
 export const CREATE_ORDER_JOB_ORDER = [
   { label: '普工', value: 'GENERAL_WORKER' },
   { label: '技工', value: 'TECH_WORKER' },
-  { label: '工程师', value: 'ENGINEER_WORKER' },
+  { label: '工程师', value: 'ENGINEER_WORKER' }
 ];
 
 //新建订单-工种枚举值：
 export const CREATE_ORDER_JOB_TYPE = [
   { label: '正式工', value: 'FORMAL_WORKER' },
   { label: '派遣工-小时工', value: 'DISPATH_HOURLY_WORKER' },
-  { label: '派遣工-同工同酬', value: 'DISPATH_EQUAL_PAY' },
+  { label: '派遣工-同工同酬', value: 'DISPATH_EQUAL_PAY' }
+];
+
+//新建订单-录用要求-性别枚举值：
+export const FEMALE_LIMIT = [
+  { label: '不限', value: 'UNLIMIT' },
+  { label: '限制比例', value: 'LIMIT' }
+];
+
+//新建订单-招聘员提成说明-提成模式枚举值：
+export const REWARD_MODE = [
+  { label: '短线买断', value: 'STUB' },
+  { label: '长线按天提成', value: 'LONG_LINE' }
+];
+
+//新建订单-招聘员提成说明-条件设置枚举值：
+export const CONDITIONS_LIST = [
+  { value: 'punch_day_ok', label: '打卡满', type: 'punch_day' },
+  { value: 'work_day_ok', label: '在职满', type: 'work_day' }
 ];

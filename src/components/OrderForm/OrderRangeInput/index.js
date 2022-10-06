@@ -10,6 +10,7 @@ const OrderRangeInput = ({
   rightButton,
   placeholder,
   inputStyle,
+  inputRightComponent,
   ...rest
 }) => {
   console.log('form', form);
@@ -39,14 +40,14 @@ const OrderRangeInput = ({
             <View style={[{flex: 1, flexDirection: 'row', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingHorizontal: 20}, form.errors[field.name]?.start && {borderColor: 'red'}]}>
               <TextInput
                 value={field.value.start}
-                placeholder='输入起始薪资'
+                placeholder={`起始${label}`}
                 placeholderTextColor="#999999"
                 onChangeText={changeTextOnStart}
                 style={{flex: 1, fontSize: 26}}
                 selectionColor="#409EFF"
                 {...rest}
               />
-              <Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>¥</Text>
+              {inputRightComponent}
             </View>
             {!!form.errors[field.name] && <View style={{flexDirection: 'row'}}>
               <Text style={{fontSize: 22, color: 'red'}}>{form.errors[field.name].start}</Text>
@@ -57,14 +58,14 @@ const OrderRangeInput = ({
             <View style={[{flex: 1, flexDirection: 'row', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingHorizontal: 20}, form.errors[field.name]?.end && {borderColor: 'red'}]}>
               <TextInput
                 value={field.value.end}
-                placeholder='输入结束薪资'
+                placeholder={`结束${label}`}
                 placeholderTextColor="#999999"
                 onChangeText={changeTextOnEnd}
                 style={{flex: 1, fontSize: 26}}
                 selectionColor="#409EFF"
                 {...rest}
               />
-              <Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>¥</Text>
+              {inputRightComponent}
             </View>
             {!!form.errors[field.name] && <View style={{flexDirection: 'row'}}>
               <Text style={{fontSize: 22, color: 'red'}}>{form.errors[field.name].end}</Text>

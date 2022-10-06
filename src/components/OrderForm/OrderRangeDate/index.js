@@ -44,8 +44,6 @@ const OrderRangeDate = ({
         break;
     }
   };
-  console.log('field.name', field.name);
-  console.log('form', form);
 
   return (
     <View style={{marginBottom: form.errors[field.name] ? 10 : 20}}>
