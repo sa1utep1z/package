@@ -32,27 +32,27 @@ const SingleSelect = ({
     <View style={[{flex: 1}, !form.errors[field.name] && styles.selectArea]}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
-        <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
-          {field.value && <>
-            <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
-              {!!field.value.length ? field.value[0].label : `请选择${label}`}
-            </Text>
-          </>}
-          <AntDesign
-            name={showDialog ? 'up' : 'down'}
-            size={36}
-            color={showDialog ? '#999999' : '#000000'}
-          />
-        </TouchableOpacity>
+        <View style={{flex: 1}}>
+          <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
+            {field.value && <>
+              <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
+                {!!field.value.length ? field.value[0].label : `请选择${label}`}
+              </Text>
+            </>}
+            <AntDesign
+              name='down'
+              size={36}
+              color={!!field?.value?.length ? '#000000' : '#999999'}
+            />
+          </TouchableOpacity>
+          {!!form.errors[field.name] && 
+            <ErrorMessage
+              name={field.name}
+              style={styles.errorMessage}
+              component={Text}
+          />}
+        </View>
       </View>
-      {!!form.errors[field.name] && <View style={{flexDirection: 'row'}}>
-        <Text style={[styles.labelText, {opacity: 0}]}>{label}：</Text>
-        <ErrorMessage
-          name={field.name}
-          style={styles.errorMessage}
-          component={Text}
-        />
-      </View>}
     </View>
   )
 };
@@ -63,9 +63,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'flex-start'
   },
   labelText: {
+    height: 60,
+    textAlignVertical: 'center',
     minWidth: 150,
     fontSize: 28,
     color: '#333333'
@@ -79,7 +81,6 @@ const styles = StyleSheet.create({
     color: '#999999'
   },
   inputContainer: {
-    flex: 1,
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
@@ -91,7 +92,8 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22
+    fontSize: 22,
+    marginBottom: 10
   },
   errorBorder: {
     borderColor: 'red'

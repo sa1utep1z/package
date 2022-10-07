@@ -155,14 +155,14 @@ const OrderManage = () => {
 
   const renderHiddenItem = (data, rowMap) => (
     <View style={styles.rowBack}>
-        <TouchableOpacity
-          style={styles.backRightBtn}
-          onPress={() => deleteRow(rowMap, data.item.key)}>
-          <AntDesign
-            name='delete'
-            size={36}
-            color='#ffffff'
-          />
+      <TouchableOpacity
+        style={styles.backRightBtn}
+        onPress={() => deleteRow(rowMap, data.item.key)}>
+        <AntDesign
+          name='delete'
+          size={36}
+          color='#ffffff'
+        />
       </TouchableOpacity>
     </View>
   );

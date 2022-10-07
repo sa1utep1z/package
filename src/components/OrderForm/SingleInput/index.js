@@ -7,37 +7,41 @@ const SingleInput = ({
   field, 
   form, 
   label,
-  rightButton,
   placeholder,
   inputStyle,
   inputContainerStyle,
+  inputRightComponent,
+  lengthLimit = false, //是否限制字数（多行输入框输入文本右下角）
+  showLabel = true, //是否展示标题，默认为是
+  centerInput = false, //输入框是否居中
   ...rest
 }) => {
   return (
-    <View style={[!form.errors[field.name] && styles.inputArea, inputStyle]}>
+    <View style={[{flex: 1}, !form.errors[field.name] && styles.inputArea, inputStyle]}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>{label}：</Text>
-        <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder, inputContainerStyle]}>
-          <TextInput
-            value={field.value}
-            placeholder={placeholder || `请输入${label}`}
-            placeholderTextColor="#999999"
-            onChangeText={form.handleChange(field.name)}
-            style={{fontSize: 26}}
-            selectionColor="#409EFF"
-            {...rest}
-          />
+        {showLabel && <Text style={styles.labelText}>{label}：</Text>}
+        <View style={{flex: 1}}>
+          <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder, inputContainerStyle]}>
+            <TextInput
+              value={field.value}
+              placeholder={placeholder || `请输入${label}`}
+              placeholderTextColor="#999999"
+              onChangeText={form.handleChange(field.name)}
+              style={[{flex: 1, fontSize: 26}, centerInput && {textAlign: 'center'}]}
+              selectionColor="#409EFF"
+              {...rest}
+            />
+            {inputRightComponent}
+            {lengthLimit ? <Text style={{fontSize: 22, color: '#999999', position: 'absolute', right: 0, bottom: 0, marginRight: 10, marginBottom: 5}}>{`${field.value.length}/200`}</Text> : <></>}
+          </View>
+          {!!form.errors[field.name] && 
+            <ErrorMessage
+              name={field.name}
+              style={styles.errorMessage}
+              component={Text}
+          />}
         </View>
-        {rightButton}
       </View>
-      {!!form.errors[field.name] && <View style={{flexDirection: 'row'}}>
-        <Text style={[styles.labelText, {opacity: 0}]}>{label}：</Text>
-        <ErrorMessage
-          name={field.name}
-          style={styles.errorMessage}
-          component={Text}
-        />
-      </View>}
     </View>
   )
 };
@@ -48,15 +52,17 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'flex-start'
   },
   labelText: {
+    height: 60,
+    textAlignVertical: 'center',
     minWidth: 150,
     fontSize: 28,
     color: '#333333'
   },
   inputContainer: {
-    flex: 1,
+    flexDirection: 'row',
     minHeight: 60,
     borderWidth: 2,
     borderColor: '#E5E5E5',
@@ -65,7 +71,8 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22
+    fontSize: 22,
+    marginBottom: 10
   },
   errorBorder: {
     borderColor: 'red'

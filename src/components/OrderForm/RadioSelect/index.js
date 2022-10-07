@@ -10,6 +10,7 @@ const RadioSelect = ({
   form, 
   label,
   radioList = [],
+  radioItemsStyle,
   ...rest
 }) => {
 
@@ -21,12 +22,11 @@ const RadioSelect = ({
     <View style={!form.errors[field.name] && styles.selectArea}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
-        <View style={[{flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}, form.errors[field.name] && styles.errorBorder]}>
-          {radioList.map((radio, radioIndex) => {
-            const isLastIndex = radioIndex === radioList.length - 1;
-            return (
-              <View key={radio.value} style={[{flex: 1, borderRightWidth: 1, borderColor: '#E5E5E5'}, isLastIndex && {borderRightWidth: 0}, form.errors[field.name] && styles.errorBorder_radio]}>
-                <TouchableOpacity style={{flex: 1, minHeight: 60,  flexDirection: 'row', alignItems: 'center', padding: 5}} onPress={() => radioOnPress(radio)}>
+        <View style={{flex: 1}}>
+          <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}, form.errors[field.name] && styles.errorBorder, radioItemsStyle]}>
+            {radioList.map((radio, radioIndex) => {
+              return (
+                <TouchableOpacity key={radioIndex} style={{maxWidth: `${(1/radioList.length) * 100}%`, minHeight: 60,  flexDirection: 'row', alignItems: 'center', padding: 5}} onPress={() => radioOnPress(radio)}>
                   <CheckBox
                     center
                     size={30}
@@ -36,23 +36,19 @@ const RadioSelect = ({
                     checkedIcon="dot-circle-o"
                     uncheckedIcon="circle-o"
                   />
-                  <View style={{flex: 1}}>
-                    <Text style={[{fontSize: 26, color: '#333333'}, !field.value.length && styles.itemText_none]}>{radio.label}</Text>
-                  </View>
+                  <Text style={[{fontSize: 26, color: '#333333', paddingRight: 10}, !field?.value?.length && styles.itemText_none]}>{radio.label}</Text>
                 </TouchableOpacity>
-              </View>
-            )
-          })}
+              )
+            })}
+          </View>
+          {!!form.errors[field.name] && 
+            <ErrorMessage
+              name={field.name}
+              style={styles.errorMessage}
+              component={Text}
+          />}
         </View>
       </View>
-      {!!form.errors[field.name] && <View style={{flexDirection: 'row'}}>
-        <Text style={[styles.labelText, {opacity: 0}]}>{label}：</Text>
-        <ErrorMessage
-          name={field.name}
-          style={styles.errorMessage}
-          component={Text}
-        />
-      </View>}
     </View>
   )
 };
@@ -63,9 +59,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'flex-start'
   },
   labelText: {
+    height: 60,
+    textAlignVertical: 'center',
     minWidth: 150,
     fontSize: 28,
     color: '#333333'
@@ -80,7 +78,8 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22
+    fontSize: 22,
+    marginBottom: 10
   },
   errorBorder: {
     borderColor: 'red'
