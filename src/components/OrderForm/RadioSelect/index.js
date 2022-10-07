@@ -36,7 +36,7 @@ const RadioSelect = ({
                     checkedIcon="dot-circle-o"
                     uncheckedIcon="circle-o"
                   />
-                  <Text style={[{fontSize: 26, color: '#333333', paddingRight: 10}, !field.value.length && styles.itemText_none]}>{radio.label}</Text>
+                  <Text style={[{fontSize: 26, color: '#333333', paddingRight: 10}, !field?.value?.length && styles.itemText_none]}>{radio.label}</Text>
                 </TouchableOpacity>
               )
             })}

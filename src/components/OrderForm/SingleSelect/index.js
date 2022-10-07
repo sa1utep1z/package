@@ -40,9 +40,9 @@ const SingleSelect = ({
               </Text>
             </>}
             <AntDesign
-              name={showDialog ? 'up' : 'down'}
+              name='down'
               size={36}
-              color={showDialog ? '#999999' : '#000000'}
+              color={!!field?.value?.length ? '#000000' : '#999999'}
             />
           </TouchableOpacity>
           {!!form.errors[field.name] && 
@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22
+    fontSize: 22,
+    marginBottom: 10
   },
   errorBorder: {
     borderColor: 'red'

@@ -13,6 +13,7 @@ const SingleInput = ({
   inputRightComponent,
   lengthLimit = false, //是否限制字数（多行输入框输入文本右下角）
   showLabel = true, //是否展示标题，默认为是
+  centerInput = false, //输入框是否居中
   ...rest
 }) => {
   return (
@@ -26,7 +27,7 @@ const SingleInput = ({
               placeholder={placeholder || `请输入${label}`}
               placeholderTextColor="#999999"
               onChangeText={form.handleChange(field.name)}
-              style={{flex: 1, fontSize: 26}}
+              style={[{flex: 1, fontSize: 26}, centerInput && {textAlign: 'center'}]}
               selectionColor="#409EFF"
               {...rest}
             />
