@@ -7,13 +7,17 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
+import CitySelect from '../../../../../components/CitySelect';
 import Radio from '../../../../../components/Form/Radio';
 import RadioGroup from '../../../../../components/Form/RadioGroup';
 import ImagePicker from 'react-native-image-crop-picker';
 import CompanyApi from '../../../../../request/companyApi';
 import { deepCopy, getYMD } from '../../../../../utils';
-import { SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
-// const data = require('@bang88/china-city-data')
+import UserSelect from '../UserSelect'
+import { CityData } from '../../../../../assets/City';
+import MobileInput from "../../../../../components/OrderForm/MobileInput";
+import { SUCCESS_CODE, SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
+
 
 
 let restForm;
@@ -22,6 +26,7 @@ const BusinessAdd = (props) => {
   // const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [modalVisible, setModalVisible] = useState(false); // 图库选择、拍照弹框
   const toast = useToast();
+  const [userList, setUserList] = useState([]); // 用户名数据
   const [orderTime, setOrderTime] = useState(new Date()); // 日期
   const [content, setContent] = useState(''); // 公司简介内容
   const [payDay, setPayDay] = useState(''); // 发薪日
@@ -34,14 +39,11 @@ const BusinessAdd = (props) => {
   const [addTags, setAddTags] = useState(true); // 添加标签显隐
   const [selected, setSelected] = useState([]); //地区选择数组
   const [contactFields, setContactFields] = useState([
-    // {
-    //   label: '姓名',
-    //   phone: '手机号',
-    // },
-    // {
-    //   label: '姓名',
-    //   phone: '手机号',
-    // },
+    {
+      userId: '',
+      userName: '',
+      mobile: '',
+    },
   ]); // 选择的城市数据
 
   const initialValues = {
@@ -71,6 +73,7 @@ const BusinessAdd = (props) => {
     payStart: '',
     payEnd: '',
     companyGoodTags: [],
+    userName: [],
     companyImages: companyImage,
     arrivalMode: true,
     remark: '',
@@ -83,6 +86,21 @@ const BusinessAdd = (props) => {
     setCompanyImage(res.data);
     restForm.setFieldValue('companyImages', res.data);
     console.log('打印获取的值：', res)
+  };
+
+  // 获取用户数据
+  const getUserList = async () => {
+    try {
+      const res = await CompanyApi.UserList();
+      console.log('用户名数据：', res)
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`获取用户数据失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setUserList(res.data);
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const onChangeText = (value) => {
@@ -172,18 +190,28 @@ const BusinessAdd = (props) => {
 
   // 添加
   const addField = () => {
-    if (contactFields.length === 0) {
-      setContactFields([{ index: 0, label: '姓名', phone: '手机号' }])
+    // if (contactFields.length === 0) {
+    //   setContactFields([{ index: 0, label: '姓名', phone: '手机号' }])
+    // } else {
+    //   const arryData = contactFields.map((permiData, index) => {
+    //     const permiData1 = Object.assign(permiData, { index: index + 1 })
+    //     return permiData1
+    //   })
+    //   setContactFields([...contactFields, { index: arryData.length + 1, label: '姓名', phone: '手机号' }])
+    //   console.log('添加数组:', arryData)
+    // }
+    const formData = restForm.values;
+    console.log('获取数组:', formData)
+    if (formData.userName.length) {
+      setContactFields([...contactFields, {userId: formData.userName[0].id, userName: formData.userName[0].userName, mobile: formData.userName[0].mobile}])
+      restForm.setFieldValue('userName', [...contactFields, {userId: formData.userName[0].id, userName: formData.userName[0].userName, mobile: formData.userName[0].mobile}]);
+    } else if (contactFields.length === 0) {
+      setContactFields([{ userId: '', userName: '', mobile: '' }])
     } else {
-      const arryData = contactFields.map((permiData, index) => {
-        const permiData1 = Object.assign(permiData, { index: index + 1 })
-        return permiData1
-      })
-      setContactFields([...contactFields, { index: arryData.length + 1, label: '姓名', phone: '手机号' }])
-      console.log('添加数组:', arryData)
+      toast.show('请完善上一行信息');
     }
   }
-
+  console.log('添加数组:', contactFields)
   // 删除
   const delField = (value) => {
     const newArr = deepCopy(contactFields);
@@ -207,22 +235,22 @@ const BusinessAdd = (props) => {
         scale: values.scale ? values.scale[0].value : '',
       }
       console.log('打印上上传参数：', params);
-      const res = await CompanyApi.AddCompany(params); 
+      const res = await CompanyApi.AddCompany(params);
       if (res.code === 0) {
-         toast.show('保存提交成功');
-         console.log('保存提交成功：', params);
+        toast.show('保存提交成功');
+        console.log('保存提交成功：', params);
       }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
-   
+
   }
 
   useEffect(() => {
     getImage();
+    getUserList();
     console.log('执行了')
   }, [])
-
 
   return (
     <Formik
@@ -296,11 +324,15 @@ const BusinessAdd = (props) => {
                 />
                 <Field
                   name="region"
-                  title="区域"
-                  placeholder="请输入区域"
+                  title="区域地址"
+                  noBorder
+                  bottomButton
+                  singleSelect
+                  inPageField
+                  formalLabel
                   isRequired
-                  inputStyle={{ fontSize: 28 }}
-                  component={FormItem}
+                  selectList={CityData}
+                  component={CitySelect}
                 />
                 <Field
                   name="addressDetail"
@@ -697,20 +729,6 @@ const BusinessAdd = (props) => {
                   <View style={styles.title}>
                     <Text style={styles.text}>八、对接企业信息</Text>
                   </View>
-                  {/* <Field
-                    name="contactResidents"
-                    title="驻场信息"
-                    placeholder="请输入"
-                    inputStyle={{ fontSize: 28 }}
-                    component={FormItem}
-                  />
-                  <Field
-                    name="contactBusiness"
-                    title="商务信息"
-                    placeholder="请输入"
-                    inputStyle={{ fontSize: 28 }}
-                    component={FormItem}
-                  /> */}
                   <View style={styles.contactStyle}>
                     <Text style={styles.contactText}>驻场对接人</Text>
                     <TouchableOpacity onPress={addField}>
@@ -725,34 +743,55 @@ const BusinessAdd = (props) => {
                     {
                       contactFields.length > 0 && contactFields.map((item, index) => {
                         return (
-                          <View style={styles.boxContent} key={index}>
-                            <View style={styles.inputName}>
-                              <Text style={{ fontSize: 28, color: '#333', marginRight: 10 }}>{item.label}</Text>
-                              <View style={styles.select}>
-                                <Text style={styles.useName}>张三</Text>
-                                <AntDesign
-                                  name='down'
-                                  color='#333'
-                                  size={35}
-                                />
-                              </View>
-                            </View>
-                            <View style={styles.inputName}>
-                              <Text style={{ fontSize: 28, color: '#333', marginLeft: 15, marginRight: 10 }}>{item.phone}</Text>
-                              <TextInput
-                                name="useName"
-                                style={styles.useNameStyle}
-                                onChangeText={text => onChangeDayEnd(text)}
-                                value={payEnd}
-                                clearTextOnFocus
-                                placeholderTextColor="#999999"
-                              />
-                            </View>
+                          <View style={styles.boxContent} key={item.userId}>
+                            <Field
+                              name="userName"
+                              label="姓名"
+                              selectList={userList}
+                              inputStyle={{ width: 300 }}
+                              component={UserSelect}
+                            />
                             <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => delField(item.index)}>
                               <AntDesign
                                 name='minuscircle'
                                 color='#409EFE'
                                 size={40}
+                                style={{ marginTop: 10 }}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      })
+                    }
+                  </View>
+                  <View style={[styles.contactStyle, {marginTop: 0}]}>
+                    <Text style={styles.contactText}>商务对接人</Text>
+                    <TouchableOpacity onPress={addField}>
+                      <AntDesign
+                        name='pluscircle'
+                        color='#409EFE'
+                        size={50}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.box}>
+                    {
+                      contactFields.length > 0 && contactFields.map((item, index) => {
+                        return (
+                          <View style={styles.boxContent} key={item.userId}>
+                            <Field
+                              name="userName"
+                              label="姓名"
+                              selectList={userList}
+                              inputStyle={{ width: 300 }}
+                              component={UserSelect}
+                            />
+                            <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => delField(item.index)}>
+                              <AntDesign
+                                name='minuscircle'
+                                color='#409EFE'
+                                size={40}
+                                style={{ marginTop: 10 }}
                               />
                             </TouchableOpacity>
                           </View>
@@ -1000,10 +1039,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   boxContent: {
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
+    paddingRight: 20,
   },
   inputName: {
     flexDirection: 'row',
@@ -1011,7 +1052,7 @@ const styles = StyleSheet.create({
   },
   useNameStyle: {
     width: 200,
-    height: 40,
+    height: 60,
     borderWidth: 1,
     fontSize: 26,
     padding: 0,
@@ -1020,7 +1061,7 @@ const styles = StyleSheet.create({
   },
   select: {
     width: 200,
-    height: 40,
+    height: 60,
     borderWidth: 1,
     fontSize: 26,
     padding: 0,

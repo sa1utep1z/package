@@ -125,6 +125,7 @@ const SelectItem = ({
 
   const checkFieldValueType = () => {
     const type = checkedType(itemName());
+    console.log('类型数据11：', field.value, type)
     switch (type){
       case 'String': 
         return false;
