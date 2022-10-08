@@ -47,29 +47,10 @@ const initialValues = {
 
 const CommissionDescription = () => {
   const [showDetail, setShowDetail] = useState(true);
-  const [companyList, setCompanyList] = useState([]);
   const [rulesList, setRulesList] = useState([{
     name: 1,
     age: 2
   }]);
-
-  useEffect(() => {
-    getFactoryList();
-  }, [])
-
-  const getFactoryList = async() => {
-    try {
-      const res = await MyMembersApi.CompaniesList();
-      console.log('res', res)
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      setCompanyList(res.data);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
@@ -171,8 +152,8 @@ const CommissionDescription = () => {
                               />
                               <Field  
                                 name={`store${ruleIndex + 1}`}
+                                type="store"
                                 label="适用门店"
-                                selectList={companyList}
                                 component={SingleSelect}
                               />
                               <View style={{flex: 1, flexDirection: 'row'}}>
@@ -201,7 +182,7 @@ const CommissionDescription = () => {
                                   <Text style={{fontSize: 28, color: '#ffffff'}}>天</Text>
                                 </View>
                               </View>
-                              <View style={{backgroundColor: '#FAFAFA', borderRadius: 10, padding: 20, paddingBottom: 0}}>
+                              <View style={{backgroundColor: '#FAFAFA', borderRadius: 10, padding: 20, paddingBottom: 0, borderWidth: 1, borderColor: '#999999'}}>
                                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                                   <Text style={styles.labelText}>提成规则</Text>
                                   <View style={{flexDirection: 'row', alignItems: 'center'}}>

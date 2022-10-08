@@ -346,6 +346,8 @@ export default Navigator = () => {
         initialRouteName={NAVIGATION_KEYS.LOGIN}
         screenOptions={{
           headerTitleAlign: 'center',
+          statusBarAnimation: 'fade',
+          animation: 'fade_from_bottom',
           header,
         }}>
         {login}

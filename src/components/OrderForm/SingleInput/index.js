@@ -32,7 +32,7 @@ const SingleInput = ({
               {...rest}
             />
             {inputRightComponent}
-            {lengthLimit ? <Text style={{fontSize: 22, color: '#999999', position: 'absolute', right: 0, bottom: 0, marginRight: 10, marginBottom: 5}}>{`${field.value.length}/200`}</Text> : <></>}
+            {lengthLimit ? <Text style={{fontSize: 22, color: '#999999', position: 'absolute', right: 0, bottom: 0, marginRight: 10, marginBottom: 5}}>{`${field.value.length}/${rest.maxLength}`}</Text> : <></>}
           </View>
           {!!form.errors[field.name] && 
             <ErrorMessage

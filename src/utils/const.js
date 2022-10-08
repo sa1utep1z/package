@@ -626,3 +626,11 @@ export const CONDITIONS_LIST = [
   { value: 'punch_day_ok', label: '打卡满', type: 'punch_day' },
   { value: 'work_day_ok', label: '在职满', type: 'work_day' }
 ];
+
+//新建订单-会员工价详情-借支类型枚举值：
+export const SALARY_TYPE = [
+  { label: '日借支', value: 'DAILY' },
+  { label: '周借支', value: 'WEEKLY' },
+  { label: '月借支', value: 'MONTHLY' },
+  { label: '无借支', value: 'NoDEBIT' }
+];
