@@ -173,6 +173,7 @@ const DataCompare = ({
     }
   };
 
+  //这里是弹框的组件；
   const filterMore = () => {
     dispatch(openDialog(
       <FilterMoreOfCompare 

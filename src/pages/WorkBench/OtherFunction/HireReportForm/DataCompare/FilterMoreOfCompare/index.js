@@ -28,7 +28,7 @@ const StoreItem = ({isSelected, store, isLastIndex, selectStoreOnPress}) => {
         uncheckedIcon={"circle-o"}
       />
     </TouchableOpacity>
-  ), [isSelected])
+  ), [store, isSelected])
 };
 
 const RecruiterItem = ({isSelected, recruiter, isLastIndex, recruiterOnPress}) => {
@@ -44,7 +44,7 @@ const RecruiterItem = ({isSelected, recruiter, isLastIndex, recruiterOnPress}) =
         uncheckedIcon={"circle-o"}
       />
     </TouchableOpacity>
-  ), [isSelected])
+  ), [recruiter, isSelected])
 };
 
 const SupplierItem = ({isSelected, supplier, isLastIndex, supplierOnPress}) => {
@@ -60,7 +60,7 @@ const SupplierItem = ({isSelected, supplier, isLastIndex, supplierOnPress}) => {
         uncheckedIcon={"circle-o"}
       />
     </TouchableOpacity>
-  ), [isSelected])
+  ), [supplier, isSelected])
 };
 
 const EnterpriseItem = ({isSelected, company, isLastIndex, selectCompanyOnPress}) => {
@@ -76,7 +76,7 @@ const EnterpriseItem = ({isSelected, company, isLastIndex, selectCompanyOnPress}
         uncheckedIcon={"circle-o"}
       />
     </TouchableOpacity>
-  ), [isSelected])
+  ), [company, isSelected])
 };
 
 const FilterMoreOfCompare = ({

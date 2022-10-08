@@ -28,6 +28,7 @@ const CreateOrder = () => {
             <Requirement />
             <Policy />
             <CommissionDescription />
+            <View style={{height: 300}}></View>
             <WagesDetail />
         </ScrollView>
       </KeyboardAvoidingView>
