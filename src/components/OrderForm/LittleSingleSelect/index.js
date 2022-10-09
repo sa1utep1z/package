@@ -1,92 +1,37 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {ErrorMessage} from 'formik';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
-import { useToast } from 'react-native-toast-notifications';
 
 import { openDialog, setTitle } from '../../../redux/features/PageDialog'; 
 import SingleSelectList from '../../PageDialog/SingleSelectList';
 import MyMembersApi from "../../../request/MyMembersApi";
 import { SUCCESS_CODE } from '../../../utils/const';
 
-/**单选*/
-const SingleSelect = ({
+/**缩小版的单选组件*/
+const LittleSingleSelect = ({
   field, 
   form, 
   label,
   selectList = [], //单选列表自选
   type = '', //单选表单组件：提供几个基础模式：企业，门店，不需要模式也可以在外部传入selectList。
-  showLabel = true,
-  labelStyle,
   ...rest
 }) => {
-  const toast = useToast();
   const dispatch = useDispatch();
-  
-  const [loading, setLoading] = useState(false);
 
   const confirm = (list) => {
     form.setFieldValue(field.name, list);
   };
-  console.log('传过来的用工企业：',field)
+
   const selectOnPress = () => {
-    setLoading(true);
     dispatch(setTitle(`请选择${label}`));
-    switch(type){
-      case 'store':
-        getStoreList();
-        break;
-      case 'factory':
-        getFactoryList();
-        break;
-      default: //没传入type则自动使用外部传进的selectList。
-        setLoading(false);
-        dispatch(openDialog(<SingleSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
-        break;
-    }
-  };
-
-  const getStoreList = async() => {
-    try {
-      const res = await MyMembersApi.StoreList();
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      res.data.map(item => {
-        item.label = item.storeName;
-        item.value = item.storeId;
-      });
-      dispatch(openDialog(<SingleSelectList selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
-    } catch (error) {
-      console.log('getStoreList -> error', error);
-      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
-    } finally{
-      setLoading(false);
-    }
-  };
-
-  const getFactoryList = async() => {
-    try {
-      const res = await MyMembersApi.CompaniesList();
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      dispatch(openDialog(<SingleSelectList selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
-    } catch (error) {
-      console.log('getFactoryList -> error', error);
-      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
-    } finally{
-      setLoading(false);
-    }
+    dispatch(openDialog(<SingleSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
   };
 
   return (
     <View style={[{flex: 1}, !form.errors[field.name] && styles.selectArea]}>
       <View style={styles.container}>
-        {showLabel ? <Text style={[styles.labelText, labelStyle]}>{label}：</Text> : <></>}
         <View style={{flex: 1}}>
           <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
             {field.value && <>
@@ -94,11 +39,11 @@ const SingleSelect = ({
                 {!!field.value.length ? field.value[0].label : `请选择${label}`}
               </Text>
             </>}
-            {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <AntDesign
+            <AntDesign
               name='down'
-              size={36}
+              size={30}
               color={!!field?.value?.length ? '#000000' : '#999999'}
-            />}
+            />
           </TouchableOpacity>
           {!!form.errors[field.name] && 
             <ErrorMessage
@@ -114,7 +59,6 @@ const SingleSelect = ({
 
 const styles = StyleSheet.create({
   selectArea: {
-    marginBottom: 20
   },
   container: {
     flexDirection: 'row',
@@ -128,7 +72,7 @@ const styles = StyleSheet.create({
     color: '#333333'
   },
   itemText: {
-    fontSize: 26,
+    fontSize: 22,
     color: '#333333'
   },
   itemText_none: {
@@ -143,7 +87,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#E5E5E5',
     borderRadius: 6,
-    paddingHorizontal: 19
+    paddingHorizontal: 10
   },
   errorMessage: {
     color: 'red',
@@ -155,4 +99,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SingleSelect;
+export default LittleSingleSelect;

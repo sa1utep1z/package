@@ -626,3 +626,70 @@ export const CONDITIONS_LIST = [
   { value: 'punch_day_ok', label: '打卡满', type: 'punch_day' },
   { value: 'work_day_ok', label: '在职满', type: 'work_day' }
 ];
+
+//新建订单-会员工价详情-借支类型枚举值：
+export const SALARY_TYPE = [
+  { label: '日借支', value: 'DAILY' },
+  { label: '周借支', value: 'WEEKLY' },
+  { label: '月借支', value: 'MONTHLY' },
+  { label: '无借支', value: 'NoDEBIT' }
+];
+
+//新建订单-会员工价详情-就餐枚举值：
+export const FOOD_LIST = [
+  { label: '免费工作餐', value: 'FOOD_FREE' },
+  { label: '三餐包吃', value: 'FOOD_THREE_INCLUDE' },
+  { label: '刷卡吃饭', value: 'FOOD_SWIPE' },
+  { label: '自费吃饭', value: 'FOOD_OWN' },
+];
+
+//新建订单-会员工价详情-住宿枚举值：
+export const DORMITORY_LIST = [
+  { label: '住宿免费', value: 'DORMITORY_FREE' },
+  { label: '住宿扣费', value: 'DORMITORY_NOT_FREE' },
+  { label: '无住宿', value: 'NOT_DORMITORY' }
+];
+
+//新建订单-会员工价详情-住宿枚举值：
+export const WATER_FEE_LIST = [
+  { label: '不扣费', value: 'NODEDUCTION' },
+  { label: '超额扣费', value: 'EXCESSDEDUCTION' },
+  { label: '房间均摊', value: 'ROOMSHARING' },
+  { label: '全员均摊', value: 'WHOLESHARING' },
+  { label: '定额均摊', value: 'QUOTASHARING' }
+];
+
+//新建订单-会员工价详情-模式枚举值：
+export const MODE_LIST = [
+  { label: '纯工价', value: 'WAGE' },
+  { label: '满自然月', value: 'MONTH' },
+  { label: '发薪日在职', value: 'PAYDAY' },
+  { label: '同工同酬+返费', value: 'REBATE_WAGE' },
+  { label: '同工同酬+补差价', value: 'SPREAD_WAGE' },
+  { label: '满工期', value: 'DURATION' },
+  { label: '其他', value: 'OTHER' }
+];
+
+//新建订单-会员工价详情- 区分男女枚举值：
+export const MALE_OR_FEMALE = [
+  { label: '不区分男女', value: 'NOT_DISTINGUISH' },
+  { label: '区分男女', value: 'DISTINGUISH' }
+];
+
+//新建订单-会员工价详情-工价/底薪-模式枚举值：
+export const MEMBER_FEE_MODE = [
+  { label: '纯', value: 'PURE' },
+  { label: '是否在职', value: 'WORKING' },
+  { label: '打卡是否满（单位：天）', value: 'CARD_DAY' },
+  { label: '打卡是否满（单位：时）', value: 'CARD_HOUR' },
+  { label: '在职是否满（单位：天）', value: 'WORKING_DAY' },
+  { label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }
+];
+
+//新建订单-会员工价详情-工价模式枚举值：
+export const FEE_WAY_MODE = [
+  { label: '工价', value: 'WORK_FEE' },
+  { label: '底薪', value: 'LOW_FEE' },
+  { label: '日薪', value: 'DAY_FEE' },
+  { label: '日结', value: 'DAY_END' }
+];

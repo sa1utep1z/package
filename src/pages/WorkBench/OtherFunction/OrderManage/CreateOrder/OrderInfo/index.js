@@ -56,25 +56,6 @@ const initialValues = {
 
 const OrderInfo = () => {
   const [showDetail, setShowDetail] = useState(true);
-  const [companyList, setCompanyList] = useState([]);
-
-  useEffect(() => {
-    getFactoryList();
-  }, [])
-
-  const getFactoryList = async() => {
-    try {
-      const res = await MyMembersApi.CompaniesList();
-      console.log('res', res)
-      if(res.code !== SUCCESS_CODE){
-        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      setCompanyList(res.data);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
@@ -118,7 +99,7 @@ const OrderInfo = () => {
                   <Field
                     name="factory"
                     label="用工企业"
-                    selectList={companyList}
+                    type="factory"
                     component={SingleSelect}
                   />
                   <Field

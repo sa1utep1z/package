@@ -10,6 +10,7 @@ const SingleInput = ({
   placeholder,
   inputStyle,
   inputContainerStyle,
+  labelStyle,
   inputRightComponent,
   lengthLimit = false, //是否限制字数（多行输入框输入文本右下角）
   showLabel = true, //是否展示标题，默认为是
@@ -19,20 +20,24 @@ const SingleInput = ({
   return (
     <View style={[{flex: 1}, !form.errors[field.name] && styles.inputArea, inputStyle]}>
       <View style={styles.container}>
-        {showLabel && <Text style={styles.labelText}>{label}：</Text>}
+        {showLabel && <Text style={[styles.labelText, labelStyle]}>{label}：</Text>}
         <View style={{flex: 1}}>
           <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder, inputContainerStyle]}>
-            <TextInput
-              value={field.value}
-              placeholder={placeholder || `请输入${label}`}
-              placeholderTextColor="#999999"
-              onChangeText={form.handleChange(field.name)}
-              style={[{flex: 1, fontSize: 26}, centerInput && {textAlign: 'center'}]}
-              selectionColor="#409EFF"
-              {...rest}
-            />
-            {inputRightComponent}
-            {lengthLimit ? <Text style={{fontSize: 22, color: '#999999', position: 'absolute', right: 0, bottom: 0, marginRight: 10, marginBottom: 5}}>{`${field.value.length}/200`}</Text> : <></>}
+            <View style={{flexDirection: 'row'}}>
+              <TextInput
+                value={field.value}
+                placeholder={placeholder || `请输入${label}`}
+                placeholderTextColor="#999999"
+                onChangeText={form.handleChange(field.name)}
+                style={[{flex: 1, fontSize: 26}, centerInput && {textAlign: 'center'}]}
+                selectionColor="#409EFF"
+                {...rest}
+              />
+              {inputRightComponent}
+            </View>
+            {lengthLimit ? <View style={{width: '100%', alignItems: 'flex-end', paddingBottom: 5, marginLeft: 5}}>
+              <Text style={{fontSize: 22, color: '#999999'}}>{`${field.value.length}/${rest.maxLength}`}</Text>
+            </View> : <></>}
           </View>
           {!!form.errors[field.name] && 
             <ErrorMessage
@@ -62,7 +67,6 @@ const styles = StyleSheet.create({
     color: '#333333'
   },
   inputContainer: {
-    flexDirection: 'row',
     minHeight: 60,
     borderWidth: 2,
     borderColor: '#E5E5E5',

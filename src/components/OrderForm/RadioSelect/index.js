@@ -11,6 +11,8 @@ const RadioSelect = ({
   label,
   radioList = [],
   radioItemsStyle,
+  labelStyle,
+  showLabel = true,
   ...rest
 }) => {
 
@@ -21,7 +23,7 @@ const RadioSelect = ({
   return (
     <View style={!form.errors[field.name] && styles.selectArea}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>{label}：</Text>
+        {showLabel ? <Text style={[styles.labelText, labelStyle]}>{label}：</Text> : <></>}
         <View style={{flex: 1}}>
           <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}, form.errors[field.name] && styles.errorBorder, radioItemsStyle]}>
             {radioList.map((radio, radioIndex) => {
