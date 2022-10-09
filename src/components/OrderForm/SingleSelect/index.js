@@ -29,7 +29,7 @@ const SingleSelect = ({
   const confirm = (list) => {
     form.setFieldValue(field.name, list);
   };
-
+  console.log('传过来的用工企业：',field)
   const selectOnPress = () => {
     setLoading(true);
     dispatch(setTitle(`请选择${label}`));

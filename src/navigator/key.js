@@ -39,6 +39,7 @@ const NAVIGATION_KEYS = {
   //商务企业管理
   BUSINESS_MANAGE: 'business_manage',
   BUSINESS_ADD: 'business_add',
+  BUSINESS_EDIT: 'business_edit',
   ORDER_MANAGE: 'order_manage',
   CERATE_ORDER: 'create_order',
 

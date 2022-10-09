@@ -39,6 +39,7 @@ const NAVIGATION_PAGES_LIST = {
   PAY_MANAGEMENT: require('./WorkBench/OtherFunction/PayManagement'), //借支管理
   BUSINESS_MANAGE: require('./WorkBench/OtherFunction/BusinessManage'), //企业管理
   BUSINESS_ADD: require('./WorkBench/OtherFunction/BusinessManage/BusinessAdd'), //新增企业
+  BUSINESS_EDIT: require('./WorkBench/OtherFunction/BusinessManage/BusinessEdit'), //编辑企业
   ORDER_MANAGE: require('./WorkBench/OtherFunction/OrderManage'), //订单管理
   CERATE_ORDER: require('./WorkBench/OtherFunction/OrderManage/CreateOrder'), //新建订单
 

@@ -3,25 +3,70 @@ import { StyleSheet, ScrollView, View, Text, Modal, TextInput, TouchableOpacity,
 import { Button, CheckBox } from '@rneui/themed';
 import { Formik, Field } from 'formik';
 import moment from 'moment';
+import * as Yup from 'yup';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
+import CitySelect from '../../../../../components/CitySelect';
 import Radio from '../../../../../components/Form/Radio';
 import RadioGroup from '../../../../../components/Form/RadioGroup';
 import ImagePicker from 'react-native-image-crop-picker';
 import CompanyApi from '../../../../../request/companyApi';
 import { deepCopy, getYMD } from '../../../../../utils';
-import { SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
-// const data = require('@bang88/china-city-data')
+import UserSelect from '../UserSelect'
+import { CityData } from '../../../../../assets/City';
+import MobileInput from "../../../../../components/OrderForm/MobileInput";
+import { SUCCESS_CODE, SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
+
 
 
 let restForm;
+const validationSchema = Yup.object().shape({
+  companyName: Yup.string().required('请输入企业全称'),
+  shortCompanyName: Yup.string().required('请输入企业简称'),
+  companyNo: Yup.string().required('请输入企业代号'),
+  scale: Yup.array().min(1, '请选择企业规模'),
+  industry: Yup.array().min(1, '请选择所属行业'),
+  companyType: Yup.array().min(1, '请选择企业类别'),
+  companyGoodTags: Yup.array().min(1, '请输入企业优势'),
+  companyImages: Yup.array().min(1, '请上传企业照片'),
+  region: Yup.string().required('请选择区域地址'),
+  addressDetail: Yup.string().required('请输入企业位置'),
+  receiveAddress: Yup.string().required('请输入接人地址'),
+  payDay: Yup.string().required('请输入发薪日期'),
+  payCycleStart: Yup.string().required('请输入起始发薪日期'),
+  payCycleEnd: Yup.string().required('请输入结束发薪日期'),
+  shiftCategory: Yup.string().required('请选择班别'),
+  sitStand: Yup.string().required('请选择站坐'),
+  dress: Yup.array().min('请选择着装'),
+  line: Yup.string().required('请选择产线'),
+  microscope: Yup.string().required('请选择显微镜'),
+  dormitory: Yup.string().required('请选择住宿条件'),
+  food: Yup.string().required('请选择伙食'),
+  phone: Yup.string().required('请选择手机'),
+  idCard: Yup.string().required('请选择身份证'),
+  english: Yup.string().required('请选择英文字母'),
+  returnFactory: Yup.string().required('请选择返厂条件'),
+  tattooSmoke: Yup.string().required('请选择纹身烟疤'),
+  nationality: Yup.string().required('请选择民族限制'),
+  background: Yup.string().required('请选择案底是否可要'),
+  studentProve: Yup.string().required('请选择学生证明'),
+  examine: Yup.string().required('请输入体检要求'),
+  idCardCopy: Yup.string().required('请输入身份证复印件要求'),
+  graduateCopy: Yup.string().required('请输入毕业证复印件要求'),
+  photo: Yup.string().required('请输入照片要求'),
+  itineraryCode: Yup.string().required('请输入行程码要求'),
+  nucleicAcid: Yup.string().required('请输入核酸要求'),
+  vaccination: Yup.string().required('请输入疫苗要求'),
+});
+
 const BusinessAdd = (props) => {
   const { navigation, route: { params } } = props;
   // const [orderId, setOrderId] = useState(params?.orderId); // 订单id
   const [modalVisible, setModalVisible] = useState(false); // 图库选择、拍照弹框
   const toast = useToast();
+  const [userList, setUserList] = useState([]); // 用户名数据
   const [orderTime, setOrderTime] = useState(new Date()); // 日期
   const [content, setContent] = useState(''); // 公司简介内容
   const [payDay, setPayDay] = useState(''); // 发薪日
@@ -34,25 +79,39 @@ const BusinessAdd = (props) => {
   const [addTags, setAddTags] = useState(true); // 添加标签显隐
   const [selected, setSelected] = useState([]); //地区选择数组
   const [contactFields, setContactFields] = useState([
-    // {
-    //   label: '姓名',
-    //   phone: '手机号',
-    // },
-    // {
-    //   label: '姓名',
-    //   phone: '手机号',
-    // },
-  ]); // 选择的城市数据
+    {
+      userId: '',
+      userName: '',
+      mobile: '',
+    },
+  ]); // 驻场对接人
+  const [businessFields, setBusinessFields] = useState([
+    {
+      userId: '',
+      userName: '',
+      mobile: '',
+    },
+  ]); // 商务对接人
+  const [financesFields, setFinancesFields] = useState([
+    {
+      userId: '',
+      userName: '',
+      mobile: '',
+    },
+  ]); // 财务对接人
 
   const initialValues = {
-    orderDate: orderTime,
     companyName: '',
-    companyShortName: '',
-    // companyNo: '',
+    shortCompanyName: '',
+    companyNo: '',
+    scale: '',
+    receiveAddress: '',
+    region: '',
     companyType: [],
     companyScale: [],
     industry: [],
     address: '',
+    microscope: '',
     region: '',
     position: '',
     idCardCopy: '',
@@ -65,16 +124,29 @@ const BusinessAdd = (props) => {
     contactBusiness: [],
     contactFinances: [],
     idCard: '',
-    introduction: '',
+    companyIntroduction: '',
     addressDetail: '',
     payDay: '',
     payStart: '',
     payEnd: '',
     companyGoodTags: [],
     companyImages: companyImage,
-    arrivalMode: true,
     remark: '',
-    tip: true
+    tip: true,
+    examine: '',
+    background: '',
+    studentProve: '',
+    nationality: '',
+    tattooSmoke: '',
+    returnFactory: '',
+    english: '',
+    phone: '',
+    food: '',
+    dormitory: '',
+    line: '',
+    dress: '',
+    sitStand: '',
+    shiftCategory: '',
   };
 
   // 获取默认企业图片
@@ -85,9 +157,24 @@ const BusinessAdd = (props) => {
     console.log('打印获取的值：', res)
   };
 
+  // 获取用户数据
+  const getUserList = async () => {
+    try {
+      const res = await CompanyApi.UserList();
+      console.log('用户名数据：', res)
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`获取用户数据失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setUserList(res.data);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   const onChangeText = (value) => {
     setContent(value);
-    restForm.setFieldValue('introduction', value);
+    restForm.setFieldValue('companyIntroduction', value);
   };
 
   // 发薪日期
@@ -98,12 +185,12 @@ const BusinessAdd = (props) => {
 
   const onChangeStart = (value) => {
     setPayStart(value);
-    restForm.setFieldValue('payStart', value);
+    restForm.setFieldValue('payCycleStart', value);
   }
 
   const onChangeDayEnd = (value) => {
     setPayEnd(value);
-    restForm.setFieldValue('payEnd', value);
+    restForm.setFieldValue('payCycleEnd', value);
   }
 
   //　输入标签
@@ -135,7 +222,7 @@ const BusinessAdd = (props) => {
       }
     }
   }
-
+  console.log('标签数组的值11：', tagArry)
   // 删除标签
   const delTag = (value) => {
     let prams = tagArry.indexOf(value);
@@ -162,7 +249,7 @@ const BusinessAdd = (props) => {
         uri: pickerImage.path, type: 'multipart/form-data', name: fileName,
       };
       data.append('file', file);
-      restForm.setFieldValue('companyImages', data);
+      restForm.setFieldValue('companyImages', [...companyImage, ...data]);
       console.log('选择图库照片：', pickerImage)
       return pickerImage;
     } catch (err) {
@@ -170,21 +257,39 @@ const BusinessAdd = (props) => {
     }
   }
 
-  // 添加
-  const addField = () => {
-    if (contactFields.length === 0) {
-      setContactFields([{ index: 0, label: '姓名', phone: '手机号' }])
-    } else {
-      const arryData = contactFields.map((permiData, index) => {
-        const permiData1 = Object.assign(permiData, { index: index + 1 })
-        return permiData1
-      })
-      setContactFields([...contactFields, { index: arryData.length + 1, label: '姓名', phone: '手机号' }])
-      console.log('添加数组:', arryData)
+  const delImage = (value) => {
+    console.log('打印照片传值：', value);
+    const newArr = deepCopy(companyImage);
+    const findIndex = newArr.findIndex(item => item.md5 === value);
+    if (findIndex > -1) {
+      newArr.splice(findIndex, 1);
+      setCompanyImage(newArr);
+      restForm.setFieldValue('companyImages', newArr);
+      return;
     }
   }
 
-  // 删除
+  // 添加驻场
+  const addField = () => {
+    const formData = restForm.values;
+    const copyList = deepCopy(contactFields);
+    console.log('获取数组:', formData)
+    if (formData.Resident1.length) {
+      setContactFields([...contactFields, { userId: '', userName: '', mobile: '' }]);
+      let newFieldValues = {};
+      newFieldValues[`Resident${contactFields.length + 1}`] = [];
+      restForm.setValues({
+        ...restForm.values,
+        ...newFieldValues
+      })
+    } else if (contactFields.length === 0) {
+      setContactFields([{ userId: '', userName: '', mobile: '' }])
+    } else {
+      toast.show('请完善上一行信息');
+    }
+  }
+
+  // 删除驻场
   const delField = (value) => {
     const newArr = deepCopy(contactFields);
     const findIndex = newArr.findIndex(item => item.index === value);
@@ -195,6 +300,7 @@ const BusinessAdd = (props) => {
     }
     console.log('删除按钮11:', newArr)
   }
+
 
   // 提交报名表单
   const onSubmit = async (values) => {
@@ -207,26 +313,29 @@ const BusinessAdd = (props) => {
         scale: values.scale ? values.scale[0].value : '',
       }
       console.log('打印上上传参数：', params);
-      const res = await CompanyApi.AddCompany(params); 
-      if (res.code === 0) {
-         toast.show('保存提交成功');
-         console.log('保存提交成功：', params);
+      const res = await CompanyApi.AddCompany(params);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+        return;
       }
+      toast.show('新建企业成功');
+      console.log('保存提交成功：', params);
     } catch (error) {
+      console.log('errorerrorerrorerrorerrorerror', error)
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
-   
+
   }
 
   useEffect(() => {
     getImage();
-    console.log('执行了')
+    getUserList();
   }, [])
-
 
   return (
     <Formik
       initialValues={initialValues}
+      // validationSchema={validationSchema}
       handleChange={(e) => console.log('e', e)}
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {
@@ -244,7 +353,7 @@ const BusinessAdd = (props) => {
                   component={FormItem}
                 />
                 <Field
-                  name="companyShortName"
+                  name="shortCompanyName"
                   title="企业简称"
                   isRequired
                   inputStyle={{ fontSize: 28 }}
@@ -296,11 +405,15 @@ const BusinessAdd = (props) => {
                 />
                 <Field
                   name="region"
-                  title="区域"
-                  placeholder="请输入区域"
+                  title="区域地址"
+                  noBorder
+                  bottomButton
+                  singleSelect
+                  inPageField
+                  formalLabel
                   isRequired
-                  inputStyle={{ fontSize: 28 }}
-                  component={FormItem}
+                  selectList={CityData}
+                  component={CitySelect}
                 />
                 <Field
                   name="addressDetail"
@@ -378,7 +491,7 @@ const BusinessAdd = (props) => {
                   </View>
                   <View>
                     <TextInput
-                      name="introduction"
+                      name="companyIntroduction"
                       multiline
                       style={styles.inputStyle}
                       onChangeText={text => onChangeText(text)}
@@ -404,13 +517,13 @@ const BusinessAdd = (props) => {
                               style={{ width: '100%', height: '100%' }}
                               source={{ uri: `${item.url}` }}
                             />
-                            <View style={styles.closeStyle}>
+                            <TouchableOpacity style={styles.closeStyle} onPress={() => delImage(item.md5)}>
                               <AntDesign
                                 name='close'
                                 color='#FFFEFE'
                                 size={50}
                               />
-                            </View>
+                            </TouchableOpacity>
                           </View>
                         )
                       })
@@ -524,7 +637,7 @@ const BusinessAdd = (props) => {
                     component={RadioGroup}
                   />
                   <Field
-                    name="dress"
+                    name="microscope"
                     title="显微镜"
                     noBorder
                     isRequired
@@ -533,7 +646,7 @@ const BusinessAdd = (props) => {
                     component={RadioGroup}
                   />
                   <Field
-                    name="line"
+                    name="phone"
                     title="车间带手机"
                     noBorder
                     isRequired
@@ -690,76 +803,6 @@ const BusinessAdd = (props) => {
                     inputStyle={{ fontSize: 28 }}
                     component={FormItem}
                   />
-                </View>
-              </>
-              <>
-                <View style={styles.cardArea}>
-                  <View style={styles.title}>
-                    <Text style={styles.text}>八、对接企业信息</Text>
-                  </View>
-                  {/* <Field
-                    name="contactResidents"
-                    title="驻场信息"
-                    placeholder="请输入"
-                    inputStyle={{ fontSize: 28 }}
-                    component={FormItem}
-                  />
-                  <Field
-                    name="contactBusiness"
-                    title="商务信息"
-                    placeholder="请输入"
-                    inputStyle={{ fontSize: 28 }}
-                    component={FormItem}
-                  /> */}
-                  <View style={styles.contactStyle}>
-                    <Text style={styles.contactText}>驻场对接人</Text>
-                    <TouchableOpacity onPress={addField}>
-                      <AntDesign
-                        name='pluscircle'
-                        color='#409EFE'
-                        size={50}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.box}>
-                    {
-                      contactFields.length > 0 && contactFields.map((item, index) => {
-                        return (
-                          <View style={styles.boxContent} key={index}>
-                            <View style={styles.inputName}>
-                              <Text style={{ fontSize: 28, color: '#333', marginRight: 10 }}>{item.label}</Text>
-                              <View style={styles.select}>
-                                <Text style={styles.useName}>张三</Text>
-                                <AntDesign
-                                  name='down'
-                                  color='#333'
-                                  size={35}
-                                />
-                              </View>
-                            </View>
-                            <View style={styles.inputName}>
-                              <Text style={{ fontSize: 28, color: '#333', marginLeft: 15, marginRight: 10 }}>{item.phone}</Text>
-                              <TextInput
-                                name="useName"
-                                style={styles.useNameStyle}
-                                onChangeText={text => onChangeDayEnd(text)}
-                                value={payEnd}
-                                clearTextOnFocus
-                                placeholderTextColor="#999999"
-                              />
-                            </View>
-                            <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => delField(item.index)}>
-                              <AntDesign
-                                name='minuscircle'
-                                color='#409EFE'
-                                size={40}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        )
-                      })
-                    }
-                  </View>
                 </View>
               </>
             </ScrollView>
@@ -1000,10 +1043,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   boxContent: {
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
+    paddingRight: 20,
   },
   inputName: {
     flexDirection: 'row',
@@ -1011,7 +1056,7 @@ const styles = StyleSheet.create({
   },
   useNameStyle: {
     width: 200,
-    height: 40,
+    height: 60,
     borderWidth: 1,
     fontSize: 26,
     padding: 0,
@@ -1020,7 +1065,7 @@ const styles = StyleSheet.create({
   },
   select: {
     width: 200,
-    height: 40,
+    height: 60,
     borderWidth: 1,
     fontSize: 26,
     padding: 0,

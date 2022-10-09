@@ -98,7 +98,11 @@ const BusinessManage = () => {
   }, [searchContent]);
 
   const addBusiness = () => navigation.navigate(NAVIGATION_KEYS.BUSINESS_ADD);
-
+  const editBusiness = (value) => {
+    navigation.navigate(NAVIGATION_KEYS.BUSINESS_EDIT, {
+      companyId: value,
+    })
+  };
   const tabHead = () => {
     return (
       <View style={{ backgroundColor: '#fff', marginBottom: 20, padding: 20 }}>
@@ -155,7 +159,7 @@ const BusinessManage = () => {
             <Text style={styles.area}>{item.city + item.area}</Text>
           </View>
           <View style={styles.rightIcon}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => editBusiness(item.companyId)}>
               <AntDesign
                 name='caretright'
                 color='#409EFF'

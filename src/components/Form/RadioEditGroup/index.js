@@ -3,33 +3,34 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Text, CheckBox, Input } from '@rneui/themed';
 import { WebView } from 'react-native-webview';
 
-const RadioGroup = ({
+const RadioEditGroup = ({
   field,
   form,
   title,
   labelAreaStyle,
   arryDate,
   label,
+  remark,
   ...rest
 }) => {
-  
+  const [radio, setRadio] = useState(false);
   const [groupDate, setGroupDate] = useState(arryDate);
 
-  // useEffect(() => {
-  //   if (field.value) {
-  //     const res = arryDate.map((item) => {
-  //       if (item.value === field.value) {
-  //         item.checked = true
-  //       } else {
-  //         item.checked = false
-  //       }
-  //       return item;
-  //     })
-  //     setGroupDate(res);
-  //   }
-  //   console.log('打印选择的值5525：', field, arryDate, label)
-  // },[field.value])
-  
+  useEffect(() => {
+    if (field.value) {
+      const res = arryDate.map((item) => {
+        if (item.value === field.value) {
+          item.checked = true
+        } else {
+          item.checked = false
+        }
+        return item;
+      })
+      setGroupDate(res);
+    }
+    console.log('打印选择的值5525：', field, arryDate, remark)
+  },[field.value])
+ 
   const pressCheck = (value) => {
     const res = arryDate.map((item) => {
       if (item.value === value) {
@@ -59,7 +60,7 @@ const RadioGroup = ({
       </View>
       <View style={styles.radioArea}>
         {
-          groupDate.length && groupDate.map((item, index) => {
+          groupDate.length > 0 && groupDate.map((item, index) => {
             return (
               <TouchableOpacity key={index} style={[styles.radio, { marginRight: 20 }]}>
                 <CheckBox
@@ -79,7 +80,7 @@ const RadioGroup = ({
         }
         <Input
           inputStyle={styles.input}
-          // value={label}
+          value={remark}
           placeholder="请输入备注说明"
           placeholderTextColor="#999999"
           containerStyle={styles.inputStyle}
@@ -184,4 +185,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default RadioGroup;
+export default RadioEditGroup;

@@ -7,20 +7,91 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useToast } from "react-native-toast-notifications";
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
+import CitySelect from '../../../../../components/CitySelect';
 import Radio from '../../../../../components/Form/Radio';
-import RadioGroup from '../../../../../components/Form/RadioGroup';
+import RadioEditGroup from '../../../../../components/Form/RadioEditGroup';
 import ImagePicker from 'react-native-image-crop-picker';
 import CompanyApi from '../../../../../request/companyApi';
-import { SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
-// const data = require('@bang88/china-city-data')
+import { deepCopy, getYMD } from '../../../../../utils';
+import UserSelect from '../UserSelect'
+import { CityData } from '../../../../../assets/City';
+import MobileInput from "../../../../../components/OrderForm/MobileInput";
+import { SUCCESS_CODE, SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
 
 
-let restForm;
+const initialValues = {
+  companyName: '',
+  shortCompanyName: '',
+  companyNo: '',
+  scale: '',
+  receiveAddress: '',
+  region: '',
+  companyType: [],
+  companyScale: [],
+  industry: [],
+  address: '',
+  microscope: '',
+  region: '',
+  position: '',
+  idCardCopy: '',
+  graduateCopy: '',
+  photo: '',
+  itineraryCode: '',
+  nucleicAcid: '',
+  vaccination: '',
+  contactResidents: [],
+  contactBusiness: [],
+  contactFinances: [],
+  idCard: '',
+  companyIntroduction: '',
+  addressDetail: '',
+  payDay: '',
+  payCycleStart: '',
+  payCycleEnd: '',
+  companyGoodTags: [],
+  companyImages: [],
+  remark: '',
+  tip: true,
+  examine: '',
+  background: '',
+  studentProve: '',
+  nationality: '',
+  tattooSmoke: '',
+  returnFactory: '',
+  english: '',
+  phone: '',
+  food: '',
+  dormitory: '',
+  line: '',
+  dress: '',
+  sitStand: '',
+  shiftCategory: '',
+  shiftCategoryExplain: '',
+  sitStandExplain: '',
+  dormitoryExplain: '',
+  foodExplain: '',
+  dressExplain: '',
+  lineExplain: '',
+  microscopeExplain: '',
+  phoneExplain: '',
+  idCardExplain: '',
+  englishExplain: '',
+  returnFactoryExplain: '',
+  tattooSmokeExplain: '',
+  nationalityExplain: '',
+  backgroundExplain: '',
+  studentProveExplain: '',
+};
+
+let restForm, timer;
 const BusinessEdit = (props) => {
   const { navigation, route: { params } } = props;
-  // const [orderId, setOrderId] = useState(params?.orderId); // 订单id
+  const [companyId, setCompanyId] = useState(params?.companyId); // 企业id
   const [modalVisible, setModalVisible] = useState(false); // 图库选择、拍照弹框
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
+  const [userList, setUserList] = useState([]); // 用户名数据
+  const [companyInfo, setCompanyInfo] = useState({}); // 企业详情
   const [orderTime, setOrderTime] = useState(new Date()); // 日期
   const [content, setContent] = useState(''); // 公司简介内容
   const [payDay, setPayDay] = useState(''); // 发薪日
@@ -32,59 +103,71 @@ const BusinessEdit = (props) => {
   const [cityValue, setCityValue] = useState([]); // 选择的城市数据
   const [addTags, setAddTags] = useState(true); // 添加标签显隐
   const [selected, setSelected] = useState([]); //地区选择数组
-  const [contactFields, setContactFields] = useState([
-    {
-      label: '姓名',
-      phone: '手机号',
-    },
-    {
-      label: '姓名',
-      phone: '手机号',
-    },
-  ]); // 选择的城市数据
 
-  const initialValues = {
-    orderDate: orderTime,
-    companyName: '',
-    companyShortName: '',
-    // companyNo: '',
-    companyType: [],
-    companyScale: [],
-    industry: [],
-    address: '',
-    region: '',
-    position: '',
-    idCardCopy: '',
-    graduateCopy: '',
-    photo: '',
-    itineraryCode: '',
-    nucleicAcid: '',
-    vaccination: '',
-    contactResidents: '',
-    contactBusiness: '',
-    idCard: '',
-    introduction: '',
-    payDay: '',
-    payStart: '',
-    payEnd: '',
-    companyGoodTags: [],
-    companyImages: companyImage,
-    arrivalMode: true,
-    remark: '',
-    tip: true
+  // 获取用户数据
+  const getUserList = async () => {
+    try {
+      const res = await CompanyApi.UserList();
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`获取用户数据失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      setUserList(res.data);
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
-  // 获取默认企业图片
-  const getImage = async () => {
-    const res = await CompanyApi.getDefaultImage();
-    setCompanyImage(res.data);
-    restForm.setFieldValue('companyImages', res.data);
-    console.log('打印获取的值：', res)
+  // 获取企业详情
+  const getCompanyInfo = async () => {
+    try {
+      const res = await CompanyApi.GetCompanyInfo(companyId);
+      console.log('企业数据：', res)
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`获取企业详情失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      restForm.setValues(res.data);
+      setCompanyInfo(res.data);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const setFieldValue = () => {
+    if (companyInfo) {
+      setTagArry(companyInfo.companyGoodTags);
+      setContent(companyInfo.companyIntroduction);
+      setCompanyImage(companyInfo.companyImages);
+      setPayDay(String(companyInfo.payDay));
+      setPayStart(String(companyInfo.payCycleStart));
+      setPayEnd(String(companyInfo.payCycleEnd));
+    }
+  };
+
+  const getCompanyType = () => {
+    //如果回填表单有传值，就回填表单；
+    if (companyInfo.scale) {
+      const scale = [COMPANY_SCALE.find(item => item.value === companyInfo.scale)];
+      restForm.setFieldValue('scale', scale);
+    }
+    if (companyInfo.companyType) {
+      const companyType = [COMPANY_TYPE.find(item => item.value === companyInfo.companyType)];
+      restForm.setFieldValue('companyType', companyType);
+    }
+    if (companyInfo.industry) {
+      const industry = [COMPANY_INDUSTRY.find(item => item.value === companyInfo.industry)];
+      restForm.setFieldValue('industry', industry);
+    }
+    if (companyInfo.province || companyInfo.city || companyInfo.area) {
+      restForm.setFieldValue('region', companyInfo.province + '/' + companyInfo.city + '/' + companyInfo.area);
+    }
+   
   };
 
   const onChangeText = (value) => {
     setContent(value);
-    restForm.setFieldValue('introduction', value);
+    restForm.setFieldValue('companyIntroduction', value);
   };
 
   // 发薪日期
@@ -95,12 +178,12 @@ const BusinessEdit = (props) => {
 
   const onChangeStart = (value) => {
     setPayStart(value);
-    restForm.setFieldValue('payStart', value);
+    restForm.setFieldValue('payCycleStart', value);
   }
 
   const onChangeDayEnd = (value) => {
     setPayEnd(value);
-    restForm.setFieldValue('payEnd', value);
+    restForm.setFieldValue('payCycleEnd', value);
   }
 
   //　输入标签
@@ -139,7 +222,6 @@ const BusinessEdit = (props) => {
     tagArry.splice(prams, 1);
     setTagArry(tagArry);
     restForm.setFieldValue('companyGoodTags', [...tagArry]);
-    console.log('删除了：', tagArry, value)
   }
 
   //从图库选择图片
@@ -154,13 +236,12 @@ const BusinessEdit = (props) => {
         cropping: true,
       })
       const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
-      // uploadImage(fileName, pickerImage.path);
       const data = new FormData();
       const file = {
         uri: pickerImage.path, type: 'multipart/form-data', name: fileName,
       };
       data.append('file', file);
-      restForm.setFieldValue('companyImages', data);
+      restForm.setFieldValue('companyImages', [...companyImage, ...data]);
       console.log('选择图库照片：', pickerImage)
       return pickerImage;
     } catch (err) {
@@ -168,34 +249,61 @@ const BusinessEdit = (props) => {
     }
   }
 
-  const addField = () => {
-    const arryData = contactFields.map((permiData, index) => {
-      const permiData1 = Object.assign(permiData, { index: index + 1 })
-      return permiData1
-    })
-    setContactFields([...arryData, { index: arryData.index + 1, label: '姓名', phone: '手机号' }])
-    console.log('添加数组:', arryData)
+  const delImage = (value) => {
+    console.log('打印照片传值：', value);
+    const newArr = deepCopy(companyImage);
+    const findIndex = newArr.findIndex(item => item.md5 === value);
+    if (findIndex > -1) {
+      newArr.splice(findIndex, 1);
+      setCompanyImage(newArr);
+      restForm.setFieldValue('companyImages', newArr);
+      return;
+    }
   }
- 
+
   // 提交报名表单
   const onSubmit = async (values) => {
-    console.log('提交参数11：', values)
+    try {
+      console.log('提交参数11：', values)
+      const params = {
+        ...values,
+        companyType: values.companyType ? values.companyType[0].value : '',
+        industry: values.industry ? values.industry[0].value : '',
+        scale: values.scale ? values.scale[0].value : '',
+      }
+      console.log('打印编辑修改的参数：', params);
+      const res = await CompanyApi.EditCompany(companyId, params);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      toast.show('保存提交成功');
+      console.log('保存提交成功：', params);
+    } catch (error) {
+      console.log('上传参数发生的错误：', error)
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }
   }
 
   useEffect(() => {
-    getImage();
-    console.log('执行了')
+    // getImage();
+    getUserList();
+    getCompanyInfo();
   }, [])
+
+  useEffect(() => {
+    setFieldValue();
+    getCompanyType();
+  }, [companyInfo])
 
 
   return (
     <Formik
-      initialValues={initialValues}
+    initialValues={initialValues}
       handleChange={(e) => console.log('e', e)}
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {
         restForm = rest;
-
         return (
           <View style={{ flex: 1 }}>
             <ScrollView style={styles.scrollArea}>
@@ -208,7 +316,7 @@ const BusinessEdit = (props) => {
                   component={FormItem}
                 />
                 <Field
-                  name="companyShortName"
+                  name="shortCompanyName"
                   title="企业简称"
                   isRequired
                   inputStyle={{ fontSize: 28 }}
@@ -260,14 +368,18 @@ const BusinessEdit = (props) => {
                 />
                 <Field
                   name="region"
-                  title="区域"
-                  placeholder="请输入区域"
+                  title="区域地址"
+                  noBorder
+                  bottomButton
+                  singleSelect
+                  inPageField
+                  formalLabel
                   isRequired
-                  inputStyle={{ fontSize: 28 }}
-                  component={FormItem}
+                  selectList={CityData}
+                  component={CitySelect}
                 />
                 <Field
-                  name="address"
+                  name="addressDetail"
                   title="工厂位置"
                   isRequired
                   placeholder="请输入工厂位置"
@@ -290,7 +402,7 @@ const BusinessEdit = (props) => {
                   </View>
                   <View style={styles.tagsBox}>
                     {
-                      tagArry.length > 0 && tagArry.map(item => {
+                      tagArry ? tagArry.map(item => {
                         return (
                           <TouchableOpacity style={styles.tags} key={item}>
                             <Text style={styles.tagText}>{item}</Text>
@@ -303,7 +415,7 @@ const BusinessEdit = (props) => {
                             </TouchableOpacity>
                           </TouchableOpacity>
                         )
-                      })
+                      }) : <></>
                     }
                     {
                       addTags && <TouchableOpacity style={styles.tags} onPress={() => setAddTags(false)}>
@@ -335,6 +447,7 @@ const BusinessEdit = (props) => {
                   </View>
                 </View>
               </>
+              {/* {loading?  <> */}
               <>
                 <View style={styles.cardArea}>
                   <View style={styles.title}>
@@ -342,7 +455,7 @@ const BusinessEdit = (props) => {
                   </View>
                   <View>
                     <TextInput
-                      name="introduction"
+                      name="companyIntroduction"
                       multiline
                       style={styles.inputStyle}
                       onChangeText={text => onChangeText(text)}
@@ -361,20 +474,20 @@ const BusinessEdit = (props) => {
                   </View>
                   <View style={styles.imageBox}>
                     {
-                      companyImage.length > 0 && companyImage.map((item, index) => {
+                      companyImage && companyImage.map((item, index) => {
                         return (
                           <View style={styles.imags} key={index}>
                             <Image
                               style={{ width: '100%', height: '100%' }}
                               source={{ uri: `${item.url}` }}
                             />
-                            <View style={styles.closeStyle}>
+                            <TouchableOpacity style={styles.closeStyle} onPress={() => delImage(item.md5)}>
                               <AntDesign
                                 name='close'
                                 color='#FFFEFE'
                                 size={50}
                               />
-                            </View>
+                            </TouchableOpacity>
                           </View>
                         )
                       })
@@ -439,8 +552,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="shiftCategoryExplain"
+                    remark={rest.values.shiftCategoryExplain}
                     arryDate={COMPANY_SHIFT}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="sitStand"
@@ -448,8 +562,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="sitStandExplain"
+                    remark={rest.values.sitStandExplain}
                     arryDate={SITSTAND}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="dormitory"
@@ -457,8 +572,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="dormitoryExplain"
+                    remark={rest.values.dormitoryExplain}
                     arryDate={DORMITORY}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="food"
@@ -466,8 +582,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="foodExplain"
+                    remark={rest.values.foodExplain}
                     arryDate={COMPANY_FOOD}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="dress"
@@ -475,8 +592,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="dressExplain"
+                    remark={rest.values.dressExplain}
                     arryDate={DRESS}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="line"
@@ -484,26 +602,29 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="lineExplain"
+                    remark={rest.values.lineExplain}
                     arryDate={COMPANY_LINE}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
-                    name="dress"
+                    name="microscope"
                     title="显微镜"
                     noBorder
                     isRequired
                     label="microscopeExplain"
+                    remark={rest.values.microscopeExplain}
                     arryDate={MICROSCOPE}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
-                    name="line"
+                    name="phone"
                     title="车间带手机"
                     noBorder
                     isRequired
                     label="phoneExplain"
+                    remark={rest.values.phoneExplain}
                     arryDate={COMPANY_PHONE}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                 </View>
               </>
@@ -518,8 +639,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="idCardExplain"
+                    remark={rest.values.idCardExplain}
                     arryDate={COMPANY_IDCARD}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="english"
@@ -527,8 +649,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="englishExplain"
+                    remark={rest.values.englishExplain}
                     arryDate={COMPANY_ENGLISH}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="returnFactory"
@@ -536,8 +659,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="returnFactoryExplain"
+                    remark={rest.values.returnFactoryExplain}
                     arryDate={RETURNFACTORY}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="tattooSmoke"
@@ -545,8 +669,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="tattooSmokeExplain"
+                    remark={rest.values.tattooSmokeExplain}
                     arryDate={TATTOOSMOKE}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="nationality"
@@ -554,8 +679,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="nationalityExplain"
+                    remark={rest.values.nationalityExplain}
                     arryDate={COMPANYNATIONALITY}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="background"
@@ -563,8 +689,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="backgroundExplain"
+                    remark={rest.values.backgroundExplain}
                     arryDate={BACKGROUND}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="studentProve"
@@ -572,8 +699,9 @@ const BusinessEdit = (props) => {
                     noBorder
                     isRequired
                     label="studentProveExplain"
+                    remark={rest.values.studentProveExplain}
                     arryDate={STUDENTPROVE}
-                    component={RadioGroup}
+                    component={RadioEditGroup}
                   />
                   <Field
                     name="height"
@@ -656,76 +784,7 @@ const BusinessEdit = (props) => {
                   />
                 </View>
               </>
-              <>
-                <View style={styles.cardArea}>
-                  <View style={styles.title}>
-                    <Text style={styles.text}>八、对接企业信息</Text>
-                  </View>
-                  {/* <Field
-                    name="contactResidents"
-                    title="驻场信息"
-                    placeholder="请输入"
-                    inputStyle={{ fontSize: 28 }}
-                    component={FormItem}
-                  />
-                  <Field
-                    name="contactBusiness"
-                    title="商务信息"
-                    placeholder="请输入"
-                    inputStyle={{ fontSize: 28 }}
-                    component={FormItem}
-                  /> */}
-                  <View style={styles.contactStyle}>
-                    <Text style={styles.contactText}>驻场对接人</Text>
-                    <TouchableOpacity onPress={addField}>
-                      <AntDesign
-                        name='pluscircle'
-                        color='#409EFE'
-                        size={50}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.box}>
-                    {
-                      contactFields.length > 0 && contactFields.map((item, index) => {
-                        return (
-                          <View style={styles.boxContent} key={index}>
-                            <View style={styles.inputName}>
-                              <Text style={{ fontSize: 28, color: '#333', marginRight: 10 }}>{item.label}</Text>
-                              <View style={styles.select}>
-                                <Text style={styles.useName}>张三</Text>
-                                <AntDesign
-                                  name='down'
-                                  color='#333'
-                                  size={35}
-                                />
-                              </View>
-                            </View>
-                            <View style={styles.inputName}>
-                              <Text style={{ fontSize: 28, color: '#333', marginLeft: 15, marginRight: 10 }}>{item.phone}</Text>
-                              <TextInput
-                                name="useName"
-                                style={styles.useNameStyle}
-                                onChangeText={text => onChangeDayEnd(text)}
-                                value={payEnd}
-                                clearTextOnFocus
-                                placeholderTextColor="#999999"
-                              />
-                            </View>
-                            <TouchableOpacity style={{ marginLeft: 10 }}>
-                              <AntDesign
-                                name='minuscircle'
-                                color='#409EFE'
-                                size={40}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        )
-                      })
-                    }
-                  </View>
-                </View>
-              </>
+              {/* </> :<></>} */}
             </ScrollView>
             <Button
               title="保存提交"
@@ -964,10 +1023,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   boxContent: {
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
+    paddingRight: 20,
   },
   inputName: {
     flexDirection: 'row',
@@ -975,7 +1036,7 @@ const styles = StyleSheet.create({
   },
   useNameStyle: {
     width: 200,
-    height: 40,
+    height: 60,
     borderWidth: 1,
     fontSize: 26,
     padding: 0,
@@ -984,7 +1045,7 @@ const styles = StyleSheet.create({
   },
   select: {
     width: 200,
-    height: 40,
+    height: 60,
     borderWidth: 1,
     fontSize: 26,
     padding: 0,
