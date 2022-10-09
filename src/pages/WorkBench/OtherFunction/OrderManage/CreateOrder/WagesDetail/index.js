@@ -1,23 +1,27 @@
-import React, {useState, useEffect} from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect, Children} from "react";
+import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Formik, Field } from 'formik';
+import { Formik, Field, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Shadow } from 'react-native-shadow-2';
+import { TabView, TabBar } from 'react-native-tab-view';
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import LittleSingleSelect from "../../../../../../components/OrderForm/LittleSingleSelect";
+import LittleSingleInput from "../../../../../../components/OrderForm/LittleSingleInput";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
-import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
+import LittleSingleDate from "../../../../../../components/OrderForm/LittleSingleDate";
 import TabSelectItem from "../../../../../../components/OrderForm/TabSelectItem";
 import MyMembersApi from "../../../../../../request/MyMembersApi";
 import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, MODE_LIST, MALE_OR_FEMALE, MEMBER_FEE_MODE, FEE_WAY_MODE } from "../../../../../../utils/const";
+import SettlementRules from "./SettlementRules";
 import { deepCopy } from "../../../../../../utils";
 
+let restForm;
 const validationSchema = Yup.object().shape({
   orderName: Yup.string().required('请输入订单名称'),
   factory: Yup.array().min(1, '请选择用工企业'),
@@ -68,36 +72,86 @@ const initialValues = {
     startDate: '',
     endDate: ''
   },
-  mode: [],
-  female_or_not1: [{ label: '不区分男女', value: 'NOT_DISTINGUISH' }],
-  fee_mode: [{ label: '纯', value: 'PURE' }],
-  fee_way_mode: [{ label: '工价', value: 'WORK_FEE' }]
+  mode1: [],
+  wagesAndSalary1: {
+    value: [{ label: '不区分男女', value: 'NOT_DISTINGUISH' }],
+    children: {
+      fee_mode: {
+        value: [{ label: '纯', value: 'PURE' }],
+        children: {
+          pure: {
+            mode: [{ label: '工价', value: 'WORK_FEE' }],
+            value: ''
+          },
+          working: {
+            time: '',
+            mode1: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            },
+            mode2: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            }
+          },
+          card_day: {
+            value: '',
+            mode1: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            },
+            mode2: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            }
+          },
+          card_hour: {
+            value: '',
+            mode1: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            },
+            mode2: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            }
+          },
+          working_day: {
+            value: '',
+            mode1: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            },
+            mode2: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            }
+          },
+          working_hour: {
+            value: '',
+            mode1: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            },
+            mode2: {
+              mode: [{ label: '工价', value: 'WORK_FEE' }],
+              value: ''
+            }
+          }
+        }
+      }
+    }
+  }
 };
 
 const WagesDetail = () => {
   const [showDetail, setShowDetail] = useState(true);
-  const [rulesList, setRulesList] = useState([{
-    name: 1,
-    age: 2
-  }]);
+
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
-  const deleteRule = (rule) => {
-    const copyList = deepCopy(rulesList);
-    const findRuleIndex = rulesList.findIndex(item => item.name === rule.name);
-    copyList.splice(findRuleIndex, 1);
-    setRulesList(copyList);
-  };
 
-  const addRule = () => {
-    const copyList = deepCopy(rulesList);
-    copyList.push({
-      name: rulesList.length + 1,
-      age: rulesList.length + 2
-    });
-    setRulesList(copyList);
-  };
+
 
   const onSubmit = async (values) => {
     console.log('提交表单', values)
@@ -117,9 +171,10 @@ const WagesDetail = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          handleChange={(e) => console.log('e', e)}
           onSubmit={onSubmit}>
           {({values, handleSubmit, ...rest }) => {
+            restForm = rest;
+            restForm.values = values;
             console.log('rest', rest);
             return (
               <View style={{ flex: 1, paddingHorizontal: 28}}>
@@ -234,101 +289,12 @@ const WagesDetail = () => {
                 <Text style={{fontSize: 22, color: 'red', textAlign: 'center'}}>请注意月初和月底跨月招聘时，适用日期要合理设置，避免工价异常！</Text>
                 <View>
                   <Text style={styles.labelText}>会员结算规则：</Text>
-                  <View style={{marginTop: 10}}>
-                    {rulesList.map((rule, ruleIndex) => {
-                      return (
-                        <Shadow key={ruleIndex} style={{width: '100%', marginBottom: 30, borderRadius: 10}}>
-                          <View style={{height: 60, backgroundColor: '#EFEFEF', justifyContent: 'center', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
-                            {rulesList.length !== 1 && <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={()=>deleteRule(rule)}>
-                              <AntDesign
-                                name='delete'
-                                size={36}
-                                color='#ff6666'
-                              />
-                            </TouchableOpacity>}
-                            <Text style={{fontSize: 28, fontWeight: 'bold', textAlign: 'center'}}>{`规则${ruleIndex + 1}`}</Text>
-                            {rulesList.length !== 5 && <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, right: 0, justifyContent: 'center', alignItems: 'center'}} onPress={addRule}>
-                              <AntDesign
-                                name='pluscircleo'
-                                size={36}
-                                color='#409EFF'
-                              />
-                            </TouchableOpacity>}
-                          </View>
-                          <View style={{backgroundColor: '#fff', minHeight: 200, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, padding: 20}}>
-                            <Field
-                              name={`orderRangeDate${ruleIndex + 1}`}
-                              label="适用日期"
-                              component={OrderRangeDate}
-                            />
-                            <Field  
-                              name='mode'
-                              label="结算模式"
-                              selectList={MODE_LIST}
-                              component={SingleSelect}
-                            />
-                            <View style={{flex: 1}}>
-                              <Text style={styles.labelText}>工价/底薪：</Text>
-                              <View style={{flex: 1, borderWidth: 1, backgroundColor: '#ffffff', borderColor: '#999999', borderRadius: 10, minHeight: 200}}>
-                                <Field  
-                                  name='female_or_not1'
-                                  selectList={MALE_OR_FEMALE}
-                                  component={TabSelectItem}
-                                />
-                                <View style={{flex: 1, padding: 20}}>
-                                  <Field  
-                                    name='fee_mode'
-                                    label="模式"
-                                    selectList={MEMBER_FEE_MODE}
-                                    labelStyle={{minWidth: 0}}
-                                    component={SingleSelect}
-                                  />
-                                  {values.fee_mode[0].value === 'PURE' && <View>
-                                    <Text>纯</Text>
-                                  </View>}
-                                  {values.fee_mode[0].value === 'WORKING' && <View>
-                                    <Text>在职/不在职</Text>
-                                  </View>}
-                                  {values.fee_mode[0].value === 'CARD_DAY' && <View style={{borderWidth: 1, flexDirection: 'row', minHeight: 100}}>
-                                    <View style={{flex: 1}}>
-                                      <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满：</Text>
-                                      <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满：</Text>
-                                    </View>
-                                    <View style={{flex: 1, borderWidth: 1}}>
-
-                                    </View>
-                                    <View style={{flex: 1, borderWidth: 1}}>
-                                      <View style={{flex: 1}}>
-                                        <Field  
-                                          name='fee_way_mode'
-                                          showLabel={false}
-                                          selectList={FEE_WAY_MODE}
-                                          component={LittleSingleSelect}
-                                        />
-                                      </View>
-                                      <View style={{flex: 1}}>
-                                        <Field  
-                                          name='fee_way_mode'
-                                          showLabel={false}
-                                          selectList={FEE_WAY_MODE}
-                                          component={LittleSingleSelect}
-                                        />
-                                      </View>
-                                    </View>
-                                    <View style={{flex: 1, borderWidth: 1}}>
-
-                                    </View>
-                                    <View style={{flex: 1, borderWidth: 1}}>
-
-                                    </View>
-                                  </View>}
-                                </View>
-                              </View>
-                            </View>
-                          </View>
-                        </Shadow>
-                      )})}
-                  </View>
+                  {/* 结算规则组件 */}
+                  <SettlementRules
+                    values={values}
+                    restForm={restForm}
+                    initialValues={initialValues}
+                  />
                 </View>
               </View>
             )
@@ -361,6 +327,13 @@ const styles = StyleSheet.create({
     minWidth: 150,
     fontSize: 26,
     color: '#333333'
+  },
+  tabBarStyle: {
+    height: 60,
+    backgroundColor: '#fff'
+  },
+  tabBarIndicatorStyle: {
+    backgroundColor: '#409EFF' 
   }
 });
 
