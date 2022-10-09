@@ -237,6 +237,13 @@ export default Navigator = () => {
           headerTitle: '新增企业',
         }}
       />
+       <Stack.Screen
+        name={NAVIGATION_KEYS.BUSINESS_EDIT}
+        component={NAVIGATION_PAGES.BUSINESS_EDIT}
+        options={{
+          headerTitle: '编辑企业',
+        }}
+      />
       <Stack.Screen
         name={NAVIGATION_KEYS.ORDER_MANAGE}
         component={NAVIGATION_PAGES.ORDER_MANAGE}

@@ -896,7 +896,7 @@ export const CityData = [
           },
           {
               name: "深圳市",
-              districtAndCounty: ["福田区", "罗湖区", "南山区", "宝安区", "龙岗区", "盐田区"]
+              districtAndCounty: ["福田区", "罗湖区", "南山区", "宝安区", "龙岗区", "龙华区", "盐田区"]
           },
           {
               name: "清远市",

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -33,7 +33,6 @@ const CitySelect = ({
     ...rest
 }) => {
     const toast = useToast();
-    console.log('打印城市的值：', CityData)
     const [list, setList] = useState([]);
     const [showSelectItems, setShowSelectItems] = useState(false);
     const [selectedItemList, setSelectedItemList] = useState([]);
@@ -42,9 +41,9 @@ const CitySelect = ({
     const [city, setCity] = useState([]); // 市
     const [area, setArea] = useState([]); // 区
     const [tabTitle, setTabTitle] = useState(['请选择']); // 选中的
-    const [proTabTitle, setProTabTitle] = useState('请选择'); // 省名
-    const [cityTabTitle, setCityTabTitle] = useState('请选择'); // 市名
-    const [areaTabTitle, setAreaTabTitle] = useState('请选择'); // 区名
+    const [proTabTitle, setProTabTitle] = useState(''); // 省名
+    const [cityTabTitle, setCityTabTitle] = useState(''); // 市名
+    const [areaTabTitle, setAreaTabTitle] = useState(''); // 区名
 
     const selectIndex = (i) => {
         setIndex(i);
@@ -75,7 +74,7 @@ const CitySelect = ({
         ))
 
     };
-
+    
     useMemo(() => {
         //单选？设置为filed表单内数组第一个元素；
         if (field.value && field.value.length && singleSelect) {
@@ -91,7 +90,6 @@ const CitySelect = ({
 
     const pressItem = (item) => {
         // 单选
-        console.log('选中的值item:', item)
         if (singleSelect) {
             const newList = [item];
             let arry = []
@@ -144,10 +142,9 @@ const CitySelect = ({
             return;
         }
     };
-    console.log('新的数组：', list)
+
     const itemName = () => {
         const type = checkedType(field.value);
-        console.log('类型数据：', field.value, type)
         switch (type) {
             case 'Array':
                 return field.value.length && field.value.length !== 0 && field.value.map(item => item.title).join('、');
@@ -170,6 +167,18 @@ const CitySelect = ({
         }
     };
 
+    // 重置
+    const clear = () => {
+        setIndex(0);
+        setTabTitle(['请选择'])
+        setProvince([]);
+        setCity([]);
+        setArea([]);
+        setProTabTitle('');
+        setCityTabTitle('');
+        setAreaTabTitle('');
+    }
+
     const confirm = () => {
         if ((proTabTitle && cityTabTitle && areaTabTitle) !== '请选择') {
             form.setFieldValue(field.name, proTabTitle + '/' + cityTabTitle + '/' + areaTabTitle);
@@ -181,8 +190,14 @@ const CitySelect = ({
                 form.handleSubmit();
             }
             setShowSelectItems(!showSelectItems);
+            clear();
         }
     };
+
+    const cancelClose = () => {
+        setShowSelectItems(!showSelectItems);
+        clear();
+    }
 
     const clearSelected = () => {
         // setSelectedItemList([]);
@@ -232,7 +247,7 @@ const CitySelect = ({
                                 name={showSelectItems ? 'up' : 'down'}
                                 size={30}
                                 style={{ paddingHorizontal: 10 }}
-                                color={!checkFieldValueType() ? 'black' : '#E3E3E3'}
+                                color={checkFieldValueType() ? 'black' : '#E3E3E3'}
                             />}
                     </TouchableOpacity>
                     {checkedType(field.value) === 'String' && !!field.value.length &&
@@ -291,7 +306,7 @@ const CitySelect = ({
                     }
                 </View>
                 {bottomButton && <View style={styles.bottomButtonArea}>
-                    <TouchableOpacity style={styles.bottomLeft} onPress={() => setShowSelectItems(!showSelectItems)}>
+                    <TouchableOpacity style={styles.bottomLeft} onPress={cancelClose}>
                         <Text style={styles.leftText}>取消</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.bottomRight} onPress={() => confirm()}>

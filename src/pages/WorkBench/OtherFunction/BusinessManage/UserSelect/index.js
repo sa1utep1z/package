@@ -23,10 +23,9 @@ const UserSelect = ({
   const confirm = (list) => {
     form.setFieldValue(field.name, list);
     console.log('选择的数组值：', list);
-    form.setFieldValue('contactResidents', [{userId: list[0].id, userName: list[0].userName, mobile: list[0].mobile}]);
   };
   const formData = form.values;
-  console.log('传过来的数组值：', field, formData);
+  console.log('传过来的数组值：', field, selectList, formData);
   const selectOnPress = () => {
     dispatch(setTitle('请选择姓名'));
     dispatch(openDialog(<UserSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
@@ -53,7 +52,7 @@ const UserSelect = ({
         <Text style={[styles.labelText, { marginLeft: 10 }]}>手机号</Text>
         <View>
           <TextInput
-            value={!!field.value.length ? field.value[0].mobile : ''}
+            value={ !!field && !!field.value && field.value[0] ? field.value[0].mobile : ''}
             placeholder='请输入手机号码'
             placeholderTextColor="#999999"
             onChangeText={form.handleChange(field.name)}
