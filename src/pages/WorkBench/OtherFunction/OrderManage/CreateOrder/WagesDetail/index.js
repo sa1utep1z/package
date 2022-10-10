@@ -20,6 +20,7 @@ import MyMembersApi from "../../../../../../request/MyMembersApi";
 import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, MODE_LIST, MALE_OR_FEMALE, MEMBER_FEE_MODE, FEE_WAY_MODE } from "../../../../../../utils/const";
 import SettlementRules from "./SettlementRules";
 import { deepCopy } from "../../../../../../utils";
+import {originRule} from './SettlementRules/const';
 
 let restForm;
 const validationSchema = Yup.object().shape({
@@ -68,80 +69,7 @@ const initialValues = {
   leave_self: '',
   induction: '',
   remark: '',
-  orderRangeDate1: {
-    startDate: '',
-    endDate: ''
-  },
-  mode1: [],
-  wagesAndSalary1: {
-    value: [{ label: '不区分男女', value: 'NOT_DISTINGUISH' }],
-    children: {
-      fee_mode: {
-        value: [{ label: '纯', value: 'PURE' }],
-        children: {
-          pure: {
-            mode: [{ label: '工价', value: 'WORK_FEE' }],
-            value: ''
-          },
-          working: {
-            time: '',
-            mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            },
-            mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            }
-          },
-          card_day: {
-            value: '',
-            mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            },
-            mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            }
-          },
-          card_hour: {
-            value: '',
-            mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            },
-            mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            }
-          },
-          working_day: {
-            value: '',
-            mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            },
-            mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            }
-          },
-          working_hour: {
-            value: '',
-            mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            },
-            mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: ''
-            }
-          }
-        }
-      }
-    }
-  }
+  ...originRule
 };
 
 const WagesDetail = () => {
@@ -287,15 +215,12 @@ const WagesDetail = () => {
                   component={SingleInput}
                 />
                 <Text style={{fontSize: 22, color: 'red', textAlign: 'center'}}>请注意月初和月底跨月招聘时，适用日期要合理设置，避免工价异常！</Text>
-                <View>
-                  <Text style={styles.labelText}>会员结算规则：</Text>
                   {/* 结算规则组件 */}
-                  <SettlementRules
-                    values={values}
-                    restForm={restForm}
-                    initialValues={initialValues}
-                  />
-                </View>
+                <SettlementRules
+                  values={values}
+                  restForm={restForm}
+                  initialValues={initialValues}
+                />
               </View>
             )
           }}
@@ -320,20 +245,6 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold'
-  },
-  labelText: {
-    height: 60,
-    textAlignVertical: 'center',
-    minWidth: 150,
-    fontSize: 26,
-    color: '#333333'
-  },
-  tabBarStyle: {
-    height: 60,
-    backgroundColor: '#fff'
-  },
-  tabBarIndicatorStyle: {
-    backgroundColor: '#409EFF' 
   }
 });
 

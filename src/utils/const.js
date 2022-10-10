@@ -693,3 +693,10 @@ export const FEE_WAY_MODE = [
   { label: '日薪', value: 'DAY_FEE' },
   { label: '日结', value: 'DAY_END' }
 ];
+
+export const FEE_WAY_NAME = {
+  'WORK_FEE': '元/小时',
+  'LOW_FEE': '元/月',
+  'DAY_FEE': '元/天',
+  'DAY_END': '元/天'
+};
