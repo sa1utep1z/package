@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -6,13 +6,8 @@ import * as Yup from 'yup';
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
-import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
-import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
-import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
-import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
-import MyMembersApi from "../../../../../../request/MyMembersApi";
-import { SUCCESS_CODE, CREATE_ORDER_JOB_ORDER, FEMALE_LIMIT } from "../../../../../../utils/const";
+import { FEMALE_LIMIT } from "../../../../../../utils/const";
 
 const validationSchema = Yup.object().shape({
   requireNumber: Yup.string().required('请输入需求人数'),
@@ -47,7 +42,7 @@ const Requirement = () => {
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
-  const onSubmit = async (values) => {
+  const onSubmit = (values) => {
     console.log('提交表单', values)
   };
 
@@ -65,11 +60,8 @@ const Requirement = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        handleChange={(e) => console.log('e', e)}
         onSubmit={onSubmit}>
         {({values, handleSubmit, ...rest }) => {
-          console.log('rest', rest);
-          console.log('values++', values)
           return (
             <View style={{ flex: 1, paddingHorizontal: 28}}>
               <View style={{flex: 1, flexDirection: 'row'}}>
@@ -91,8 +83,10 @@ const Requirement = () => {
                 radioList={FEMALE_LIMIT}
                 validate={value => {
                   let errMsg = '';
-                  if(value[0].value === 'LIMIT' && values.requireNumber.length === 0){
-                    errMsg = '请先输入需求人数';
+                  if(value.length){
+                    if(value[0].value === 'LIMIT' && values.requireNumber.length === 0){
+                      return errMsg = '请先输入需求人数';
+                    }
                   }
                   return errMsg;
                 }}

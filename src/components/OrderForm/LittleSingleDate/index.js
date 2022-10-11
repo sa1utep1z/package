@@ -10,6 +10,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 const LittleSingleDate = ({
   field, 
   form, 
+  type = '',
   ...rest
 }) => {
 
@@ -28,17 +29,17 @@ const LittleSingleDate = ({
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
+    <View style={{flex: 1, paddingTop: 25}}>
       <View style={styles.container}>
         <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && styles.errorBorder]}>
           <View style={{flex: 1}}>
-            <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10}, form.errors[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>
-              <AntDesign
+            <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, minHeight: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10}, form.errors[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>
+              {type !== 'distinguish' && <AntDesign
                 name='calendar' 
                 size={26}
                 color={field.value ? '#333333' : '#999999'}
                 style={{marginRight: 10}}
-              />
+              />}
               <Text style={{fontSize: 22, color: field.value ? '#333333' : '#999999'}}>{field.value || '请选择日期'}</Text>
             </TouchableOpacity>
             {!!form.errors[field.name] && <Text style={[styles.errorMessage, !form.errors[field.name] && {opacity: 0}]}>{form.errors[field.name]}</Text>}

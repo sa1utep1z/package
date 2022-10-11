@@ -31,9 +31,7 @@ const SettlementRules = ({
 
   const addRule = () => {
     const copyList = deepCopy(rulesList);
-    copyList.push({
-      ruleLocation: rulesList.length + 1
-    });
+    copyList.push({ruleLocation: rulesList.length + 1});
     setRulesList(copyList);
 
     let newFieldValues = {};

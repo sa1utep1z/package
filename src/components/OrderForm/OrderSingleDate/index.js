@@ -29,12 +29,12 @@ const OrderSingleDate = ({
   };
 
   return (
-    <View style={{flex: 1, marginBottom: form.errors[field.name] ? 10 : 20}}>
+    <View style={{flex: 1, marginBottom: form.errors[field.name] && form.touched[field.name] ? 10 : 20}}>
       <View style={styles.container}>
         <Text style={styles.labelText}>{label}：</Text>
-        <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && styles.errorBorder]}>
+        <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]}>
           <View style={{flex: 1}}>
-            <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}, form.errors[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>
+            <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}, form.errors[field.name] && form.touched[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>
               <AntDesign
                 name='calendar' 
                 size={30}
@@ -43,7 +43,7 @@ const OrderSingleDate = ({
               />
               <Text style={{fontSize: 26, color: field.value ? '#333333' : '#999999'}}>{field.value || '请选择日期'}</Text>
             </TouchableOpacity>
-            {!!form.errors[field.name] && <Text style={[styles.errorMessage, !form.errors[field.name] && {opacity: 0}]}>{form.errors[field.name]}</Text>}
+            {!!form.errors[field.name] && form.touched[field.name] && <Text style={[styles.errorMessage, !form.errors[field.name] && !form.touched[field.name] && {opacity: 0}]}>{form.errors[field.name]}</Text>}
           </View>
         </View>
       </View>

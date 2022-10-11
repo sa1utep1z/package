@@ -1,22 +1,29 @@
-import React, {useState, useEffect, Children} from "react";
-import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Formik, Field } from 'formik';
-import * as Yup from 'yup';
-import { Shadow } from 'react-native-shadow-2';
-import { TabView, TabBar } from 'react-native-tab-view';
+import React from "react";
+import { View, StyleSheet, Text } from 'react-native';
+import { Field } from 'formik';
 
-import SingleInput from "../../../../../../../../components/OrderForm/SingleInput";
-import OrderRangeInput from "../../../../../../../../components/OrderForm/OrderRangeInput";
 import SingleSelect from "../../../../../../../../components/OrderForm/SingleSelect";
 import LittleSingleSelect from "../../../../../../../../components/OrderForm/LittleSingleSelect";
 import LittleSingleInput from "../../../../../../../../components/OrderForm/LittleSingleInput";
-import RadioSelect from "../../../../../../../../components/OrderForm/RadioSelect";
-import OrderRangeDate from "../../../../../../../../components/OrderForm/OrderRangeDate";
 import LittleSingleDate from "../../../../../../../../components/OrderForm/LittleSingleDate";
-import TabSelectItem from "../../../../../../../../components/OrderForm/TabSelectItem";
-import MyMembersApi from "../../../../../../../../request/MyMembersApi";
-import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, MODE_LIST, MALE_OR_FEMALE, MEMBER_FEE_MODE, FEE_WAY_MODE } from "../../../../../../../../utils/const";
+import { FEE_WAY_NAME, MEMBER_FEE_MODE, FEE_WAY_MODE } from "../../../../../../../../utils/const";
+
+const Unit = ({value}) => {
+  const unitValue = value.length ? value[0].value : 'WORK_FEE';
+  return (
+    <View style={styles.unitArea}>
+      <Text style={styles.unitArea_text}>{FEE_WAY_NAME[unitValue]}</Text>
+    </View>
+  )
+};
+
+const RightUnit = ({value}) => {
+  return (
+    <View style={styles.rightUnitArea}>
+      <Text style={styles.rightUnitArea_text}>{value}</Text>
+    </View>
+  )
+};
 
 const Distinguish = ({
   type,
@@ -25,12 +32,20 @@ const Distinguish = ({
   ...rest
 }) => {
 
+  const selectMode_male = values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value;
+  const fieldName_male = `${type}${ruleIndex + 1}.distinguish.male.fee_mode.children`;
+  const selectPayMode_male = values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.children;
+
+  const selectMode_female = values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value;
+  const fieldName_female = `${type}${ruleIndex + 1}.distinguish.female.fee_mode.children`;
+  const selectPayMode_female = values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.children;
+
   return (
-    <View style={{flex: 1, padding: 20, paddingBottom: 0}}>
+    <View style={styles.totalArea}>
       {/* 男 */}
-      <View style={{flexDirection: 'row', minHeight: 200, marginBottom: 20}}>
-        <Text style={{fontSize: 26, fontWeight: 'bold', textAlign: 'center', textAlignVertical: 'center', backgroundColor: '#409EFF', color: '#ffffff', paddingHorizontal: 5, borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>男</Text>
-        <View style={{flex: 1, borderWidth: 1, borderLeftWidth: 0, borderTopRightRadius: 6, borderBottomRightRadius: 6, borderColor: '#999999', padding: 20}}>
+      <View style={styles.titleArea}>
+        <Text style={[styles.title_text, {backgroundColor: '#417eba'}]}>男</Text>
+        <View style={[styles.title_content, {borderColor: '#417eba'}]}>
           <View style={{height: 60, marginBottom: 20}}>
             <Field  
               name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.value`}
@@ -41,328 +56,299 @@ const Distinguish = ({
             />
           </View>
           {/* 模式：纯 */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value === 'PURE' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
-            <Text style={{fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>纯：</Text>
-            <View style={{width: 100, marginRight: 10}}>
+          {selectMode_male === 'PURE' && <View style={styles.mode_area}>
+            <Text style={styles.mode_pure_title}>纯：</Text>
+            <View style={{width: 100}}>
               <View style={{flex: 1}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.pure.mode`}
+                  name={`${fieldName_male}.pure.mode`}
                   showLabel={false}
-                  selectList={FEE_WAY_MODE}
+                  selectList={FEE_WAY_MODE[type]}
                   component={LittleSingleSelect}
                 />
               </View>
             </View>
-            <View style={{width: 180, height: 50}}>
+            <View style={{flexDirection: 'row', width: 180, height: 50}}>
               <Field  
-                name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.pure.value`}
+                name={`${fieldName_male}.pure.value`}
                 inputStyle={{maxHeight: 60}}
-                inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                  <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                </View>}
                 component={LittleSingleInput}
               />
+              <Unit value={selectPayMode_male.pure.mode} />
             </View>
           </View>}
           {/* 模式：是否在职 */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value === 'WORKING' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
-            <View style={{flex: 1, justifyContent: 'center'}}>
+          {selectMode_male === 'WORKING' && <View style={styles.mode_area}>
+            <View style={{width: 140, justifyContent: 'center'}}>
               <Field
-                name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working.time`}
+                name={`${fieldName_male}.working.time`}
+                type="distinguish"
                 component={LittleSingleDate}
               />
             </View>
-            <View style={{width: 100}}>
+            <View style={{width: 80}}>
               <Text style={{flex: 1, fontSize: 22, textAlign: 'center', textAlignVertical: 'center', color: '#333333'}}>在职</Text>
               <Text style={{flex: 1, fontSize: 22, textAlign: 'center', textAlignVertical: 'center', color: '#333333'}}>不在职</Text>
             </View>
-            <View style={{width: 100, marginRight: 10}}>
+            <View style={{width: 100}}>
               <View style={{flex: 1}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working.mode1.mode`}
+                  name={`${fieldName_male}.working.mode1.mode`}
                   showLabel={false}
-                  selectList={FEE_WAY_MODE}
+                  selectList={FEE_WAY_MODE[type]}
                   component={LittleSingleSelect}
                 />
               </View>
               <View style={{height: 10}}></View>
               <View style={{flex: 1}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working.mode2.mode`}
+                  name={`${fieldName_male}.working.mode2.mode`}
                   showLabel={false}
-                  selectList={FEE_WAY_MODE}
+                  selectList={FEE_WAY_MODE[type]}
                   component={LittleSingleSelect}
                 />
               </View>
             </View>
             <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={{maxWidth: 180, height: 50}}>
+              <View style={styles.inputArea}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working.mode1.value`}
+                  name={`${fieldName_male}.working.mode1.value`}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                  </View>}
                   component={LittleSingleInput}
                 />
+                <Unit value={selectPayMode_male.working.mode1.mode} />
               </View>
               <View style={{height: 10}}></View>
-              <View style={{maxWidth: 180, height: 50}}>
+              <View style={styles.inputArea}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working.mode2.value`}
+                  name={`${fieldName_male}.working.mode2.value`}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                  </View>}
                   component={LittleSingleInput}
                 />
+                <Unit value={selectPayMode_male.working.mode2.mode} />
               </View>
             </View>
           </View>}
           {/* 模式：打卡是否满（单位：天） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value === 'CARD_DAY' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_male === 'CARD_DAY' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_day.value`}
+                  name={`${fieldName_male}.card_day.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>天</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="天"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_day.mode1.mode`}
+                    name={`${fieldName_male}.card_day.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_day.mode2.mode`}
+                    name={`${fieldName_male}.card_day.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_day.mode1.value`}
+                    name={`${fieldName_male}.card_day.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.card_day.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_day.mode2.value`}
+                    name={`${fieldName_male}.card_day.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.card_day.mode2.mode} />
                 </View>
               </View>
             </>
           </View>}
           {/* 模式：打卡是否满（单位：时） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value === 'CARD_HOUR' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_male === 'CARD_HOUR' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_hour.value`}
+                  name={`${fieldName_male}.card_hour.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>时</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="时"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_hour.mode1.mode`}
+                    name={`${fieldName_male}.card_hour.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_hour.mode2.mode`}
+                    name={`${fieldName_male}.card_hour.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_hour.mode1.value`}
+                    name={`${fieldName_male}.card_hour.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.card_hour.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.card_hour.mode2.value`}
+                    name={`${fieldName_male}.card_hour.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.card_hour.mode2.mode} />
                 </View>
               </View>
             </>
           </View>}
           {/* 模式：在职是否满（单位：天） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value === 'WORKING_DAY' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_male === 'WORKING_DAY' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_day.value`}
+                  name={`${fieldName_male}.working_day.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>天</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="天"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_day.mode1.mode`}
+                    name={`${fieldName_male}.working_day.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_day.mode2.mode`}
+                    name={`${fieldName_male}.working_day.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_day.mode1.value`}
+                    name={`${fieldName_male}.working_day.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.working_day.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_day.mode2.value`}
+                    name={`${fieldName_male}.working_day.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.working_day.mode2.mode} />
                 </View>
               </View>
             </>
           </View>}
           {/* 模式：在职是否满（单位：时） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.male.fee_mode.value[0].value === 'WORKING_HOUR' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_male === 'WORKING_HOUR' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_hour.value`}
+                  name={`${fieldName_male}.working_hour.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>时</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="时"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_hour.mode1.mode`}
+                    name={`${fieldName_male}.working_hour.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_hour.mode2.mode`}
+                    name={`${fieldName_male}.working_hour.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_hour.mode1.value`}
+                    name={`${fieldName_male}.working_hour.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.working_hour.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.children.working_hour.mode2.value`}
+                    name={`${fieldName_male}.working_hour.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_male.working_hour.mode2.mode} />
                 </View>
               </View>
             </>
@@ -370,9 +356,9 @@ const Distinguish = ({
         </View>
       </View>
       {/* 女 */}
-      <View style={{flexDirection: 'row', minHeight: 200, marginBottom: 20}}>
-        <Text style={{fontSize: 26, fontWeight: 'bold', textAlign: 'center', textAlignVertical: 'center', backgroundColor: '#409EFF', color: '#ffffff', paddingHorizontal: 5, borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>女</Text>
-        <View style={{flex: 1, borderWidth: 1, borderLeftWidth: 0, borderTopRightRadius: 6, borderBottomRightRadius: 6, borderColor: '#999999', padding: 20}}>
+      <View style={styles.titleArea}>
+        <Text style={[styles.title_text, {backgroundColor: '#ed4996'}]}>女</Text>
+        <View style={[styles.title_content, {borderColor: '#ed4996'}]}>
           <View style={{height: 60, marginBottom: 20}}>
             <Field  
               name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.value`}
@@ -383,328 +369,299 @@ const Distinguish = ({
             />
           </View>
           {/* 模式：纯 */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value === 'PURE' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
-            <Text style={{fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>纯：</Text>
-            <View style={{width: 100, marginRight: 10}}>
+          {selectMode_female === 'PURE' && <View style={styles.mode_area}>
+            <Text style={styles.mode_pure_title}>纯：</Text>
+            <View style={{width: 100}}>
               <View style={{flex: 1}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.pure.mode`}
+                  name={`${fieldName_female}.pure.mode`}
                   showLabel={false}
-                  selectList={FEE_WAY_MODE}
+                  selectList={FEE_WAY_MODE[type]}
                   component={LittleSingleSelect}
                 />
               </View>
             </View>
-            <View style={{width: 180, height: 50}}>
+            <View style={{flexDirection: 'row', width: 180, height: 50}}>
               <Field  
-                name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.pure.value`}
+                name={`${fieldName_female}.pure.value`}
                 inputStyle={{maxHeight: 60}}
-                inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                  <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                </View>}
                 component={LittleSingleInput}
               />
+              <Unit value={selectPayMode_female.pure.mode} />
             </View>
           </View>}
           {/* 模式：是否在职 */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value === 'WORKING' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
-            <View style={{flex: 1, justifyContent: 'center'}}>
+          {selectMode_female === 'WORKING' && <View style={styles.mode_area}>
+            <View style={{width: 140, justifyContent: 'center'}}>
               <Field
-                name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working.time`}
+                name={`${fieldName_female}.working.time`}
+                type="distinguish"
                 component={LittleSingleDate}
               />
             </View>
-            <View style={{width: 100}}>
+            <View style={{width: 80}}>
               <Text style={{flex: 1, fontSize: 22, textAlign: 'center', textAlignVertical: 'center', color: '#333333'}}>在职</Text>
               <Text style={{flex: 1, fontSize: 22, textAlign: 'center', textAlignVertical: 'center', color: '#333333'}}>不在职</Text>
             </View>
-            <View style={{width: 100, marginRight: 10}}>
+            <View style={{width: 100}}>
               <View style={{flex: 1}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working.mode1.mode`}
+                  name={`${fieldName_female}.working.mode1.mode`}
                   showLabel={false}
-                  selectList={FEE_WAY_MODE}
+                  selectList={FEE_WAY_MODE[type]}
                   component={LittleSingleSelect}
                 />
               </View>
               <View style={{height: 10}}></View>
               <View style={{flex: 1}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working.mode2.mode`}
+                  name={`${fieldName_female}.working.mode2.mode`}
                   showLabel={false}
-                  selectList={FEE_WAY_MODE}
+                  selectList={FEE_WAY_MODE[type]}
                   component={LittleSingleSelect}
                 />
               </View>
             </View>
             <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={{maxWidth: 180, height: 50}}>
+              <View style={styles.inputArea}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working.mode1.value`}
+                  name={`${fieldName_female}.working.mode1.value`}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                  </View>}
                   component={LittleSingleInput}
                 />
+                <Unit value={selectPayMode_female.working.mode1.mode} />
               </View>
               <View style={{height: 10}}></View>
-              <View style={{maxWidth: 180, height: 50}}>
+              <View style={styles.inputArea}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working.mode2.value`}
+                  name={`${fieldName_female}.working.mode2.value`}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                  </View>}
                   component={LittleSingleInput}
                 />
+                <Unit value={selectPayMode_female.working.mode2.mode} />
               </View>
             </View>
           </View>}
           {/* 模式：打卡是否满（单位：天） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value === 'CARD_DAY' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_female === 'CARD_DAY' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_day.value`}
+                  name={`${fieldName_female}.card_day.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>天</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="天"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_day.mode1.mode`}
+                    name={`${fieldName_female}.card_day.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_day.mode2.mode`}
+                    name={`${fieldName_female}.card_day.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_day.mode1.value`}
+                    name={`${fieldName_female}.card_day.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.card_day.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_day.mode2.value`}
+                    name={`${fieldName_female}.card_day.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.card_day.mode2.mode} />
                 </View>
               </View>
             </>
           </View>}
           {/* 模式：打卡是否满（单位：时） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value === 'CARD_HOUR' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_female === 'CARD_HOUR' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>打卡不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_hour.value`}
+                  name={`${fieldName_female}.card_hour.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>时</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="时"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_hour.mode1.mode`}
+                    name={`${fieldName_female}.card_hour.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_hour.mode2.mode`}
+                    name={`${fieldName_female}.card_hour.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_hour.mode1.value`}
+                    name={`${fieldName_female}.card_hour.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.card_hour.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.card_hour.mode2.value`}
+                    name={`${fieldName_female}.card_hour.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.card_hour.mode2.mode} />
                 </View>
               </View>
             </>
           </View>}
           {/* 模式：在职是否满（单位：天） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value === 'WORKING_DAY' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_female === 'WORKING_DAY' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_day.value`}
+                  name={`${fieldName_female}.working_day.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>天</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="天"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_day.mode1.mode`}
+                    name={`${fieldName_female}.working_day.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_day.mode2.mode`}
+                    name={`${fieldName_female}.working_day.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_day.mode1.value`}
+                    name={`${fieldName_female}.working_day.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.working_day.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_day.mode2.value`}
+                    name={`${fieldName_female}.working_day.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.working_day.mode2.mode} />
                 </View>
               </View>
             </>
           </View>}
           {/* 模式：在职是否满（单位：时） */}
-          {values[`${type}${ruleIndex + 1}`].distinguish.female.fee_mode.value[0].value === 'WORKING_HOUR' && <View style={{borderWidth: 1, flexDirection: 'row', padding: 20, borderRadius: 10, borderColor: '#999999'}}>
+          {selectMode_female === 'WORKING_HOUR' && <View style={styles.mode_area}>
             <>
-              <View style={{width: 120}}>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满：</Text>
-                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满：</Text>
+              <View style={{width: 100}}>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职满</Text>
+                <Text style={{flex: 1, fontSize: 22, textAlignVertical: 'center', color: '#333333'}}>在职不满</Text>
               </View>
               <View style={{width: 120, justifyContent: 'center', marginRight: 10}}>
                 <Field  
-                  name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_hour.value`}
+                  name={`${fieldName_female}.working_hour.value`}
                   showLabel={false}
                   inputStyle={{maxHeight: 50}}
-                  inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 5}}>
-                    <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>时</Text>
-                  </View>}
+                  inputRightComponent={<RightUnit value="时"/>}
                   component={LittleSingleInput}
                 />
               </View>
-              <View style={{width: 100, marginRight: 10}}>
+              <View style={{width: 100}}>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_hour.mode1.mode`}
+                    name={`${fieldName_female}.working_hour.mode1.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
                 <View style={{height: 10}}></View>
                 <View style={{flex: 1}}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_hour.mode2.mode`}
+                    name={`${fieldName_female}.working_hour.mode2.mode`}
                     showLabel={false}
-                    selectList={FEE_WAY_MODE}
+                    selectList={FEE_WAY_MODE[type]}
                     component={LittleSingleSelect}
                   />
                 </View>
               </View>
               <View style={{flex: 1, justifyContent: 'center'}}>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_hour.mode1.value`}
+                    name={`${fieldName_female}.working_hour.mode1.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.working_hour.mode1.mode} />
                 </View>
                 <View style={{height: 10}}></View>
-                <View style={{maxWidth: 180, height: 50}}>
+                <View style={styles.inputArea}>
                   <Field  
-                    name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.children.working_hour.mode2.value`}
+                    name={`${fieldName_female}.working_hour.mode2.value`}
                     inputStyle={{maxHeight: 50}}
-                    inputRightComponent={<View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#409EFF', borderRadius: 6, marginLeft: 10}}>
-                      <Text style={{fontSize: 22, color: '#fff', paddingHorizontal: 10}}>元/小时</Text>
-                    </View>}
                     component={LittleSingleInput}
                   />
+                  <Unit value={selectPayMode_female.working_hour.mode2.mode} />
                 </View>
               </View>
             </>
@@ -716,7 +673,77 @@ const Distinguish = ({
 };
 
 const styles = StyleSheet.create({
-
+  totalArea: {
+    flex: 1, 
+    padding: 20, 
+    paddingBottom: 0
+  },
+  titleArea: {
+    flexDirection: 'row', 
+    minHeight: 200, 
+    marginBottom: 20
+  },
+  title_text: {
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    textAlignVertical: 'center', 
+    backgroundColor: '#409EFF', 
+    color: '#ffffff', 
+    paddingHorizontal: 5, 
+    borderTopLeftRadius: 6, 
+    borderBottomLeftRadius: 6
+  },
+  title_content: {
+    flex: 1, 
+    borderWidth: 1, 
+    borderLeftWidth: 0, 
+    borderTopRightRadius: 6, 
+    borderBottomRightRadius: 6, 
+    borderColor: '#999999', 
+    padding: 20
+  },
+  mode_area: {
+    borderWidth: 1, 
+    flexDirection: 'row', 
+    padding: 20, 
+    borderRadius: 10, 
+    borderColor: '#999999'
+  },
+  mode_pure_title: {
+    fontSize: 22, 
+    textAlignVertical: 'center', 
+    color: '#333333'
+  },
+  rightUnitArea: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#409EFF', 
+    borderRadius: 6, 
+    marginLeft: 5
+  },
+  rightUnitArea_text: {
+    fontSize: 22, 
+    color: '#fff', 
+    paddingHorizontal: 10
+  },
+  unitArea: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#409EFF', 
+    borderRadius: 6, 
+    marginLeft: 10
+  },
+  unitArea_text: {
+    fontSize: 22, 
+    color: '#fff', 
+    paddingHorizontal: 10
+  },
+  inputArea: {
+    flexDirection: 'row', 
+    maxWidth: 180, 
+    height: 50
+  }
 });
 
 export default Distinguish;

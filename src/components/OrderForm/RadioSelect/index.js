@@ -21,11 +21,11 @@ const RadioSelect = ({
   };
 
   return (
-    <View style={!form.errors[field.name] && styles.selectArea}>
+    <View style={[styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}]}>
       <View style={styles.container}>
         {showLabel ? <Text style={[styles.labelText, labelStyle]}>{label}：</Text> : <></>}
         <View style={{flex: 1}}>
-          <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}, form.errors[field.name] && styles.errorBorder, radioItemsStyle]}>
+          <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, radioItemsStyle]}>
             {radioList.map((radio, radioIndex) => {
               return (
                 <TouchableOpacity key={radioIndex} style={{maxWidth: `${(1/radioList.length) * 100}%`, minHeight: 60,  flexDirection: 'row', alignItems: 'center', padding: 5}} onPress={() => radioOnPress(radio)}>
@@ -43,12 +43,11 @@ const RadioSelect = ({
               )
             })}
           </View>
-          {!!form.errors[field.name] && 
-            <ErrorMessage
-              name={field.name}
-              style={styles.errorMessage}
-              component={Text}
-          />}
+          <ErrorMessage
+            name={field.name}
+            style={styles.errorMessage}
+            component={Text}
+        />
         </View>
       </View>
     </View>
@@ -80,8 +79,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22,
-    marginBottom: 10
+    fontSize: 22
   },
   errorBorder: {
     borderColor: 'red'

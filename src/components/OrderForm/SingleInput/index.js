@@ -18,11 +18,11 @@ const SingleInput = ({
   ...rest
 }) => {
   return (
-    <View style={[{flex: 1}, !form.errors[field.name] && styles.inputArea, inputStyle]}>
+    <View style={[styles.inputArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}, inputStyle]}>
       <View style={styles.container}>
         {showLabel && <Text style={[styles.labelText, labelStyle]}>{label}：</Text>}
         <View style={{flex: 1}}>
-          <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder, inputContainerStyle]}>
+          <View style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, inputContainerStyle]}>
             <View style={{flexDirection: 'row'}}>
               <TextInput
                 value={field.value}
@@ -39,12 +39,11 @@ const SingleInput = ({
               <Text style={{fontSize: 22, color: '#999999'}}>{`${field.value.length}/${rest.maxLength}`}</Text>
             </View> : <></>}
           </View>
-          {!!form.errors[field.name] && 
-            <ErrorMessage
-              name={field.name}
-              style={styles.errorMessage}
-              component={Text}
-          />}
+          <ErrorMessage
+            name={field.name}
+            style={styles.errorMessage}
+            component={Text}
+        />
         </View>
       </View>
     </View>
@@ -53,6 +52,7 @@ const SingleInput = ({
 
 const styles = StyleSheet.create({
   inputArea: {
+    flex: 1, 
     marginBottom: 20
   },
   container: {
@@ -75,8 +75,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22,
-    marginBottom: 10
+    fontSize: 22
   },
   errorBorder: {
     borderColor: 'red'

@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from "react";
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React from "react";
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Button } from '@rneui/themed';
 
 import OrderInfo from "./OrderInfo";
@@ -9,19 +9,19 @@ import CommissionDescription from "./CommissionDescription";
 import WagesDetail from "./WagesDetail";
 
 const CreateOrder = () => {
-  const scrollViewRef = useRef(null);
 
   const save = () => {
     console.log('提交保存');
   };
 
   return (
-    <View style={styles.screen}>
-      <KeyboardAvoidingView 
-        style={{flex: 1}}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+    <KeyboardAvoidingView
+      behavior="height"
+      style={styles.container}
+      keyboardVerticalOffset={-300}
+    >
+      <View style={styles.screen}>
         <ScrollView 
-          ref={scrollViewRef} 
           style={styles.screen}
           keyboardShouldPersistTaps="handled">
             <OrderInfo />
@@ -29,21 +29,24 @@ const CreateOrder = () => {
             <Policy />
             <CommissionDescription />
             <WagesDetail />
-            <View style={{height: 300}}></View>
         </ScrollView>
-      </KeyboardAvoidingView>
-      <Button
-        title="提交保存"
-        onPress={save}
-        containerStyle={styles.buttonContainerStyle}
-        buttonStyle={styles.buttonStyle}
-        titleStyle={styles.titleStyle}
-      />
-    </View>
+        <Button
+          title="提交保存"
+          onPress={save}
+          containerStyle={styles.buttonContainerStyle}
+          buttonStyle={styles.buttonStyle}
+          titleStyle={styles.titleStyle}
+        />
+      </View>
+    </KeyboardAvoidingView>
   )
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column'
+  },
   screen: {
     flex: 1
   },

@@ -24,6 +24,7 @@ const LittleSingleInput = ({
           {...rest}
         />
       </View>
+      {inputRightComponent}
     </View>
   )
 };

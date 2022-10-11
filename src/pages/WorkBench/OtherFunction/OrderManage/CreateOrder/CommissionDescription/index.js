@@ -4,19 +4,20 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import { Shadow } from 'react-native-shadow-2';
+import moment from "moment";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
-import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
-import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
-import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
-import MyMembersApi from "../../../../../../request/MyMembersApi";
-import { SUCCESS_CODE, CONDITIONS_LIST, REWARD_MODE } from "../../../../../../utils/const";
+import { CONDITIONS_LIST, REWARD_MODE } from "../../../../../../utils/const";
 import { deepCopy } from "../../../../../../utils";
 
 let restForm;
+const today = moment().format('YYYY-MM-DD');
+const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
+const oneYearLater = moment().add(1, 'years').format('YYYY-MM-DD');
+
 const validationSchema = Yup.object().shape({
   rewardMode: Yup.array().min(1, '请选择提成模式'),
   // orderRangeDate: Yup.object({
@@ -34,8 +35,8 @@ const validationSchema = Yup.object().shape({
 const initialValues = {
   rewardMode: [],
   orderRangeDate1: {
-    startDate: '',
-    endDate: ''
+    startDate: today,
+    endDate: today
   },
   store1: [],
   conditionsSetting1: [],
@@ -47,10 +48,9 @@ const initialValues = {
 
 const CommissionDescription = () => {
   const [showDetail, setShowDetail] = useState(true);
-  const [rulesList, setRulesList] = useState([{
-    name: 1,
-    age: 2
-  }]);
+  const [rulesList, setRulesList] = useState([
+    {startDateLimit: oneYearBefore, endDateLimit: oneYearLater}
+  ]);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
@@ -63,14 +63,16 @@ const CommissionDescription = () => {
 
   const addRule = () => {
     const copyList = deepCopy(rulesList);
-    copyList.push({
-      name: rulesList.length + 1,
-      age: rulesList.length + 2
-    });
+    copyList.push({startDateLimit: oneYearBefore, endDateLimit: oneYearLater});
     setRulesList(copyList);
 
+    //获取当前规则列表中上一个列表的结束时间；
+    const lastRuleDate = restForm.values[`orderRangeDate${rulesList.length}`].endDate;
+    const newDate = moment(lastRuleDate).add(1, 'days').format('YYYY-MM-DD');
+    console.log('oneYearLater', oneYearLater);
+
     let newFieldValues = {};
-    newFieldValues[`orderRangeDate${rulesList.length + 1}`] = {startDate: '', endDate: ''};
+    newFieldValues[`orderRangeDate${rulesList.length + 1}`] = {startDate: newDate, endDate: newDate};
     newFieldValues[`store${rulesList.length + 1}`] = [];
     newFieldValues[`conditionsSetting${rulesList.length + 1}`] = [];
     newFieldValues[`days${rulesList.length + 1}`] = '';
@@ -101,7 +103,6 @@ const CommissionDescription = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          handleChange={(e) => console.log('e', e)}
           onSubmit={onSubmit}>
           {({ handleSubmit, ...rest }) => {
             restForm = rest;
@@ -148,6 +149,7 @@ const CommissionDescription = () => {
                               <Field
                                 name={`orderRangeDate${ruleIndex + 1}`}
                                 label="订单日期"
+                                limit={rule}
                                 component={OrderRangeDate}
                               />
                               <Field  
@@ -170,7 +172,7 @@ const CommissionDescription = () => {
                                   <Field
                                     name={`days${ruleIndex + 1}`}
                                     placeholder="天数"
-                                    maxLength={2}
+                                    maxLength={3}
                                     showLabel={false}
                                     centerInput
                                     keyboardType="numeric"
@@ -196,7 +198,7 @@ const CommissionDescription = () => {
                                     name={`recruiter${ruleIndex + 1}`}
                                     showLabel={false}
                                     placeholder="输入"
-                                    maxLength={2}
+                                    maxLength={3}
                                     centerInput
                                     keyboardType="numeric"
                                     selectTextOnFocus
@@ -208,7 +210,7 @@ const CommissionDescription = () => {
                                     name={`groupLeader${ruleIndex + 1}`}
                                     showLabel={false}
                                     placeholder="输入"
-                                    maxLength={2}
+                                    maxLength={3}
                                     centerInput
                                     keyboardType="numeric"
                                     selectTextOnFocus
@@ -220,7 +222,7 @@ const CommissionDescription = () => {
                                     name={`storeLeader${ruleIndex + 1}`}
                                     showLabel={false}
                                     placeholder="输入"
-                                    maxLength={2}
+                                    maxLength={3}
                                     centerInput
                                     keyboardType="numeric"
                                     selectTextOnFocus

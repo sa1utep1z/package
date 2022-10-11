@@ -1,66 +1,33 @@
-import React, {useState, useEffect, Children} from "react";
+import React, {useState} from "react";
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Formik, Field, useFormik } from 'formik';
+import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
-import { Shadow } from 'react-native-shadow-2';
-import { TabView, TabBar } from 'react-native-tab-view';
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
-import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
-import LittleSingleSelect from "../../../../../../components/OrderForm/LittleSingleSelect";
-import LittleSingleInput from "../../../../../../components/OrderForm/LittleSingleInput";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
-import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
-import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
-import LittleSingleDate from "../../../../../../components/OrderForm/LittleSingleDate";
-import TabSelectItem from "../../../../../../components/OrderForm/TabSelectItem";
-import MyMembersApi from "../../../../../../request/MyMembersApi";
-import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, MODE_LIST, MALE_OR_FEMALE, MEMBER_FEE_MODE, FEE_WAY_MODE } from "../../../../../../utils/const";
+import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST } from "../../../../../../utils/const";
 import SettlementRules from "./SettlementRules";
-import { deepCopy } from "../../../../../../utils";
 import {originRule} from './SettlementRules/const';
 
 let restForm;
 const validationSchema = Yup.object().shape({
-  orderName: Yup.string().required('请输入订单名称'),
-  factory: Yup.array().min(1, '请选择用工企业'),
-  job: Yup.array().min(1, '请选择岗位'),
-  jobType: Yup.array().min(1, '请选择工种'),
-  orderRangeDate: Yup.object({
-    startDate: Yup.string().required('请选择订单开始日期'),
-    endDate: Yup.string().required('请选择订单结束日期')
-  }),
-  orderDuration: Yup.string().required('请选择订单工期'),
-  jobOrder: Yup.string().required('请输入职位顺序'),
-  complexSalary: Yup.object({
-    start: Yup.string().required('请输入起始薪资'),
-    end: Yup.string().required('请输入结束薪资')
-  }),
-  pictureList: Yup.array().min(1, '请选择职位展示图片'),
-  littleProgramTitle: Yup.string().required('请输入小程序职位标题'),
-  littleProgramSalaryDetail: Yup.string().required('请输入小程序薪资详情文本'),
+  payType: Yup.array().min(1, '请选择借支类型'),
+  wageDetail: Yup.string().required('请输入工价详情文本'),
+  food: Yup.array().min(1, '请选择就餐'),
+  dormitory: Yup.array().min(1, '请选择住宿'),
+  water_fee: Yup.array().min(1, '请选择水电费'),
+  commercial: Yup.string().required('请输入需要购买商保的文本内容'),
+  social: Yup.string().required('请输入需要购买商保的文本内容'),
+  leave_self: Yup.string().required('请输入需要购买商保的文本内容'),
+  induction: Yup.string().required('请输入需要购买商保的文本内容'),
+  remark: Yup.string().required('请输入需要购买商保的文本内容')
 });
 
 const initialValues = {
-  orderName: '',
-  factory: [],
-  jobOrder: '',
-  job: [],
-  jobType: [],
-  orderRangeDate: {
-    startDate: '',
-    endDate: ''
-  },
-  orderDuration: '',
-  complexSalary: {
-    start: '',
-    end: ''
-  },
-  pictureList: [],
-  littleProgramTitle: '',
-  littleProgramSalaryDetail: '',
+  payType: [],
+  wageDetail: '',
   food: [],
   dormitory: [],
   water_fee: [],
@@ -72,14 +39,11 @@ const initialValues = {
   ...originRule
 };
 
+// 会员工价详情
 const WagesDetail = () => {
   const [showDetail, setShowDetail] = useState(true);
 
-
   const detailOnPress = () => setShowDetail(!showDetail);
-
-
-
 
   const onSubmit = async (values) => {
     console.log('提交表单', values)
@@ -108,7 +72,7 @@ const WagesDetail = () => {
               <View style={{ flex: 1, paddingHorizontal: 28}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <Field
-                    name="littleProgramSalaryDetail"
+                    name="wageDetail"
                     label="工价详情"
                     placeholder="请输入工价详情文本"
                     maxLength={200}
@@ -122,19 +86,19 @@ const WagesDetail = () => {
                   </TouchableOpacity>
                 </View>
                 <Field
-                  name="job"
+                  name="payType"
                   label="借支类型"
                   radioList={SALARY_TYPE}
                   component={RadioSelect}
                 />
-                {values.job.length && values.job[0].value !== 'NoDEBIT' ? <Field
+                {values.payType.length && values.payType[0].value !== 'NoDEBIT' ? <Field
                   name="requireNumber"
                   label="借支金额"
                   selectTextOnFocus
                   keyboardType="numeric"
                   maxLength={4}
                   component={SingleInput}
-                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.job[0].value === 'DAILY' ? '元/天' : values.job[0].value === 'WEEKLY' ? '周/天' : '月/天'}</Text>}
+                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.payType[0].value === 'DAILY' ? '元/天' : values.payType[0].value === 'WEEKLY' ? '周/天' : '月/天'}</Text>}
                 /> : <></>}
                 <Field  
                   name='food'
@@ -162,7 +126,7 @@ const WagesDetail = () => {
                   multiline
                   lengthLimit
                   selectTextOnFocus
-                  inputContainerStyle={{minHeight: 100, alignItems: 'flex-start'}}
+                  inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
                   component={SingleInput}
                 />
@@ -174,7 +138,7 @@ const WagesDetail = () => {
                   multiline
                   lengthLimit
                   selectTextOnFocus
-                  inputContainerStyle={{minHeight: 100, alignItems: 'flex-start'}}
+                  inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
                   component={SingleInput}
                 />
@@ -186,7 +150,7 @@ const WagesDetail = () => {
                   multiline
                   lengthLimit
                   selectTextOnFocus
-                  inputContainerStyle={{minHeight: 100, alignItems: 'flex-start'}}
+                  inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
                   component={SingleInput}
                 />
@@ -198,7 +162,7 @@ const WagesDetail = () => {
                   multiline
                   lengthLimit
                   selectTextOnFocus
-                  inputContainerStyle={{minHeight: 100, alignItems: 'flex-start'}}
+                  inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
                   component={SingleInput}
                 />
@@ -210,12 +174,19 @@ const WagesDetail = () => {
                   multiline
                   lengthLimit
                   selectTextOnFocus
-                  inputContainerStyle={{minHeight: 100, alignItems: 'flex-start'}}
+                  inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
                   component={SingleInput}
                 />
-                <Text style={{fontSize: 22, color: 'red', textAlign: 'center'}}>请注意月初和月底跨月招聘时，适用日期要合理设置，避免工价异常！</Text>
-                  {/* 结算规则组件 */}
+                <View style={styles.noticeArea}>
+                  <AntDesign
+                    name='star'
+                    size={28}
+                    color='red'
+                  />
+                  <Text style={styles.notice_text}>请注意月初和月底跨月招聘时，适用日期要合理设置，避免工价异常！</Text>
+                </View>
+                {/* 结算规则组件 */}
                 <SettlementRules
                   values={values}
                   restForm={restForm}
@@ -245,6 +216,19 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold'
+  },
+  inputContainerStyle: {
+    minHeight: 100, 
+    alignItems: 'flex-start'
+  },
+  noticeArea: {
+    flexDirection: 'row', 
+    alignItems: 'center'
+  },
+  notice_text: {
+    fontSize: 22, 
+    color: 'red', 
+    textAlign: 'center'
   }
 });
 

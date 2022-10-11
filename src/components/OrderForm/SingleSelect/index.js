@@ -29,7 +29,6 @@ const SingleSelect = ({
   const confirm = (list) => {
     form.setFieldValue(field.name, list);
   };
-  console.log('传过来的用工企业：',field)
   const selectOnPress = () => {
     setLoading(true);
     dispatch(setTitle(`请选择${label}`));
@@ -84,11 +83,11 @@ const SingleSelect = ({
   };
 
   return (
-    <View style={[{flex: 1}, !form.errors[field.name] && styles.selectArea]}>
+    <View style={[{flex: 1}, styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}]}>
       <View style={styles.container}>
         {showLabel ? <Text style={[styles.labelText, labelStyle]}>{label}：</Text> : <></>}
         <View style={{flex: 1}}>
-          <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
+          <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
             {field.value && <>
               <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
                 {!!field.value.length ? field.value[0].label : `请选择${label}`}
@@ -100,12 +99,11 @@ const SingleSelect = ({
               color={!!field?.value?.length ? '#000000' : '#999999'}
             />}
           </TouchableOpacity>
-          {!!form.errors[field.name] && 
-            <ErrorMessage
-              name={field.name}
-              style={styles.errorMessage}
-              component={Text}
-          />}
+          <ErrorMessage
+            name={field.name}
+            style={styles.errorMessage}
+            component={Text}
+        />
         </View>
       </View>
     </View>
@@ -147,8 +145,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    fontSize: 22,
-    marginBottom: 10
+    fontSize: 22
   },
   errorBorder: {
     borderColor: 'red'
