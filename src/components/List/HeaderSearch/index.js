@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
-import {Formik, Field} from 'formik';
+import { Formik, Field } from 'formik';
 import { Text } from '@rneui/themed';
 import moment from "moment";
 import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
-import { STATUS_LIST, SUCCESS_CODE } from '../../../utils/const';
+import { STATUS_LIST, SUCCESS_CODE, TYPERESULT } from '../../../utils/const';
 import SelectItem from '../../Form/SelectItem';
 import SearchItem from '../../Form/SearchItem';
 import SearchInput from '../../SearchInput';
@@ -22,10 +22,11 @@ let restForm;
 const initialValues = {
   enterprise: [],
   status: [],
+  type: [],
   store: [],
   staff: [],
-  joinIn: {startDate: '', endDate: ''},
-  leaving: {startDate: '', endDate: ''},
+  joinIn: { startDate: '', endDate: '' },
+  leaving: { startDate: '', endDate: '' },
   dateRange: {},
   staffSearch: '',
   search: ''
@@ -38,16 +39,17 @@ const HeaderSearch = ({
   noCompanyAndStatus = false,
   noStoreAndStaff = false,
   canFilterStatus = false,
-  placeholder= '',
+  placeholder = '',
   companyShow = true,
   withoutCompanyFilter = false,
+  typeResult = false,
   batchOperate, // 批量操作函数
   leavingList = false,
   clearRangeDate, //进入页面时不要筛选时间
   startText,
   endText,
-    ...rest
-  }) => {
+  ...rest
+}) => {
   const toast = useToast();
   const dispatch = useDispatch();
 
@@ -60,11 +62,11 @@ const HeaderSearch = ({
   const [companyList, setCompanyList] = useState([]);
   const [storeList, setStoreList] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
     setRangeDate();
-  },[showSearch])
+  }, [showSearch])
 
   useEffect(() => {
     getCompaniesList();
@@ -72,47 +74,47 @@ const HeaderSearch = ({
   }, [])
 
   const setRangeDate = () => {
-    if(rangeDate.startDate && rangeDate.endDate) return;
-    dispatch(setStartDate(!clearRangeDate ? moment().format('YYYY-MM-DD'): ''));
-    dispatch(setEndDate(!clearRangeDate ? moment().format('YYYY-MM-DD'): ''));
+    if (rangeDate.startDate && rangeDate.endDate) return;
+    dispatch(setStartDate(!clearRangeDate ? moment().format('YYYY-MM-DD') : ''));
+    dispatch(setEndDate(!clearRangeDate ? moment().format('YYYY-MM-DD') : ''));
   };
 
-  const getCompaniesList = async() => {
-    try{  
+  const getCompaniesList = async () => {
+    try {
       const res = await MyMembersApi.CompaniesList();
-      if(res.code !== SUCCESS_CODE){
+      if (res.code !== SUCCESS_CODE) {
         toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
         return;
       }
-      if(res.data.length){
-        res.data.forEach((item,index) => {
+      if (res.data.length) {
+        res.data.forEach((item, index) => {
           item.title = item.label;
           item.id = index + 1;
         });
         setCompanyList(res.data);
       }
-    }catch(err){
+    } catch (err) {
       console.log('err', err);
       toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
     }
   };
 
-  const getStoreList = async() => {
-    try{  
+  const getStoreList = async () => {
+    try {
       const res = await MyMembersApi.StoreList();
-      if(res.code !== SUCCESS_CODE){
+      if (res.code !== SUCCESS_CODE) {
         toast.show(`获取门店列表失败，${res.msg}`, { type: 'danger' });
         return;
       }
-      if(res.data.length){
-        res.data.forEach((item,index) => {
+      if (res.data.length) {
+        res.data.forEach((item, index) => {
           item.title = item.storeName;
           item.id = index + 1;
           item.value = item.storeId;
         });
         setStoreList(res.data);
       }
-    }catch(err){
+    } catch (err) {
       console.log('err', err);
       toast.show(`获取门店列表失败`, { type: 'danger' });
     }
@@ -148,29 +150,29 @@ const HeaderSearch = ({
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}>
-        {({values, ...rest}) => {
-          restForm = rest;
-          let staffList = [];
-          if(values.store && values.store.length > 0){
-            values.store.map((item) => {
-              if(item.members.length){
-                item.members.map((member) => {
-                  staffList.push({
-                    title: member.label,
-                    id: member.value, 
-                    value: member.value
-                  })
+      {({ values, ...rest }) => {
+        restForm = rest;
+        let staffList = [];
+        if (values.store && values.store.length > 0) {
+          values.store.map((item) => {
+            if (item.members.length) {
+              item.members.map((member) => {
+                staffList.push({
+                  title: member.label,
+                  id: member.value,
+                  value: member.value
                 })
-              }
-            })
-          }else{
-            staffList = [];
-          }
-          return (
-            <Animated.View style={[styles.topView, {opacity: fadeAnim}, !showSearch && {display: 'none'}]}>
-              {!noCompanyAndStatus && <View style={[{flexDirection: 'row', marginBottom: 20}, withoutCompanyFilter && {marginBottom: 0}]}>
-                {
-                  companyShow && <Field
+              })
+            }
+          })
+        } else {
+          staffList = [];
+        }
+        return (
+          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }]}>
+            {!noCompanyAndStatus && <View style={[{ flexDirection: 'row', marginBottom: 20 }, withoutCompanyFilter && { marginBottom: 0 }]}>
+              {
+                companyShow && <Field
                   title="企业"
                   name="enterprise"
                   placeholder={canFilterStatus ? '请选择企业' : '请点击选择企业或手动输入筛选'}
@@ -179,71 +181,82 @@ const HeaderSearch = ({
                   originList={companyList}
                   component={HeaderSelectItem}
                 />}
-                {canFilterStatus && <View style={{width: 40}}></View>}
-                {canFilterStatus && <Field
-                  title="状态"
-                  name="status"
-                  placeholder="请选择状态"
-                  lastButton={batch}
-                  singleSelect={singleSelect}
-                  originList={STATUS_LIST}
-                  component={HeaderSelectItem}
-                />}
-              </View>}
-              {!noStoreAndStaff && <View style={{flexDirection: 'row', marginBottom: 20}}>
-                <Field
-                  title="门店"
-                  name="store"
-                  singleSelect={singleSelect}
-                  originList={storeList}
-                  component={HeaderSelectItem}
-                />
-                <View style={{width: 40}}></View>
-                {staffSearch ? <Field
-                  title="招聘员"
-                  name="staffSearch"
-                  placeholder="手动输入"
-                  showLittleTitle
-                  canSearch
-                  bottomButton
-                  noBorder
-                  autoSubmit
-                  formalLabel={false}
-                  component={SearchItem}
-                /> : <Field
-                  title="招聘员"
-                  name="staff"
-                  singleSelect={singleSelect}
-                  originList={staffList}
-                  component={HeaderSelectItem}
-                />}
-              </View>}
-              {leavingList && <>
-                <Field
-                  name="joinIn"
-                  component={DateRangePickerInLeavingList}
-                />
-                <Field
-                  name="leaving"
-                  leaving
-                  component={DateRangePickerInLeavingList}
-                />
-              </>}
-              {!leavingList && <Field
-                name="dateRange"
-                startText={startText}
-                endText={endText}
-                component={DateRangePicker}
+              {typeResult && <View style={{ width: 40 }}></View>}
+              {typeResult && <Field
+                title="问题类型"
+                name="type"
+                placeholder='请选择'
+                lastButton={batch}
+                singleSelect={singleSelect}
+                originList={TYPERESULT}
+                component={HeaderSelectItem}
               />}
+              {canFilterStatus && <View style={{ width: 40 }}></View>}
+              {canFilterStatus && <Field
+                title="状态"
+                name="status"
+                placeholder="请选择状态"
+                lastButton={batch}
+                singleSelect={singleSelect}
+                originList={STATUS_LIST}
+                component={HeaderSelectItem}
+              />}
+            </View>}
+            {!noStoreAndStaff && <View style={{ flexDirection: 'row', marginBottom: 20 }}>
               <Field
-                name="search"
-                placeholder={placeholder? placeholder : '请输入会员姓名、身份证或手机号码'}
-                borderRadius={8}
-                searchInputStyle={styles.searchInputStyle}
-                component={SearchInput}
+                title="门店"
+                name="store"
+                singleSelect={singleSelect}
+                originList={storeList}
+                component={HeaderSelectItem}
               />
-            </Animated.View>
-        )}}
+              <View style={{ width: 40 }}></View>
+              {staffSearch ? <Field
+                title="招聘员"
+                name="staffSearch"
+                placeholder="手动输入"
+                showLittleTitle
+                canSearch
+                bottomButton
+                noBorder
+                autoSubmit
+                formalLabel={false}
+                component={SearchItem}
+              /> : <Field
+                title="招聘员"
+                name="staff"
+                singleSelect={singleSelect}
+                originList={staffList}
+                component={HeaderSelectItem}
+              />}
+            </View>}
+            {leavingList && <>
+              <Field
+                name="joinIn"
+                component={DateRangePickerInLeavingList}
+              />
+              <Field
+                name="leaving"
+                leaving
+                component={DateRangePickerInLeavingList}
+              />
+            </>}
+            {!leavingList && <Field
+              name="dateRange"
+              startText={startText}
+              endText={endText}
+              component={DateRangePicker}
+            />}
+            <Field
+              name="search"
+              placeholder={placeholder ? placeholder : '请输入会员姓名、身份证或手机号码'}
+              borderRadius={8}
+              searchInputStyle={styles.searchInputStyle}
+              component={SearchInput}
+            />
+          </Animated.View>
+        )
+      }}
     </Formik>
   )
 }
@@ -254,11 +267,11 @@ const styles = StyleSheet.create({
     marginVertical: 30
   },
   selectContainerStyle: {
-    flex: 1 
+    flex: 1
   },
   searchInputStyle: {
     height: 60,
-    marginBottom: 0, 
+    marginBottom: 0,
     paddingHorizontal: 0
   },
   batchButton: {
@@ -266,12 +279,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#409EFF', 
+    backgroundColor: '#409EFF',
     marginLeft: 20,
     borderRadius: 10
   },
   btnText: {
-    color: '#fff', 
+    color: '#fff',
     fontSize: 26
   }
 })

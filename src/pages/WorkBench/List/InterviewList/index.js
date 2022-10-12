@@ -38,7 +38,7 @@ const InterviewList = () => {
   const dispatch = useDispatch();
 
   const role = useSelector(state => state.roleSwitch.role);
-
+  
   const [searchContent, setSearchContent] = useState({status: 'ALL', role, ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});

@@ -112,7 +112,13 @@ export const WORKBENCH_LIST = [
         imgBackground: require('../../assets/images/blue.png'),
         iconSource: require('../../assets/images/LeavingManage.png'),
         routeName: NAVIGATION_KEYS.ORDER_MANAGE
-      }
+      }, {
+        key: 'complaintFeedback',
+        title: '投诉反馈',
+        imgBackground: require('../../assets/images/lightBlue.png'),
+        iconSource: require('../../assets/images/NewestState.png'),
+        routeName: NAVIGATION_KEYS.COMPLAINT_FEEDBACK
+      },
     ]
     },
   ];

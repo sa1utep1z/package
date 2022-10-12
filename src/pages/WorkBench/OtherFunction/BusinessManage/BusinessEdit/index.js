@@ -16,6 +16,7 @@ import { deepCopy, getYMD } from '../../../../../utils';
 import UserSelect from '../UserSelect'
 import { CityData } from '../../../../../assets/City';
 import MobileInput from "../../../../../components/OrderForm/MobileInput";
+import { isDateNumber } from '../../../../../utils/validate';
 import { SUCCESS_CODE, SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
 
 
@@ -172,18 +173,33 @@ const BusinessEdit = (props) => {
 
   // 发薪日期
   const onChangeDay = (value) => {
-    setPayDay(value);
-    restForm.setFieldValue('payDay', value);
+    if (isDateNumber.test(value)) {
+      setPayDay(value);
+      restForm.setFieldValue('payDay', value);
+    } else {
+      setPayDay('');
+      toast.show('取值必须在1-31之间', { type: 'danger' })
+    }
   }
 
   const onChangeStart = (value) => {
-    setPayStart(value);
-    restForm.setFieldValue('payCycleStart', value);
+    if (isDateNumber.test(value)) {
+      setPayStart(value);
+      restForm.setFieldValue('payCycleStart', value);
+    } else {
+      setPayStart('');
+      toast.show('取值必须在1-31之间', { type: 'danger' })
+    }
   }
 
   const onChangeDayEnd = (value) => {
-    setPayEnd(value);
-    restForm.setFieldValue('payCycleEnd', value);
+    if (isDateNumber.test(value)) {
+      setPayEnd(value);
+      restForm.setFieldValue('payCycleEnd', value);
+    } else {
+      setPayEnd('');
+      toast.show('取值必须在1-31之间', { type: 'danger' })
+    }
   }
 
   //　输入标签
@@ -224,6 +240,28 @@ const BusinessEdit = (props) => {
     restForm.setFieldValue('companyGoodTags', [...tagArry]);
   }
 
+  // 上传图片
+  const uploadImage = async (fileName, localFilePath) => {
+    const data = new FormData();
+    const file = {
+      uri: localFilePath, type: 'multipart/form-data', name: fileName,
+    };
+    data.append('file', file);
+    console.log('选择图库照片data的值：', data);
+    try {
+      const res = await CompanyApi.UploadImages(data)
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      console.log('是否执行操作上传', res.data)
+      setCompanyImage([...companyImage, res.data]);
+        restForm.setFieldValue('companyImages', [...companyImage, res.data]);
+    } catch (error) {
+      toast.show('识别失败，出现异常请联系管理员处理')
+    }
+  }
+
   //从图库选择图片
   const openPick = async () => {
     try {
@@ -236,16 +274,11 @@ const BusinessEdit = (props) => {
         cropping: true,
       })
       const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
-      const data = new FormData();
-      const file = {
-        uri: pickerImage.path, type: 'multipart/form-data', name: fileName,
-      };
-      data.append('file', file);
-      restForm.setFieldValue('companyImages', [...companyImage, ...data]);
+      uploadImage(fileName, pickerImage.path);
       console.log('选择图库照片：', pickerImage)
       return pickerImage;
     } catch (err) {
-      console.log('err', err);
+      console.log('选择图库照片err: ', err);
     }
   }
 
@@ -516,6 +549,7 @@ const BusinessEdit = (props) => {
                       value={payDay}
                       textAlign='center'
                       clearTextOnFocus
+                      keyboardType="numeric"
                       placeholderTextColor="#999999"
                     />
                     <Text style={styles.titleName}>号</Text>
@@ -526,6 +560,7 @@ const BusinessEdit = (props) => {
                       onChangeText={text => onChangeStart(text)}
                       value={payStart}
                       clearTextOnFocus
+                      keyboardType="numeric"
                       placeholderTextColor="#999999"
                     />
                     <Text style={[styles.titleName, { marginRight: 15 }]}>至</Text>
@@ -535,6 +570,7 @@ const BusinessEdit = (props) => {
                       onChangeText={text => onChangeDayEnd(text)}
                       value={payEnd}
                       clearTextOnFocus
+                      keyboardType="numeric"
                       placeholderTextColor="#999999"
                     />
                     <Text style={styles.titleName}>号</Text>

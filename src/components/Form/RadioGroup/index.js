@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Text, CheckBox, Input } from '@rneui/themed';
 import { WebView } from 'react-native-webview';
+import { ErrorMessage } from 'formik';
 
 const RadioGroup = ({
   field,
@@ -10,26 +11,28 @@ const RadioGroup = ({
   labelAreaStyle,
   arryDate,
   label,
+  isRemark = true,
+  errInputStyle,
   ...rest
 }) => {
-  
+
   const [groupDate, setGroupDate] = useState(arryDate);
 
-  // useEffect(() => {
-  //   if (field.value) {
-  //     const res = arryDate.map((item) => {
-  //       if (item.value === field.value) {
-  //         item.checked = true
-  //       } else {
-  //         item.checked = false
-  //       }
-  //       return item;
-  //     })
-  //     setGroupDate(res);
-  //   }
-  //   console.log('打印选择的值5525：', field, arryDate, label)
-  // },[field.value])
-  
+  useEffect(() => {
+    if (field.value) {
+      const res = arryDate.map((item) => {
+        if (item.value === field.value) {
+          item.checked = true
+        } else {
+          item.checked = false
+        }
+        return item;
+      })
+      setGroupDate(res);
+    }
+    console.log('打印选择的值5525：', field, arryDate)
+  }, [field.value])
+
   const pressCheck = (value) => {
     const res = arryDate.map((item) => {
       if (item.value === value) {
@@ -77,16 +80,22 @@ const RadioGroup = ({
             )
           })
         }
-        <Input
-          inputStyle={styles.input}
-          // value={label}
-          placeholder="请输入备注说明"
-          placeholderTextColor="#999999"
-          containerStyle={styles.inputStyle}
-          inputContainerStyle={styles.noBorder}
-          onChangeText={text => onChangeText(text)}
-        />
+        {
+          isRemark && <Input
+            inputStyle={styles.input}
+            placeholder="请输入备注说明"
+            placeholderTextColor="#999999"
+            containerStyle={styles.inputStyle}
+            inputContainerStyle={styles.noBorder}
+            onChangeText={text => onChangeText(text)}
+          />
+        }
       </View>
+      <ErrorMessage
+        name={field.name}
+        component={Text}
+        style={[styles.errorInput, errInputStyle]}
+      />
     </View>
   )
 }
@@ -165,8 +174,8 @@ const styles = StyleSheet.create({
   },
   labelArea: {
     height: '100%',
-    flexDirection: 'row',  
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10
   },
@@ -175,12 +184,17 @@ const styles = StyleSheet.create({
     fontSize: 32
   },
   required: {
-    color: 'red', 
-    textAlign: 'center', 
-    textAlignVertical: 'top', 
-    alignSelf: 'flex-start', 
+    color: 'red',
+    textAlign: 'center',
+    textAlignVertical: 'top',
+    alignSelf: 'flex-start',
     marginTop: 25,
     fontSize: 25
+  },
+  errorInput: {
+    fontSize: 26,
+    textAlign: 'center',
+    color: 'red'
   },
 })
 

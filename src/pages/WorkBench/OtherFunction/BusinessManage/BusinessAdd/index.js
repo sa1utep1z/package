@@ -15,6 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import CompanyApi from '../../../../../request/companyApi';
 import { deepCopy, getYMD } from '../../../../../utils';
 import UserSelect from '../UserSelect'
+import { isDateNumber } from '../../../../../utils/validate';
 import { CityData } from '../../../../../assets/City';
 import MobileInput from "../../../../../components/OrderForm/MobileInput";
 import { SUCCESS_CODE, SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
@@ -37,21 +38,6 @@ const validationSchema = Yup.object().shape({
   payDay: Yup.string().required('请输入发薪日期'),
   payCycleStart: Yup.string().required('请输入起始发薪日期'),
   payCycleEnd: Yup.string().required('请输入结束发薪日期'),
-  shiftCategory: Yup.string().required('请选择班别'),
-  sitStand: Yup.string().required('请选择站坐'),
-  dress: Yup.array().min('请选择着装'),
-  line: Yup.string().required('请选择产线'),
-  microscope: Yup.string().required('请选择显微镜'),
-  dormitory: Yup.string().required('请选择住宿条件'),
-  food: Yup.string().required('请选择伙食'),
-  phone: Yup.string().required('请选择手机'),
-  idCard: Yup.string().required('请选择身份证'),
-  english: Yup.string().required('请选择英文字母'),
-  returnFactory: Yup.string().required('请选择返厂条件'),
-  tattooSmoke: Yup.string().required('请选择纹身烟疤'),
-  nationality: Yup.string().required('请选择民族限制'),
-  background: Yup.string().required('请选择案底是否可要'),
-  studentProve: Yup.string().required('请选择学生证明'),
   examine: Yup.string().required('请输入体检要求'),
   idCardCopy: Yup.string().required('请输入身份证复印件要求'),
   graduateCopy: Yup.string().required('请输入毕业证复印件要求'),
@@ -111,19 +97,19 @@ const BusinessAdd = (props) => {
     companyScale: [],
     industry: [],
     address: '',
-    microscope: '',
+    microscope: 'ALL_HAVE',
     region: '',
     position: '',
-    idCardCopy: '',
-    graduateCopy: '',
-    photo: '',
-    itineraryCode: '',
-    nucleicAcid: '',
-    vaccination: '',
+    idCardCopy: '3张身份证复印件',
+    graduateCopy: '不需要',
+    photo: '不用照片',
+    itineraryCode: '不接收中高风险地区行程，行程不带星号',
+    nucleicAcid: '24小时核酸',
+    vaccination: '2针以上接种记录',
     contactResidents: [],
     contactBusiness: [],
     contactFinances: [],
-    idCard: '',
+    idCard: 'ID_CARD_MAGNETIC',
     companyIntroduction: '',
     addressDetail: '',
     payDay: '',
@@ -133,21 +119,25 @@ const BusinessAdd = (props) => {
     companyImages: companyImage,
     remark: '',
     tip: true,
-    examine: '',
-    background: '',
-    studentProve: '',
-    nationality: '',
-    tattooSmoke: '',
-    returnFactory: '',
-    english: '',
-    phone: '',
-    food: '',
-    dormitory: '',
-    line: '',
-    dress: '',
-    sitStand: '',
-    shiftCategory: '',
+    examine: '需要体检',
+    background: 'BACKGROUND_UNLIMITED',
+    studentProve: 'STUDENT_PROVE_NOT_CHECK',
+    nationality: 'NATIONALITY_UNLIMITED',
+    tattooSmoke: 'TATTOO_SMOKE_NOT_EXPOSED',
+    returnFactory: 'RETURN_FACTORY_CONDITION',
+    english: 'ENGLISH_NOT_MUST',
+    phone: 'PHONE_CARRY',
+    food: 'FOOD_THREE_INCLUDE',
+    dormitory: 'DORMITORY_FREE',
+    line: 'ALL_HAVE',
+    dress: 'DRESS_ORDINARY',
+    sitStand: 'SIT_DOWN',
+    shiftCategory: 'SHIFT_CATEGORY_LONG',
   };
+
+  useEffect(() => {
+    restForm.resetForm(initialValues);
+  }, [])
 
   // 获取默认企业图片
   const getImage = async () => {
@@ -179,18 +169,33 @@ const BusinessAdd = (props) => {
 
   // 发薪日期
   const onChangeDay = (value) => {
-    setPayDay(value);
-    restForm.setFieldValue('payDay', value);
+    if (isDateNumber.test(value)) {
+      setPayDay(value);
+      restForm.setFieldValue('payDay', value);
+    } else {
+      setPayDay('');
+      toast.show('取值必须在1-31之间', { type: 'danger' })
+    }
   }
 
   const onChangeStart = (value) => {
-    setPayStart(value);
-    restForm.setFieldValue('payCycleStart', value);
+    if (isDateNumber.test(value)) {
+      setPayStart(value);
+      restForm.setFieldValue('payCycleStart', value);
+    } else {
+      setPayStart('');
+      toast.show('取值必须在1-31之间', { type: 'danger' })
+    }
   }
 
   const onChangeDayEnd = (value) => {
-    setPayEnd(value);
-    restForm.setFieldValue('payCycleEnd', value);
+    if (isDateNumber.test(value)) {
+      setPayEnd(value);
+      restForm.setFieldValue('payCycleEnd', value);
+    } else {
+      setPayEnd('');
+      toast.show('取值必须在1-31之间', { type: 'danger' })
+    }
   }
 
   //　输入标签
@@ -219,6 +224,7 @@ const BusinessAdd = (props) => {
       } else {
         setTagArry([...tagArry, tag]);
         setTag('');
+        restForm.setFieldValue('companyGoodTags', [...tagArry, tag]);
       }
     }
   }
@@ -230,6 +236,28 @@ const BusinessAdd = (props) => {
     setTagArry(tagArry);
     restForm.setFieldValue('companyGoodTags', [...tagArry]);
     console.log('删除了：', tagArry, value)
+  }
+
+  // 上传图片
+  const uploadImage = async (fileName, localFilePath) => {
+    const data = new FormData();
+    const file = {
+      uri: localFilePath, type: 'multipart/form-data', name: fileName,
+    };
+    data.append('file', file);
+    console.log('选择图库照片data的值：', data);
+    try {
+      const res = await CompanyApi.UploadImages(data)
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      console.log('是否执行操作上传', res.data)
+      setCompanyImage([...companyImage, res.data]);
+      restForm.setFieldValue('companyImages', [...companyImage, res.data]);
+    } catch (error) {
+      toast.show('识别失败，出现异常请联系管理员处理')
+    }
   }
 
   //从图库选择图片
@@ -244,16 +272,11 @@ const BusinessAdd = (props) => {
         cropping: true,
       })
       const fileName = `${pickerImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
-      const data = new FormData();
-      const file = {
-        uri: pickerImage.path, type: 'multipart/form-data', name: fileName,
-      };
-      data.append('file', file);
-      restForm.setFieldValue('companyImages', [...companyImage, ...data]);
+      uploadImage(fileName, pickerImage.path);
       console.log('选择图库照片：', pickerImage)
       return pickerImage;
     } catch (err) {
-      console.log('err', err);
+      console.log('选择图库照片err: ', err);
     }
   }
 
@@ -324,7 +347,6 @@ const BusinessAdd = (props) => {
       console.log('errorerrorerrorerrorerrorerror', error)
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
-
   }
 
   useEffect(() => {
@@ -340,7 +362,6 @@ const BusinessAdd = (props) => {
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {
         restForm = rest;
-
         return (
           <View style={{ flex: 1 }}>
             <ScrollView style={styles.scrollArea}>
@@ -551,6 +572,7 @@ const BusinessAdd = (props) => {
                       onChangeText={text => onChangeDay(text)}
                       value={payDay}
                       textAlign='center'
+                      keyboardType="numeric"
                       clearTextOnFocus
                       placeholderTextColor="#999999"
                     />
@@ -562,6 +584,7 @@ const BusinessAdd = (props) => {
                       onChangeText={text => onChangeStart(text)}
                       value={payStart}
                       clearTextOnFocus
+                      keyboardType="numeric"
                       placeholderTextColor="#999999"
                     />
                     <Text style={[styles.titleName, { marginRight: 15 }]}>至</Text>
@@ -571,6 +594,7 @@ const BusinessAdd = (props) => {
                       onChangeText={text => onChangeDayEnd(text)}
                       value={payEnd}
                       clearTextOnFocus
+                      keyboardType="numeric"
                       placeholderTextColor="#999999"
                     />
                     <Text style={styles.titleName}>号</Text>

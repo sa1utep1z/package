@@ -8,12 +8,12 @@ const CompanyApi = {
   GetCompanyInfo: async (companyId) => await httpRequest.get(`admin/app/company/${companyId}`), // 获取企业详情
   UserList: async () => await httpRequest.get('/common/user/detail/forSelect'), // 用户信息
   getDefaultImage: async () => await httpRequest.get(`admin/company/images`), // 默认企业图片
-  // ocrReq: async (prams) => await httpRequest.post('admin/app/ocr', prams, 
-  //   {
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data'
-  //     }
-  //   }),
+  UploadImages: async (prams) => await httpRequest.post('/admin/file/upload', prams, 
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }),
 }
 
 export default CompanyApi;

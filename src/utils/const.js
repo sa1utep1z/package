@@ -6,7 +6,7 @@ export const SUCCESS_CODE = 0;
 export const today = moment().format('YYYY-MM-DD');
 export const TODAY = moment().format('YYYY-MM-DD');
 //昨日
-export const YESTERDAY = moment().subtract(1,'day').format('YYYY-MM-DD');
+export const YESTERDAY = moment().subtract(1, 'day').format('YYYY-MM-DD');
 //本周开始
 export const THIS_WEEK_START = moment().weekday(0).format('YYYY-MM-DD');
 //本周结束
@@ -20,172 +20,206 @@ export const THIS_MONTH_START = moment().startOf('month').format('YYYY-MM-DD');
 //本月结束
 export const THIS_MONTH_END = moment().endOf('month').format('YYYY-MM-DD');
 //上月开始
-export const LAST_MONTH_START = moment().subtract(1,'month').startOf('month').format('YYYY-MM-DD');
+export const LAST_MONTH_START = moment().subtract(1, 'month').startOf('month').format('YYYY-MM-DD');
 //上月结束
-export const LAST_MONTH_END = moment().subtract(1,'month').endOf('month').format('YYYY-MM-DD');
+export const LAST_MONTH_END = moment().subtract(1, 'month').endOf('month').format('YYYY-MM-DD');
 
 export const FAKE_MEMBER_INFO = [
-  {type: 'name', title: '姓名', value: '呵呵'},
-  {type: 'IDCard', title: '身份证', value: '478523694562315964'},
-  {type: 'phone', title: '手机号', value: '18088889999'},
-  {type: 'jobName', title: '职位名称', value: '南山爱普生'},
-  {type: 'jobFrom', title: '职位来源', value: '门店录入'},
-  {type: 'belongOfPeople', title: '经纪人', value: '张三（18088879996）'},
-  {type: 'belongOfStore', title: '归属门店', value: '新媒体店'},
-  {type: 'signUpState', title: '报名状态', value: '待处理'},
-  {type: 'theWayToArrive', title: '到厂方式', value: '门店集合'},
-  {type: 'handleTime', title: '处理时间', value: moment().format('YYYY-MM-DD HH:mm:ss')},
-  {type: 'remark', title: '备注', value: '门店集合'},
-  {type: 'isStay', title: '是否住宿', value: '否'}
+  { type: 'name', title: '姓名', value: '呵呵' },
+  { type: 'IDCard', title: '身份证', value: '478523694562315964' },
+  { type: 'phone', title: '手机号', value: '18088889999' },
+  { type: 'jobName', title: '职位名称', value: '南山爱普生' },
+  { type: 'jobFrom', title: '职位来源', value: '门店录入' },
+  { type: 'belongOfPeople', title: '经纪人', value: '张三（18088879996）' },
+  { type: 'belongOfStore', title: '归属门店', value: '新媒体店' },
+  { type: 'signUpState', title: '报名状态', value: '待处理' },
+  { type: 'theWayToArrive', title: '到厂方式', value: '门店集合' },
+  { type: 'handleTime', title: '处理时间', value: moment().format('YYYY-MM-DD HH:mm:ss') },
+  { type: 'remark', title: '备注', value: '门店集合' },
+  { type: 'isStay', title: '是否住宿', value: '否' }
 ];
 
+export const COMPLAINT_INFO = [
+  { type: 'type', title: '问题类型', value: '' },
+  { type: 'userName', title: '会员姓名', value: '' },
+  { type: 'idNo', title: '身份证号', value: '' },
+  { type: 'mobile', title: '手机号码', value: '' },
+  { type: 'companyShortName', title: '企业名称', value: '' },
+  { type: 'jobOn', title: '是否在职', value: '' },
+  { type: 'jobDate', title: '入职日期', value: '' },
+  { type: 'createdDate', title: '反馈时间', value: '' },
+  { type: 'content', title: '反馈内容', value: '' },
+  { type: 'imgs', title: '上传照片', value: [] },
+];
 export const ARRIVE_WAY = [
-  {id: 1, title: '自行到厂', value: 'byHimself'},
-  {id: 2, title: '门店集合', value: 'unifyAssemble'}
+  { id: 1, title: '自行到厂', value: 'byHimself' },
+  { id: 2, title: '门店集合', value: 'unifyAssemble' }
 ];
 
 //渠道来源
 export const CHANEL_SOURCE_LIST = [
-  {id: 1, title: '自主报名', value: 'SELF'},
-  {id: 2, title: '门店录入', value: 'RECRUITER'},
-  {id: 3, title: '供应商', value: 'SUPPLIER'},
-  {id: 4, title: '会员推荐', value: 'MEMBER_RECOMMEND'}
+  { id: 1, title: '自主报名', value: 'SELF' },
+  { id: 2, title: '门店录入', value: 'RECRUITER' },
+  { id: 3, title: '供应商', value: 'SUPPLIER' },
+  { id: 4, title: '会员推荐', value: 'MEMBER_RECOMMEND' }
 ]
 
 export const HANDLE_STATE = [
-  {title: '待处理', value: 'waitToHandle'},
-  {title: '考虑中', value: 'considering'},
-  {title: '未通过', value: 'notPass'},
-  {title: '已通过', value: 'isPassed'}
+  { title: '待处理', value: 'waitToHandle' },
+  { title: '考虑中', value: 'considering' },
+  { title: '未通过', value: 'notPass' },
+  { title: '已通过', value: 'isPassed' }
 ];
 
 // 报名名单的初始状态列表
 export const DEFAULT_STATUS_LIST_OF_SIGN_UP_LIST = [
-  {value: 'shenjingbing' ,title: '精神异常'},
-  {value: 'noIDCard', title: '无身份证'},
-  {value: 'youwenshen', title: '纹身不过'},
-  {value: 'giveup', title: '现场放弃'},
-  {value: 'failedExam', title: '考试不过'}
+  { value: 'shenjingbing', title: '精神异常' },
+  { value: 'noIDCard', title: '无身份证' },
+  { value: 'youwenshen', title: '纹身不过' },
+  { value: 'giveup', title: '现场放弃' },
+  { value: 'failedExam', title: '考试不过' }
 ];
 
 // 待入职未报到原因
 export const DEFAULT_ONBORADINGSTATUS = [
-  {value: 'unContact' ,title: '联系不上'},
-  {value: 'giveUp', title: '放弃入职'},
-  {value: 'busy', title: '临时有事'},
+  { value: 'unContact', title: '联系不上' },
+  { value: 'giveUp', title: '放弃入职' },
+  { value: 'busy', title: '临时有事' },
 ];
 
 // 在离职原因
 export const DEFAULT_JOBSTATUS = [
-  {value: 'resignation' ,title: '辞职'},
-  {value: 'selfDissociation', title: '自离'},
-  {value: 'factoryDismissal', title: '工厂开除'},
-  {value: 'giveUp', title: '放弃入职'},
-  {value: 'worker', title: '工期满转正'},
+  { value: 'resignation', title: '辞职' },
+  { value: 'selfDissociation', title: '自离' },
+  { value: 'factoryDismissal', title: '工厂开除' },
+  { value: 'giveUp', title: '放弃入职' },
+  { value: 'worker', title: '工期满转正' },
 ];
 
 // 面试名单的初始状态列表
 export const DEFAULT_STATUS_LIST_OF_INTERVIEW_LIST = [
-  {value: 'giveUp', title: '现场放弃'},
-  {value: 'failInMedical' ,title: '体检不过'},
-  {value: 'haveWenShen', title: '纹身不过'},
-  {value: 'failedInExam', title: '考试不过'},
-  {value: 'failInComprehensiveExam', title: '综合考试不过'}
+  { value: 'giveUp', title: '现场放弃' },
+  { value: 'failInMedical', title: '体检不过' },
+  { value: 'haveWenShen', title: '纹身不过' },
+  { value: 'failedInExam', title: '考试不过' },
+  { value: 'failInComprehensiveExam', title: '综合考试不过' }
 ];
 
 export const TAB_OF_LIST = {
   SIGN_UP_LIST: [
-    {title: '全部',type: 'total',},
-    {title: '待处理',type: 'pending',},
-    {title: '无意愿',type: 'noIntention',},
-    {title: '已报名',type: 'intention',}
+    { title: '全部', type: 'total', },
+    { title: '待处理', type: 'pending', },
+    { title: '无意愿', type: 'noIntention', },
+    { title: '已报名', type: 'intention', }
   ],
   INTERVIEW_LIST: [
-    {title: '全部',type: 'total'},
-    {title: '待处理',type: 'pending'},
-    {title: '未面试',type: 'noArrive'},
-    {title: '未通过',type: 'fail'},
-    {title: '已通过',type: 'pass'}
+    { title: '全部', type: 'total' },
+    { title: '待处理', type: 'pending' },
+    { title: '未面试', type: 'noArrive' },
+    { title: '未通过', type: 'fail' },
+    { title: '已通过', type: 'pass' }
   ],
   WAIT_TO_ENTRY_LIST: [
-    {title: '全部',type: 'total'},
-    {title: '待处理',type: 'pending'},
-    {title: '未报到',type: 'fail'},
-    {title: '已入职',type: 'pass'}
+    { title: '全部', type: 'total' },
+    { title: '待处理', type: 'pending' },
+    { title: '未报到', type: 'fail' },
+    { title: '已入职', type: 'pass' }
   ],
   LEAVING_LIST: [
-    {title: '全部',type: 'total'},
-    {title: '离职',type: 'resign'},
-    {title: '在职',type: 'on'}
+    { title: '全部', type: 'total' },
+    { title: '离职', type: 'resign' },
+    { title: '在职', type: 'on' }
   ],
   NEWEST_STATE: [
-    {title: '姓名',type: 'name'},
-    {title: '企业',type: 'enterprise'},
-    {title: '两卡',type: 'twoCard'},
-    {title: '打卡记录',type: 'record'},
-    {title: '状态',type: 'status'},
-    {title: '来源',type: 'from'}
+    { title: '姓名', type: 'name' },
+    { title: '企业', type: 'enterprise' },
+    { title: '两卡', type: 'twoCard' },
+    { title: '打卡记录', type: 'record' },
+    { title: '状态', type: 'status' },
+    { title: '来源', type: 'from' }
   ],
   MY_MEMBERS: [
-    {title: '全部', type: 'allNums'},
-    {title: '待回访', type: 'preparingNums'},
-    {title: '有意愿', type: 'haveWillNums'},
-    {title: '无意愿', type: 'noWillNums'}
+    { title: '全部', type: 'allNums' },
+    { title: '待回访', type: 'preparingNums' },
+    { title: '有意愿', type: 'haveWillNums' },
+    { title: '无意愿', type: 'noWillNums' }
   ],
   ORDER_MANAGE: [
-    {title: '全部', type: 'total'},
-    {title: '招聘中', type: 'hiring'},
-    {title: '停招', type: 'stopHiring'}
-  ]
+    { title: '全部', type: 'total' },
+    { title: '招聘中', type: 'hiring' },
+    { title: '停招', type: 'stopHiring' }
+  ],
+  COMPLAINT_LIST: [
+    { title: '全部', type: 'total' },
+    { title: '待处理', type: 'PREPARING' },
+    { title: '处理中', type: 'PROCESSING' },
+    { title: '已结案', type: 'END' },
+  ],
 };
 
 export const CHANGING_STAGE_LIST_IN_DIALOG = [
-  {title: '报名', value: 'SIGN_UP_PENDING', statusList: [
-    {title: '已报名', value: 'SIGN_UP_INTENTION'},
-    {title: '无意向', value: 'SIGN_UP_NO_INTENTION', reasonList: [
-      {title: '精神异常', value: 'jingshenbing'},
-      {title: '无身份证', value: 'noIDCard'},
-      {title: '大花臂', value: 'bigFlowerHand'},
-      {title: '有案底', value: 'inPrison'},
-      {title: '在外地', value: 'out'}
-    ]}
-  ]},
-  {title: '面试', value: 'INTERVIEW_PENDING', statusList: [
-    {title: '通过', value: 'INTERVIEW_PASS'},
-    {title: '未通过', value: 'INTERVIEW_FAIL', reasonList: [
-      {title: '现场放弃', value: 'giveUp'},
-      {title: '身份证过期', value: 'IDCardOutDate'},
-      {title: '精神异常', value: 'jingshenbing'},
-      {title: '纹身不过', value: 'haveWenShen'},
-      {title: '联系不上', value: 'unconnected'},
-      {title: '考试不过', value: 'failInExam'},
-      {title: '体检不过', value: 'failInPhysical'}
-    ]},
-    {title: '未面试', value: 'INTERVIEW_NO_ARRIVE', reasonList: [
-      {title: '现场放弃', value: 'giveUp'},
-      {title: '身份证过期', value: 'IDCardOutDate'},
-      {title: '精神异常', value: 'jingshenbing'},
-      {title: '纹身不过', value: 'haveWenShen'},
-      {title: '联系不上', value: 'unconnected'},
-      {title: '考试不过', value: 'failInExam'},
-      {title: '体检不过', value: 'failInPhysical'}
-    ]}
-  ]},
-  {title: '待入职', value: 'ON_BOARDING_PENDING', statusList: [
-    {title: '已入职', value: 'ON_BOARDING_PASS'},
-    {title: '未报到', value: 'ON_BOARDING_FAIL', reasonList: [
-      {title: '联系不上', value: 'unconnected'},
-      {title: '放弃入职', value: 'giveUpJob'},
-      {title: '临时有事', value: 'haveSomething'}
-    ]}
-  ]},
-  {title: '离职', value: 'JOB_RESIGN', reasonList: [
-    {title: '辞职', value: 'resign'},
-    {title: '自离', value: 'selfLeave'},
-    {title: '工期满转正', value: 'positive'},
-    {title: '工厂开除', value: 'fired'},
-    {title: '放弃入职', value: 'giveUp'}
-  ]},
+  {
+    title: '报名', value: 'SIGN_UP_PENDING', statusList: [
+      { title: '已报名', value: 'SIGN_UP_INTENTION' },
+      {
+        title: '无意向', value: 'SIGN_UP_NO_INTENTION', reasonList: [
+          { title: '精神异常', value: 'jingshenbing' },
+          { title: '无身份证', value: 'noIDCard' },
+          { title: '大花臂', value: 'bigFlowerHand' },
+          { title: '有案底', value: 'inPrison' },
+          { title: '在外地', value: 'out' }
+        ]
+      }
+    ]
+  },
+  {
+    title: '面试', value: 'INTERVIEW_PENDING', statusList: [
+      { title: '通过', value: 'INTERVIEW_PASS' },
+      {
+        title: '未通过', value: 'INTERVIEW_FAIL', reasonList: [
+          { title: '现场放弃', value: 'giveUp' },
+          { title: '身份证过期', value: 'IDCardOutDate' },
+          { title: '精神异常', value: 'jingshenbing' },
+          { title: '纹身不过', value: 'haveWenShen' },
+          { title: '联系不上', value: 'unconnected' },
+          { title: '考试不过', value: 'failInExam' },
+          { title: '体检不过', value: 'failInPhysical' }
+        ]
+      },
+      {
+        title: '未面试', value: 'INTERVIEW_NO_ARRIVE', reasonList: [
+          { title: '现场放弃', value: 'giveUp' },
+          { title: '身份证过期', value: 'IDCardOutDate' },
+          { title: '精神异常', value: 'jingshenbing' },
+          { title: '纹身不过', value: 'haveWenShen' },
+          { title: '联系不上', value: 'unconnected' },
+          { title: '考试不过', value: 'failInExam' },
+          { title: '体检不过', value: 'failInPhysical' }
+        ]
+      }
+    ]
+  },
+  {
+    title: '待入职', value: 'ON_BOARDING_PENDING', statusList: [
+      { title: '已入职', value: 'ON_BOARDING_PASS' },
+      {
+        title: '未报到', value: 'ON_BOARDING_FAIL', reasonList: [
+          { title: '联系不上', value: 'unconnected' },
+          { title: '放弃入职', value: 'giveUpJob' },
+          { title: '临时有事', value: 'haveSomething' }
+        ]
+      }
+    ]
+  },
+  {
+    title: '离职', value: 'JOB_RESIGN', reasonList: [
+      { title: '辞职', value: 'resign' },
+      { title: '自离', value: 'selfLeave' },
+      { title: '工期满转正', value: 'positive' },
+      { title: '工厂开除', value: 'fired' },
+      { title: '放弃入职', value: 'giveUp' }
+    ]
+  },
 ];
 
 //这是在最新状态名单中的修改状态的枚举值
@@ -267,18 +301,44 @@ export const STATUS_LIST_KEY = {
   "JOB_RESIGN": '离职'
 };
 
-export const STATUS_LIST = [
-  {title: '全部', value: '', id: 1},
-  {title: '无', value: 'none', id: 2},
-  {title: '报名-无意向', value: 'sign_up_no_intention', id: 3},
-  {title: '面试-未去面试', value: 'interview_no_arrive', id: 4},
-  {title: '面试-未通过', value: 'interview_fail', id: 5},
-  {title: '入职-未报到', value: 'on_boarding_fail', id: 6},
-  {title: '在职', value: 'job_on', id: 7},
-  {title: '预离职', value: 'prepare_job_resign', id: 8},
-  {title: '离职', value: 'job_resign', id: 9}
+export const TYPERESULT = [
+  { title: '薪资类型', value: 'SALARY', id: 1 },
+  { title: '借支类型', value: 'BORROW', id: 2 },
+  { title: '驻场类型', value: 'RESIDENTIAL', id: 3 },
+  { title: '投诉类型', value: 'COMPLAINT', id: 4 },
+  { title: '宿舍类型', value: 'DORMITORY', id: 5 },
 ];
- 
+
+export const STATUSRESULT = [
+  { title: '待处理', value: 'PREPARING', id: 1 },
+  { title: '处理中', value: 'PROCESSING', id: 2 },
+  { title: '已结案', value: 'END', id: 3 },
+];
+export const SOURCETYPES = [
+  { title: '后台导入', value: 'IMPORT', id: 1 },
+  { title: '游客关注', value: 'VISITOR', id: 2 },
+  { title: '招聘员录入', value: 'INPUT', id: 3 },
+  { title: '供应商导入', value: 'SUPPLIER', id: 4 },
+  { title: '分享裂变', value: 'SHARE', id: 5 },
+];
+
+export const ISEND = [
+  { label: '是', value: true, id: 1 },
+  { label: '否', value: false, id: 2 },
+];
+
+export const STATUS_LIST = [
+  { title: '全部', value: '', id: 1 },
+  { title: '无', value: 'none', id: 2 },
+  { title: '报名-无意向', value: 'sign_up_no_intention', id: 3 },
+  { title: '面试-未去面试', value: 'interview_no_arrive', id: 4 },
+  { title: '面试-未通过', value: 'interview_fail', id: 5 },
+  { title: '入职-未报到', value: 'on_boarding_fail', id: 6 },
+  { title: '在职', value: 'job_on', id: 7 },
+  { title: '预离职', value: 'prepare_job_resign', id: 8 },
+  { title: '离职', value: 'job_resign', id: 9 }
+];
+
 export const COMPANY_SHIFT = [
   { label: '长白班', value: 'SHIFT_CATEGORY_LONG', checked: false },
   { label: '两班倒', value: 'SHIFT_CATEGORY_TWO', checked: false },
@@ -374,13 +434,13 @@ export const COMPANY_INDUSTRY = [
   { id: 3, title: '服务业', value: 'INDUSTRY_SERVE' },
 ];
 export const STATUS_LISTS = [
-  {title: '报名-无意向', value: 'sign_up_no_intention', id: 1},
-  {title: '面试-未去面试', value: 'interview_no_arrive', id: 2},
-  {title: '面试-未通过', value: 'interview_fail', id: 3},
-  {title: '入职-未报到', value: 'on_boarding_fail', id: 4},
-  {title: '在职', value: 'job_on', id: 5},
-  {title: '预离职', value: 'prepare_job_resign', id: 6},
-  {title: '离职', value: 'job_resign', id: 7}
+  { title: '报名-无意向', value: 'sign_up_no_intention', id: 1 },
+  { title: '面试-未去面试', value: 'interview_no_arrive', id: 2 },
+  { title: '面试-未通过', value: 'interview_fail', id: 3 },
+  { title: '入职-未报到', value: 'on_boarding_fail', id: 4 },
+  { title: '在职', value: 'job_on', id: 5 },
+  { title: '预离职', value: 'prepare_job_resign', id: 6 },
+  { title: '离职', value: 'job_resign', id: 7 }
 ];
 //报名状态列表；
 export const SIGN_UP_STATUS = {
@@ -412,12 +472,12 @@ export const WAY_TO_GO = [
 ];
 
 export const NEWEST_STATE_LIST_HEAD = [
-  {title: '姓名'},
-  {title: '企业'},
-  {title: '两卡'},
-  {title: '打卡记录'},
-  {title: '状态'},
-  {title: '来源'}
+  { title: '姓名' },
+  { title: '企业' },
+  { title: '两卡' },
+  { title: '打卡记录' },
+  { title: '状态' },
+  { title: '来源' }
 ];
 
 export const ORIGIN_HIRE_REPORT_OVERVIEW_LIST = [
@@ -492,43 +552,43 @@ export const ROLE_INFO = {
 };
 
 export const ORIGIN_SELECTED_STATUS_LIST = [
-  {value: 'signUpIntention', title: '已报名'},
-  {value: 'interviewPass', title: '面试通过'},
-  {value: 'onBoardingPass', title: '入职'}
+  { value: 'signUpIntention', title: '已报名' },
+  { value: 'interviewPass', title: '面试通过' },
+  { value: 'onBoardingPass', title: '入职' }
 ];
 
 export const ORIGIN_COMPARE_STATUS_LIST = [
-  {value: 'onBoardingPass', title: '入职'}
+  { value: 'onBoardingPass', title: '入职' }
 ];
 
 export const CHART_STATUS_LIST = [
-  {value: 'signUp', title: '报名邀约'},
-  {value: 'signUpIntention', title: '已报名'},
-  {value: 'interviewNoArrive', title: '面试未去'},
-  {value: 'interviewFail', title: '面试未过'},
-  {value: 'interviewPass', title: '面试通过'},
-  {value: 'onBoardingFail', title: '未报到'},
-  {value: 'onBoardingPass', title: '入职'},
-  {value: 'resignNum', title: '离职'}
+  { value: 'signUp', title: '报名邀约' },
+  { value: 'signUpIntention', title: '已报名' },
+  { value: 'interviewNoArrive', title: '面试未去' },
+  { value: 'interviewFail', title: '面试未过' },
+  { value: 'interviewPass', title: '面试通过' },
+  { value: 'onBoardingFail', title: '未报到' },
+  { value: 'onBoardingPass', title: '入职' },
+  { value: 'resignNum', title: '离职' }
 ];
 
 export const PERCENT_CHART_STATUS_LIST = [
   /**报名 */
-  {value: 'SIGN_UP_PENDING', title: '报名-待处理'},
-  {value: 'SIGN_UP_NO_INTENTION', title: '报名-无意愿'},
+  { value: 'SIGN_UP_PENDING', title: '报名-待处理' },
+  { value: 'SIGN_UP_NO_INTENTION', title: '报名-无意愿' },
 
   /**面试 */
-  {value: 'INTERVIEW_PENDING', title: '面试-待处理'},
-  {value: 'INTERVIEW_NO_ARRIVE', title: '面试-未去面试'},
-  {value: 'INTERVIEW_FAIL', title: '面试-未通过'},
+  { value: 'INTERVIEW_PENDING', title: '面试-待处理' },
+  { value: 'INTERVIEW_NO_ARRIVE', title: '面试-未去面试' },
+  { value: 'INTERVIEW_FAIL', title: '面试-未通过' },
 
   /**入职 */
-  {value: 'ON_BOARDING_PENDING', title: '入职-待处理'},
-  {value: 'ON_BOARDING_FAIL', title: '入职-未报到'},
+  { value: 'ON_BOARDING_PENDING', title: '入职-待处理' },
+  { value: 'ON_BOARDING_FAIL', title: '入职-未报到' },
 
   /**在离职 */
-  {value: 'JOB_ON', title: '在职'},
-  {value: 'JOB_RESIGN', title: '离职'}
+  { value: 'JOB_ON', title: '在职' },
+  { value: 'JOB_RESIGN', title: '离职' }
 ];
 
 export const MESSAGE_TYPE = [

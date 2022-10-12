@@ -86,7 +86,6 @@ const CompanyDetail = (props) => {
     Clipboard.setString(orderTextDetail);
     //从剪贴板获取内容
     Clipboard.getString().then((content) => {
-      // alert(content)
       toast.show('复制成功');
     }, (error) => {
       console.log('error:' + error);

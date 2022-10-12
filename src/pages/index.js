@@ -42,6 +42,10 @@ const NAVIGATION_PAGES_LIST = {
   BUSINESS_EDIT: require('./WorkBench/OtherFunction/BusinessManage/BusinessEdit'), //编辑企业
   ORDER_MANAGE: require('./WorkBench/OtherFunction/OrderManage'), //订单管理
   CERATE_ORDER: require('./WorkBench/OtherFunction/OrderManage/CreateOrder'), //新建订单
+  COMPLAINT_FEEDBACK: require('./WorkBench/OtherFunction/ComplaintManage'), //投诉反馈
+  COMPLAINT_ADD: require('./WorkBench/OtherFunction/ComplaintManage/AddComplaint'), //新增投诉
+  COMPLAINT_EDIT: require('./WorkBench/OtherFunction/ComplaintManage/EditComplaint'), //编辑投诉
+  
 
   //我的会员
   EDIT_RETURN_VISIT: require('./WorkBench/OtherFunction/MyMembers/EditReturnView'),

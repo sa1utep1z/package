@@ -148,7 +148,7 @@ const BusinessManage = () => {
 
   const renderItem = ({ item }) => {
     return (
-      <View style={styles.contentBox} key={item.companyId}>
+      <TouchableOpacity style={styles.contentBox} key={item.companyId} onPress={() => editBusiness(item.companyId)}>
         <View style={styles.left}>
           <Image style={{ width: '100%', height: '100%', borderRadius: 8 }} source={{ uri: `${item.companyImage}` }} />
         </View>
@@ -169,7 +169,7 @@ const BusinessManage = () => {
             <Text style={styles.letter}>{getEnumValue(COMPANY_TYPE, item.companyType)}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   };
 

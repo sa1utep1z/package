@@ -42,6 +42,9 @@ const NAVIGATION_KEYS = {
   BUSINESS_EDIT: 'business_edit',
   ORDER_MANAGE: 'order_manage',
   CERATE_ORDER: 'create_order',
+  COMPLAINT_FEEDBACK: 'complaint_feedback',
+  COMPLAINT_ADD: 'complaint_add',
+  COMPLAINT_EDIT: 'complaint_edit',
 
   //我的会员
   EDIT_RETURN_VISIT: 'edit_return_visit',

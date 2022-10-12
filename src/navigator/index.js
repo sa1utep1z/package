@@ -258,6 +258,27 @@ export default Navigator = () => {
           headerTitle: '新建订单',
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.COMPLAINT_FEEDBACK}
+        component={NAVIGATION_PAGES.COMPLAINT_FEEDBACK}
+        options={{
+          headerTitle: '投诉反馈',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.COMPLAINT_ADD}
+        component={NAVIGATION_PAGES.COMPLAINT_ADD}
+        options={{
+          headerTitle: '新建投诉',
+        }}
+      />
+       <Stack.Screen
+        name={NAVIGATION_KEYS.COMPLAINT_EDIT}
+        component={NAVIGATION_PAGES.COMPLAINT_EDIT}
+        options={{
+          headerTitle: '编辑投诉',
+        }}
+      />
     </>
   );
 
