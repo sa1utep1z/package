@@ -60,7 +60,7 @@ const SelectPhotos = ({
 
   return (
     <>
-      <View style={[{marginBottom: form.errors[field.name] ? 10 : 20}, inputStyle]}>
+      <View style={[{marginBottom: form.errors[field.name] && form.touched[field.name] ? 10 : 20}, inputStyle]}>
         <View style={styles.container}>
           <Text style={styles.labelText}>{label}：</Text>
           <View style={{flex: 1}}>
@@ -69,11 +69,11 @@ const SelectPhotos = ({
                 <TouchableOpacity key={imageIndex} onPress={() => pressImage(image)}>
                   <Image
                     style={{width: 120, height: 120, marginRight: 20, marginBottom: 20}}
-                    source={{uri: `${image.uri}`}}
+                    source={image.name === 'normal.jpg' ? require('../../../assets/images/order_normal_img.jpg') : {uri: `${image.uri}`}}
                   />
                 </TouchableOpacity>
               )) : <></>}
-              <TouchableOpacity style={[{width: 120, height: 120, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 4, justifyContent: 'center', alignItems: 'center'}, !!form.errors[field.name] && {borderColor: 'red'}]} onPress={selectPhotosOnPress}>
+              <TouchableOpacity style={[{width: 120, height: 120, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 4, justifyContent: 'center', alignItems: 'center'}, !!form.errors[field.name] && form.touched[field.name] && {borderColor: 'red'}]} onPress={selectPhotosOnPress}>
                 <AntDesign
                   name='plus'
                   size={36}
@@ -82,12 +82,11 @@ const SelectPhotos = ({
                 <Text style={{fontSize: 20, color: '#999999'}}>上传</Text>
               </TouchableOpacity>
             </View>
-            {!!form.errors[field.name] && 
             <ErrorMessage
               name={field.name}
               style={styles.errorMessage}
               component={Text}
-          />}
+            />
           </View>
         </View>
       </View>
@@ -112,7 +111,7 @@ const SelectPhotos = ({
                 color='#ff6666'
               />
             </TouchableOpacity>
-            <FitImage source={{uri: `${showImage.uri}`}}/>
+            <FitImage source={{uri: showImage.name === 'normal.jpg' ? 'https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/normal.jpg.jpg' : `${showImage.uri}`}}/>
           </View>
         </View>
       </Modal>

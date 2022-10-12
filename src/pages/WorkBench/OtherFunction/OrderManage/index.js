@@ -154,17 +154,15 @@ const OrderManage = () => {
   };
 
   const renderHiddenItem = (data, rowMap) => (
-    <View style={styles.rowBack}>
-      <TouchableOpacity
-        style={styles.backRightBtn}
-        onPress={() => deleteRow(rowMap, data.item.key)}>
-        <AntDesign
-          name='delete'
-          size={36}
-          color='#ffffff'
-        />
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      style={styles.backRightBtn}
+      onPress={() => deleteRow(rowMap, data.item.key)}>
+      <AntDesign
+        name='delete'
+        size={36}
+        color='#ffffff'
+      />
+    </TouchableOpacity>
   );
 
   return (
@@ -173,6 +171,7 @@ const OrderManage = () => {
         filterFun={filter}
         noCompanyAndStatus
         noStoreAndStaff
+        placeholder="请输入企业名称"
         startText="开始日期："
         endText="结束日期："
       />
@@ -240,9 +239,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     position: 'absolute',
-    top: 0,
+    top: 1,
     width: 120,
-    height: 244,
+    height: 242,
     backgroundColor: '#FF4040',
     right: 0
   },

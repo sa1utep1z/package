@@ -26,11 +26,10 @@ const FlattListItem = ({item, pressItem, isLastIndex}) => {
   ),[item])
 };
 
-const SingleSelectList = ({
+const MultiSelectList = ({
   selectList,
   fieldValue,
-  confirm,
-  canSearch = true, //是否可以搜索（default: true）
+  confirm
 }) => {
   const dispatch = useDispatch();
 
@@ -39,9 +38,10 @@ const SingleSelectList = ({
 
   useEffect(() => {
     const copyList = deepCopy(selectList);
+    const storeIds = fieldValue.map(item => item.storeId);
     if(fieldValue.length){
       copyList.map(item => {
-        if(item.value === fieldValue[0].value){
+        if(storeIds.includes(item.value)){
           item.isChecked = true;
         }else{
           item.isChecked = false;
@@ -52,12 +52,10 @@ const SingleSelectList = ({
   }, [fieldValue])
 
   const selectItem = (item) => {
-    const copyList = deepCopy(selectList);
+    const copyList = deepCopy(showList);
     copyList.map(data => {
       if(data.value === item.value){
-        data.isChecked = true;
-      }else{
-        data.isChecked = false;
+        data.isChecked = !item.isChecked;
       }
     });
     setShowList(copyList);
@@ -83,7 +81,7 @@ const SingleSelectList = ({
   return (
     <View style={{maxHeight: 900}}>
       <View style={{maxHeight: 780, marginHorizontal: 20, borderWidth: 1, borderColor: '#E3E3E3', marginBottom: 20, borderRadius: 12}}>
-        {canSearch && <View style={{height: 60, borderBottomWidth: 1, borderColor: '#E3E3E3', paddingLeft: 20, flexDirection: 'row'}}>
+        <View style={{height: 60, borderBottomWidth: 1, borderColor: '#E3E3E3', paddingLeft: 20, flexDirection: 'row'}}>
           <TextInput 
             style={{flex: 1, fontSize: 26}}
             placeholder="请输入搜索内容"
@@ -98,7 +96,7 @@ const SingleSelectList = ({
               color={!!inputValue.length ? "#999999" : "#409EFF"}
             />
           </TouchableOpacity>
-        </View>}
+        </View>
         <FlatList
           data={showList}
           renderItem={renderItem}
@@ -128,4 +126,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default SingleSelectList;
+export default MultiSelectList;

@@ -747,9 +747,30 @@ export const MEMBER_FEE_MODE = [
 ];
 
 //新建订单-会员工价详情-工价模式枚举值：
-export const FEE_WAY_MODE = [
-  { label: '工价', value: 'WORK_FEE' },
-  { label: '底薪', value: 'LOW_FEE' },
-  { label: '日薪', value: 'DAY_FEE' },
-  { label: '日结', value: 'DAY_END' }
-];
+export const FEE_WAY_MODE = {
+  wagesAndSalary: [
+    { label: '工价', value: 'WORK_FEE' },
+    { label: '底薪', value: 'LOW_FEE' },
+    { label: '日薪', value: 'DAY_FEE' },
+    { label: '日结', value: 'DAY_END' }
+  ],
+  differenceAndReturnMoney: [
+    { label: '返费', value: 'RETURN_FEE' },
+    { label: '差价', value: 'DISTANCE_FEE' },
+    { label: '补足', value: 'SUPPLEMENT_FEE' },
+    { label: '补贴', value: 'SUBSIDIES_FEE' },
+    { label: '稳岗', value: 'STABLE_WORK' }
+  ]
+};
+
+export const FEE_WAY_NAME = {
+  'WORK_FEE': '元/小时',
+  'LOW_FEE': '元/月',
+  'DAY_FEE': '元/天',
+  'DAY_END': '元/天',
+  'RETURN_FEE': '元',
+  'DISTANCE_FEE': '元/小时',
+  'SUPPLEMENT_FEE': '元/小时',
+  'SUBSIDIES_FEE': '元/小时',
+  'STABLE_WORK': '元/小时'
+};

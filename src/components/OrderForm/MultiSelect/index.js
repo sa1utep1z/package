@@ -6,12 +6,12 @@ import { useDispatch } from 'react-redux';
 import { useToast } from 'react-native-toast-notifications';
 
 import { openDialog, setTitle } from '../../../redux/features/PageDialog'; 
-import SingleSelectList from '../../PageDialog/SingleSelectList';
+import MultiSelectList from '../../PageDialog/MultiSelectList';
 import MyMembersApi from "../../../request/MyMembersApi";
 import { SUCCESS_CODE } from '../../../utils/const';
 
-/**单选*/
-const SingleSelect = ({
+/**多选*/
+const MultiSelect = ({
   field, 
   form, 
   label,
@@ -20,7 +20,6 @@ const SingleSelect = ({
   filterStore = false, //type为store的时候需要对列表进行筛选。
   showLabel = true,
   labelStyle,
-  canSearch = true, //默认可以搜索
   ...rest
 }) => {
   const toast = useToast();
@@ -29,6 +28,7 @@ const SingleSelect = ({
   const [loading, setLoading] = useState(false);
 
   const confirm = (list) => {
+    console.log('list', list)
     form.setFieldValue(field.name, list);
   };
 
@@ -44,7 +44,7 @@ const SingleSelect = ({
         break;
       default: //没传入type则自动使用外部传进的selectList。
         setLoading(false);
-        dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
+        dispatch(openDialog(<MultiSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
         break;
     }
   };
@@ -64,7 +64,7 @@ const SingleSelect = ({
         filterStoreList(res.data);
         return;
       }
-      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
+      dispatch(openDialog(<MultiSelectList selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
     } catch (error) {
       console.log('getStoreList -> error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -80,7 +80,7 @@ const SingleSelect = ({
         toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
         return;
       }
-      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
+      dispatch(openDialog(<MultiSelectList selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
     } catch (error) {
       console.log('getFactoryList -> error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -117,11 +117,11 @@ const SingleSelect = ({
         if(nowFieldSelectedStore.length){ //如果当前的表单是有值的话，那直接将当前的表单值放列表前列。
           filterStoreList.unshift(...nowFieldSelectedStore);
         }
-        dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={filterStoreList} fieldValue={field.value} confirm={confirm}/>));
+        dispatch(openDialog(<MultiSelectList selectList={filterStoreList} fieldValue={field.value} confirm={confirm}/>));
         return;
       }
     }
-    dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={storeList} fieldValue={field.value} confirm={confirm}/>));
+    dispatch(openDialog(<MultiSelectList selectList={storeList} fieldValue={field.value} confirm={confirm}/>));
   };
 
   return (
@@ -132,7 +132,7 @@ const SingleSelect = ({
           <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
             {field.value && <>
               <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
-                {!!field.value.length ? field.value[0].label : `请选择${label}`}
+                {!!field.value.length ? field.value.map(item => item.storeName).join('、') : `请选择${label}`}
               </Text>
             </>}
             {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <AntDesign
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     color: '#333333'
   },
   itemText: {
+    flex: 1,
     fontSize: 26,
     color: '#333333'
   },
@@ -194,4 +195,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SingleSelect;
+export default MultiSelect;

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -11,8 +11,7 @@ import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
-import MyMembersApi from "../../../../../../request/MyMembersApi";
-import { SUCCESS_CODE, CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE } from "../../../../../../utils/const";
+import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE } from "../../../../../../utils/const";
 
 const validationSchema = Yup.object().shape({
   orderName: Yup.string().required('请输入订单名称'),
@@ -34,6 +33,13 @@ const validationSchema = Yup.object().shape({
   littleProgramSalaryDetail: Yup.string().required('请输入小程序薪资详情文本'),
 });
 
+//默认的图片列表；
+const normalImg = {
+  name: 'normal.jpg',
+  type: "multipart/form-data",
+  uri: '../../../../../../assets/images/order_normal_img.jpg'
+};
+
 const initialValues = {
   orderName: '',
   factory: [],
@@ -49,7 +55,7 @@ const initialValues = {
     start: '',
     end: ''
   },
-  pictureList: [],
+  pictureList: [normalImg],
   littleProgramTitle: '',
   littleProgramSalaryDetail: ''
 };
@@ -77,10 +83,8 @@ const OrderInfo = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          handleChange={(e) => console.log('e', e)}
           onSubmit={onSubmit}>
           {({ handleSubmit, ...rest }) => {
-            console.log('rest', rest);
             return (
               <View style={{ flex: 1, paddingHorizontal: 28}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
@@ -109,7 +113,7 @@ const OrderInfo = () => {
                     keyboardType="numeric"
                     multiline={false}
                     numberOfLines={1}
-                    maxLength={2}
+                    maxLength={3}
                     inputStyle={{maxWidth: 260, marginLeft: 20}}
                     component={SingleInput}
                   />
@@ -123,8 +127,9 @@ const OrderInfo = () => {
                 <Field
                   name="jobType"
                   label="工种"
-                  radioList={CREATE_ORDER_JOB_TYPE}
-                  component={RadioSelect}
+                  canSearch={false}
+                  selectList={CREATE_ORDER_JOB_TYPE}
+                  component={SingleSelect}
                 />
                 <Field
                   name="orderRangeDate"
@@ -139,6 +144,7 @@ const OrderInfo = () => {
                 <Field
                   name="complexSalary"
                   label="综合薪资"
+                  maxLength={5}
                   keyboardType="numeric"
                   inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>¥</Text>}
                   component={OrderRangeInput}
@@ -174,6 +180,10 @@ const OrderInfo = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderWidth: 1
+  },
   touchArea: {
     height: 94, 
     flexDirection: 'row', 

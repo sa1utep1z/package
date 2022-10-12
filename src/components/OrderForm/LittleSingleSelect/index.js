@@ -13,7 +13,7 @@ import { SUCCESS_CODE } from '../../../utils/const';
 const LittleSingleSelect = ({
   field, 
   form, 
-  label,
+  label = '',
   selectList = [], //单选列表自选
   type = '', //单选表单组件：提供几个基础模式：企业，门店，不需要模式也可以在外部传入selectList。
   ...rest
@@ -26,32 +26,30 @@ const LittleSingleSelect = ({
 
   const selectOnPress = () => {
     dispatch(setTitle(`请选择${label}`));
-    dispatch(openDialog(<SingleSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
+    dispatch(openDialog(<SingleSelectList canSearch={false} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
   };
 
   return (
     <View style={[{flex: 1}, !form.errors[field.name] && styles.selectArea]}>
       <View style={styles.container}>
-        <View style={{flex: 1}}>
-          <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
-            {field.value && <>
-              <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
-                {!!field.value.length ? field.value[0].label : `请选择${label}`}
-              </Text>
-            </>}
-            <AntDesign
-              name='down'
-              size={30}
-              color={!!field?.value?.length ? '#000000' : '#999999'}
-            />
-          </TouchableOpacity>
-          {!!form.errors[field.name] && 
-            <ErrorMessage
-              name={field.name}
-              style={styles.errorMessage}
-              component={Text}
-          />}
-        </View>
+        <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
+          {field.value && <>
+            <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
+              {!!field.value.length ? field.value[0].label : `请选择${label}`}
+            </Text>
+          </>}
+          <AntDesign
+            name='down'
+            size={26}
+            color={!!field?.value?.length ? '#000000' : '#999999'}
+          />
+        </TouchableOpacity>
+        {!!form.errors[field.name] && 
+          <ErrorMessage
+            name={field.name}
+            style={styles.errorMessage}
+            component={Text}
+        />}
       </View>
     </View>
   )
@@ -61,15 +59,9 @@ const styles = StyleSheet.create({
   selectArea: {
   },
   container: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start'
-  },
-  labelText: {
-    height: 60,
-    textAlignVertical: 'center',
-    minWidth: 150,
-    fontSize: 28,
-    color: '#333333'
   },
   itemText: {
     fontSize: 22,
@@ -80,7 +72,7 @@ const styles = StyleSheet.create({
     color: '#999999'
   },
   inputContainer: {
-    height: 60,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

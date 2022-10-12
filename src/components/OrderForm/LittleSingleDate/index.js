@@ -6,11 +6,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-/**单选日期*/
-const OrderSingleDate = ({
+/**缩小版的单选日期*/
+const LittleSingleDate = ({
   field, 
   form, 
-  label,
+  type = '',
   ...rest
 }) => {
 
@@ -29,21 +29,20 @@ const OrderSingleDate = ({
   };
 
   return (
-    <View style={{flex: 1, marginBottom: form.errors[field.name] && form.touched[field.name] ? 10 : 20}}>
+    <View style={{flex: 1, paddingTop: 25}}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>{label}：</Text>
-        <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]}>
+        <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && styles.errorBorder]}>
           <View style={{flex: 1}}>
-            <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}, form.errors[field.name] && form.touched[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>
-              <AntDesign
+            <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, minHeight: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10}, form.errors[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>
+              {type !== 'distinguish' && <AntDesign
                 name='calendar' 
-                size={30}
+                size={26}
                 color={field.value ? '#333333' : '#999999'}
                 style={{marginRight: 10}}
-              />
-              <Text style={{fontSize: 26, color: field.value ? '#333333' : '#999999'}}>{field.value || '请选择日期'}</Text>
+              />}
+              <Text style={{fontSize: 22, color: field.value ? '#333333' : '#999999'}}>{field.value || '请选择日期'}</Text>
             </TouchableOpacity>
-            {!!form.errors[field.name] && form.touched[field.name] && <Text style={[styles.errorMessage, !form.errors[field.name] && !form.touched[field.name] && {opacity: 0}]}>{form.errors[field.name]}</Text>}
+            {!!form.errors[field.name] && <Text style={[styles.errorMessage, !form.errors[field.name] && {opacity: 0}]}>{form.errors[field.name]}</Text>}
           </View>
         </View>
       </View>
@@ -57,18 +56,8 @@ const OrderSingleDate = ({
 };
 
 const styles = StyleSheet.create({
-  selectArea: {
-    marginBottom: 20
-  },
   container: {
     flexDirection: 'row'
-  },
-  labelText: {
-    height: 60,
-    textAlignVertical: 'center',
-    minWidth: 150,
-    fontSize: 28,
-    color: '#333333'
   },
   itemText: {
     fontSize: 26,
@@ -90,4 +79,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default OrderSingleDate;
+export default LittleSingleDate;

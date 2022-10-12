@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -8,8 +8,7 @@ import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 
 const validationSchema = Yup.object().shape({
-  policyPicture: Yup.array().min(1, '请选择接单政策照片'),
-  policyText: Yup.string().required('请输入接单政策文本'),
+  policyText: Yup.string().required('请输入接单政策文本')
 });
 
 const initialValues = {
