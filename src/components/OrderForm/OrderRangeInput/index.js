@@ -40,7 +40,7 @@ const OrderRangeInput = ({
             <View style={[{flex: 1, flexDirection: 'row', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingHorizontal: 20}, form.errors[field.name]?.start && form.touched[field.name]?.start && {borderColor: 'red'}]}>
               <TextInput
                 value={field.value.start}
-                placeholder={`起始${label}`}
+                placeholder={placeholder?.start || `起始${label}`}
                 placeholderTextColor="#999999"
                 onChangeText={changeTextOnStart}
                 style={{flex: 1, fontSize: 26}}
@@ -58,7 +58,7 @@ const OrderRangeInput = ({
             <View style={[{flex: 1, flexDirection: 'row', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingHorizontal: 20}, form.errors[field.name]?.end && form.touched[field.name]?.end && {borderColor: 'red'}]}>
               <TextInput
                 value={field.value.end}
-                placeholder={`结束${label}`}
+                placeholder={placeholder?.end || `结束${label}`}
                 placeholderTextColor="#999999"
                 onChangeText={changeTextOnEnd}
                 style={{flex: 1, fontSize: 26}}

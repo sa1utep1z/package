@@ -132,6 +132,10 @@ const Requirement = () => {
                 maxLength={2}
                 inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>岁</Text>}
                 component={OrderRangeInput}
+                placeholder={{
+                  start: '起始年龄',
+                  end: '结束年龄'
+                }}
               />
               <Field
                 name="female_age_limit"
@@ -140,6 +144,10 @@ const Requirement = () => {
                 maxLength={2}
                 inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>岁</Text>}
                 component={OrderRangeInput}
+                placeholder={{
+                  start: '起始年龄',
+                  end: '结束年龄'
+                }}
               />
             </View>
           )

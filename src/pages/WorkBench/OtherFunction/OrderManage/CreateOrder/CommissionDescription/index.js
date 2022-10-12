@@ -7,7 +7,7 @@ import { Shadow } from 'react-native-shadow-2';
 import moment from "moment";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
-import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
+import MultiSelect from "../../../../../../components/OrderForm/MultiSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
 import { CONDITIONS_LIST, REWARD_MODE } from "../../../../../../utils/const";
@@ -17,6 +17,21 @@ let restForm;
 const today = moment().format('YYYY-MM-DD');
 const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
 const oneYearLater = moment().add(1, 'years').format('YYYY-MM-DD');
+
+const originCommissionRule = {
+  rule1: {
+    orderRangeDate: {
+      startDate: today,
+      endDate: today
+    },
+    store: [],
+    conditionsSetting: [],
+    days: '',
+    recruiter: '',
+    groupLeader: '',
+    storeLeader: ''
+  }
+};
 
 const validationSchema = Yup.object().shape({
   rewardMode: Yup.array().min(1, '请选择提成模式'),
@@ -34,51 +49,40 @@ const validationSchema = Yup.object().shape({
 
 const initialValues = {
   rewardMode: [],
-  orderRangeDate1: {
-    startDate: today,
-    endDate: today
-  },
-  store1: [],
-  conditionsSetting1: [],
-  days1: '',
-  recruiter1: '',
-  groupLeader1: '',
-  storeLeader1: ''
+  ...originCommissionRule
 };
 
+// 招聘员提成说明
 const CommissionDescription = () => {
   const [showDetail, setShowDetail] = useState(true);
   const [rulesList, setRulesList] = useState([
-    {startDateLimit: oneYearBefore, endDateLimit: oneYearLater}
+    {index: 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater}
   ]);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
   const deleteRule = (rule) => {
     const copyList = deepCopy(rulesList);
-    const findRuleIndex = rulesList.findIndex(item => item.name === rule.name);
+    const findRuleIndex = rulesList.findIndex(item => item.index === rule.index);
     copyList.splice(findRuleIndex, 1);
     setRulesList(copyList);
   };
 
   const addRule = () => {
+    //获取当前规则列表中上一个列表的开始和结束时间；
+    const lastRuleStartDate = restForm.values[`rule${rulesList.length}`].orderRangeDate.startDate;
+    const lastRuleEndDate = restForm.values[`rule${rulesList.length}`].orderRangeDate.endDate;
+    const newDate = moment(lastRuleEndDate).add(1, 'days').format('YYYY-MM-DD');
+    const oneYearLaterOfEnd = moment(newDate).add(1, 'years').format('YYYY-MM-DD'); //目前时间范围一年后；
+
     const copyList = deepCopy(rulesList);
-    copyList.push({startDateLimit: oneYearBefore, endDateLimit: oneYearLater});
+    copyList.push({index: rulesList.length + 1, startDateLimit: lastRuleStartDate, endDateLimit: oneYearLaterOfEnd});
     setRulesList(copyList);
 
-    //获取当前规则列表中上一个列表的结束时间；
-    const lastRuleDate = restForm.values[`orderRangeDate${rulesList.length}`].endDate;
-    const newDate = moment(lastRuleDate).add(1, 'days').format('YYYY-MM-DD');
-    console.log('oneYearLater', oneYearLater);
-
     let newFieldValues = {};
-    newFieldValues[`orderRangeDate${rulesList.length + 1}`] = {startDate: newDate, endDate: newDate};
-    newFieldValues[`store${rulesList.length + 1}`] = [];
-    newFieldValues[`conditionsSetting${rulesList.length + 1}`] = [];
-    newFieldValues[`days${rulesList.length + 1}`] = '';
-    newFieldValues[`recruiter${rulesList.length + 1}`] = '';
-    newFieldValues[`groupLeader${rulesList.length + 1}`] = '';
-    newFieldValues[`storeLeader${rulesList.length + 1}`] = '';
+    newFieldValues[`rule${rulesList.length + 1}`] = {...originCommissionRule.rule1};
+    newFieldValues[`rule${rulesList.length + 1}`].orderRangeDate = {startDate: newDate, endDate: newDate};
+
     restForm.setValues({
       ...restForm.values,
       ...newFieldValues
@@ -136,8 +140,8 @@ const CommissionDescription = () => {
                                   color='#ff6666'
                                 />
                               </TouchableOpacity>}
-                              <Text style={{fontSize: 28, fontWeight: 'bold', textAlign: 'center'}}>{`适用门店${ruleIndex + 1}`}</Text>
-                              {rulesList.length !== 5 && <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, right: 0, justifyContent: 'center', alignItems: 'center'}} onPress={addRule}>
+                              <Text style={{fontSize: 28, fontWeight: 'bold', textAlign: 'center'}}>{`适用门店${rule.index}`}</Text>
+                              {rulesList.length !== 20 && <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, right: 0, justifyContent: 'center', alignItems: 'center'}} onPress={addRule}>
                                 <AntDesign
                                   name='pluscircleo'
                                   size={36}
@@ -147,21 +151,24 @@ const CommissionDescription = () => {
                             </View>
                             <View style={{flex: 1, padding: 20}}>
                               <Field
-                                name={`orderRangeDate${ruleIndex + 1}`}
+                                name={`rule${ruleIndex + 1}.orderRangeDate`}
                                 label="订单日期"
                                 limit={rule}
+                                limitCrossDate
+                                canSelect={ruleIndex === rulesList.length - 1}
                                 component={OrderRangeDate}
                               />
                               <Field  
-                                name={`store${ruleIndex + 1}`}
+                                name={`rule${ruleIndex + 1}.store`}
                                 type="store"
+                                filterStore
                                 label="适用门店"
-                                component={SingleSelect}
+                                component={MultiSelect}
                               />
                               <View style={{flex: 1, flexDirection: 'row'}}>
                                 <View style={{flex: 1}}>
                                   <Field
-                                    name={`conditionsSetting${ruleIndex + 1}`}
+                                    name={`rule${ruleIndex + 1}.conditionsSetting`}
                                     label="条件设置"
                                     radioList={CONDITIONS_LIST}
                                     radioItemsStyle={{height: 60}}
@@ -170,7 +177,7 @@ const CommissionDescription = () => {
                                 </View>
                                 <View style={{width: 110, marginLeft: 10}}>
                                   <Field
-                                    name={`days${ruleIndex + 1}`}
+                                    name={`rule${ruleIndex + 1}.days`}
                                     placeholder="天数"
                                     maxLength={3}
                                     showLabel={false}
@@ -195,7 +202,7 @@ const CommissionDescription = () => {
                                 <View style={{flexDirection: 'row', paddingTop: 20}}>
                                   <Text style={{fontSize: 26, color: '#333333', height: 60, textAlignVertical: 'center'}}>招聘员：</Text>
                                   <Field
-                                    name={`recruiter${ruleIndex + 1}`}
+                                    name={`rule${ruleIndex + 1}.recruiter`}
                                     showLabel={false}
                                     placeholder="输入"
                                     maxLength={3}
@@ -207,7 +214,7 @@ const CommissionDescription = () => {
                                   <View style={{width: 20}}></View>
                                   <Text style={{fontSize: 26, color: '#333333', height: 60, textAlignVertical: 'center'}}>组长：</Text>
                                   <Field
-                                    name={`groupLeader${ruleIndex + 1}`}
+                                    name={`rule${ruleIndex + 1}.groupLeader`}
                                     showLabel={false}
                                     placeholder="输入"
                                     maxLength={3}
@@ -219,7 +226,7 @@ const CommissionDescription = () => {
                                   <View style={{width: 20}}></View>
                                   <Text style={{fontSize: 26, color: '#333333', height: 60, textAlignVertical: 'center'}}>店长：</Text>
                                   <Field
-                                    name={`storeLeader${ruleIndex + 1}`}
+                                    name={`rule${ruleIndex + 1}.storeLeader`}
                                     showLabel={false}
                                     placeholder="输入"
                                     maxLength={3}

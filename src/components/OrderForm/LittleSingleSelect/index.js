@@ -26,7 +26,7 @@ const LittleSingleSelect = ({
 
   const selectOnPress = () => {
     dispatch(setTitle(`请选择${label}`));
-    dispatch(openDialog(<SingleSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
+    dispatch(openDialog(<SingleSelectList canSearch={false} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
   };
 
   return (

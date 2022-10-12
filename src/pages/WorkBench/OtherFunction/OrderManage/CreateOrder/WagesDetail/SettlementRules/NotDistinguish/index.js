@@ -44,6 +44,7 @@ const NotDistinguish = ({
           label="模式"
           selectList={MEMBER_FEE_MODE}
           labelStyle={{minWidth: 0}}
+          canSearch={false}
           component={SingleSelect}
         />
       </View>

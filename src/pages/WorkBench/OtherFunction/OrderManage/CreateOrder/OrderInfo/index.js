@@ -127,6 +127,7 @@ const OrderInfo = () => {
                 <Field
                   name="jobType"
                   label="工种"
+                  canSearch={false}
                   selectList={CREATE_ORDER_JOB_TYPE}
                   component={SingleSelect}
                 />

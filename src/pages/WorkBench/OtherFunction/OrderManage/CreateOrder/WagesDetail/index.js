@@ -40,7 +40,9 @@ const initialValues = {
 };
 
 // 会员工价详情
-const WagesDetail = () => {
+const WagesDetail = ({
+  scrollRef
+}) => {
   const [showDetail, setShowDetail] = useState(true);
 
   const detailOnPress = () => setShowDetail(!showDetail);
@@ -104,18 +106,21 @@ const WagesDetail = () => {
                   name='food'
                   label="就餐"
                   selectList={FOOD_LIST}
+                  canSearch={false}
                   component={SingleSelect}
                 />
                 <Field  
                   name='dormitory'
                   label="住宿"
                   selectList={DORMITORY_LIST}
+                  canSearch={false}
                   component={SingleSelect}
                 />
                 <Field  
                   name='water_fee'
                   label="水电费"
                   selectList={WATER_FEE_LIST}
+                  canSearch={false}
                   component={SingleSelect}
                 />
                 <Field
@@ -188,6 +193,7 @@ const WagesDetail = () => {
                 </View>
                 {/* 结算规则组件 */}
                 <SettlementRules
+                  scrollRef={scrollRef}
                   values={values}
                   restForm={restForm}
                   initialValues={initialValues}

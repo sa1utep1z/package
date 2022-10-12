@@ -4,6 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Field } from 'formik';
 import { Shadow } from 'react-native-shadow-2';
 import { TabView, TabBar } from 'react-native-tab-view';
+import moment from "moment";
 
 import SingleSelect from "../../../../../../../components/OrderForm/SingleSelect";
 import OrderRangeDate from "../../../../../../../components/OrderForm/OrderRangeDate";
@@ -14,12 +15,17 @@ import { originRule } from "./const";
 import NotDistinguish from "./NotDistinguish";
 import Distinguish from "./Distinguish";
 
+const today = moment().format('YYYY-MM-DD');
+const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
+const oneYearLater = moment().add(1, 'years').format('YYYY-MM-DD');
+
 const SettlementRules = ({
   values,
-  restForm
+  restForm,
+  scrollRef
 }) => {
   const [rulesList, setRulesList] = useState([{
-    ruleLocation: 1
+    ruleLocation: 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater
   }]);
 
   const deleteRule = (rule) => {
@@ -30,12 +36,17 @@ const SettlementRules = ({
   };
 
   const addRule = () => {
+    scrollRef?.current?.scrollToEnd({animated: true, duration: 1000});
+    const lastRuleEndDate = restForm.values[`orderRangeDate${rulesList.length}`].endDate;
+    const newDate = moment(lastRuleEndDate).add(1, 'days').format('YYYY-MM-DD');
+    const oneYearLaterOfEnd = moment(newDate).add(1, 'years').format('YYYY-MM-DD'); //目前时间范围一年后；
+
     const copyList = deepCopy(rulesList);
-    copyList.push({ruleLocation: rulesList.length + 1});
+    copyList.push({ruleLocation: rulesList.length + 1, startDateLimit: newDate, endDateLimit: oneYearLaterOfEnd});
     setRulesList(copyList);
 
     let newFieldValues = {};
-    newFieldValues[`orderRangeDate${rulesList.length + 1}`] = originRule.orderRangeDate1;
+    newFieldValues[`orderRangeDate${rulesList.length + 1}`] = {startDate: newDate, endDate: newDate};
     newFieldValues[`mode${rulesList.length + 1}`] = originRule.mode1;
     newFieldValues[`wagesAndSalary${rulesList.length + 1}`] = originRule.wagesAndSalary1;
     newFieldValues[`differenceAndReturnMoney${rulesList.length + 1}`] = originRule.differenceAndReturnMoney1;
@@ -115,7 +126,7 @@ const SettlementRules = ({
                     />
                   </TouchableOpacity>}
                   <Text style={styles.topTitleText}>{`规则${rule.ruleLocation}`}</Text>
-                  {rulesList.length !== 5 && <TouchableOpacity style={[styles.deleteArea, {right: 0}]} onPress={addRule}>
+                  {rulesList.length !== 20 && <TouchableOpacity style={[styles.deleteArea, {right: 0}]} onPress={addRule}>
                     <AntDesign
                       name='pluscircleo'
                       size={36}
@@ -127,12 +138,16 @@ const SettlementRules = ({
                   <Field
                     name={`orderRangeDate${ruleIndex + 1}`}
                     label="适用日期"
+                    limit={rule}
+                    limitCrossDate
+                    canSelect={ruleIndex === rulesList.length - 1}
                     component={OrderRangeDate}
                   />
                   <Field  
                     name={`mode${ruleIndex + 1}`}
                     label="结算模式"
                     selectList={MODE_LIST}
+                    canSearch={false}
                     component={SingleSelect}
                   />
                   <View style={{flex: 1}}>

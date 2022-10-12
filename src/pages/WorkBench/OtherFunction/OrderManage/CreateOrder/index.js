@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import { View, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Button } from '@rneui/themed';
 
@@ -9,6 +9,7 @@ import CommissionDescription from "./CommissionDescription";
 import WagesDetail from "./WagesDetail";
 
 const CreateOrder = () => {
+  const scrollRef = useRef(null);
 
   const save = () => {
     console.log('提交保存');
@@ -22,13 +23,14 @@ const CreateOrder = () => {
     >
       <View style={styles.screen}>
         <ScrollView 
+          ref={scrollRef}
           style={styles.screen}
           keyboardShouldPersistTaps="handled">
             <OrderInfo />
             <Requirement />
             <Policy />
             <CommissionDescription />
-            <WagesDetail />
+            <WagesDetail scrollRef={scrollRef} />
         </ScrollView>
         <Button
           title="提交保存"

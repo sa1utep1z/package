@@ -1,7 +1,9 @@
+import moment from "moment";
+
 export const originRule = {
   orderRangeDate1: {
-    startDate: '',
-    endDate: ''
+    startDate: moment().format('YYYY-MM-DD'),
+    endDate: moment().format('YYYY-MM-DD')
   },
   mode1: [],
   wagesAndSalary1: {
