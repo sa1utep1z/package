@@ -237,7 +237,7 @@ export default Navigator = () => {
           headerTitle: '新增企业',
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={NAVIGATION_KEYS.BUSINESS_EDIT}
         component={NAVIGATION_PAGES.BUSINESS_EDIT}
         options={{
@@ -272,11 +272,18 @@ export default Navigator = () => {
           headerTitle: '新建投诉',
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={NAVIGATION_KEYS.COMPLAINT_EDIT}
         component={NAVIGATION_PAGES.COMPLAINT_EDIT}
         options={{
           headerTitle: '编辑投诉',
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ADVANCE_MANAGE}
+        component={NAVIGATION_PAGES.ADVANCE_MANAGE}
+        options={{
+          headerTitle: '预支审核',
         }}
       />
     </>

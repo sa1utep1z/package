@@ -13,7 +13,7 @@ import RadioEditGroup from '../../../../../components/Form/RadioEditGroup';
 import ImagePicker from 'react-native-image-crop-picker';
 import CompanyApi from '../../../../../request/companyApi';
 import { deepCopy, getYMD } from '../../../../../utils';
-import UserSelect from '../UserSelect'
+import NAVIGATION_KEYS from '../../../../../navigator/key';
 import { CityData } from '../../../../../assets/City';
 import MobileInput from "../../../../../components/OrderForm/MobileInput";
 import { isDateNumber } from '../../../../../utils/validate';
@@ -119,6 +119,9 @@ const BusinessEdit = (props) => {
     }
   };
 
+  // 跳转返回企业首页
+  const goBackBusiness = () => navigation.navigate(NAVIGATION_KEYS.BUSINESS_MANAGE);
+
   // 获取企业详情
   const getCompanyInfo = async () => {
     try {
@@ -163,7 +166,7 @@ const BusinessEdit = (props) => {
     if (companyInfo.province || companyInfo.city || companyInfo.area) {
       restForm.setFieldValue('region', companyInfo.province + '/' + companyInfo.city + '/' + companyInfo.area);
     }
-   
+
   };
 
   const onChangeText = (value) => {
@@ -256,7 +259,7 @@ const BusinessEdit = (props) => {
       }
       console.log('是否执行操作上传', res.data)
       setCompanyImage([...companyImage, res.data]);
-        restForm.setFieldValue('companyImages', [...companyImage, res.data]);
+      restForm.setFieldValue('companyImages', [...companyImage, res.data]);
     } catch (error) {
       toast.show('识别失败，出现异常请联系管理员处理')
     }
@@ -305,15 +308,14 @@ const BusinessEdit = (props) => {
         scale: values.scale ? values.scale[0].value : '',
       }
       console.log('打印编辑修改的参数：', params);
-      // const res = await CompanyApi.EditCompany(companyId, params);
-      // if (res?.code !== SUCCESS_CODE) {
-      //   toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
-      //   return;
-      // }
-      // toast.show('保存提交成功');
-      // console.log('保存提交成功：', params);
+      const res = await CompanyApi.EditCompany(companyId, params);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      toast.show('保存提交成功');
+      goBackBusiness();
     } catch (error) {
-      console.log('上传参数发生的错误：', error)
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   }
@@ -331,7 +333,7 @@ const BusinessEdit = (props) => {
 
   return (
     <Formik
-    initialValues={initialValues}
+      initialValues={initialValues}
       handleChange={(e) => console.log('e', e)}
       onSubmit={onSubmit}>
       {({ handleSubmit, ...rest }) => {

@@ -54,7 +54,7 @@ const AddComplaint = (props) => {
     data.append('file', file);
     console.log('选择图库照片data的值：', data);
     try {
-      const res = await CompanyApi.UploadImages(data)
+      const res = await ComplainApi.UploadImages(data)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
         return;
@@ -207,7 +207,7 @@ const AddComplaint = (props) => {
                 />
                 <View style={styles.cardArea}>
                   <View style={styles.title}>
-                    <Text style={styles.required}>*</Text>
+                    {/* <Text style={styles.required}>*</Text> */}
                     <Text style={styles.text}>上传照片：</Text>
                   </View>
                   <View style={styles.imageBox}>
