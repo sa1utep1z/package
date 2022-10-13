@@ -8,12 +8,12 @@ import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 
 const validationSchema = Yup.object().shape({
-  policyText: Yup.string().required('请输入接单政策文本')
+  applyPolicyRemark: Yup.string().required('请输入接单政策文本')
 });
 
 const initialValues = {
-  policyPicture: [],
-  policyText: ''
+  applyPolicyImage: [],
+  applyPolicyRemark: ''
 };
 
 const Policy = () => {
@@ -48,7 +48,7 @@ const Policy = () => {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View style={{flex: 1}}>
                     <Field
-                      name="policyPicture"
+                      name="applyPolicyImage"
                       label="接单政策照片"
                       component={SelectPhotos}
                     />
@@ -58,12 +58,13 @@ const Policy = () => {
                   </TouchableOpacity>
                 </View>
                 <Field
-                  name="policyText"
+                  name="applyPolicyRemark"
                   label="接单政策文字说明"
                   placeholder="请输入接单政策文本"
                   maxLength={200}
                   multiline
                   lengthLimit
+                  isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
                 />

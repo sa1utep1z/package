@@ -305,13 +305,13 @@ const BusinessEdit = (props) => {
         scale: values.scale ? values.scale[0].value : '',
       }
       console.log('打印编辑修改的参数：', params);
-      const res = await CompanyApi.EditCompany(companyId, params);
-      if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
-        return;
-      }
-      toast.show('保存提交成功');
-      console.log('保存提交成功：', params);
+      // const res = await CompanyApi.EditCompany(companyId, params);
+      // if (res?.code !== SUCCESS_CODE) {
+      //   toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+      //   return;
+      // }
+      // toast.show('保存提交成功');
+      // console.log('保存提交成功：', params);
     } catch (error) {
       console.log('上传参数发生的错误：', error)
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -328,7 +328,6 @@ const BusinessEdit = (props) => {
     setFieldValue();
     getCompanyType();
   }, [companyInfo])
-
 
   return (
     <Formik

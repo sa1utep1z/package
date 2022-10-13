@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, TextInput} from 'react-native';
 import {ErrorMessage} from 'formik';
 
@@ -9,8 +9,50 @@ const LittleSingleInput = ({
   inputStyle,
   inputContainerStyle,
   inputRightComponent,
+  inputLength = [],
+  maxLength = 0,
   ...rest
 }) => {
+  const [inputMaxLength, setInputMaxLength] = useState(3);
+
+  useEffect(()=>{
+    if(inputLength.length){
+      const inputValue = inputLength[0].value;
+      switch(inputValue){
+        case 'WORK_FEE':
+          setInputMaxLength(2);
+          break;
+        case 'LOW_FEE':
+          setInputMaxLength(5);
+          break;
+        case 'DAY_FEE':
+          setInputMaxLength(3);
+          break;
+        case 'DAY_END':
+          setInputMaxLength(3);
+          break;
+        case 'RETURN_FEE':
+          setInputMaxLength(5);
+          break;
+        case 'DISTANCE_FEE':
+          setInputMaxLength(2);
+          break;
+        case 'SUPPLEMENT_FEE':
+          setInputMaxLength(2);
+          break;
+        case 'SUBSIDIES_FEE':
+          setInputMaxLength(2);
+          break;
+        case 'STABLE_WORK':
+          setInputMaxLength(2);
+          break;
+        default:
+          setInputMaxLength(3);
+          break;
+      }
+    }
+  },[inputLength])
+
   return (
     <View style={[{flex: 1, flexDirection: 'row'}, inputStyle]}>
       <View style={[styles.inputContainer, inputContainerStyle]}>
@@ -21,6 +63,7 @@ const LittleSingleInput = ({
           onChangeText={form.handleChange(field.name)}
           style={{flex: 1, fontSize: 22, textAlign: 'center', padding: 0}}
           selectionColor="#409EFF"
+          maxLength={!!maxLength ? maxLength : inputMaxLength}
           {...rest}
         />
       </View>

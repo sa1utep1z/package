@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-nativ
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
+import moment from "moment";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
@@ -10,33 +11,28 @@ import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST } from "../../../../../../utils/const";
 import SettlementRules from "./SettlementRules";
 import {originRule} from './SettlementRules/const';
+import { deepCopy } from "../../../../../../utils";
 
 let restForm;
+const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
+const oneYearLater = moment().add(1, 'years').format('YYYY-MM-DD');
+
 const validationSchema = Yup.object().shape({
-  payType: Yup.array().min(1, '请选择借支类型'),
-  wageDetail: Yup.string().required('请输入工价详情文本'),
-  food: Yup.array().min(1, '请选择就餐'),
-  dormitory: Yup.array().min(1, '请选择住宿'),
-  water_fee: Yup.array().min(1, '请选择水电费'),
-  commercial: Yup.string().required('请输入需要购买商保的文本内容'),
-  social: Yup.string().required('请输入需要购买商保的文本内容'),
-  leave_self: Yup.string().required('请输入需要购买商保的文本内容'),
-  induction: Yup.string().required('请输入需要购买商保的文本内容'),
-  remark: Yup.string().required('请输入需要购买商保的文本内容')
+  explain: Yup.string().required('请输入工价详情文本')
 });
 
 const initialValues = {
-  payType: [],
-  wageDetail: '',
-  food: [],
-  dormitory: [],
-  water_fee: [],
+  debtType: [],
+  explain: '',
+  debtAmount: '',
+  eat: [],
+  stay: [],
+  waterElectricity: [],
   commercial: '',
-  social: '',
-  leave_self: '',
-  induction: '',
-  remark: '',
-  ...originRule
+  socialSecurity: '',
+  leaveSalary: '',
+  memberAward: '',
+  remark: ''
 };
 
 // 会员工价详情
@@ -44,11 +40,71 @@ const WagesDetail = ({
   scrollRef
 }) => {
   const [showDetail, setShowDetail] = useState(true);
+  const [rulesList, setRulesList] = useState([]);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
+  const deleteRule = (rule) => {
+    const copyList = deepCopy(rulesList);
+    const findRuleIndex = rulesList.findIndex(item => item.ruleLocation === rule.ruleLocation);
+    copyList.splice(findRuleIndex, 1);
+    setRulesList(copyList);
+
+    const formValues = deepCopy(restForm.values);
+    delete formValues[`differenceAndReturnMoney${rule.ruleLocation}`];
+    delete formValues[`mode${rule.ruleLocation}`];
+    delete formValues[`orderRangeDate${rule.ruleLocation}`];
+    delete formValues[`wagesAndSalary${rule.ruleLocation}`];
+    restForm.setValues(formValues);
+  };
+
+  const addRule = () => {
+    scrollRef?.current?.scrollToEnd({animated: true, duration: 1000});
+
+    if(!rulesList.length){
+      setRulesList([{ruleLocation: 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater}]);
+      restForm.setValues({
+        ...restForm.values,
+        ...originRule
+      })
+      return;
+    }
+
+    const lastRuleEndDate = restForm.values[`orderRangeDate${rulesList.length}`].endDate;
+    const newDate = moment(lastRuleEndDate).add(1, 'days').format('YYYY-MM-DD');
+    const oneYearLaterOfEnd = moment(newDate).add(1, 'years').format('YYYY-MM-DD'); //目前时间范围一年后；
+
+    const copyList = deepCopy(rulesList);
+    copyList.push({ruleLocation: rulesList.length + 1, startDateLimit: newDate, endDateLimit: oneYearLaterOfEnd});
+    setRulesList(copyList);
+
+    let newFieldValues = {};
+    newFieldValues[`orderRangeDate${rulesList.length + 1}`] = {startDate: newDate, endDate: newDate};
+    newFieldValues[`mode${rulesList.length + 1}`] = originRule.mode1;
+    newFieldValues[`wagesAndSalary${rulesList.length + 1}`] = originRule.wagesAndSalary1;
+    newFieldValues[`differenceAndReturnMoney${rulesList.length + 1}`] = originRule.differenceAndReturnMoney1;
+    restForm.setValues({
+      ...restForm.values,
+      ...newFieldValues
+    })
+  };
+
   const onSubmit = async (values) => {
-    console.log('提交表单', values)
+    console.log('origin-values', values);
+    const newObject = {
+      explain: values.explain, //工价详情
+      debtType: values.debtType.length ? values.debtType[0].value : '', //借支类型
+      debtAmount: values.debtAmount, //借支金额
+      eat: values.eat.length ? values.eat[0].value : '', //就餐
+      stay: values.stay.length ? values.stay[0].value : '', //住宿
+      waterElectricity: values.waterElectricity.length ? values.waterElectricity[0].value : '', //水电费
+      commercial: values.commercial, //购买商保
+      socialSecurity: values.socialSecurity, //购买社保
+      leaveSalary: values.leaveSalary, //自离薪资
+      memberAward: values.memberAward, //会员入职奖
+      remark: values.remark //备注说明
+    };
+    console.log('transform-newObject', newObject);
   };
 
   return (
@@ -69,17 +125,17 @@ const WagesDetail = ({
           {({values, handleSubmit, ...rest }) => {
             restForm = rest;
             restForm.values = values;
-            console.log('rest', rest);
             return (
               <View style={{ flex: 1, paddingHorizontal: 28}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <Field
-                    name="wageDetail"
+                    name="explain"
                     label="工价详情"
                     placeholder="请输入工价详情文本"
                     maxLength={200}
                     multiline
                     lengthLimit
+                    isRequire
                     inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                     component={SingleInput}
                   />
@@ -88,36 +144,36 @@ const WagesDetail = ({
                   </TouchableOpacity>
                 </View>
                 <Field
-                  name="payType"
+                  name="debtType"
                   label="借支类型"
                   radioList={SALARY_TYPE}
                   component={RadioSelect}
                 />
-                {values.payType.length && values.payType[0].value !== 'NoDEBIT' ? <Field
-                  name="requireNumber"
+                {values.debtType.length && values.debtType[0].value !== 'NoDEBIT' ? <Field
+                  name="debtAmount"
                   label="借支金额"
                   selectTextOnFocus
                   keyboardType="numeric"
                   maxLength={4}
                   component={SingleInput}
-                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.payType[0].value === 'DAILY' ? '元/天' : values.payType[0].value === 'WEEKLY' ? '周/天' : '月/天'}</Text>}
+                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.debtType[0].value === 'DAILY' ? '元/天' : values.debtType[0].value === 'WEEKLY' ? '周/天' : '月/天'}</Text>}
                 /> : <></>}
                 <Field  
-                  name='food'
+                  name='eat'
                   label="就餐"
                   selectList={FOOD_LIST}
                   canSearch={false}
                   component={SingleSelect}
                 />
                 <Field  
-                  name='dormitory'
+                  name='stay'
                   label="住宿"
                   selectList={DORMITORY_LIST}
                   canSearch={false}
                   component={SingleSelect}
                 />
                 <Field  
-                  name='water_fee'
+                  name='waterElectricity'
                   label="水电费"
                   selectList={WATER_FEE_LIST}
                   canSearch={false}
@@ -136,7 +192,7 @@ const WagesDetail = ({
                   component={SingleInput}
                 />
                 <Field
-                  name="social"
+                  name="socialSecurity"
                   label="购买社保"
                   placeholder="请输入社保文本"
                   maxLength={200}
@@ -148,7 +204,7 @@ const WagesDetail = ({
                   component={SingleInput}
                 />
                 <Field
-                  name="leave_self"
+                  name="leaveSalary"
                   label="自离薪资"
                   placeholder="请输入自离薪资文本"
                   maxLength={200}
@@ -160,7 +216,7 @@ const WagesDetail = ({
                   component={SingleInput}
                 />
                 <Field
-                  name="induction"
+                  name="memberAward"
                   label="会员入职奖"
                   placeholder="请输入会员入职奖文本"
                   maxLength={200}
@@ -197,6 +253,9 @@ const WagesDetail = ({
                   values={values}
                   restForm={restForm}
                   initialValues={initialValues}
+                  rulesList={rulesList}
+                  addRule={addRule}
+                  deleteRule={deleteRule}
                 />
               </View>
             )

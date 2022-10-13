@@ -5,6 +5,7 @@ import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import { Shadow } from 'react-native-shadow-2';
 import moment from "moment";
+import { useToast } from "react-native-toast-notifications";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import MultiSelect from "../../../../../../components/OrderForm/MultiSelect";
@@ -26,38 +27,27 @@ const originCommissionRule = {
     },
     store: [],
     conditionsSetting: [],
-    days: '',
-    recruiter: '',
-    groupLeader: '',
-    storeLeader: ''
+    days: '4',
+    recruiter: '0',
+    groupLeader: '0',
+    storeLeader: '0'
   }
 };
 
 const validationSchema = Yup.object().shape({
-  rewardMode: Yup.array().min(1, '请选择提成模式'),
-  // orderRangeDate: Yup.object({
-  //   startDate: Yup.string().required('请选择订单开始日期'),
-  //   endDate: Yup.string().required('请选择订单结束日期')
-  // }),
-  // store: Yup.array().min(1, '请选择适用门店'),
-  // conditionsSetting: Yup.array().min(1, '请选择条件'),
-  // days: Yup.string().required('请输入天数'),
-  // recruiter: Yup.string().required('请输入招聘员的提成规则'),
-  // groupLeader: Yup.string().required('请输入组长的提成规则'),
-  // storeLeader: Yup.string().required('请输入店长的提成规则')
+  mode: Yup.array().min(1, '请选择提成模式')
 });
 
 const initialValues = {
-  rewardMode: [],
-  ...originCommissionRule
+  mode: []
 };
 
 // 招聘员提成说明
 const CommissionDescription = () => {
+  const toast = useToast();
+
   const [showDetail, setShowDetail] = useState(true);
-  const [rulesList, setRulesList] = useState([
-    {index: 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater}
-  ]);
+  const [rulesList, setRulesList] = useState([]);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
@@ -66,9 +56,21 @@ const CommissionDescription = () => {
     const findRuleIndex = rulesList.findIndex(item => item.index === rule.index);
     copyList.splice(findRuleIndex, 1);
     setRulesList(copyList);
+
+    const formValues = deepCopy(restForm.values);
+    delete formValues[`rule${rule.index}`];
+    restForm.setValues(formValues);
   };
 
   const addRule = () => {
+    if(!rulesList.length){
+      setRulesList([{index: 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater}]);
+      restForm.setValues({
+        ...restForm.values,
+        ...originCommissionRule
+      })
+      return;
+    }
     //获取当前规则列表中上一个列表的开始和结束时间；
     const lastRuleStartDate = restForm.values[`rule${rulesList.length}`].orderRangeDate.startDate;
     const lastRuleEndDate = restForm.values[`rule${rulesList.length}`].orderRangeDate.endDate;
@@ -90,7 +92,41 @@ const CommissionDescription = () => {
   };
 
   const onSubmit = async (values) => {
-    console.log('提交表单', values)
+    console.log('origin-values', values);
+    const newObject = {
+      mode: values.mode[0].value,
+      data: []
+    };
+    if(!!rulesList.length){
+      const FieldNameListOfRule = Object.keys(values).filter(name => name.includes('rule'));
+      for(const rule of FieldNameListOfRule){
+        console.log('rule', rule);
+        const ruleName = values[rule];
+        if(!ruleName.store.length){
+          toast.show('请选择提成规则的适用门店！', {type: 'warning'});
+          return;
+        }else if (!ruleName.conditionsSetting.length){
+          toast.show('请选择提成规则的条件！', {type: 'warning'});
+          return;
+        }
+        newObject.data.push({
+          startDate: moment(ruleName.orderRangeDate.startDate).format('x'),
+          endDate: moment(ruleName.orderRangeDate.endDate).format('x'),
+          storeIds: ruleName.store.map(store => store.storeId),
+          condition: {
+            varComputerCode: ruleName.conditionsSetting[0].value, 
+            operator: 'GTE',
+            constantValue: Number(ruleName.days)
+          },
+          result: {
+            recruiter: Number(ruleName.recruiter),
+            groupLeader: Number(ruleName.groupLeader),
+            storeLeader: Number(ruleName.storeLeader)
+          }
+        })
+      }
+    }
+    console.log('newObject', newObject);
   };
 
   return (
@@ -115,8 +151,9 @@ const CommissionDescription = () => {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View style={{flex: 1}}>
                     <Field
-                      name="rewardMode"
+                      name="mode"
                       label="提成模式"
+                      isRequire
                       radioList={REWARD_MODE}
                       component={RadioSelect}
                     />
@@ -126,20 +163,30 @@ const CommissionDescription = () => {
                   </TouchableOpacity>
                 </View>
                 <View>
-                  <Text style={styles.labelText}>提成规则详情：</Text>
-                  <View style={{marginTop: 10}}>
+                  <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <Text style={styles.labelText}>{`提成规则详情：${!rulesList.length ? '暂无提成规则' : ''}`}</Text>
+                    {!rulesList.length && <TouchableOpacity style={{paddingHorizontal: 10, paddingVertical: 10, borderRadius: 6, flexDirection: 'row'}} onPress={addRule}>
+                      <AntDesign
+                        name='pluscircleo'
+                        size={32}
+                        color='#409EFF'
+                      />
+                    </TouchableOpacity>}
+                  </View>
+                  <View style={{height: 20}}></View>
+                  {!!rulesList.length && <View>
                     {rulesList.map((rule, ruleIndex) => {
                       return (
                         <Shadow key={ruleIndex} style={{width: '100%', marginBottom: 30}}>
                           <View style={{borderRadius: 10}}>
                             <View style={{height: 60, backgroundColor: '#EFEFEF', justifyContent: 'center', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
-                              {rulesList.length !== 1 && <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={()=>deleteRule(rule)}>
+                              <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, justifyContent: 'center', alignItems: 'center'}} onPress={()=>deleteRule(rule)}>
                                 <AntDesign
                                   name='delete'
                                   size={36}
                                   color='#ff6666'
                                 />
-                              </TouchableOpacity>}
+                              </TouchableOpacity>
                               <Text style={{fontSize: 28, fontWeight: 'bold', textAlign: 'center'}}>{`适用门店${rule.index}`}</Text>
                               {rulesList.length !== 20 && <TouchableOpacity style={{width: 60, height: 60, position: 'absolute', zIndex: 999, right: 0, justifyContent: 'center', alignItems: 'center'}} onPress={addRule}>
                                 <AntDesign
@@ -151,7 +198,7 @@ const CommissionDescription = () => {
                             </View>
                             <View style={{flex: 1, padding: 20}}>
                               <Field
-                                name={`rule${ruleIndex + 1}.orderRangeDate`}
+                                name={`rule${rule.index}.orderRangeDate`}
                                 label="订单日期"
                                 limit={rule}
                                 limitCrossDate
@@ -159,7 +206,7 @@ const CommissionDescription = () => {
                                 component={OrderRangeDate}
                               />
                               <Field  
-                                name={`rule${ruleIndex + 1}.store`}
+                                name={`rule${rule.index}.store`}
                                 type="store"
                                 filterStore
                                 label="适用门店"
@@ -168,7 +215,7 @@ const CommissionDescription = () => {
                               <View style={{flex: 1, flexDirection: 'row'}}>
                                 <View style={{flex: 1}}>
                                   <Field
-                                    name={`rule${ruleIndex + 1}.conditionsSetting`}
+                                    name={`rule${rule.index}.conditionsSetting`}
                                     label="条件设置"
                                     radioList={CONDITIONS_LIST}
                                     radioItemsStyle={{height: 60}}
@@ -177,7 +224,7 @@ const CommissionDescription = () => {
                                 </View>
                                 <View style={{width: 110, marginLeft: 10}}>
                                   <Field
-                                    name={`rule${ruleIndex + 1}.days`}
+                                    name={`rule${rule.index}.days`}
                                     placeholder="天数"
                                     maxLength={3}
                                     showLabel={false}
@@ -196,13 +243,13 @@ const CommissionDescription = () => {
                                   <Text style={styles.labelText}>提成规则</Text>
                                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                     <Text style={{fontSize: 26, color: '#ffffff', backgroundColor: '#409EFF', paddingHorizontal: 15, paddingVertical: 5, borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>单位</Text>
-                                    <Text style={{fontSize: 26, color: '#ffffff', backgroundColor: '#E6A042', paddingHorizontal: 15, paddingVertical: 5, borderTopRightRadius: 6, borderBottomRightRadius: 6}}>{rest.values.rewardMode.length ? rest.values.rewardMode[0].value === 'STUB' ? '元/人' : '元/人/天' : '请选择提成模式'}</Text>
+                                    <Text style={{fontSize: 26, color: '#ffffff', backgroundColor: '#E6A042', paddingHorizontal: 15, paddingVertical: 5, borderTopRightRadius: 6, borderBottomRightRadius: 6}}>{rest.values.mode.length ? rest.values.mode[0].value === 'STUB' ? '元/人' : '元/人/天' : '请选择提成模式'}</Text>
                                   </View>
                                 </View>
                                 <View style={{flexDirection: 'row', paddingTop: 20}}>
                                   <Text style={{fontSize: 26, color: '#333333', height: 60, textAlignVertical: 'center'}}>招聘员：</Text>
                                   <Field
-                                    name={`rule${ruleIndex + 1}.recruiter`}
+                                    name={`rule${rule.index}.recruiter`}
                                     showLabel={false}
                                     placeholder="输入"
                                     maxLength={3}
@@ -214,7 +261,7 @@ const CommissionDescription = () => {
                                   <View style={{width: 20}}></View>
                                   <Text style={{fontSize: 26, color: '#333333', height: 60, textAlignVertical: 'center'}}>组长：</Text>
                                   <Field
-                                    name={`rule${ruleIndex + 1}.groupLeader`}
+                                    name={`rule${rule.index}.groupLeader`}
                                     showLabel={false}
                                     placeholder="输入"
                                     maxLength={3}
@@ -226,7 +273,7 @@ const CommissionDescription = () => {
                                   <View style={{width: 20}}></View>
                                   <Text style={{fontSize: 26, color: '#333333', height: 60, textAlignVertical: 'center'}}>店长：</Text>
                                   <Field
-                                    name={`rule${ruleIndex + 1}.storeLeader`}
+                                    name={`rule${rule.index}.storeLeader`}
                                     showLabel={false}
                                     placeholder="输入"
                                     maxLength={3}
@@ -241,7 +288,7 @@ const CommissionDescription = () => {
                           </View>
                         </Shadow>
                       )})}
-                  </View>
+                  </View>}
                 </View>
               </View>
             )

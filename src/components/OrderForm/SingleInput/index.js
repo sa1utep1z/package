@@ -12,6 +12,7 @@ const SingleInput = ({
   inputContainerStyle,
   labelStyle,
   inputRightComponent,
+  isRequire = false, //是否必填
   lengthLimit = false, //是否限制字数（多行输入框输入文本右下角）
   showLabel = true, //是否展示标题，默认为是
   centerInput = false, //输入框是否居中
@@ -20,7 +21,9 @@ const SingleInput = ({
   return (
     <View style={[styles.inputArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}, inputStyle]}>
       <View style={styles.container}>
-        {showLabel && <Text style={[styles.labelText, labelStyle]}>{label}：</Text>}
+        {showLabel && <Text style={[styles.labelText, labelStyle]}>
+          {isRequire && <Text style={{color: 'red'}}>*</Text>}
+          {label}：</Text>}
         <View style={{flex: 1}}>
           <View style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, inputContainerStyle]}>
             <View style={{flexDirection: 'row'}}>

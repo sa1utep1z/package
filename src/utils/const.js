@@ -683,8 +683,8 @@ export const REWARD_MODE = [
 
 //新建订单-招聘员提成说明-条件设置枚举值：
 export const CONDITIONS_LIST = [
-  { value: 'punch_day_ok', label: '打卡满', type: 'punch_day' },
-  { value: 'work_day_ok', label: '在职满', type: 'work_day' }
+  { value: 'var-punch-day', label: '打卡满', type: 'punch_day' },
+  { value: 'var-work-day', label: '在职满', type: 'work_day' }
 ];
 
 //新建订单-会员工价详情-借支类型枚举值：

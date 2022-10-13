@@ -11,9 +11,9 @@ const OrderRangeInput = ({
   placeholder,
   inputStyle,
   inputRightComponent,
+  isRequire = false,
   ...rest
 }) => {
-  console.log('form', form);
 
   const changeTextOnStart = (value) => {
     const newObj = {
@@ -34,7 +34,9 @@ const OrderRangeInput = ({
   return (
     <View style={[{marginBottom: form.errors[field.name] ? 10 : 20}, inputStyle]}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>{label}：</Text>
+        <Text style={styles.labelText}>
+          {isRequire && <Text style={{color: 'red'}}>*</Text>}
+          {label}：</Text>
         <View style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]}>
           <View style={{flex: 1}}>
             <View style={[{flex: 1, flexDirection: 'row', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingHorizontal: 20}, form.errors[field.name]?.start && form.touched[field.name]?.start && {borderColor: 'red'}]}>

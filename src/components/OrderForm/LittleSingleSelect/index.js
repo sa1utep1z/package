@@ -22,6 +22,9 @@ const LittleSingleSelect = ({
 
   const confirm = (list) => {
     form.setFieldValue(field.name, list);
+    //这里是将mode对应的表单清空；以防止其他的表单输入了限制长度的文本跳转到新mode结果文本长度没正确限制的问题；
+    const newFieldName = field.name.substr(0, field.name.length - 4) + 'value';
+    form.setFieldValue(newFieldName, '');
   };
 
   const selectOnPress = () => {

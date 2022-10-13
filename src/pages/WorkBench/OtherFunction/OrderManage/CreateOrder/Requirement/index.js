@@ -10,8 +10,8 @@ import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import { FEMALE_LIMIT } from "../../../../../../utils/const";
 
 const validationSchema = Yup.object().shape({
-  requireNumber: Yup.string().required('请输入需求人数'),
-  sex: Yup.array().min(1, '请选择性别'),
+  needNumber: Yup.string().required('请输入需求人数'),
+  sexGroup: Yup.array().min(1, '请选择性别'),
   male_age_limit: Yup.object({
     start: Yup.string().required('请输入起始年龄（男）'),
     end: Yup.string().required('请输入结束年龄（男）')
@@ -23,8 +23,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  requireNumber: '',
-  sex: [],
+  needNumber: '',
+  sexGroup: [],
   male: '',
   female: '',
   male_age_limit: {
@@ -43,7 +43,21 @@ const Requirement = () => {
   const detailOnPress = () => setShowDetail(!showDetail);
 
   const onSubmit = (values) => {
-    console.log('提交表单', values)
+    console.log('origin-values', values);
+    const newObject = {
+      needNumber: values.needNumber, //需求人数
+      sexGroup: values.sexGroup[0].value, //性别
+      maleAgeStart: values.male_age_limit.start, //男-年龄-起始
+      maleAgeEnd: values.male_age_limit.end, //男-年龄-结束
+      femaleAgeStart: values.female_age_limit.start, //女-年龄-起始
+      femaleAgeEnd: values.female_age_limit.end, //女-年龄-结束
+      orderId: '' //TODO修改订单/创建订单
+    };
+    if(newObject.sexGroup === 'LIMIT'){
+      newObject.male = values.male;
+      newObject.female = values.female;
+    }
+    console.log('transform-value', newObject);
   };
 
   return (
@@ -66,9 +80,10 @@ const Requirement = () => {
             <View style={{ flex: 1, paddingHorizontal: 28}}>
               <View style={{flex: 1, flexDirection: 'row'}}>
                 <Field
-                  name="requireNumber"
+                  name="needNumber"
                   label="需求人数"
                   maxLength={4}
+                  isRequire
                   component={SingleInput}
                   inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>人</Text>}
                   selectTextOnFocus
@@ -78,13 +93,14 @@ const Requirement = () => {
                 </TouchableOpacity>
               </View>
               <Field
-                name="sex"
+                name="sexGroup"
                 label="性别"
+                isRequire
                 radioList={FEMALE_LIMIT}
                 validate={value => {
                   let errMsg = '';
                   if(value.length){
-                    if(value[0].value === 'LIMIT' && values.requireNumber.length === 0){
+                    if(value[0].value === 'LIMIT' && values.needNumber.length === 0){
                       return errMsg = '请先输入需求人数';
                     }
                   }
@@ -92,17 +108,25 @@ const Requirement = () => {
                 }}
                 component={RadioSelect}
               />
-              {values.sex.length && values.sex[0].value === 'LIMIT' ? <View style={{flex: 1, flexDirection: 'row'}}>
+              {values.sexGroup.length && values.sexGroup[0].value === 'LIMIT' ? <View style={{flex: 1, flexDirection: 'row'}}>
                 <Field
                   name="male"
                   label="比例（男）"
                   keyboardType="numeric"
+                  placeholder="输入比例"
+                  isRequire
                   multiline={false}
                   numberOfLines={1}
                   validate={value => {
                     let errMsg = '';
-                    if(Number(value) > Number(values.requireNumber)){
-                      errMsg = '不能大于需求人数';
+                    if(Number(value) > Number(values.needNumber)){
+                      return errMsg = '不能大于需求人数';
+                    }
+                    if(Number(value) + Number(values.female) !== Number(values.needNumber)){
+                      return errMsg = '男女比例不等于需求人数';
+                    }
+                    if(values.sexGroup[0].value === 'LIMIT' && !value.length){
+                      return errMsg = '请输入比例（男）';
                     }
                     return errMsg;
                   }}
@@ -113,12 +137,20 @@ const Requirement = () => {
                   name="female"
                   label="比例（女）"
                   keyboardType="numeric"
+                  placeholder="输入比例"
+                  isRequire
                   multiline={false}
                   numberOfLines={1}
                   validate={value => {
                     let errMsg = '';
-                    if(Number(value) > Number(values.requireNumber)){
+                    if(Number(value) > Number(values.needNumber)){
                       return errMsg = '不能大于需求人数';
+                    }
+                    if(Number(value) + Number(values.male) !== Number(values.needNumber)){
+                      return errMsg = '男女比例不等于需求人数';
+                    }
+                    if(values.sexGroup[0].value === 'LIMIT' && !value.length){
+                      return errMsg = '请输入比例（女）';
                     }
                     return errMsg;
                   }}
@@ -130,6 +162,7 @@ const Requirement = () => {
                 label="年龄（男）"
                 keyboardType="numeric"
                 maxLength={2}
+                isRequire
                 inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>岁</Text>}
                 component={OrderRangeInput}
                 placeholder={{
@@ -142,6 +175,7 @@ const Requirement = () => {
                 label="年龄（女）"
                 keyboardType="numeric"
                 maxLength={2}
+                isRequire
                 inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>岁</Text>}
                 component={OrderRangeInput}
                 placeholder={{

@@ -19,6 +19,7 @@ const SingleSelect = ({
   type = '', //单选表单组件：提供几个基础模式：企业，门店，不需要模式也可以在外部传入selectList。
   filterStore = false, //type为store的时候需要对列表进行筛选。
   showLabel = true,
+  isRequire = false,
   labelStyle,
   canSearch = true, //默认可以搜索
   ...rest
@@ -127,7 +128,9 @@ const SingleSelect = ({
   return (
     <View style={[{flex: 1}, styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}]}>
       <View style={styles.container}>
-        {showLabel ? <Text style={[styles.labelText, labelStyle]}>{label}：</Text> : <></>}
+        {showLabel ? <Text style={[styles.labelText, labelStyle]}>
+          {isRequire && <Text style={{color: 'red'}}>*</Text>}
+          {label}：</Text> : <></>}
         <View style={{flex: 1}}>
           <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
             {field.value && <>

@@ -15,37 +15,37 @@ import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE } from "../../../../../..
 
 const validationSchema = Yup.object().shape({
   orderName: Yup.string().required('请输入订单名称'),
-  factory: Yup.array().min(1, '请选择用工企业'),
-  job: Yup.array().min(1, '请选择岗位'),
-  jobType: Yup.array().min(1, '请选择工种'),
+  organizeId: Yup.array().min(1, '请选择用工企业'),
+  post: Yup.array().min(1, '请选择岗位'),
+  profession: Yup.array().min(1, '请选择工种'),
   orderRangeDate: Yup.object({
     startDate: Yup.string().required('请选择订单开始日期'),
     endDate: Yup.string().required('请选择订单结束日期')
   }),
   orderDuration: Yup.string().required('请选择订单工期'),
-  jobOrder: Yup.string().required('请输入职位顺序'),
+  postSequence: Yup.string().required('请输入职位顺序'),
   complexSalary: Yup.object({
     start: Yup.string().required('请输入起始薪资'),
     end: Yup.string().required('请输入结束薪资')
   }),
   pictureList: Yup.array().min(1, '请选择职位展示图片'),
-  littleProgramTitle: Yup.string().required('请输入小程序职位标题'),
-  littleProgramSalaryDetail: Yup.string().required('请输入小程序薪资详情文本'),
+  showTitle: Yup.string().required('请输入小程序职位标题'),
+  salaryTitle: Yup.string().required('请输入小程序薪资详情文本'),
 });
 
 //默认的图片列表；
 const normalImg = {
-  name: 'normal.jpg',
-  type: "multipart/form-data",
-  uri: '../../../../../../assets/images/order_normal_img.jpg'
+  name: 'default_Image_Of_Order_In_Mobile.jpg',
+  fileKey: 'laborMgt/labor/20221013ce50d5a94b4b46dfaf6cb04a.jpg',
+  url: 'https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/20221013b5750f9af18d46149a35dbdf.jpg?Expires=1665646187&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=FKBxl%2F3V095AayqknlQG3XySsyY%3D'
 };
 
 const initialValues = {
   orderName: '',
-  factory: [],
-  jobOrder: '',
-  job: [],
-  jobType: [],
+  organizeId: [],
+  postSequence: '',
+  post: [],
+  profession: [],
   orderRangeDate: {
     startDate: '',
     endDate: ''
@@ -56,8 +56,8 @@ const initialValues = {
     end: ''
   },
   pictureList: [normalImg],
-  littleProgramTitle: '',
-  littleProgramSalaryDetail: ''
+  showTitle: '',
+  salaryTitle: ''
 };
 
 const OrderInfo = () => {
@@ -66,7 +66,25 @@ const OrderInfo = () => {
   const detailOnPress = () => setShowDetail(!showDetail);
 
   const onSubmit = async (values) => {
-    console.log('提交表单', values)
+    console.log('origin-values', values);
+    const newObject = {
+      salaryStart: values.complexSalary.start, //综合薪资-开始
+      salaryEnd: values.complexSalary.end, //综合薪资-结束
+      recruitStart: values.orderRangeDate.startDate, //订单日期-开始
+      recruitEnd: values.orderRangeDate.endDate, //订单日期-结束
+      organizeId: values.organizeId[0].value, //用工企业
+      post: values.post[0].value, //岗位
+      profession: values.profession[0].value, //工种
+      salaryTitle: values.salaryTitle, //小程序薪资详情
+      showTitle: values.showTitle, //小程序职位标题
+      orderDuration: values.orderDuration, //订单工期
+      orderName: values.orderName, //订单名称
+      postSequence: values.postSequence, //职位顺序
+      positionImages: values.pictureList, //职位展示图片
+      self: true, //自招（固定字段）
+      orderId: '' //TODO修改订单/创建订单
+    };
+    console.log('transform-value', newObject);
   };
 
   return (
@@ -91,6 +109,7 @@ const OrderInfo = () => {
                   <Field
                     name="orderName"
                     label="订单名称"
+                    isRequire
                     component={SingleInput}
                     inputStyle={{flex: 1}}
                     selectTextOnFocus
@@ -101,14 +120,16 @@ const OrderInfo = () => {
                 </View>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <Field
-                    name="factory"
+                    name="organizeId"
                     label="用工企业"
                     type="factory"
+                    isRequire
                     component={SingleSelect}
                   />
                   <Field
-                    name="jobOrder"
+                    name="postSequence"
                     label="职位顺序"
+                    isRequire
                     placeholder="输入"
                     keyboardType="numeric"
                     multiline={false}
@@ -119,14 +140,16 @@ const OrderInfo = () => {
                   />
                 </View>
                 <Field
-                  name="job"
+                  name="post"
                   label="岗位"
+                  isRequire
                   radioList={CREATE_ORDER_JOB_ORDER}
                   component={RadioSelect}
                 />
                 <Field
-                  name="jobType"
+                  name="profession"
                   label="工种"
+                  isRequire
                   canSearch={false}
                   selectList={CREATE_ORDER_JOB_TYPE}
                   component={SingleSelect}
@@ -134,17 +157,20 @@ const OrderInfo = () => {
                 <Field
                   name="orderRangeDate"
                   label="订单日期"
+                  isRequire
                   component={OrderRangeDate}
                 />
                 <Field
                   name="orderDuration"
                   label="订单工期"
+                  isRequire
                   component={OrderSingleDate}
                 />
                 <Field
                   name="complexSalary"
                   label="综合薪资"
                   maxLength={5}
+                  isRequire
                   keyboardType="numeric"
                   inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>¥</Text>}
                   component={OrderRangeInput}
@@ -152,21 +178,24 @@ const OrderInfo = () => {
                 <Field
                   name="pictureList"
                   label="职位展示图片"
+                  isRequire
                   component={SelectPhotos}
                 />
                 <Field
-                  name="littleProgramTitle"
+                  name="showTitle"
                   label="小程序职位标题"
                   selectTextOnFocus
+                  isRequire
                   component={SingleInput}
                 />
                 <Field
-                  name="littleProgramSalaryDetail"
+                  name="salaryTitle"
                   label="小程序薪资详情"
                   placeholder="请输入小程序薪资详情文本"
                   maxLength={200}
                   multiline
                   lengthLimit
+                  isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
                 />
