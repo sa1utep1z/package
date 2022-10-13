@@ -61,7 +61,6 @@ const HeaderSearch = ({
 
   const [companyList, setCompanyList] = useState([]);
   const [storeList, setStoreList] = useState([]);
-
   useEffect(() => {
     showSearch && startingAnimation();
     !showSearch && closeAnimation();

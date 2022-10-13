@@ -46,14 +46,9 @@ const EditComplaint = (props) => {
   const navigation = useNavigation();
   const { route: { params: { msg } } } = props;
   const toast = useToast();
-
-  const [storeList, setStoreList] = useState([]);
-  const [companyList, setCompanyList] = useState([]);
-  const [orderList, setOrderList] = useState([]);
   const [companyImage, setCompanyImage] = useState([]); // 企业图片
 
   useEffect(() => {
-    getCompaniesList();
     setFieldValue();
   }, [])
 
@@ -89,7 +84,7 @@ const EditComplaint = (props) => {
     data.append('file', file);
     console.log('选择图库照片data的值：', data);
     try {
-      const res = await CompanyApi.UploadImages(data)
+      const res = await ComplaintApi.UploadImages(data)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
         return;
@@ -154,25 +149,6 @@ const EditComplaint = (props) => {
     }
   };
 
-  const getCompaniesList = async () => {
-    try {
-      const res = await MyMembersApi.CompaniesList();
-      if (res.code !== SUCCESS_CODE) {
-        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      if (res.data.length) {
-        res.data.forEach((item, index) => {
-          item.title = item.label;
-          item.id = index + 1;
-        });
-        setCompanyList(res.data);
-      }
-    } catch (err) {
-      console.log('err', err);
-      toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
-    }
-  };
 
   return (
     <Formik
@@ -213,6 +189,7 @@ const EditComplaint = (props) => {
                 <Field
                   name="companyShortName"
                   title="企业简称"
+                  placeholder="无"
                   editable={false}
                   inputStyle={{ fontSize: 28 }}
                   component={FormItem}

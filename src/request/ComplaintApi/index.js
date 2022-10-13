@@ -1,6 +1,6 @@
 import httpRequest from '../httpRequest';
 
-const CompanyApi = {
+const ComplainApi = {
   AddComplaint: async (params) => await httpRequest.post('admin/app/feedback', params), //新增投诉建议
   ComplaintList: async (params) => await httpRequest.post('admin/app/feedback/list', params), // 获取投诉列表
   ComplaintTotalList: async (params) => await httpRequest.post('admin/app/feedback/list/statistics', params), // 获取投诉数据统计
@@ -10,6 +10,8 @@ const CompanyApi = {
   BatchTransfer: async (params) => await httpRequest.post('admin/app/feedback/transfer/batch', params), // 批量转单
   GetCompanyInfo: async (feedbackId) => await httpRequest.get(`admin/app/feedback/${feedbackId}`), // 获取反馈详情
   GetUserList: async () => await httpRequest.get('/common/user/detail/forSelect'), // 获取用户数据
+  MemberDetail: async (poolId) => await httpRequest.get(`admin/app/memberPool/${poolId}`), // 获取会员信息
+  OrderInfo: async(applyId) => await httpRequest.get(`admin/app/resignApply/${applyId}/orderInfo`), // 订单详情
   UploadImages: async (prams) => await httpRequest.post('/admin/file/upload', prams,  // 上传照片
     {
       headers: {
@@ -18,4 +20,4 @@ const CompanyApi = {
     }),
 }
 
-export default CompanyApi;
+export default ComplainApi;

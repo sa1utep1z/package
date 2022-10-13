@@ -17,6 +17,7 @@ import { deepCopy, getYMD } from '../../../../../utils';
 import UserSelect from '../UserSelect'
 import { isDateNumber } from '../../../../../utils/validate';
 import { CityData } from '../../../../../assets/City';
+import NAVIGATION_KEYS from '../../../../../navigator/key';
 import MobileInput from "../../../../../components/OrderForm/MobileInput";
 import { SUCCESS_CODE, SITSTAND, DRESS, COMPANY_SHIFT, MICROSCOPE, DORMITORY, COMPANY_FOOD, COMPANY_PHONE, COMPANY_LINE, COMPANY_IDCARD, COMPANY_ENGLISH, TATTOOSMOKE, RETURNFACTORY, STUDENTPROVE, BACKGROUND, COMPANYNATIONALITY, COMPANY_SCALE, COMPANY_TYPE, COMPANY_INDUSTRY } from '../../../../../utils/const';
 
@@ -64,27 +65,6 @@ const BusinessAdd = (props) => {
   const [cityValue, setCityValue] = useState([]); // 选择的城市数据
   const [addTags, setAddTags] = useState(true); // 添加标签显隐
   const [selected, setSelected] = useState([]); //地区选择数组
-  const [contactFields, setContactFields] = useState([
-    {
-      userId: '',
-      userName: '',
-      mobile: '',
-    },
-  ]); // 驻场对接人
-  const [businessFields, setBusinessFields] = useState([
-    {
-      userId: '',
-      userName: '',
-      mobile: '',
-    },
-  ]); // 商务对接人
-  const [financesFields, setFinancesFields] = useState([
-    {
-      userId: '',
-      userName: '',
-      mobile: '',
-    },
-  ]); // 财务对接人
 
   const initialValues = {
     companyName: '',
@@ -135,9 +115,9 @@ const BusinessAdd = (props) => {
     shiftCategory: 'SHIFT_CATEGORY_LONG',
   };
 
-  useEffect(() => {
-    restForm.resetForm(initialValues);
-  }, [])
+
+  // 跳转返回企业首页
+  const goBackBusiness = () => navigation.navigate(NAVIGATION_KEYS.BUSINESS_MANAGE);
 
   // 获取默认企业图片
   const getImage = async () => {
@@ -342,6 +322,7 @@ const BusinessAdd = (props) => {
         return;
       }
       toast.show('新建企业成功');
+      goBackBusiness();
       console.log('保存提交成功：', params);
     } catch (error) {
       console.log('errorerrorerrorerrorerrorerror', error)

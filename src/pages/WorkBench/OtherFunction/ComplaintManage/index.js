@@ -8,8 +8,8 @@ import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButt
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
-import FormTransfer from "../../../../components/NormalDialog/FormTransfer";
 import FormComplaintDetail from "../../../../components/NormalDialog/FormComplaintDetail";
+import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
 import StatusChangeInInterviewList from "../../../../components/NormalDialog/StatusChangeInInterviewList";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
@@ -17,6 +17,7 @@ import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
 import ComplaintApi from "../../../../request/ComplaintApi";
 import { SUCCESS_CODE, TYPERESULT, TAB_OF_LIST } from "../../../../utils/const";
+import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 import { replaceMobile } from "../../../../utils";
 import Clipboard from '@react-native-clipboard/clipboard';
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
@@ -66,6 +67,7 @@ const ComplaintManage = () => {
       headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
+    clearRangeDate();
     return () => dispatch(setTabName(''));
   }, [])
 
@@ -77,6 +79,12 @@ const ComplaintManage = () => {
       msg: values,
     })
   }
+
+  //每次进入页面的时候都清空顶部时间筛选值
+  const clearRangeDate = () => {
+    dispatch(setStartDate(''));
+    dispatch(setEndDate(''));
+  };
 
   useEffect(() => {
     timer && clearTimeout(timer);
@@ -145,9 +153,10 @@ const ComplaintManage = () => {
       companyIds: searchContent?.companyIds || [],
       storeIds: searchContent?.storeIds || [],
       recruitIds: searchContent?.recruitIds || [],
-      startDate: searchContent?.startDate || '',
-      endDate: searchContent?.endDate || '',
+      createDateStart: searchContent?.startDate || '',
+      createDateEnd: searchContent?.endDate || '',
       str: searchContent?.str || '',
+      type: searchContent?.type || '',
       role
     };
     try {
@@ -157,7 +166,26 @@ const ComplaintManage = () => {
         return;
       }
       setTabNumberList(res.data);
-      console.log('打印全部数量：', res)
+      console.log('打印全部数量：', res, params)
+    } catch (err) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  // 会员信息
+  const memberDetailOnPress = async (msg) => {
+    const poolId = msg?.memberPoolId;
+    try {
+      const res = await ComplaintApi.MemberDetail(poolId);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`请求失败，请稍后重试。${data?.msg}`, { type: 'danger' });
+        return;
+      }
+      dialogRef.current.setShowDialog(true);
+      setDialogContent({
+        dialogTitle: '会员信息',
+        dialogComponent: <MemberDetail memberInfoList={res.data} />,
+      });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -192,17 +220,21 @@ const ComplaintManage = () => {
     }
   }
 
+  const copyFun = (value) => {
+    console.log('是否拿到值：', value);
+  }
 
   //复制文本
   const _handleClipboardContent = async () => {
+    console.log('你点击了！！！！！')
     //设置内容到剪贴板
-    Clipboard.setString('复制的内容。。。。。');
-    //从剪贴板获取内容
-    Clipboard.getString().then((content) => {
-      toast.show('复制成功');
-    }, (error) => {
-      console.log('error:' + error);
-    })
+    // Clipboard.setString('复制的内容。。。。。');
+    // //从剪贴板获取内容
+    // Clipboard.getString().then((content) => {
+    //   toast.show('复制成功');
+    // }, (error) => {
+    //   console.log('error:' + error);
+    // })
   };
 
   // 查看投诉详情
@@ -219,7 +251,7 @@ const ComplaintManage = () => {
       setDialogContent({
         dialogTitle: '投诉反馈详情',
         dialogComponent: <FormComplaintDetail memberInfoList={res.data} />,
-        confirmText: '一键复制'
+        confirmText: '一键复制',
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -257,22 +289,25 @@ const ComplaintManage = () => {
   }, []);
 
   const filter = (values) => {
-    const startDate = values.dateRange.startDate;
-    const endDate = values.dateRange.endDate;
+    console.log('打印筛选框的值：', values);
+    const createDateStart = values.dateRange.startDate;
+    const createDateEnd = values.dateRange.endDate;
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
     const str = values.search;
+    const type = values.type.length ? values.type[0].value : '';
 
     setSearchContent({
       ...searchContent,
       ...firstPage,
-      startDate,
-      endDate,
+      createDateStart,
+      createDateEnd,
       str,
       companyIds,
       storeIds,
-      recruitIds
+      recruitIds,
+      type
     });
   };
 
@@ -332,27 +367,29 @@ const ComplaintManage = () => {
           <View style={styles.titleArea}>
             <Text style={styles.text}>会员姓名：</Text>
           </View>
-          <Text style={styles.text}>{item.userName || '无'}</Text>
+          <TouchableOpacity onPress={() => memberDetailOnPress(item)}>
+            <Text style={[styles.text, { color: '#409EFF' }]}>{item.userName || '无'}</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.textArea}>
           <View style={styles.titleArea}>
             <Text style={styles.text}>手机号码：</Text>
           </View>
           <TouchableOpacity onPress={() => callPhone(item)}>
-            <Text style={[styles.text, { color: '#409EFF' }]}>{item.mobile}</Text>
+            <Text style={[styles.text, { color: '#409EFF' }]}>{item.mobile || '无'}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.textArea}>
           <View style={styles.titleArea}>
             <Text style={styles.text}>身份证号：</Text>
           </View>
-          <Text style={styles.text}>{item.idNo}</Text>
+          <Text style={styles.text}>{item.idNo || '无'}</Text>
         </View>
         <View style={styles.textArea}>
           <View style={styles.titleArea}>
             <Text style={styles.text}>企业名称：</Text>
           </View>
-          <Text style={styles.text}>{item.companyShortName}</Text>
+          <Text style={styles.text}>{item.companyShortName || '无'}</Text>
         </View>
         <View style={styles.textArea}>
           <View style={styles.titleArea}>
@@ -404,6 +441,8 @@ const ComplaintManage = () => {
         startText="开始日期："
         endText="结束日期："
         typeResult
+        clearRangeDate
+        singleSelect
       />
       <CenterSelectDate />
       <View style={styles.tab_containerStyle}>
@@ -465,7 +504,7 @@ const ComplaintManage = () => {
                         containerStyle={styles.buttonContainerStyle}
                       />
                       <Button
-                        title="保存提交"
+                        title="保存"
                         onPress={handleSubmit}
                         buttonStyle={styles.comfirmStyle}
                         titleStyle={styles.comfirmText}

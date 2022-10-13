@@ -13,7 +13,7 @@ const HeaderCenterSearch = ({routeParams}) => {
 
   //为什么需要将路由中的名字都写进数组呢？因为不同页面的顶部筛选开关控制路由位置/功能/样式不同，例如首页与名单的顶部筛选栏，但是通过顶部点击函数去修改展开/折叠状态的控件却是同一个，所以在这里就需要通过路由名称去检查展开或关闭函数的触发页面，再根据页面的不同去同步修改redux中的状态。
   const check = (name) => {
-    if(['INTERVIEW_LIST', 'LEAVING_LIST', 'SIGN_UP_LIST', 'WAIT_TO_ENTRY_LIST', 'NEWEST_STATE', 'MY_MEMBERS', 'DATA_STATISTICS', 'LEAVING_MANAGE', 'ORDER_MANAGE'].includes(name.toUpperCase())){
+    if(['INTERVIEW_LIST', 'LEAVING_LIST', 'SIGN_UP_LIST', 'WAIT_TO_ENTRY_LIST', 'NEWEST_STATE', 'MY_MEMBERS', 'DATA_STATISTICS', 'LEAVING_MANAGE', 'ORDER_MANAGE', 'COMPLAINT_FEEDBACK', 'ADVANCE_MANAGE'].includes(name.toUpperCase())){
       return 'list';
     }else if (['HOME'].includes(name.toUpperCase())){
       return 'home';

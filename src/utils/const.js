@@ -155,6 +155,12 @@ export const TAB_OF_LIST = {
     { title: '处理中', type: 'PROCESSING' },
     { title: '已结案', type: 'END' },
   ],
+  ADVANCE_LIST: [
+    { title: '全部', type: 'total' },
+    { title: '审核中', type: 'pending' },
+    { title: '拒绝', type: 'fail' },
+    { title: '通过', type: 'pass' }
+  ],
 };
 
 export const CHANGING_STAGE_LIST_IN_DIALOG = [
@@ -476,6 +482,15 @@ export const NEWEST_STATE_LIST_HEAD = [
   { title: '企业' },
   { title: '两卡' },
   { title: '打卡记录' },
+  { title: '状态' },
+  { title: '来源' }
+];
+
+export const ADVANCE_STATE_LIST_HEAD = [
+  { title: '姓名' },
+  { title: '企业' },
+  { title: '门店' },
+  { title: '金额' },
   { title: '状态' },
   { title: '来源' }
 ];

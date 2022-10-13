@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
@@ -10,13 +10,14 @@ import { getYMD } from "../../../../utils";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
 
 const PickerOfDateRange = ({
-    field, 
-    form, 
-    clearTimer = true, //时间组件默认支持清空
-    startText,
-    endText,
-    ...rest
-  }) => {
+  field,
+  form,
+  clearTimer = true, //时间组件默认支持清空
+  startText,
+  endText,
+  showTimer = true, //默认初始日期显示今天
+  ...rest
+}) => {
   const toast = useToast();
   const dispatch = useDispatch();
 
@@ -27,9 +28,9 @@ const PickerOfDateRange = ({
   const [type, setType] = useState('start');
 
   //外部通过其他组件传进来的时间范围一旦发生改变，就主动修改组件内部的起始/结束日期。
-  useEffect(()=>{
+  useEffect(() => {
     const formRangeDate = {
-      startDate: rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '', 
+      startDate: rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '',
       endDate: rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : ''
     };
     form.setFieldValue(field.name, formRangeDate);
@@ -47,12 +48,12 @@ const PickerOfDateRange = ({
   const dateChange = (event, selectedDate) => {
     setModalVisible(false);
     //清空
-    if(event.type === 'neutralButtonPressed'){
-      if(type === 'start'){
+    if (event.type === 'neutralButtonPressed') {
+      if (type === 'start') {
         dispatch(setStartDate(''));
         return;
       }
-      if(type === 'end'){
+      if (type === 'end') {
         dispatch(setEndDate(''));
         return;
       }
@@ -62,16 +63,16 @@ const PickerOfDateRange = ({
     const currentDateText = getYMD(currentDate);
     const startDate = moment(rangeDate.startDate).format('YYYY-MM-DD');
     const endDate = moment(rangeDate.endDate).format('YYYY-MM-DD');
-    switch(type){
-      case 'start': 
-        if(currentDateText > endDate){
+    switch (type) {
+      case 'start':
+        if (currentDateText > endDate) {
           toast.show(`开始日期不能晚于结束日期！`, { type: 'warning' });
           return;
         }
         dispatch(setStartDate(moment.utc(selectedDate)));
         return;
       case 'end':
-        if(currentDateText < startDate){
+        if (currentDateText < startDate) {
           toast.show(`结束日期不能早于开始日期！`, { type: 'warning' });
           return;
         }
@@ -81,13 +82,13 @@ const PickerOfDateRange = ({
   };
 
   const clearStart = () => {
-    if(rangeDate.startDate){
+    if (rangeDate.startDate) {
       dispatch(setStartDate(''));
     }
   };
 
   const clearEnd = () => {
-    if(rangeDate.endDate){
+    if (rangeDate.endDate) {
       dispatch(setEndDate(''));
     }
   };
@@ -100,36 +101,36 @@ const PickerOfDateRange = ({
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
               <AntDesign
-                name='calendar' 
+                name='calendar'
                 size={30}
                 color={rangeDate.startDate ? '#333333' : '#999999'}
               />
-              <Text style={[styles.font, rangeDate.startDate && {color: '#333333'}]}>{rangeDate.startDate ? moment(rangeDate.startDate).format('MM-DD') : '无'}</Text>
+              <Text style={[styles.font, rangeDate.startDate && { color: '#333333' }]}>{rangeDate.startDate ? moment(rangeDate.startDate).format('MM-DD') : '无'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.iconStyle, !rangeDate.startDate && {opacity: 0}]} onPress={clearStart}>
+            <TouchableOpacity style={[styles.iconStyle, !rangeDate.startDate && { opacity: 0 }]} onPress={clearStart}>
               <AntDesign
-                name='closecircle' 
+                name='closecircle'
                 size={30}
                 color='#999999'
               />
             </TouchableOpacity>
           </View>
-        </View> 
-        <View style={{width: 40}}></View>
+        </View>
+        <View style={{ width: 40 }}></View>
         <View style={styles.datePicker}>
           <Text style={styles.title}>{endText || '报名结束：'}</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
               <AntDesign
-                name='calendar' 
+                name='calendar'
                 size={30}
                 color={rangeDate.endDate ? '#333333' : '#999999'}
               />
-              <Text style={[styles.font, rangeDate.endDate && {color: '#333333'}]}>{rangeDate.endDate ? moment(rangeDate.endDate).format('MM-DD') : '无'}</Text>
+              <Text style={[styles.font, rangeDate.endDate && { color: '#333333' }]}>{rangeDate.endDate ? moment(rangeDate.endDate).format('MM-DD') : '无'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.iconStyle, !rangeDate.endDate && {opacity: 0}]} onPress={clearEnd}>
+            <TouchableOpacity style={[styles.iconStyle, !rangeDate.endDate && { opacity: 0 }]} onPress={clearEnd}>
               <AntDesign
-                name='closecircle' 
+                name='closecircle'
                 size={30}
                 color='#999999'
               />
@@ -137,9 +138,9 @@ const PickerOfDateRange = ({
           </View>
         </View>
       </View>
-      {modalVisible && <DateTimePicker 
-        value={dateTime} 
-        onChange={dateChange} 
+      {modalVisible && <DateTimePicker
+        value={dateTime}
+        onChange={dateChange}
         neutralButtonLabel={clearTimer ? '清除' : ''}
       />}
     </>
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   pickerTouchable: {
     flex: 1,
     height: '100%',
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center'
   },
   font: {
@@ -171,8 +172,8 @@ const styles = StyleSheet.create({
     fontSize: 28
   },
   iconStyle: {
-    height: '100%', 
-    justifyContent: 'center', 
+    height: '100%',
+    justifyContent: 'center',
     paddingHorizontal: 10
   },
   title: {
@@ -183,8 +184,8 @@ const styles = StyleSheet.create({
   pressArea: {
     flex: 1,
     height: '100%',
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingLeft: 20,
     backgroundColor: '#fff',
     borderRadius: 10

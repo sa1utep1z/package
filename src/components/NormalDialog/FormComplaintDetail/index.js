@@ -27,6 +27,10 @@ const FormComplaintDetail = ({
     { type: 'imgs', title: '上传照片', value: [] },
   ]);
 
+  const copyFun = (value) => {
+    console.log('复制的值：', value);
+  }
+
   useMemo(() => {
     const copyList = deepCopy(showList);
     for (let key in memberInfoList) {
@@ -44,6 +48,9 @@ const FormComplaintDetail = ({
             case 'jobDate':
               findItem.value = memberInfoList[key] ? moment(memberInfoList[key]).format('YYYY-MM-DD') : '无';
               break;
+            case 'jobOn':
+              findItem.value = memberInfoList[key] ? memberInfoList[key] === true ? '是' : '否' : '无';
+              break;
             default:
               findItem.value = memberInfoList[key];
               break;
@@ -53,16 +60,22 @@ const FormComplaintDetail = ({
     }
     setShowList(copyList);
     console.log('打印数据格式4444：', copyList);
+    let arr = [];
+    for (let key in copyList) {
+      console.log('打印遍历的数据：', copyList[key].title, copyList[key].value);
+      arr.push([copyList[key].title, copyList[key].value])
+    }
+    const newArr = arr.join('、');
+    console.log('newArrnewArrnewArrnewArrnewArrs', newArr)
+    copyFun(newArr);
   }, [memberInfoList])
 
   const callPhone = (item) => {
     Linking.openURL(`tel:${item.value}`);
   };
-
-  const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'));
-  console.log('打印数据格式1111：', newDate);
-  console.log('打印数据格式2222：', showList);
   console.log('打印数据格式3333：', memberInfoList);
+  const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'));
+
   return (
     <ScrollView style={styles.msgArea}>
       <View style={styles.topArea}>
