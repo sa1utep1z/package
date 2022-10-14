@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platfor
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
+import { useToast } from "react-native-toast-notifications";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
@@ -11,7 +12,8 @@ import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
-import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE } from "../../../../../../utils/const";
+import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE, SUCCESS_CODE } from "../../../../../../utils/const";
+import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 
 const validationSchema = Yup.object().shape({
   orderName: Yup.string().required('请输入订单名称'),
@@ -36,8 +38,8 @@ const validationSchema = Yup.object().shape({
 //默认的图片列表；
 const normalImg = {
   name: 'default_Image_Of_Order_In_Mobile.jpg',
-  fileKey: 'laborMgt/labor/20221013ce50d5a94b4b46dfaf6cb04a.jpg',
-  url: 'https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/20221013b5750f9af18d46149a35dbdf.jpg?Expires=1665646187&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=FKBxl%2F3V095AayqknlQG3XySsyY%3D'
+  fileKey: 'laborMgt/labor/normal.jpg.jpg',
+  url: 'https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/normal.jpg.jpg'
 };
 
 const initialValues = {
@@ -55,21 +57,41 @@ const initialValues = {
     start: '',
     end: ''
   },
-  pictureList: [normalImg],
+  pictureList: [],
   showTitle: '',
   salaryTitle: ''
 };
 
-const OrderInfo = () => {
+const OrderInfo = ({
+  setOrderId
+}) => {
+  const toast = useToast();
+
   const [showDetail, setShowDetail] = useState(true);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
+  const CreateOrderInfo = async(params) => {
+    console.log('CreateOrderInfo->params', params);
+    try {
+      const res = await CreateOrderApi.CreateBasicOrder(params);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('订单保存成功！', {type: 'success'});
+      setOrderId('哈哈哈');
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }
+  };
+
   const onSubmit = async (values) => {
     console.log('origin-values', values);
     const newObject = {
-      salaryStart: values.complexSalary.start, //综合薪资-开始
-      salaryEnd: values.complexSalary.end, //综合薪资-结束
+      salaryStart: Number(values.complexSalary.start), //综合薪资-开始
+      salaryEnd: Number(values.complexSalary.end), //综合薪资-结束
       recruitStart: values.orderRangeDate.startDate, //订单日期-开始
       recruitEnd: values.orderRangeDate.endDate, //订单日期-结束
       organizeId: values.organizeId[0].value, //用工企业
@@ -79,12 +101,12 @@ const OrderInfo = () => {
       showTitle: values.showTitle, //小程序职位标题
       orderDuration: values.orderDuration, //订单工期
       orderName: values.orderName, //订单名称
-      postSequence: values.postSequence, //职位顺序
+      postSequence: Number(values.postSequence), //职位顺序
       positionImages: values.pictureList, //职位展示图片
       self: true, //自招（固定字段）
       orderId: '' //TODO修改订单/创建订单
     };
-    console.log('transform-value', newObject);
+    CreateOrderInfo(newObject);
   };
 
   return (

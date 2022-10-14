@@ -11,8 +11,9 @@ import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import MultiSelect from "../../../../../../components/OrderForm/MultiSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
-import { CONDITIONS_LIST, REWARD_MODE } from "../../../../../../utils/const";
+import { CONDITIONS_LIST, REWARD_MODE, SUCCESS_CODE } from "../../../../../../utils/const";
 import { deepCopy } from "../../../../../../utils";
+import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 
 let restForm;
 const today = moment().format('YYYY-MM-DD');
@@ -43,7 +44,9 @@ const initialValues = {
 };
 
 // 招聘员提成说明
-const CommissionDescription = () => {
+const CommissionDescription = ({
+  orderId = '634769ea452c5b76a655cd20',
+}) => {
   const toast = useToast();
 
   const [showDetail, setShowDetail] = useState(true);
@@ -91,8 +94,27 @@ const CommissionDescription = () => {
     })
   };
 
+  const CreateOrder = async(params) => {
+    console.log('CreateOrder->params', params);
+    try {
+      const res = await CreateOrderApi.CommissionDescription(params, orderId);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存成功！', {type: 'success'});
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }
+  };
+
   const onSubmit = async (values) => {
     console.log('origin-values', values);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
     const newObject = {
       mode: values.mode[0].value,
       data: []
@@ -126,7 +148,7 @@ const CommissionDescription = () => {
         })
       }
     }
-    console.log('newObject', newObject);
+    CreateOrder(newObject);
   };
 
   return (

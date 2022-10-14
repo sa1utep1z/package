@@ -3,11 +3,13 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
+import { useToast } from "react-native-toast-notifications";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import OrderRangeInput from "../../../../../../components/OrderForm/OrderRangeInput";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
-import { FEMALE_LIMIT } from "../../../../../../utils/const";
+import { FEMALE_LIMIT, SUCCESS_CODE } from "../../../../../../utils/const";
+import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 
 const validationSchema = Yup.object().shape({
   needNumber: Yup.string().required('请输入需求人数'),
@@ -37,13 +39,36 @@ const initialValues = {
   }
 };
 
-const Requirement = () => {
+const Requirement = ({
+  orderId = '634769ea452c5b76a655cd20'
+}) => {
+  const toast = useToast();
+
   const [showDetail, setShowDetail] = useState(true);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
+  const CreateOrder = async(params) => {
+    console.log('CreateOrder->params', params);
+    try {
+      const res = await CreateOrderApi.RequirementOrder(params);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存成功！', {type: 'success'});
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }
+  };
+
   const onSubmit = (values) => {
     console.log('origin-values', values);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
     const newObject = {
       needNumber: values.needNumber, //需求人数
       sexGroup: values.sexGroup[0].value, //性别
@@ -51,13 +76,13 @@ const Requirement = () => {
       maleAgeEnd: values.male_age_limit.end, //男-年龄-结束
       femaleAgeStart: values.female_age_limit.start, //女-年龄-起始
       femaleAgeEnd: values.female_age_limit.end, //女-年龄-结束
-      orderId: '' //TODO修改订单/创建订单
+      orderId
     };
     if(newObject.sexGroup === 'LIMIT'){
       newObject.male = values.male;
       newObject.female = values.female;
     }
-    console.log('transform-value', newObject);
+    CreateOrder(newObject);
   };
 
   return (

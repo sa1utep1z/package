@@ -4,14 +4,17 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import moment from "moment";
+import { useToast } from "react-native-toast-notifications";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
-import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST } from "../../../../../../utils/const";
+import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, SUCCESS_CODE } from "../../../../../../utils/const";
 import SettlementRules from "./SettlementRules";
 import {originRule} from './SettlementRules/const';
 import { deepCopy } from "../../../../../../utils";
+import transformFormValue from './SettlementRules/utils';
+import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 
 let restForm;
 const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
@@ -37,8 +40,11 @@ const initialValues = {
 
 // 会员工价详情
 const WagesDetail = ({
+  orderId = '634769ea452c5b76a655cd20',
   scrollRef
 }) => {
+  const toast = useToast();
+
   const [showDetail, setShowDetail] = useState(true);
   const [rulesList, setRulesList] = useState([]);
 
@@ -89,6 +95,41 @@ const WagesDetail = ({
     })
   };
 
+  const CreateSettlement = async(rules) => {
+    console.log('CreateOrder->rules', rules);
+    try {
+      const res = await CreateOrderApi.WageSettlement(rules, orderId);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存结算规则成功！', {type: 'success'});
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }
+  };
+
+  const CreateOrder = async(params, rulesArray) => {
+    console.log('CreateOrder->params', params);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
+    try {
+      const res = await CreateOrderApi.WageDetail(params);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存成功！', {type: 'success'});
+      CreateSettlement(rulesArray);
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }
+  };
+
   const onSubmit = async (values) => {
     console.log('origin-values', values);
     const newObject = {
@@ -102,9 +143,12 @@ const WagesDetail = ({
       socialSecurity: values.socialSecurity, //购买社保
       leaveSalary: values.leaveSalary, //自离薪资
       memberAward: values.memberAward, //会员入职奖
-      remark: values.remark //备注说明
+      remark: values.remark, //备注说明
+      orderId
     };
-    console.log('transform-newObject', newObject);
+    const rulesArray = transformFormValue(rulesList, values); //获取会员结算规则；
+    console.log('rulesArray', rulesArray);
+    CreateOrder(newObject, rulesArray);
   };
 
   return (
@@ -156,7 +200,7 @@ const WagesDetail = ({
                   keyboardType="numeric"
                   maxLength={4}
                   component={SingleInput}
-                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.debtType[0].value === 'DAILY' ? '元/天' : values.debtType[0].value === 'WEEKLY' ? '周/天' : '月/天'}</Text>}
+                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.debtType[0].value === 'DAILY' ? '元/天' : values.debtType[0].value === 'WEEKLY' ? '元/周' : '元/月'}</Text>}
                 /> : <></>}
                 <Field  
                   name='eat'

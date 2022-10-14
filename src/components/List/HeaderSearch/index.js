@@ -45,6 +45,7 @@ const HeaderSearch = ({
   typeResult = false,
   batchOperate, // 批量操作函数
   leavingList = false,
+  noSearchInput = false, 
   clearRangeDate, //进入页面时不要筛选时间
   startText,
   endText,
@@ -191,7 +192,7 @@ const HeaderSearch = ({
           staffList = [];
         }
         return (
-          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }]}>
+          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }, noSearchInput && {marginBottom: 6}]}>
             {!noCompanyAndStatus && <View style={[{ flexDirection: 'row', marginBottom: 20 }, withoutCompanyFilter && { marginBottom: 0 }]}>
               {
                 companyShow && <Field
@@ -269,13 +270,13 @@ const HeaderSearch = ({
               endText={endText}
               component={DateRangePicker}
             />}
-            <Field
+            {!noSearchInput && <Field
               name="search"
               placeholder={placeholder ? placeholder : '请输入会员姓名、身份证或手机号码'}
               borderRadius={8}
               searchInputStyle={styles.searchInputStyle}
               component={SearchInput}
-            />
+            />}
           </Animated.View>
         )
       }}

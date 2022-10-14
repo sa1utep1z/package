@@ -146,8 +146,8 @@ export const TAB_OF_LIST = {
   ],
   ORDER_MANAGE: [
     { title: '全部', type: 'total' },
-    { title: '招聘中', type: 'hiring' },
-    { title: '停招', type: 'stopHiring' }
+    { title: '招聘中', type: 'ifShelf' },
+    { title: '停招', type: 'unShelf' }
   ],
   COMPLAINT_LIST: [
     { title: '全部', type: 'total' },
@@ -764,28 +764,36 @@ export const MEMBER_FEE_MODE = [
 //新建订单-会员工价详情-工价模式枚举值：
 export const FEE_WAY_MODE = {
   wagesAndSalary: [
-    { label: '工价', value: 'WORK_FEE' },
-    { label: '底薪', value: 'LOW_FEE' },
-    { label: '日薪', value: 'DAY_FEE' },
-    { label: '日结', value: 'DAY_END' }
+    { label: '工价', value: 'WAGE' },
+    { label: '底薪', value: 'BASIC_SALARY' },
+    { label: '日薪', value: 'DAY_SALARY' },
+    { label: '日结', value: 'DAY_SETTLEMENT' }
   ],
   differenceAndReturnMoney: [
-    { label: '返费', value: 'RETURN_FEE' },
-    { label: '差价', value: 'DISTANCE_FEE' },
-    { label: '补足', value: 'SUPPLEMENT_FEE' },
-    { label: '补贴', value: 'SUBSIDIES_FEE' },
-    { label: '稳岗', value: 'STABLE_WORK' }
+    { label: '返费', value: 'REBATE' },
+    { label: '差价', value: 'SPREAD' },
+    { label: '补足', value: 'FILL' },
+    { label: '补贴', value: 'SUBSIDY' },
+    { label: '稳岗', value: 'STABLE' }
   ]
 };
 
 export const FEE_WAY_NAME = {
-  'WORK_FEE': '元/小时',
-  'LOW_FEE': '元/月',
-  'DAY_FEE': '元/天',
-  'DAY_END': '元/天',
-  'RETURN_FEE': '元',
-  'DISTANCE_FEE': '元/小时',
-  'SUPPLEMENT_FEE': '元/小时',
-  'SUBSIDIES_FEE': '元/小时',
-  'STABLE_WORK': '元/小时'
+  'WAGE': '元/小时',
+  'BASIC_SALARY': '元/月',
+  'DAY_SALARY': '元/天',
+  'DAY_SETTLEMENT': '元/天',
+
+  'REBATE': '元',
+  'SPREAD': '元/小时',
+  'FILL': '元/小时',
+  'SUBSIDY': '元/小时',
+  'STABLE': '元/小时'
+};
+
+//订单管理-页面-工种；
+export const WORK_TYPE_NAME = {
+  'FORMAL_WORKER': '正式工',
+  'DISPATH_HOURLY_WORKER': '派遣工-小时工',
+  'DISPATH_EQUAL_PAY': '派遣工-同工同酬'
 };
