@@ -54,7 +54,7 @@ const AddComplaint = (props) => {
     data.append('file', file);
     console.log('选择图库照片data的值：', data);
     try {
-      const res = await ComplainApi.UploadImages(data)
+      const res = await ComplaintApi.UploadImages(data)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
         return;
@@ -63,7 +63,7 @@ const AddComplaint = (props) => {
       setCompanyImage([...companyImage, res.data]);
       restForm.setFieldValue('imgs', [...companyImage, res.data]);
     } catch (error) {
-      toast.show('识别失败，出现异常请联系管理员处理')
+      toast.show('上传，出现异常请联系管理员处理')
     }
   }
 

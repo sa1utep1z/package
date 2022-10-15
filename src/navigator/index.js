@@ -286,6 +286,13 @@ export default Navigator = () => {
           headerTitle: '预支审核',
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ADVANCE_AUDIT}
+        component={NAVIGATION_PAGES.ADVANCE_AUDIT}
+        options={{
+          headerTitle: '预支审核详情',
+        }}
+      />
     </>
   );
 

@@ -40,6 +40,7 @@ const NAVIGATION_KEYS = {
   COMPLAINT_ADD: 'complaint_add',
   COMPLAINT_EDIT: 'complaint_edit',
   ADVANCE_MANAGE: 'advance_manage',
+  ADVANCE_AUDIT: 'advance_audit',
 
   //商务企业管理
   BUSINESS_MANAGE: 'business_manage',
