@@ -7,18 +7,21 @@ import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Button } from '@rneui/themed';
 import { useToast } from "react-native-toast-notifications";
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
-import { openDialog } from "../../../../redux/features/PageDialog";
+import { openDialog, setTitle, setRightArea } from "../../../../redux/features/PageDialog";
 import { TAB_OF_LIST, SUCCESS_CODE, WORK_TYPE_NAME } from "../../../../utils/const";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import WaterMark from "../../../../components/WaterMark";
 import Question from "../../../../components/PageDialog/OrderMessage/Question";
+import OrderDetail from "../../../../components/PageDialog/OrderMessage/OrderDetail";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import Footer from '../../../../components/FlatList/Footer';
 import Empty from '../../../../components/FlatList/Empty';
 import CreateOrderApi from "../../../../request/CreateOrderApi";
+import HomeApi from '../../../../request/HomeApi';
 import { deepCopy } from "../../../../utils";
 
 let timer;
@@ -46,10 +49,6 @@ const OrderManage = () => {
   },[])
 
   useEffect(()=>{
-    console.log('searchContent!!!!!!!!!!!!!!', searchContent);
-  },[searchContent])
-
-  useEffect(()=>{
     console.log('searchContent', searchContent);
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
@@ -67,6 +66,7 @@ const OrderManage = () => {
   const [searchContent, setSearchContent] = useState({...firstPage});
 
   const showQuestion = () => {
+    dispatch(setTitle('温馨提示'));
     dispatch(openDialog(<Question />));
   };
 
@@ -96,15 +96,12 @@ const OrderManage = () => {
 
   const QueryOrderList = async(params) => {
     setListLoading(true);
-    params.recruit = index === 0 ? null : index === 1 ;
-    console.log('QueryOrderList -> params', params);
     try {
       const res = await CreateOrderApi.QueryOrderList(params);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      console.log('QueryOrderList -> data', res.data);
       setListData(res.data.content);
       setHasNext(res.data.hasNext);
     } catch (error) {
@@ -125,11 +122,7 @@ const OrderManage = () => {
     QueryOrderList(params);
   };
 
-  const createOrder = (type) => {
-    navigation.navigate(NAVIGATION_KEYS.CERATE_ORDER, {
-      type
-    });
-  };
+  const createOrder = (type, order) => navigation.navigate(NAVIGATION_KEYS.CERATE_ORDER, { type, orderId: order?.orderId});
 
   const CopyOrder = async(order) => {
     const params = {
@@ -165,14 +158,23 @@ const OrderManage = () => {
     }
   };
 
-  const StopOrder = async(order) => {
+  const changeOrder = async(order, ifShelf) => {
     try {
-      const res = await CreateOrderApi.StopOrder(order.orderId);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
+      if(ifShelf){
+        const res = await CreateOrderApi.StopOrder(order.orderId); //下架
+        if(res?.code !== SUCCESS_CODE){
+          toast.show(`${res?.msg}`, {type: 'danger'});
+          return;
+        }
+        toast.show('下架成功', {type: 'success'});
+      }else{
+        const res = await CreateOrderApi.onOrder(order.orderId); //上架
+        if(res?.code !== SUCCESS_CODE){
+          toast.show(`${res?.msg}`, {type: 'danger'});
+          return;
+        }
+        toast.show('上架成功', {type: 'success'});
       }
-      toast.show('暂停订单成功', {type: 'success'});
       refresh();
     } catch (error) {
       console.log('error', error);
@@ -195,6 +197,52 @@ const OrderManage = () => {
     }
   };
 
+  //一键复制
+  const _handleClipboardContent = async (content) => {
+    Clipboard.setString(content);
+    try {
+      const text = await Clipboard.getString();
+      console.log('text', text);
+      if(text){
+        toast.show('复制成功', {type: 'success'});
+      }
+    } catch (error) {
+      toast.show('复制成功', {type: 'danger'});
+      console.log('复制失败error', error);
+    }
+  };
+
+  const titleOnPress = async(order) => {
+    try {
+      const orderDetailRes = await HomeApi.orderDetail(order.orderId);
+      const orderTextRes = await HomeApi.orderTextDetail(order.orderId);
+      if(orderDetailRes?.code !== SUCCESS_CODE){
+        toast.show(`${orderDetailRes?.msg}`, {type: 'danger'});
+        return;
+      }
+      if(orderTextRes?.code !== SUCCESS_CODE){
+        toast.show(`${orderTextRes?.msg}`, {type: 'danger'});
+        return;
+      }
+      const orderData = {
+        orderName: orderDetailRes.data.orderName, 
+        recruitRange: orderDetailRes.data.recruitRange, 
+        orderPolicyDetail: orderDetailRes.data.orderPolicyDetail, 
+        orderTextDetail: orderTextRes.data
+      };
+      dispatch(setTitle('岗位信息'));
+      dispatch(openDialog(<OrderDetail orderData={orderData}/>));
+      dispatch(setRightArea({
+        title: '一键复制',
+        press: () => _handleClipboardContent(orderTextRes.data) 
+      }));
+    } catch (error) {
+      console.log('titleOnPress->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }
+    
+  };
+
   const deleteRow = (rowMap, rowKey) => {
     DeleteOrder(rowKey.item.orderId);
     console.log('rowMap', rowMap);
@@ -206,7 +254,13 @@ const OrderManage = () => {
 
   const selectIndex = (tab, index) => {
     setIndex(index);
-    setSearchContent({});
+    const params = {...searchContent};
+    if(index === 1){
+      params.recruit = true;
+    }else if(index === 2){
+      params.recruit = false;
+    }
+    QueryOrderList(params);
   };
 
   const renderItem = ({item}) => {
@@ -219,9 +273,9 @@ const OrderManage = () => {
               source={{uri: item.imageUrl || 'https://reactnative.dev/img/tiny_logo.png'}}
             />
             <View style={{flex: 1, height: 120}}>
-              <View style={{flex: 1}}>
+              <TouchableOpacity style={{flex: 1}} onPress={()=>titleOnPress(item)}>
                 <Text style={{fontSize: 32, color: '#409EFF'}}>{item.orderName}</Text>
-              </View>
+              </TouchableOpacity>
               <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
                 <Text style={{fontSize: 26, color: '#FF4040', marginRight: 5}}>{item.enterpriseName}</Text>
                 <Text style={{fontSize: 26, color: '#000000', marginHorizontal: 10}}>|</Text>
@@ -245,7 +299,7 @@ const OrderManage = () => {
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
                 <Text style={{fontSize: 20, color: '#ffffff', backgroundColor: '#409EFF', padding: 10, borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>{item.debitType === 'DAILY'? '日借支': item.debitType === 'WEEKLY' ? '周借支': item.debitType === 'MONTHLY' ? '月借支' : '借支'}</Text>
-                <Text style={{fontSize: 20, color: '#ffffff', backgroundColor: '#E6A042', padding: 10, borderTopRightRadius: 6, borderBottomRightRadius: 6}}>{item.debitLimit || '无'}</Text>
+                <Text style={{fontSize: 20, color: '#ffffff', backgroundColor: '#E6A042', padding: 10, borderTopRightRadius: 6, borderBottomRightRadius: 6}}>{`${item.debitLimit || '无'}${item.debitType === 'DAILY' ? '元/天' : item.debitType === 'WEEKLY' ? '元/周': item.debitType === 'MONTHLY' ? '元/月' : ''}`}</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'flex-end', marginRight: 20, flex: 1, justifyContent: 'center'}}>
                 <Text style={{fontSize: 26, color: '#333333'}}>创建日期：</Text>
@@ -259,12 +313,12 @@ const OrderManage = () => {
               <TouchableOpacity style={{padding: 10, backgroundColor: '#409EFF', borderRadius: 6, marginRight: 10}} onPress={()=>ContinueOrder(item)}>
                 <Text style={{fontSize: 20, color: '#ffffff'}}>续单</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{padding: 10, backgroundColor: '#409EFF', borderRadius: 6}} onPress={()=>StopOrder(item)}>
+              <TouchableOpacity style={{padding: 10, backgroundColor: item.ifShelf ? '#E6A042' : '#409EFF', borderRadius: 6}} onPress={()=>changeOrder(item, item.ifShelf)}>
                 <Text style={{fontSize: 20, color: '#ffffff' }}>{item.ifShelf ? '下架' : '上架'}</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity style={{width: 110, height: 110, position: 'absolute', right: 0, paddingHorizontal: 30, paddingTop: 30}} onPress={() => createOrder('change')}>
+          <TouchableOpacity style={{width: 110, height: 110, position: 'absolute', right: 0, paddingHorizontal: 30, paddingTop: 30}} onPress={() => createOrder('change', item)}>
             <View style={{width: 50, height: 50, backgroundColor: '#3F9EFE', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}>
               <AntDesign
                 name='right'
@@ -291,7 +345,16 @@ const OrderManage = () => {
     </TouchableOpacity>
   );
 
-  const refresh = () => QueryOrderList({...firstPage});
+  const refresh = () => {
+    const params = {...firstPage};
+    if(index === 1){
+      params.recruit = true;
+    }else if(index === 2){
+      params.recruit = false;
+    }
+    QueryOrderList(params);
+    getTypeList();
+  };
 
   const onEndReached = () => {
     if(hasNext){

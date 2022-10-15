@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -45,14 +45,77 @@ const initialValues = {
 
 // 招聘员提成说明
 const CommissionDescription = ({
-  orderId = '634769ea452c5b76a655cd20',
+  orderId = '',
 }) => {
   const toast = useToast();
 
   const [showDetail, setShowDetail] = useState(true);
   const [rulesList, setRulesList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(()=>{
+    if(orderId){
+      getCommissionOrder(orderId);
+      getCommissionListOrder(orderId);
+    }
+  },[orderId])
 
   const detailOnPress = () => setShowDetail(!showDetail);
+
+  const getCommissionOrder = async(orderId) => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getCommissionOrder(orderId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      restForm.setFieldValue('mode', res.data ? [REWARD_MODE.find(item => item.value === res.data)] : []);
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const getCommissionListOrder = async(orderId) => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getCommissionListOrder(orderId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      if(res.data.length){
+        let arr = [];
+        res.data.map((item, itemIndex) => {
+          arr.push({index: itemIndex + 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater});
+          const newValue = {};
+          newValue[`rule${itemIndex + 1}`] = {};
+          newValue[`rule${itemIndex + 1}`].orderRangeDate = {
+            startDate: moment(item.startDate).format('YYYY-MM-DD'),
+            endDate: moment(item.endDate).format('YYYY-MM-DD')
+          };
+          newValue[`rule${itemIndex + 1}`].store = item.storeIds;
+          newValue[`rule${itemIndex + 1}`].conditionsSetting = [CONDITIONS_LIST.find(condition => condition.value === item.condition.varComputerCode)];
+          newValue[`rule${itemIndex + 1}`].days = item.condition.constantValue;
+          newValue[`rule${itemIndex + 1}`].recruiter = String(item.result.recruiter);
+          newValue[`rule${itemIndex + 1}`].groupLeader = String(item.result.groupLeader);
+          newValue[`rule${itemIndex + 1}`].storeLeader = String(item.result.storeLeader);
+          console.log('newValue111', newValue);
+          restForm.setValues({
+            ...restForm.values,
+            ...newValue
+          })
+        });
+        setRulesList(arr);
+      }
+    }catch(error){
+      console.log('getCommissionListOrder->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
 
   const deleteRule = (rule) => {
     const copyList = deepCopy(rulesList);
@@ -95,6 +158,7 @@ const CommissionDescription = ({
   };
 
   const CreateOrder = async(params) => {
+    setLoading(true);
     console.log('CreateOrder->params', params);
     try {
       const res = await CreateOrderApi.CommissionDescription(params, orderId);
@@ -106,6 +170,8 @@ const CommissionDescription = ({
       toast.show('保存成功！', {type: 'success'});
     }catch(error){
       console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -155,11 +221,11 @@ const CommissionDescription = ({
     <View style={{marginTop: 20}}>
       <TouchableOpacity style={styles.touchArea} onPress={detailOnPress}>
         <Text style={[styles.title, showDetail && styles.boldText]}>招聘员提成说明</Text>
-        <AntDesign
+        {!loading ? <AntDesign
           name={showDetail ? 'down' : 'up'}
           size={36}
           color={showDetail ? '#000000' : '#999999'}
-        />
+        /> : <ActivityIndicator size={36} color="#409EFF"/>}
       </TouchableOpacity>
       {showDetail && <View style={{backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#999999', paddingTop: 20}}>
         <Formik

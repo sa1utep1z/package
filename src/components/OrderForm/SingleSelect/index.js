@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {ErrorMessage} from 'formik';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -9,6 +9,7 @@ import { openDialog, setTitle } from '../../../redux/features/PageDialog';
 import SingleSelectList from '../../PageDialog/SingleSelectList';
 import MyMembersApi from "../../../request/MyMembersApi";
 import { SUCCESS_CODE } from '../../../utils/const';
+import { checkedType } from '../../../utils';
 
 /**单选*/
 const SingleSelect = ({
@@ -26,6 +27,13 @@ const SingleSelect = ({
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
+
+  useEffect(()=>{
+    const fieldValueType = checkedType(field.value);
+    if(fieldValueType === 'String' && type === 'factory'){ //判断传进来的值为一个企业id并且是属于企业选择框；
+      getFactoryList(field.value);
+    }
+  },[field.value])
   
   const [loading, setLoading] = useState(false);
 
@@ -74,11 +82,16 @@ const SingleSelect = ({
     }
   };
 
-  const getFactoryList = async() => {
+  const getFactoryList = async(factoryId = '') => {
     try {
       const res = await MyMembersApi.CompaniesList();
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if(factoryId){
+        const findOutFieldItem = res.data.find(item => item.value === factoryId);
+        form.setFieldValue(field.name, [findOutFieldItem]);
         return;
       }
       dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={confirm}/>));

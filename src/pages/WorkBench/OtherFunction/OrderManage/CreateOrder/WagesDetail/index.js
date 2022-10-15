@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
+import React, {useState, useEffect} from "react";
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -9,14 +9,14 @@ import { useToast } from "react-native-toast-notifications";
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
-import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, SUCCESS_CODE } from "../../../../../../utils/const";
+import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, SUCCESS_CODE, FEE_WAY_MODE, MODE_LIST } from "../../../../../../utils/const";
 import SettlementRules from "./SettlementRules";
 import {originRule} from './SettlementRules/const';
 import { deepCopy } from "../../../../../../utils";
-import transformFormValue from './SettlementRules/utils';
+import {transformFormValue, setFormValue} from './SettlementRules/utils';
 import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 
-let restForm;
+let restForm, timer;
 const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
 const oneYearLater = moment().add(1, 'years').format('YYYY-MM-DD');
 
@@ -25,8 +25,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  debtType: [],
   explain: '',
+  debtType: [],
   debtAmount: '',
   eat: [],
   stay: [],
@@ -40,13 +40,80 @@ const initialValues = {
 
 // 会员工价详情
 const WagesDetail = ({
-  orderId = '634769ea452c5b76a655cd20',
+  orderId = '',
   scrollRef
 }) => {
   const toast = useToast();
 
   const [showDetail, setShowDetail] = useState(true);
   const [rulesList, setRulesList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(()=>{
+    return () => timer && clearTimeout(timer);
+  }, [])
+
+  useEffect(()=>{
+    if(orderId){
+      getWagesOrder(orderId);
+      getWageSettlement(orderId);
+    }
+  },[orderId])
+
+  const getWagesOrder = async(orderId) => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getWageDetailOrder(orderId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      const formValues = {
+        explain: res.data.explain || '',
+        debtType: res.data.debtType ? [SALARY_TYPE.find(item => item.value === res.data.debtType)] : [],
+        debtAmount: String(res.data.debtAmount),
+        eat: res.data.eat ? [FOOD_LIST.find(item => item.value === res.data.eat)] : [],
+        stay: res.data.stay ? [DORMITORY_LIST.find(item => item.value === res.data.stay)] : [],
+        waterElectricity: res.data.waterElectricity ? [WATER_FEE_LIST.find(item => item.value === res.data.waterElectricity)]: [],
+        commercial: res.data.commercial || '',
+        socialSecurity: res.data.socialSecurity || '',
+        leaveSalary: res.data.leaveSalary || '',
+        memberAward: res.data.memberAward || '',
+        remark: res.data.remark || ''
+      };
+      restForm.setValues(formValues);
+    }catch(error){
+      console.log('getWagesOrder->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const getWageSettlement = async(orderId) => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getWageSettlement(orderId);
+      console.log('查询会员结算规则res', res.data);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      if(res.data.length){
+        const {newValue, newArr} = setFormValue(res);
+        timer = setTimeout(()=>{
+          restForm.setValues({
+            ...restForm.values,
+            ...newValue
+          })
+          setRulesList(newArr);
+        })
+      }
+    }catch(error){
+      console.log('getWageSettlement->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
@@ -96,10 +163,10 @@ const WagesDetail = ({
   };
 
   const CreateSettlement = async(rules) => {
+    setLoading(true);
     console.log('CreateOrder->rules', rules);
     try {
       const res = await CreateOrderApi.WageSettlement(rules, orderId);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -107,26 +174,31 @@ const WagesDetail = ({
       toast.show('保存结算规则成功！', {type: 'success'});
     }catch(error){
       console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
     }
   };
 
   const CreateOrder = async(params, rulesArray) => {
-    console.log('CreateOrder->params', params);
+    setLoading(true);
     if(!orderId){
       toast.show('请先创建订单基本信息！', {type: 'danger'});
       return;
     }
     try {
       const res = await CreateOrderApi.WageDetail(params);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show('保存成功！', {type: 'success'});
-      CreateSettlement(rulesArray);
+      if(!!rulesList.length){
+        CreateSettlement(rulesArray);
+      }
     }catch(error){
       console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -147,7 +219,6 @@ const WagesDetail = ({
       orderId
     };
     const rulesArray = transformFormValue(rulesList, values); //获取会员结算规则；
-    console.log('rulesArray', rulesArray);
     CreateOrder(newObject, rulesArray);
   };
 
@@ -155,11 +226,11 @@ const WagesDetail = ({
     <View style={{marginTop: 20}}>
       <TouchableOpacity style={styles.touchArea} onPress={detailOnPress}>
         <Text style={[styles.title, showDetail && styles.boldText]}>会员工价详情</Text>
-        <AntDesign
+        {!loading ? <AntDesign
           name={showDetail ? 'down' : 'up'}
           size={36}
           color={showDetail ? '#000000' : '#999999'}
-        />
+        /> : <ActivityIndicator size={36} color="#409EFF"/>}
       </TouchableOpacity>
       {showDetail && <View style={{backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#999999', paddingTop: 20}}>
         <Formik

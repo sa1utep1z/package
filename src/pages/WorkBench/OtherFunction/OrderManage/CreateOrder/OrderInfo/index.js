@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -15,6 +15,7 @@ import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleD
 import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE, SUCCESS_CODE } from "../../../../../../utils/const";
 import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 
+let restForm;
 const validationSchema = Yup.object().shape({
   orderName: Yup.string().required('请输入订单名称'),
   organizeId: Yup.array().min(1, '请选择用工企业'),
@@ -63,27 +64,71 @@ const initialValues = {
 };
 
 const OrderInfo = ({
-  setOrderId
+  setOrderId,
+  orderId
 }) => {
   const toast = useToast();
 
+  useEffect(()=>{
+    if(orderId){
+      getBasicOrder(orderId);
+    }
+  },[orderId])
+
   const [showDetail, setShowDetail] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
+  const getBasicOrder = async(orderId) => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getBasicOrder(orderId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      const formValues = {
+        orderName: res.data.orderName,
+        organizeId: res.data.organizeId,
+        postSequence: String(res.data.postSequence),
+        post: [CREATE_ORDER_JOB_ORDER.find(item => item.value === res.data.post)],
+        profession: [CREATE_ORDER_JOB_TYPE.find(item => item.value === res.data.profession)],
+        orderRangeDate: {
+          startDate: res.data.recruitStart,
+          endDate: res.data.recruitEnd
+        },
+        orderDuration: res.data.orderDuration,
+        complexSalary: {
+          start: String(res.data.salaryStart),
+          end: String(res.data.salaryEnd)
+        },
+        pictureList: res.data.positionImages,
+        showTitle: res.data.showTitle,
+        salaryTitle: res.data.salaryTitle
+      };
+      restForm.setValues(formValues);
+    }catch(error){
+      console.log('getBasicOrder->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
   const CreateOrderInfo = async(params) => {
-    console.log('CreateOrderInfo->params', params);
+    setLoading(true);
     try {
       const res = await CreateOrderApi.CreateBasicOrder(params);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show('订单保存成功！', {type: 'success'});
-      setOrderId('哈哈哈');
+      setOrderId(res.data);
     }catch(error){
       console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -104,7 +149,7 @@ const OrderInfo = ({
       postSequence: Number(values.postSequence), //职位顺序
       positionImages: values.pictureList, //职位展示图片
       self: true, //自招（固定字段）
-      orderId: '' //TODO修改订单/创建订单
+      orderId
     };
     CreateOrderInfo(newObject);
   };
@@ -113,11 +158,11 @@ const OrderInfo = ({
     <View style={{marginTop: 20}}>
       <TouchableOpacity style={styles.touchArea} onPress={detailOnPress}>
         <Text style={[styles.title, showDetail && styles.boldText]}>订单基本信息</Text>
-        <AntDesign
+        {!loading ? <AntDesign
           name={showDetail ? 'down' : 'up'}
           size={36}
           color={showDetail ? '#000000' : '#999999'}
-        />
+        />: <ActivityIndicator size={36} color="#409EFF"/>}
       </TouchableOpacity>
       {showDetail && <View style={{backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#999999', paddingTop: 20}}>
         <Formik
@@ -125,6 +170,7 @@ const OrderInfo = ({
           validationSchema={validationSchema}
           onSubmit={onSubmit}>
           {({ handleSubmit, ...rest }) => {
+            restForm = rest;
             return (
               <View style={{ flex: 1, paddingHorizontal: 28}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>

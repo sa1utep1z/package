@@ -1,6 +1,11 @@
 import moment from "moment";
+const oneYearBefore = moment().subtract(1, 'years').format('YYYY-MM-DD');
+const oneYearLater = moment().add(1, 'years').format('YYYY-MM-DD');
 
-const transformFormValue = (rulesList, values) => {
+import { MODE_LIST, FEE_WAY_MODE } from "../../../../../../../utils/const";
+import { originRule } from "./const";
+
+export const transformFormValue = (rulesList, values) => {
   let rulesArray = [];
   if(rulesList.length){
     const FieldNameListOfRule = Object.keys(values).filter(name => name.includes('mode'));
@@ -1025,4 +1030,465 @@ const transformFormValue = (rulesList, values) => {
   return rulesArray;
 };
 
-export default transformFormValue;
+export const setFormValue = (res) => {
+  console.log('res', res);
+  const newValue = {};
+  let newArr = [];
+  res.data.map((rule, ruleIndex) => {
+    newArr.push({ruleLocation: ruleIndex + 1, startDateLimit: oneYearBefore, endDateLimit: oneYearLater});
+    newValue[`orderRangeDate${ruleIndex + 1}`] = {
+      startDate: moment(rule.startDate).format('YYYY-MM-DD'),
+      endDate: moment(rule.endDate).format('YYYY-MM-DD')
+    };
+    newValue[`mode${ruleIndex + 1}`] = [MODE_LIST.find(item => item.value === rule.type)];
+    newValue[`wagesAndSalary${ruleIndex + 1}`] = originRule.wagesAndSalary1;
+    newValue[`differenceAndReturnMoney${ruleIndex + 1}`] = originRule.differenceAndReturnMoney1;
+    //工价/底薪
+    if(rule.punch) {
+      newValue[`wagesAndSalary${ruleIndex + 1}`].status = true;
+      newValue[`wagesAndSalary${ruleIndex + 1}`].value = [rule.punch.nextNodes.length > 1 ? { label: '区分男女', value: 'DISTINGUISH' } : { label: '不区分男女', value: 'NOT_DISTINGUISH' }];
+      //区分男女；
+      if(rule.punch.nextNodes.length > 1){
+        newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish = originRule.wagesAndSalary1.distinguish;
+        rule.punch.nextNodes.map(item => {
+          const sex = item.condition.constantValue;
+          //男模式
+          if(sex === 'male'){
+            switch(rule.punch.nextNodes[0].nextNodes[0].condition.varComputerCode){
+              case 'var-pass':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '纯', value: 'PURE' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.pure.mode = [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.pure.value = String(item.nextNodes[0].result.amount);
+                break;
+              case 'var-onJob':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '是否在职', value: 'WORKING' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working.time = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-day': 
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '打卡是否满（单位：天）', value: 'CARD_DAY' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_day.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_day.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-hour':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '打卡是否满（单位：时）', value: 'CARD_HOUR' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-day':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '在职是否满（单位：天）', value: 'WORKING_DAY' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_day.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_day.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-hour':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+            }
+          }else if(sex === 'female'){
+            //女模式
+            switch(rule.punch.nextNodes[0].nextNodes[0].condition.varComputerCode){
+              case 'var-pass':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '纯', value: 'PURE' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.pure.mode = [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.pure.value = String(item.nextNodes[0].result.amount);
+                break;
+              case 'var-onJob':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '是否在职', value: 'WORKING' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working.time = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-day': 
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '打卡是否满（单位：天）', value: 'CARD_DAY' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_day.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_day.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-hour':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '打卡是否满（单位：时）', value: 'CARD_HOUR' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-day':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '在职是否满（单位：天）', value: 'WORKING_DAY' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_day.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_day.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-hour':
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }];
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`wagesAndSalary${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+            }
+          }
+        })
+      }else{ //不区分男女
+        newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish = {
+          fee_mode: originRule.wagesAndSalary1.not_distinguish.fee_mode
+        };
+        switch(rule.punch.nextNodes[0].nextNodes[0].condition.varComputerCode){
+          case 'var-pass':
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '纯', value: 'PURE' }];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.pure.mode = [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[0].result.type)];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.pure.value = String(rule.punch.nextNodes[0].nextNodes[0].result.amount);
+            break;
+          case 'var-onJob':
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '是否在职', value: 'WORKING' }];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working.time = rule.punch.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working.mode1 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working.mode2 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-punch-day': 
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '打卡是否满（单位：天）', value: 'CARD_DAY' }];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_day.value = rule.punch.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_day.mode1 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_day.mode2 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-punch-hour':
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '打卡是否满（单位：时）', value: 'CARD_HOUR' }];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_hour.value = rule.punch.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_hour.mode1 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_hour.mode2 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-work-day':
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '在职是否满（单位：天）', value: 'WORKING_DAY' }];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_day.value = rule.punch.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_day.mode1 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_day.mode2 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-work-hour':
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }];
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_hour.value = rule.punch.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_hour.mode1 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`wagesAndSalary${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_hour.mode2 = {
+              mode: [FEE_WAY_MODE.wagesAndSalary.find(mode => mode.value === rule.punch.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.punch.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+        }
+        
+      }
+    }
+    //差价/返费
+    if(rule.date) {
+      newValue[`differenceAndReturnMoney${ruleIndex + 1}`].status = true;
+      newValue[`differenceAndReturnMoney${ruleIndex + 1}`].value = [rule.date.nextNodes.length > 1 ? { label: '区分男女', value: 'DISTINGUISH' } : { label: '不区分男女', value: 'NOT_DISTINGUISH' }];
+      //区分男女；
+      if(rule.date.nextNodes.length > 1){
+        newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish = originRule.differenceAndReturnMoney1.distinguish;
+        rule.date.nextNodes.map(item => {
+          const sex = item.condition.constantValue;
+          //男模式
+          if(sex === 'male'){
+            switch(rule.date.nextNodes[0].nextNodes[0].condition.varComputerCode){
+              case 'var-pass':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '纯', value: 'PURE' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.pure.mode = [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.pure.value = String(item.nextNodes[0].result.amount);
+                break;
+              case 'var-onJob':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '是否在职', value: 'WORKING' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working.time = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-day': 
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '打卡是否满（单位：天）', value: 'CARD_DAY' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_day.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_day.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-hour':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '打卡是否满（单位：时）', value: 'CARD_HOUR' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.card_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-day':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '在职是否满（单位：天）', value: 'WORKING_DAY' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_day.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_day.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-hour':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.value = [{ label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.male.fee_mode.children.working_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+            }
+          }else if(sex === 'female'){
+            //女模式
+            switch(rule.date.nextNodes[0].nextNodes[0].condition.varComputerCode){
+              case 'var-pass':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '纯', value: 'PURE' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.pure.mode = [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.pure.value = String(item.nextNodes[0].result.amount);
+                break;
+              case 'var-onJob':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '是否在职', value: 'WORKING' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working.time = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-day': 
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '打卡是否满（单位：天）', value: 'CARD_DAY' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_day.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_day.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-punch-hour':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '打卡是否满（单位：时）', value: 'CARD_HOUR' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.card_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-day':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '在职是否满（单位：天）', value: 'WORKING_DAY' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_day.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_day.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_day.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+              case 'var-work-hour':
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.value = [{ label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }];
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_hour.value = item.nextNodes[0].condition.constantValue;
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_hour.mode1 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[0].result.type)],
+                  value: String(item.nextNodes[0].result.amount)
+                };
+                newValue[`differenceAndReturnMoney${ruleIndex + 1}`].distinguish.female.fee_mode.children.working_hour.mode2 = {
+                  mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === item.nextNodes[1].result.type)],
+                  value: String(item.nextNodes[1].result.amount)
+                };
+                break;
+            }
+          }
+        })
+      }else{ //不区分男女
+        newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish = {
+          fee_mode: originRule.differenceAndReturnMoney1.not_distinguish.fee_mode
+        };
+        switch(rule.date.nextNodes[0].nextNodes[0].condition.varComputerCode){
+          case 'var-pass':
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '纯', value: 'PURE' }];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.pure.mode = [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[0].result.type)];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.pure.value = String(rule.date.nextNodes[0].nextNodes[0].result.amount);
+            break;
+          case 'var-onJob':
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '是否在职', value: 'WORKING' }];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working.time = rule.date.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working.mode1 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working.mode2 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-punch-day': 
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '打卡是否满（单位：天）', value: 'CARD_DAY' }];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_day.value = rule.date.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_day.mode1 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_day.mode2 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-punch-hour':
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '打卡是否满（单位：时）', value: 'CARD_HOUR' }];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_hour.value = rule.date.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_hour.mode1 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.card_hour.mode2 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-work-day':
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '在职是否满（单位：天）', value: 'WORKING_DAY' }];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_day.value = rule.date.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_day.mode1 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_day.mode2 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+          case 'var-work-hour':
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.value = [{ label: '在职是否满（单位：时）', value: 'WORKING_HOUR' }];
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_hour.value = rule.date.nextNodes[0].nextNodes[0].condition.constantValue;
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_hour.mode1 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[0].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[0].result.amount)
+            };
+            newValue[`differenceAndReturnMoney${ruleIndex + 1}`].not_distinguish.fee_mode.children.working_hour.mode2 = {
+              mode: [FEE_WAY_MODE.differenceAndReturnMoney.find(mode => mode.value === rule.date.nextNodes[0].nextNodes[1].result.type)],
+              value: String(rule.date.nextNodes[0].nextNodes[1].result.amount)
+            };
+            break;
+        }
+        
+      }
+    }
+  })
+  return {newValue, newArr};
+};

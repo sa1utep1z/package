@@ -1,6 +1,7 @@
 import React, {useRef, useState, useEffect} from "react";
 import { View, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Button } from '@rneui/themed';
+import { useNavigation } from '@react-navigation/native';
 
 import OrderInfo from "./OrderInfo";
 import Requirement from "./Requirement";
@@ -9,14 +10,24 @@ import CommissionDescription from "./CommissionDescription";
 import WagesDetail from "./WagesDetail";
 
 const CreateOrder = ({
-  route: {params: {type}}
+  route: {params: {type, orderId: originOrderId}}
 }) => {
   const scrollRef = useRef(null);
 
   const [orderId, setOrderId] = useState('');
+  const navigation = useNavigation();
+
+  useEffect(()=>{
+    if(originOrderId){
+      setOrderId(originOrderId);
+      navigation.setOptions({
+        headerTitle: '订单详情',
+      })
+    }
+  },[originOrderId])
 
   const save = () => {
-    console.log('提交保存');
+    console.log('保存了');
   };
 
   return (
@@ -36,13 +47,13 @@ const CreateOrder = ({
             <CommissionDescription orderId={orderId} />
             <WagesDetail orderId={orderId} scrollRef={scrollRef} />
         </ScrollView>
-        <Button
+        {/* <Button
           title="提交保存"
           onPress={save}
           containerStyle={styles.buttonContainerStyle}
           buttonStyle={styles.buttonStyle}
           titleStyle={styles.titleStyle}
-        />
+        /> */}
       </View>
     </KeyboardAvoidingView>
   )

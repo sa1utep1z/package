@@ -123,7 +123,7 @@ const SettlementRules = ({
                   canSearch={false}
                   component={SingleSelect}
                 />
-                <View style={{flex: 1}}>
+                {!!values.mode1 && <View style={{flex: 1}}>
                   {['wagesAndSalary', 'differenceAndReturnMoney'].map((type, typeIndex) => {
                     const isShowSwitchTitle = !!values[`${type}${rule.ruleLocation}`].status; //是否打开title栏；
                     const nowSelectIndex = MALE_OR_FEMALE.findIndex(item => item.value === values[`${type}${rule.ruleLocation}`].value[0].value); //目前所在的TabIndex；
@@ -154,7 +154,7 @@ const SettlementRules = ({
                       </View>
                     )
                   })}
-                </View>
+                </View>}
               </View>
             </Shadow>
           )})}

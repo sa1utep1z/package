@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {ErrorMessage} from 'formik';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -9,6 +9,7 @@ import { openDialog, setTitle } from '../../../redux/features/PageDialog';
 import MultiSelectList from '../../PageDialog/MultiSelectList';
 import MyMembersApi from "../../../request/MyMembersApi";
 import { SUCCESS_CODE } from '../../../utils/const';
+import { checkedType } from '../../../utils';
 
 /**多选*/
 const MultiSelect = ({
@@ -25,10 +26,18 @@ const MultiSelect = ({
   const toast = useToast();
   const dispatch = useDispatch();
   
+  useEffect(()=>{
+    if(field.value.length){
+      const fieldValueIsString = field.value.every(item => checkedType(item) === 'String'); //都是string说明全是id；
+      if(fieldValueIsString){
+        getStoreList(field.value);
+      }
+    }
+  },[field.value])
+  
   const [loading, setLoading] = useState(false);
 
   const confirm = (list) => {
-    console.log('list', list)
     form.setFieldValue(field.name, list);
   };
 
@@ -49,7 +58,7 @@ const MultiSelect = ({
     }
   };
 
-  const getStoreList = async() => {
+  const getStoreList = async(fieldValue = []) => {
     try {
       const res = await MyMembersApi.StoreList();
       if(res.code !== SUCCESS_CODE){
@@ -60,6 +69,18 @@ const MultiSelect = ({
         item.label = item.storeName;
         item.value = item.storeId;
       });
+      if(fieldValue.length){
+        let arr = [];
+        fieldValue.map(item => {
+          res.data.map(store => {
+            if(store.storeId.includes(item)){
+              arr.push(store);
+            }
+          })
+        })
+        form.setFieldValue(field.name, arr);
+        return;
+      }
       if(filterStore){
         filterStoreList(res.data);
         return;

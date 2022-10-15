@@ -3,13 +3,19 @@ import { View, Text, Modal, StyleSheet, ActivityIndicator, TouchableOpacity } fr
 import { useDispatch, useSelector } from 'react-redux';
 import ScaleView from 'react-native-scale-view';
 
-import { closeDialog } from '../../redux/features/PageDialog';
+import { closeDialog, setRightArea } from '../../redux/features/PageDialog';
 
-export const DefaultTitle = ({title}) => (
-  <View style={styles.defaultTitle}>
-    <Text style={styles.title}>{title || '温馨提示'}</Text>
-  </View>
-);
+export const DefaultTitle = ({title}) => {
+  const rightArea = useSelector((state) => state.PageDialog.rightArea);
+  return (
+    <View style={styles.defaultTitle}>
+      <Text style={styles.title}>{title || '温馨提示'}</Text>
+      {!!rightArea.title && <TouchableOpacity style={{position: 'absolute', right: 40}} onPress={rightArea.press}>
+        <Text style={{fontSize: 22, color: '#409EFF'}}>{rightArea.title}</Text>
+      </TouchableOpacity>}
+    </View>
+  )
+};
 
 export const DefaultEmptyArea = () => (
   <View style={styles.emptyArea}>
@@ -23,7 +29,13 @@ const PageDialog = () => {
   const dialogContent = useSelector((state) => state.PageDialog.dialogComponent);
   const dialogTitle = useSelector((state) => state.PageDialog.dialogTitle);
 
-  const close = () => dispatch(closeDialog());
+  const close = () => {
+    dispatch(closeDialog());
+    dispatch(setRightArea({
+      title: '',
+      press: () => {}
+    }));
+  };
 
   return (
     <Modal

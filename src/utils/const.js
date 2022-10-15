@@ -707,7 +707,7 @@ export const SALARY_TYPE = [
   { label: '日借支', value: 'DAILY' },
   { label: '周借支', value: 'WEEKLY' },
   { label: '月借支', value: 'MONTHLY' },
-  { label: '无借支', value: 'NoDEBIT' }
+  { label: '无借支', value: 'NONE' }
 ];
 
 //新建订单-会员工价详情-就餐枚举值：

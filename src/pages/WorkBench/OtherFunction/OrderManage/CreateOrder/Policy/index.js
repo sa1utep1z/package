@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from "react";
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +10,7 @@ import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import CreateOrderApi from '../../../../../../request/CreateOrderApi';
 import { SUCCESS_CODE } from "../../../../../../utils/const";
 
+let restForm;
 const validationSchema = Yup.object().shape({
   applyPolicyRemark: Yup.string().required('请输入接单政策文本')
 });
@@ -20,16 +21,43 @@ const initialValues = {
 };
 
 const Policy = ({
-  orderId = '634769ea452c5b76a655cd20'
+  orderId = ''
 }) => {
   const toast = useToast();
 
   const [showDetail, setShowDetail] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(()=>{
+    if(orderId){
+      getPolicyOrder(orderId);
+    }
+  },[orderId])
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
+  const getPolicyOrder = async(orderId) => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getPolicyOrder(orderId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      const formValues = {
+        applyPolicyImage: res.data.applyPolicyImage,
+        applyPolicyRemark: res.data.applyPolicyRemark || '无'
+      };
+      restForm.setValues(formValues);
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
   const CreateOrder = async(params) => {
-    console.log('CreateOrder->params', params);
+    setLoading(true);
     try {
       const res = await CreateOrderApi.PolicyRequirement(params);
       console.log('res', res);
@@ -40,6 +68,8 @@ const Policy = ({
       toast.show('保存成功！', {type: 'success'});
     }catch(error){
       console.log('CreateOrderInfo->error', error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -57,11 +87,11 @@ const Policy = ({
     <View style={{marginTop: 20}}>
       <TouchableOpacity style={styles.touchArea} onPress={detailOnPress}>
         <Text style={[styles.title, showDetail && styles.boldText]}>接单政策说明</Text>
-        <AntDesign
+        {!loading ? <AntDesign
           name={showDetail ? 'down' : 'up'}
           size={36}
           color={showDetail ? '#000000' : '#999999'}
-        />
+        /> : <ActivityIndicator size={36} color="#409EFF"/>}
       </TouchableOpacity>
       {showDetail && <View style={{backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#999999', paddingTop: 20}}>
         <Formik
@@ -70,6 +100,7 @@ const Policy = ({
           handleChange={(e) => console.log('e', e)}
           onSubmit={onSubmit}>
           {({ handleSubmit, ...rest }) => {
+            restForm = rest;
             console.log('rest', rest);
             return (
               <View style={{ flex: 1, paddingHorizontal: 28}}>
