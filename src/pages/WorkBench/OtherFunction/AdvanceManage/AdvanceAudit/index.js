@@ -4,27 +4,31 @@ import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
+import EmptyArea from '../../../../../components/EmptyArea';
+import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, ADVANCE_INFO } from '../../../../../utils/const';
+import { deepCopy } from '../../../../../utils';
+import { TextInput } from 'react-native';
 
-import EmptyArea from '../../EmptyArea';
-import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, COMPLAINT_INFO } from '../../../utils/const';
-import { deepCopy } from '../../../utils';
-
-const FormComplaintDetail = ({
-  memberInfoList = COMPLAINT_INFO,
-}) => {
+const AdvanceAudit = () => {
   const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
-
+  const [memberInfoList, setMemberInfoList] = useState(ADVANCE_INFO); // 详情信息
+  const [inputValue, setInputValue] = useState(''); // 输入金额
   const [showList, setShowList] = useState([
-    { type: 'type', title: '问题类型', value: '' },
     { type: 'userName', title: '会员姓名', value: '' },
     { type: 'idNo', title: '身份证号', value: '' },
     { type: 'mobile', title: '手机号码', value: '' },
     { type: 'companyShortName', title: '企业名称', value: '' },
-    { type: 'jobOn', title: '是否在职', value: '' },
+    { type: 'jobName', title: '订单名称', value: '' },
+    { type: 'jobFrom', title: '渠道来源', value: '' },
+    { type: 'belongOfPeople', title: '招聘员', value: '' },
+    { type: 'belongOfStore', title: '归属门店', value: '' },
+    { type: 'jobOn', title: '在职状态', value: '' },
     { type: 'jobDate', title: '入职日期', value: '' },
-    { type: 'createdDate', title: '反馈时间', value: '' },
-    { type: 'content', title: '反馈内容', value: '' },
-    { type: 'imgs', title: '上传照片', value: [] },
+    { type: 'momney', title: '借支金额', value: '' },
+    { type: 'content', title: '银行名称', value: '' },
+    { type: 'imgs', title: '银行卡号', value: '' },
+    { type: 'createdDate', title: '提交时间', value: '' },
   ]);
 
   useMemo(() => {
@@ -55,20 +59,12 @@ const FormComplaintDetail = ({
       }
     }
     setShowList(copyList);
-    // console.log('打印数据格式4444：', copyList);
-    let arr = [];
-    for (let key in copyList) {
-      // console.log('打印遍历的数据：', copyList[key].title, copyList[key].value);
-      arr.push([copyList[key].title, copyList[key].value])
-    }
-    const newArr = arr.join('、');
-    // console.log('newArrnewArrnewArrnewArrnewArrs', newArr)
   }, [memberInfoList])
 
   const callPhone = (item) => {
     Linking.openURL(`tel:${item.value}`);
   };
-  // console.log('打印数据格式3333：', memberInfoList);
+  const onChangeText = value => setInputValue(value);
   const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'));
 
   return (
@@ -80,32 +76,53 @@ const FormComplaintDetail = ({
               <Text style={styles.memberItem_text}>{item.title}：</Text>
               {item.type === 'mobile' ?
                 item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
-                  <Text style={{ color: '#409EFF' }}>{item.value}</Text>
+                  <Text style={{ color: '#409EFF', fontSize: 28 }}>{item.value}</Text>
                   <Entypo name='phone' size={16} color='#409EFF' />
-                </TouchableOpacity> : <Text style={{ textAlignVertical: 'center', paddingLeft: 3 }}>无</Text> : item.type === 'name' ?
+                </TouchableOpacity> : <Text style={{ textAlignVertical: 'center', paddingLeft: 3, fontSize: 28 }}>无</Text> : item.type === 'momney' ?
                   <View style={styles.memberItem_value}>
-                    <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
+                    {/* <Text selectable={true} style={{ color: item.value ? '#409EFF' : '#333', fontSize: 28 }}>{item.value || '无'}</Text> */}
+                    <TextInput
+                      style={{ flex: 1, fontSize: 28, }}
+                      placeholder="请输入借支金额"
+                      keyboardType="numeric"
+                      value={item.value || inputValue}
+                      onChangeText={onChangeText}
+                    />
                   </View> : item.type === 'idNo' ? <View style={styles.memberItem_value}>
-                    <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
-                  </View> : item.type === 'imgs' ? <View style={styles.imageBox}>
-                    {
-                      item.value.length > 0 && item.value.map((img, index) => {
-                        return (
-                          <View style={styles.imags} key={index}>
-                            <Image
-                              style={{ width: '100%', height: '100%' }}
-                              source={{ uri: `${img.url}` }}
-                            />
-                          </View>
-                        )
-                      })
-                    }
+                    <Text selectable={true} style={{ color: item.value ? '#409EFF' : '#333', fontSize: 28 }}>{item.value || '无'}</Text>
                   </View> : <View style={styles.memberItem_value}>
-                    <Text>{item.value || '无'}</Text>
+                    <Text style={styles.vauleStyle}>{item.value || '无'}</Text>
                   </View>}
             </View>
           )
         }) : <EmptyArea />}
+        <View>
+          <Text style={styles.title}>审批流程</Text>
+        </View>
+        <View style={styles.stepBoxStyle}>
+          <ProgressSteps labelFontSize={20} style={styles.stepsStyle}>
+            <ProgressStep label="提交审核" style={styles.stepStyle}>
+              <View style={{ alignItems: 'center' }}>
+                <Text>This is the content within step 1!</Text>
+              </View>
+            </ProgressStep>
+            <ProgressStep label="驻厂审核">
+              <View style={{ alignItems: 'center' }}>
+                <Text>This is the content within step 2!</Text>
+              </View>
+            </ProgressStep>
+            <ProgressStep label="财务审核">
+              <View style={{ alignItems: 'center' }}>
+                <Text>This is the content within step 3!</Text>
+              </View>
+            </ProgressStep>
+            <ProgressStep label="会计审核">
+              <View style={{ alignItems: 'center' }}>
+                <Text>This is the content within step 4!</Text>
+              </View>
+            </ProgressStep>
+          </ProgressSteps>
+        </View>
       </View>
       <View style={{ paddingHorizontal: 30, paddingBottom: 30, right: 0, height: '100%', width: '100%', position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', overflow: 'hidden' }} pointerEvents={'none'}>
         {WATERMARK_LIST_SMALL.map((item, itemIndex) => {
@@ -123,26 +140,34 @@ const FormComplaintDetail = ({
 
 const styles = StyleSheet.create({
   msgArea: {
-    maxHeight: 360,
-    marginHorizontal: 10
+    flex: 1,
+    backgroundColor: '#fff'
   },
   topArea: {
     width: '100%',
-    paddingHorizontal: 20
+    paddingHorizontal: 30
   },
   memberItem: {
-    minHeight: 30,
-    flexDirection: 'row'
+    minHeight: 60,
+    flexDirection: 'row',
+    borderBottomWidth: 2,
+    borderColor: 'rgba(0, 0, 0, .05)',
   },
   memberItem_text: {
     textAlignVertical: 'center',
-    textAlign: 'left'
+    textAlign: 'left',
+    color: '#333',
+    fontSize: 30,
   },
   memberItem_value: {
     flex: 1,
     justifyContent: 'center',
     marginLeft: 5,
     paddingLeft: 3
+  },
+  vauleStyle: {
+    fontSize: 28,
+    color: '#333',
   },
   imageBox: {
     flexDirection: 'row',
@@ -161,6 +186,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     position: 'relative',
   },
+  title: {
+    fontSize: 32,
+    color: '#333',
+    marginTop: 30,
+  },
+  stepBoxStyle: {
+    flex: 1,
+    width: 680,
+    // borderWidth: 6,
+    justifyContent: 'space-between'
+  },
+  stepsStyle: {
+    borderWidth: 4,
+    backgroundColor: 'red'
+  },
+  stepStyle: {
+    width: '100%',
+    borderWidth: 1,
+  },
+  stepTitle: {
+    fontSize: 24,
+    color: '#333'
+  },
 })
 
-export default FormComplaintDetail;
+export default AdvanceAudit;

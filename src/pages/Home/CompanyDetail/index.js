@@ -82,6 +82,7 @@ const CompanyDetail = (props) => {
 
   //复制文本
   const _handleClipboardContent = async () => {
+    console.log('复制订单详情：', orderTextDetail);
     //设置内容到剪贴板
     Clipboard.setString(orderTextDetail);
     //从剪贴板获取内容
@@ -130,8 +131,8 @@ const CompanyDetail = (props) => {
             </View>
             <View style={styles.rowStyles}>
               {
-                orderData.tags?.map((item) => (
-                  <Text style={styles.tagsStyle}>{item}</Text>
+                orderData.tags?.map((item, index) => (
+                  <Text style={styles.tagsStyle} key={index}>{item}</Text>
                 ))
               }
             </View>

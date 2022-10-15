@@ -46,6 +46,7 @@ const NAVIGATION_PAGES_LIST = {
   COMPLAINT_ADD: require('./WorkBench/OtherFunction/ComplaintManage/AddComplaint'), //新增投诉
   COMPLAINT_EDIT: require('./WorkBench/OtherFunction/ComplaintManage/EditComplaint'), //编辑投诉
   ADVANCE_MANAGE: require('./WorkBench/OtherFunction/AdvanceManage'), //预支审核
+  ADVANCE_AUDIT: require('./WorkBench/OtherFunction/AdvanceManage/AdvanceAudit'), //预支审核详情
 
   //我的会员
   EDIT_RETURN_VISIT: require('./WorkBench/OtherFunction/MyMembers/EditReturnView'),

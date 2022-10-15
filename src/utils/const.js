@@ -39,6 +39,23 @@ export const FAKE_MEMBER_INFO = [
   { type: 'isStay', title: '是否住宿', value: '否' }
 ];
 
+export const ADVANCE_INFO = [
+  { type: 'userName', title: '会员姓名', value: '' },
+  { type: 'idNo', title: '身份证号', value: '' },
+  { type: 'mobile', title: '手机号码', value: '' },
+  { type: 'companyShortName', title: '企业名称', value: '' },
+  { type: 'jobName', title: '订单名称', value: '南山爱普生' },
+  { type: 'jobFrom', title: '渠道来源', value: '门店录入' },
+  { type: 'belongOfPeople', title: '招聘员', value: '张三' },
+  { type: 'belongOfStore', title: '归属门店', value: '新媒体店' },
+  { type: 'jobOn', title: '在职状态', value: '' },
+  { type: 'jobDate', title: '入职日期', value: '' },
+  { type: 'momney', title: '借支金额', value: '' },
+  { type: 'content', title: '银行名称', value: '' },
+  { type: 'imgs', title: '银行卡号', value: '' },
+  { type: 'createdDate', title: '提交时间', value: '' },
+];
+
 export const COMPLAINT_INFO = [
   { type: 'type', title: '问题类型', value: '' },
   { type: 'userName', title: '会员姓名', value: '' },

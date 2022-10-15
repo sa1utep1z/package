@@ -93,7 +93,7 @@ const EditComplaint = (props) => {
       setCompanyImage([...companyImage, res.data]);
       restForm.setFieldValue('imgs', [...companyImage, res.data]);
     } catch (error) {
-      toast.show('识别失败，出现异常请联系管理员处理')
+      toast.show('上传失败，出现异常请联系管理员处理')
     }
   }
 

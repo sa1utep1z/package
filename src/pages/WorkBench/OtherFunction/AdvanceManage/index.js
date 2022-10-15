@@ -38,6 +38,8 @@ const AdvanceManage = () => {
   const navigation = useNavigation();
 
   const role = useSelector(state => state.roleSwitch.role);
+  // 跳转预支审核进度详情
+  const toAdvanceAudit = () => navigation.navigate(NAVIGATION_KEYS.ADVANCE_AUDIT);
 
   const [searchContent, setSearchContent] = useState({ role, ...firstPage });
   const [showList, setShowList] = useState([]);
@@ -232,17 +234,17 @@ const AdvanceManage = () => {
   };
 
   const showTwoCard = item => {
-    dialogRef.current.setShowDialog(true);
-    setDialogContent({
-      bottomButton: false,
-      rightClose: <AntDesign
-        name='closecircleo'
-        size={20}
-        onPress={() => dialogRef.current.setShowDialog(false)}
-      />,
-      dialogTitle: '会员信息',
-      dialogComponent: <TwoCard message={item} />
-    });
+    // dialogRef.current.setShowDialog(true);
+    // setDialogContent({
+    //   bottomButton: false,
+    //   rightClose: <AntDesign
+    //     name='closecircleo'
+    //     size={20}
+    //     onPress={() => dialogRef.current.setShowDialog(false)}
+    //   />,
+    //   dialogTitle: '会员信息',
+    //   dialogComponent: <TwoCard message={item} />
+    // });
   };
 
   const changeStatus = item => {
@@ -296,7 +298,7 @@ const AdvanceManage = () => {
     const status = checkStatus(item);
 
     return (
-      <View style={[(item.name && item.mobile) ? styles.listStyle : styles.listStyle1]}>
+      <View style={styles.listStyle}>
         <Text
           style={[
             styles.itemText,
@@ -304,7 +306,7 @@ const AdvanceManage = () => {
           ]}
           numberOfLines={2}
           onPress={() => callPhone(item)}
-          ellipsizeMode="tail">{item.name || '无'}</Text>
+          ellipsizeMode="tail">{item.userName || '无'}</Text>
         <Text
           style={[
             styles.itemText,
@@ -315,25 +317,24 @@ const AdvanceManage = () => {
         <Text
           style={[
             styles.itemText,
-          ]}
-          numberOfLines={2}
-          onPress={() => showTwoCard(item)}
-          ellipsizeMode="tail">{status}</Text>
-        <Text
-          style={[
-            styles.itemText,
             { color: '#409EFF' }
           ]}
           numberOfLines={2}
-          onPress={() => gotoRecordOfWorking(item)}
-          ellipsizeMode="tail">查看</Text>
+          onPress={() => showTwoCard(item)}
+          ellipsizeMode="tail">{item.store || '总部店'}</Text>
         <Text
           style={[
             styles.itemText,
           ]}
           numberOfLines={2}
-          onPress={() => changeStatus(item)}
-          ellipsizeMode="tail">{MEMBERS_STATUS[item.status] || '无'}</Text>
+          ellipsizeMode="tail">200</Text>
+        <Text
+          style={[
+            styles.itemText,
+          ]}
+          numberOfLines={2}
+          onPress={toAdvanceAudit}
+          ellipsizeMode="tail">{MEMBERS_STATUS[item.status] || '通过'}</Text>
         <Text
           style={[
             styles.itemText,
@@ -348,8 +349,8 @@ const AdvanceManage = () => {
 
   // const memoList = useMemo(() => showList, [showList])
   const memoList = [
-    { userName: '张三', flowId: '1'},
-    { userName: '李四', flowId: '2'},
+    { userName: '张三', flowId: '1' },
+    { userName: '李四', flowId: '2' },
   ]
   return (
     <View style={[styles.screen]}>

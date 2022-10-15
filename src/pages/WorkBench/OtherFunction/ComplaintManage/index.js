@@ -16,9 +16,9 @@ import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
 import ComplaintApi from "../../../../request/ComplaintApi";
-import { SUCCESS_CODE, TYPERESULT, TAB_OF_LIST } from "../../../../utils/const";
+import { SUCCESS_CODE, TYPERESULT, TAB_OF_LIST, COMPLAINT_INFO } from "../../../../utils/const";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
-import { replaceMobile } from "../../../../utils";
+import { deepCopy } from "../../../../utils";
 import Clipboard from '@react-native-clipboard/clipboard';
 import CallPhone from "../../../../components/NormalDialog/CallPhone";
 import { pageEmpty } from "../../../Home/listComponent";
@@ -60,6 +60,20 @@ const ComplaintManage = () => {
   const [visible4, setVisible4] = useState(false);
   const [feedbackId, setFeedbackId] = useState(''); // 投诉id
   const [userList, setUserList] = useState([]); // 用户名数据
+  const [complainInfo, setComplainInfo] = useState([]); // 投诉详情数据
+  const copyContentRef = useRef(''); // 复制内容
+  const [showInfoList, setShowInfoList] = useState([
+    { type: 'type', title: '问题类型', value: '' },
+    { type: 'userName', title: '会员姓名', value: '' },
+    { type: 'idNo', title: '身份证号', value: '' },
+    { type: 'mobile', title: '手机号码', value: '' },
+    { type: 'companyShortName', title: '企业名称', value: '' },
+    { type: 'jobOn', title: '是否在职', value: '' },
+    { type: 'jobDate', title: '入职日期', value: '' },
+    { type: 'createdDate', title: '反馈时间', value: '' },
+    { type: 'content', title: '反馈内容', value: '' },
+    { type: 'imgs', title: '上传照片', value: [] },
+  ]);
 
   useEffect(() => {
     dispatch(openListSearch());
@@ -220,43 +234,70 @@ const ComplaintManage = () => {
     }
   }
 
-  const copyFun = (value) => {
-    console.log('是否拿到值：', value);
-  }
+  useEffect(() => {
+    const copyList = deepCopy(showInfoList);
+    for (let key in complainInfo) {
+      if (copyList.length) {
+        const findItem = copyList.find(item => item.type === key);
+        if (findItem) {
+          switch (key) {
+            case 'type':
+              const chanelName = TYPERESULT.find(name => name.value === complainInfo[key]);
+              findItem.value = chanelName?.title;
+              break;
+            case 'createdDate':
+              findItem.value = complainInfo[key] ? moment(complainInfo[key]).format('YYYY-MM-DD HH:mm:ss') : '无';
+              break;
+            case 'jobDate':
+              findItem.value = complainInfo[key] ? moment(complainInfo[key]).format('YYYY-MM-DD') : '无';
+              break;
+            case 'jobOn':
+              findItem.value = complainInfo[key] ? complainInfo[key] === true ? '是' : '否' : '无';
+              break;
+            default:
+              findItem.value = complainInfo[key];
+              break;
+          }
+        }
+      }
+    }
+    setShowInfoList(copyList);
+    console.log('打印数据格式4444：', copyList);
+    let arr = [];
+    for (let key in copyList) {
+      arr.push([copyList[key].title, copyList[key].value])
+    }
+    let newArr = arr.join('、').replace(/、/g, "\n");
+    newArr = newArr.replace(/\,/g, ":");
+    copyContentRef.current = newArr;
+  }, [complainInfo, copyContentRef.current])
 
   //复制文本
-  const _handleClipboardContent = async () => {
-    console.log('你点击了！！！！！')
+  const handleClipboardContent = () => {
+    console.log('你点击了！！！！！', copyContentRef.current);
     //设置内容到剪贴板
-    // Clipboard.setString('复制的内容。。。。。');
-    // //从剪贴板获取内容
-    // Clipboard.getString().then((content) => {
-    //   toast.show('复制成功');
-    // }, (error) => {
-    //   console.log('error:' + error);
-    // })
+    Clipboard.setString(copyContentRef.current);
+    //从剪贴板获取内容
+    Clipboard.getString().then((content) => {
+      toast.show('复制成功');
+      dialogRef.current.setShowDialog(false);
+    }, (error) => {
+      console.log('error:' + error);
+    })
   };
 
   // 查看投诉详情
   const pressDetail = useCallback(async (item) => {
-    try {
-      const res = await ComplaintApi.GetCompanyInfo(item.feedbackId);
-      if (res?.code !== SUCCESS_CODE) {
-        toast.show(`${res?.msg}`, { type: 'danger' });
-        return;
-      }
-      res.data.feedbackId = item.feedbackId;
-      dialogRef.current.setShowDialog(true);
-      console.log('打印详情：', res.data);
-      setDialogContent({
-        dialogTitle: '投诉反馈详情',
-        dialogComponent: <FormComplaintDetail memberInfoList={res.data} />,
-        confirmText: '一键复制',
-      });
-    } catch (err) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }
-  }, []);
+    dialogRef.current.setShowDialog(true);
+    console.log('打印详情：', item);
+    setComplainInfo(item);
+    setDialogContent({
+      dialogTitle: '投诉反馈详情',
+      dialogComponent: <FormComplaintDetail memberInfoList={item} />,
+      confirmText: '一键复制',
+      confirmOnPress: handleClipboardContent,
+    });
+  }, [complainInfo, copyContentRef.current]);
 
   // 催单
   const changeUrge = async (item) => {
