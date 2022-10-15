@@ -697,8 +697,8 @@ export const CREATE_ORDER_JOB_ORDER = [
 //新建订单-工种枚举值：
 export const CREATE_ORDER_JOB_TYPE = [
   { label: '正式工', value: 'FORMAL_WORKER' },
-  { label: '派遣工-小时工', value: 'DISPATH_HOURLY_WORKER' },
-  { label: '派遣工-同工同酬', value: 'DISPATH_EQUAL_PAY' }
+  { label: '派遣工-小时工', value: 'DISPATCH_HOURLY_WORKER' },
+  { label: '派遣工-同工同酬', value: 'DISPATCH_EQUAL_PAY' }
 ];
 
 //新建订单-录用要求-性别枚举值：

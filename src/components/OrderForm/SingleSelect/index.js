@@ -148,7 +148,7 @@ const SingleSelect = ({
           <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
             {field.value && <>
               <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
-                {!!field.value.length ? field.value[0].label : `请选择${label}`}
+                {!!field.value.length ? field.value[0].label || '' : `请选择${label}`}
               </Text>
             </>}
             {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <AntDesign
