@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import { View, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Button } from '@rneui/themed';
 
@@ -8,8 +8,12 @@ import Policy from "./Policy";
 import CommissionDescription from "./CommissionDescription";
 import WagesDetail from "./WagesDetail";
 
-const CreateOrder = () => {
+const CreateOrder = ({
+  route: {params: {type}}
+}) => {
   const scrollRef = useRef(null);
+
+  const [orderId, setOrderId] = useState('');
 
   const save = () => {
     console.log('提交保存');
@@ -26,11 +30,11 @@ const CreateOrder = () => {
           ref={scrollRef}
           style={styles.screen}
           keyboardShouldPersistTaps="handled">
-            <OrderInfo />
-            <Requirement />
-            <Policy />
-            <CommissionDescription />
-            <WagesDetail scrollRef={scrollRef} />
+            <OrderInfo orderId={orderId} setOrderId={setOrderId} />
+            <Requirement orderId={orderId} />
+            <Policy orderId={orderId} />
+            <CommissionDescription orderId={orderId} />
+            <WagesDetail orderId={orderId} scrollRef={scrollRef} />
         </ScrollView>
         <Button
           title="提交保存"

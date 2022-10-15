@@ -11,6 +11,7 @@ const OrderSingleDate = ({
   field, 
   form, 
   label,
+  isRequire = false,
   ...rest
 }) => {
 
@@ -31,7 +32,9 @@ const OrderSingleDate = ({
   return (
     <View style={{flex: 1, marginBottom: form.errors[field.name] && form.touched[field.name] ? 10 : 20}}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>{label}：</Text>
+        <Text style={styles.labelText}>
+          {isRequire && <Text style={{color: 'red'}}>*</Text>}
+          {label}：</Text>
         <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]}>
           <View style={{flex: 1}}>
             <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}, form.errors[field.name] && form.touched[field.name] && {borderColor: 'red'}]} onPress={pickerOnPress}>

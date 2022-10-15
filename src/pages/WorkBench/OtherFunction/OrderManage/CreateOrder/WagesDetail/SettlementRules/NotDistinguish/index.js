@@ -65,6 +65,7 @@ const NotDistinguish = ({
           <Field  
             name={`${fieldName}.pure.value`}
             inputStyle={{maxHeight: 60}}
+            inputLength={selectPayMode.pure.mode}
             component={LittleSingleInput}
           />
         </View>
@@ -106,6 +107,7 @@ const NotDistinguish = ({
             <Field  
               name={`${fieldName}.working.mode1.value`}
               inputStyle={{maxHeight: 50}}
+              inputLength={selectPayMode.working.mode1.mode}
               component={LittleSingleInput}
             />
             <Unit value={selectPayMode.working.mode1.mode} />
@@ -115,6 +117,7 @@ const NotDistinguish = ({
             <Field  
               name={`${fieldName}.working.mode2.value`}
               inputStyle={{maxHeight: 50}}
+              inputLength={selectPayMode.working.mode2.mode}
               component={LittleSingleInput}
             />
             <Unit value={selectPayMode.working.mode2.mode} />
@@ -134,6 +137,7 @@ const NotDistinguish = ({
               showLabel={false}
               inputStyle={{maxHeight: 50}}
               inputRightComponent={<RightUnit value="天"/>}
+              maxLength={3}
               component={LittleSingleInput}
             />
           </View>
@@ -161,6 +165,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.card_day.mode1.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.card_day.mode1.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.card_day.mode1.mode} />
@@ -170,6 +175,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.card_day.mode2.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.card_day.mode2.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.card_day.mode2.mode} />
@@ -190,6 +196,7 @@ const NotDistinguish = ({
               showLabel={false}
               inputStyle={{maxHeight: 50}}
               inputRightComponent={<RightUnit value="时"/>}
+              maxLength={3}
               component={LittleSingleInput}
             />
           </View>
@@ -217,6 +224,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.card_hour.mode1.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.card_hour.mode1.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.card_hour.mode1.mode} />
@@ -226,6 +234,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.card_hour.mode2.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.card_hour.mode2.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.card_hour.mode2.mode} />
@@ -246,6 +255,7 @@ const NotDistinguish = ({
               showLabel={false}
               inputStyle={{maxHeight: 50}}
               inputRightComponent={<RightUnit value="天"/>}
+              maxLength={3}
               component={LittleSingleInput}
             />
           </View>
@@ -273,6 +283,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.working_day.mode1.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.working_day.mode1.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.working_day.mode1.mode} />
@@ -282,6 +293,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.working_day.mode2.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.working_day.mode2.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.working_day.mode2.mode} />
@@ -302,6 +314,7 @@ const NotDistinguish = ({
               showLabel={false}
               inputStyle={{maxHeight: 50}}
               inputRightComponent={<RightUnit value="时"/>}
+              maxLength={3}
               component={LittleSingleInput}
             />
           </View>
@@ -329,6 +342,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.working_hour.mode1.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.working_hour.mode1.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.working_hour.mode1.mode} />
@@ -338,6 +352,7 @@ const NotDistinguish = ({
               <Field  
                 name={`${fieldName}.working_hour.mode2.value`}
                 inputStyle={{maxHeight: 50}}
+                inputLength={selectPayMode.working_hour.mode2.mode}
                 component={LittleSingleInput}
               />
               <Unit value={selectPayMode.working_hour.mode2.mode} />

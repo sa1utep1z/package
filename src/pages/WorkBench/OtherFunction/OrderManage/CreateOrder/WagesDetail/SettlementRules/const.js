@@ -14,62 +14,62 @@ export const originRule = {
         value: [{ label: '纯', value: 'PURE' }],
         children: {
           pure: {
-            mode: [{ label: '工价', value: 'WORK_FEE' }],
-            value: []
+            mode: [{ label: '工价', value: 'WAGE' }],
+            value: ''
           },
           working: {
             time: '',
             mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             }
           },
           card_day: {
             value: '',
             mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             }
           },
           card_hour: {
             value: '',
             mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             }
           },
           working_day: {
             value: '',
             mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             }
           },
           working_hour: {
             value: '',
             mode1: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             }
           }
         }
@@ -81,62 +81,62 @@ export const originRule = {
           value: [{ label: '纯', value: 'PURE' }],
           children: {
             pure: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             working: {
               time: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             card_day: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             card_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             working_day: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             working_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             }
           }
@@ -147,62 +147,62 @@ export const originRule = {
           value: [{ label: '纯', value: 'PURE' }],
           children: {
             pure: {
-              mode: [{ label: '工价', value: 'WORK_FEE' }],
-              value: []
+              mode: [{ label: '工价', value: 'WAGE' }],
+              value: ''
             },
             working: {
               time: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             card_day: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             card_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             working_day: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             },
             working_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '工价', value: 'WORK_FEE' }],
-                value: []
+                mode: [{ label: '工价', value: 'WAGE' }],
+                value: ''
               }
             }
           }
@@ -218,62 +218,62 @@ export const originRule = {
         value: [{ label: '纯', value: 'PURE' }],
         children: {
           pure: {
-            mode: [{ label: '返费', value: 'RETURN_FEE' },],
-            value: []
+            mode: [{ label: '返费', value: 'REBATE' },],
+            value: ''
           },
           working: {
             time: '',
             mode1: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             }
           },
           card_day: {
             value: '',
             mode1: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             }
           },
           card_hour: {
             value: '',
             mode1: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             }
           },
           working_day: {
             value: '',
             mode1: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             }
           },
           working_hour: {
             value: '',
             mode1: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             mode2: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             }
           }
         }
@@ -285,62 +285,62 @@ export const originRule = {
           value: [{ label: '纯', value: 'PURE' }],
           children: {
             pure: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             working: {
               time: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             card_day: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             card_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             working_day: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             working_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             }
           }
@@ -351,62 +351,62 @@ export const originRule = {
           value: [{ label: '纯', value: 'PURE' }],
           children: {
             pure: {
-              mode: [{ label: '返费', value: 'RETURN_FEE' },],
-              value: []
+              mode: [{ label: '返费', value: 'REBATE' },],
+              value: ''
             },
             working: {
               time: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             card_day: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             card_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             working_day: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             },
             working_hour: {
               value: '',
               mode1: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               },
               mode2: {
-                mode: [{ label: '返费', value: 'RETURN_FEE' },],
-                value: []
+                mode: [{ label: '返费', value: 'REBATE' },],
+                value: ''
               }
             }
           }

@@ -7,6 +7,8 @@ const MyMembersApi = {
   CompaniesList: async() => await httpRequest.get(`common/companies/forSelect`),
   // 我的会员首页获取门店列表
   StoreList: async() => await httpRequest.get(`common/store/withMember/forSelect`),
+  // 招聘员列表
+  RecruiterList: async () => await httpRequest.get('/common/user/forSelect'),
   // 我的会员首页获取会员详情
   MemberDetail: async (poolId) => await httpRequest.get(`admin/app/memberPool/${poolId}`),
   // 我的会员首页编辑会员信息

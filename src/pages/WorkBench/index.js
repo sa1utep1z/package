@@ -58,13 +58,13 @@ const WorkBench = (props) => {
                 <TouchableOpacity key={index} style={styles.cardItem} onPress={() => gotoPage(box)}>
                   <View style={styles.imgBox}>
                     <Image style={styles.img} source={box.imgBackground}/>
-                    <Image style={[
+                    {box.iconSource && <Image style={[
                       styles.icon, 
                       box.routeName === NAVIGATION_KEYS.MY_COMMISSION && {left: 20, top: 14},
                       box.routeName === NAVIGATION_KEYS.LEAVING_LIST && {left: 20, top: 14},
                       box.routeName === NAVIGATION_KEYS.HIRE_REPORT_FORM && {left: 11, top: 20},
                       box.routeName === NAVIGATION_KEYS.COMPLAINT_PLATE && {left: 22, top: 14}
-                    ]} source={box.iconSource}/>
+                    ]} source={box.iconSource}/>}
                   </View>
                   <Text style={styles.title}>{box.title}</Text>
                 </TouchableOpacity>

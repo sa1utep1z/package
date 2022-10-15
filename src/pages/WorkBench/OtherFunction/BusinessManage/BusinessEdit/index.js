@@ -331,7 +331,6 @@ const BusinessEdit = (props) => {
     getCompanyType();
   }, [companyInfo])
 
-
   return (
     <Formik
       initialValues={initialValues}

@@ -3,26 +3,54 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
+import { useToast } from "react-native-toast-notifications";
 
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
+import CreateOrderApi from '../../../../../../request/CreateOrderApi';
+import { SUCCESS_CODE } from "../../../../../../utils/const";
 
 const validationSchema = Yup.object().shape({
-  policyText: Yup.string().required('请输入接单政策文本')
+  applyPolicyRemark: Yup.string().required('请输入接单政策文本')
 });
 
 const initialValues = {
-  policyPicture: [],
-  policyText: ''
+  applyPolicyImage: [],
+  applyPolicyRemark: ''
 };
 
-const Policy = () => {
+const Policy = ({
+  orderId = '634769ea452c5b76a655cd20'
+}) => {
+  const toast = useToast();
+
   const [showDetail, setShowDetail] = useState(true);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
+  const CreateOrder = async(params) => {
+    console.log('CreateOrder->params', params);
+    try {
+      const res = await CreateOrderApi.PolicyRequirement(params);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存成功！', {type: 'success'});
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+    }
+  };
+
   const onSubmit = async (values) => {
-    console.log('提交表单', values)
+    console.log('origin-values', values);
+    const newObject = {
+      applyPolicyImage: values.applyPolicyImage,
+      applyPolicyRemark: values.applyPolicyRemark,
+      orderId
+    };
+    CreateOrder(newObject);
   };
 
   return (
@@ -48,7 +76,7 @@ const Policy = () => {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View style={{flex: 1}}>
                     <Field
-                      name="policyPicture"
+                      name="applyPolicyImage"
                       label="接单政策照片"
                       component={SelectPhotos}
                     />
@@ -58,12 +86,13 @@ const Policy = () => {
                   </TouchableOpacity>
                 </View>
                 <Field
-                  name="policyText"
+                  name="applyPolicyRemark"
                   label="接单政策文字说明"
                   placeholder="请输入接单政策文本"
                   maxLength={200}
                   multiline
                   lengthLimit
+                  isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
                 />

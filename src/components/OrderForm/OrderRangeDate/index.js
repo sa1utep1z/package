@@ -13,6 +13,7 @@ const OrderRangeDate = ({
   field, 
   form, 
   label,
+  isRequire = false,
   canSelect = true, //是否可以选择
   limitCrossDate = false, //设置多个时间范围内是否可以交叉。（多个时间不支持交叉的话就需要修改对应的时间）
   limit = {startDateLimit: oneYearBefore, endDateLimit: oneYearLater},
@@ -94,7 +95,7 @@ const OrderRangeDate = ({
             form.setFieldValue(field.name, newRangeDate);
             return;
           }
-          if(formatSelectDate > field.value.endDate){
+          if(field.value.endDate && formatSelectDate > field.value.endDate){
             toast.show('开始日期不可大于结束日期', {type: 'warning'});
             return;
           }
@@ -136,7 +137,7 @@ const OrderRangeDate = ({
               return;
             }
           }
-          if(formatSelectDate < field.value.startDate){
+          if(field.value.startDate && formatSelectDate < field.value.startDate){
             toast.show('结束时间不可小于开始时间', {type: 'warning'});
             return;
           }
@@ -155,7 +156,9 @@ const OrderRangeDate = ({
   return (
     <View style={{marginBottom: form.errors[field.name] && form.touched[field.name]?.startDate && form.touched[field.name]?.endDate ? 10 : 20}}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>{label}：</Text>
+        <Text style={styles.labelText}>
+          {isRequire && <Text style={{color: 'red'}}>*</Text>}
+          {label}：</Text>
         {canSelect ? <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && form.touched[field.name]?.startDate && form.touched[field.name]?.endDate && styles.errorBorder]}>
           <View style={{flex: 1}}>
             <TouchableOpacity style={[{flex: 1, borderWidth: 1, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}, form.errors[field.name]?.startDate && form.touched[field.name]?.startDate && {borderColor: 'red'}]} onPress={()=>pickerOnPress('start')}>

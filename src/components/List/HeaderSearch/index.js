@@ -45,6 +45,7 @@ const HeaderSearch = ({
   typeResult = false,
   batchOperate, // 批量操作函数
   leavingList = false,
+  noSearchInput = false, 
   clearRangeDate, //进入页面时不要筛选时间
   startText,
   endText,
@@ -61,6 +62,8 @@ const HeaderSearch = ({
 
   const [companyList, setCompanyList] = useState([]);
   const [storeList, setStoreList] = useState([]);
+  const [recruiterList, setRecruiterList] = useState([]);
+
   useEffect(() => {
     showSearch && startingAnimation();
     !showSearch && closeAnimation();
@@ -70,6 +73,7 @@ const HeaderSearch = ({
   useEffect(() => {
     getCompaniesList();
     getStoreList();
+    getRecruiterList();
   }, [])
 
   const setRangeDate = () => {
@@ -94,7 +98,7 @@ const HeaderSearch = ({
       }
     } catch (err) {
       console.log('err', err);
-      toast.show(`获取企业列表失败，请稍后重试`, { type: 'danger' });
+      toast.show(`获取企业列表失败，请联系管理员`, { type: 'danger' });
     }
   };
 
@@ -115,7 +119,27 @@ const HeaderSearch = ({
       }
     } catch (err) {
       console.log('err', err);
-      toast.show(`获取门店列表失败`, { type: 'danger' });
+      toast.show(`获取门店列表失败，请联系管理员`, { type: 'danger' });
+    }
+  };
+
+  const getRecruiterList = async() => {
+    try {
+      const res = await MyMembersApi.RecruiterList();
+      if (res.code !== SUCCESS_CODE) {
+        toast.show(`获取招聘员列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if (res.data.length) {
+        res.data.forEach((item, index) => {
+          item.title = item.label;
+          item.id = index + 1;
+        });
+        setRecruiterList(res.data);
+      }
+    } catch (err) {
+      console.log('err', err);
+      toast.show(`获取招聘员列表失败，请联系管理员`, { type: 'danger' });
     }
   };
 
@@ -168,7 +192,7 @@ const HeaderSearch = ({
           staffList = [];
         }
         return (
-          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }]}>
+          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }, noSearchInput && {marginBottom: 6}]}>
             {!noCompanyAndStatus && <View style={[{ flexDirection: 'row', marginBottom: 20 }, withoutCompanyFilter && { marginBottom: 0 }]}>
               {
                 companyShow && <Field
@@ -225,7 +249,7 @@ const HeaderSearch = ({
                 title="招聘员"
                 name="staff"
                 singleSelect={singleSelect}
-                originList={staffList}
+                originList={recruiterList}
                 component={HeaderSelectItem}
               />}
             </View>}
@@ -246,13 +270,13 @@ const HeaderSearch = ({
               endText={endText}
               component={DateRangePicker}
             />}
-            <Field
+            {!noSearchInput && <Field
               name="search"
               placeholder={placeholder ? placeholder : '请输入会员姓名、身份证或手机号码'}
               borderRadius={8}
               searchInputStyle={styles.searchInputStyle}
               component={SearchInput}
-            />
+            />}
           </Animated.View>
         )
       }}
