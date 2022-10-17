@@ -164,14 +164,14 @@ const ComplaintManage = () => {
 
   const getTypeList = async () => {
     const params = {
-      companyIds: searchContent?.companyIds || [],
-      storeIds: searchContent?.storeIds || [],
-      recruitIds: searchContent?.recruitIds || [],
+      companyId: searchContent?.companyId || '',
+      storeId: searchContent?.storeId || '',
+      recruiterId: searchContent?.recruiterId || '',
       createDateStart: searchContent?.startDate || '',
       createDateEnd: searchContent?.endDate || '',
       str: searchContent?.str || '',
       type: searchContent?.type || '',
-      role
+      // role
     };
     try {
       const res = await ComplaintApi.ComplaintTotalList(params);
@@ -333,9 +333,9 @@ const ComplaintManage = () => {
     console.log('打印筛选框的值：', values);
     const createDateStart = values.dateRange.startDate;
     const createDateEnd = values.dateRange.endDate;
-    const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
-    const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
+    const companyId = values.enterprise.length ? values.enterprise[0].value : '';
+    const storeId = values.store.length ? values.store[0].value : '';
+    const recruiterId = values.staff.length ? values.staff[0].value : '';
     const str = values.search;
     const type = values.type.length ? values.type[0].value : '';
 
@@ -345,9 +345,9 @@ const ComplaintManage = () => {
       createDateStart,
       createDateEnd,
       str,
-      companyIds,
-      storeIds,
-      recruitIds,
+      companyId,
+      storeId,
+      recruiterId,
       type
     });
   };

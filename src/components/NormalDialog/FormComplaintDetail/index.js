@@ -77,7 +77,7 @@ const FormComplaintDetail = ({
         {showList?.length ? showList.map((item, index) => {
           return (
             <View key={index} style={styles.memberItem}>
-              <Text style={styles.memberItem_text}>{item.title}：</Text>
+              <Text style={styles.memberItem_text}>{item.title != '上传照片' ? item.title + ':' : ''}</Text>
               {item.type === 'mobile' ?
                 item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF' }}>{item.value}</Text>
@@ -87,20 +87,25 @@ const FormComplaintDetail = ({
                     <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
                   </View> : item.type === 'idNo' ? <View style={styles.memberItem_value}>
                     <Text selectable={true} style={{ color: '#409EFF' }}>{item.value || '无'}</Text>
-                  </View> : item.type === 'imgs' ? <View style={styles.imageBox}>
-                    {
-                      item.value.length > 0 && item.value.map((img, index) => {
-                        return (
-                          <View style={styles.imags} key={index}>
-                            <Image
-                              style={{ width: '100%', height: '100%' }}
-                              source={{ uri: `${img.url}` }}
-                            />
-                          </View>
-                        )
-                      })
-                    }
-                  </View> : <View style={styles.memberItem_value}>
+                  </View> : item.type === 'imgs' ? <>
+                    <View style={styles.title}>
+                      <Text style={styles.text}>上传照片：</Text>
+                    </View>
+                    <View style={styles.imageBox}>
+                      {
+                        item.value.length > 0 && item.value.map((img, index) => {
+                          return (
+                            <View style={styles.imags} key={index}>
+                              <Image
+                                style={{ width: '100%', height: '100%' }}
+                                source={{ uri: `${img.url}` }}
+                              />
+                            </View>
+                          )
+                        })
+                      }
+                    </View>
+                  </> : <View style={styles.memberItem_value}>
                     <Text>{item.value || '无'}</Text>
                   </View>}
             </View>
@@ -124,11 +129,11 @@ const FormComplaintDetail = ({
 const styles = StyleSheet.create({
   msgArea: {
     maxHeight: 360,
-    marginHorizontal: 10
+    // marginHorizontal: 10
   },
   topArea: {
     width: '100%',
-    paddingHorizontal: 20
+    paddingHorizontal: 10
   },
   memberItem: {
     minHeight: 30,
@@ -136,7 +141,7 @@ const styles = StyleSheet.create({
   },
   memberItem_text: {
     textAlignVertical: 'center',
-    textAlign: 'left'
+    textAlign: 'left',
   },
   memberItem_value: {
     flex: 1,
@@ -152,12 +157,12 @@ const styles = StyleSheet.create({
     // margin: 30,
   },
   imags: {
-    width: 100,
-    height: 100,
+    width: 95,
+    height: 95,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#999999',
-    marginRight: 20,
+    marginRight: 10,
     marginBottom: 20,
     position: 'relative',
   },

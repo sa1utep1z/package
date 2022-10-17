@@ -246,11 +246,10 @@ const EditComplaint = (props) => {
                   editable={false}
                   component={FormItem}
                 />
+                <View style={styles.title}>
+                  <Text style={styles.text}>上传照片：</Text>
+                </View>
                 <View style={styles.cardArea1}>
-                  <View style={styles.title}>
-                    {/* <Text style={styles.required}>*</Text> */}
-                    <Text style={styles.text}>上传照片：</Text>
-                  </View>
                   <View style={styles.imageBox}>
                     {
                       companyImage.length > 0 && companyImage.map((item, index) => {
@@ -425,7 +424,7 @@ const styles = StyleSheet.create({
   },
   imageBox: {
     flexDirection: 'row',
-    alignContent: 'center',
+    // alignContent: 'center',
     justifyContent: 'flex-start',
     flexWrap: 'wrap',
     margin: 30,

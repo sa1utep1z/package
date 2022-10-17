@@ -346,8 +346,8 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   imags: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#999999',
