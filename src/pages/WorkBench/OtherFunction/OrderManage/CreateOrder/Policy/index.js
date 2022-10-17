@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
 import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -21,12 +21,18 @@ const initialValues = {
 };
 
 const Policy = ({
-  orderId = ''
-}) => {
+  orderId = '',
+  refresh
+}, ref) => {
   const toast = useToast();
+
+  useImperativeHandle(ref, () => {
+    return { PolicyForm: restForm };
+  }, []);
 
   const [showDetail, setShowDetail] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [policyButtonLoading, setPolicyButtonLoading] = useState(false);
 
   useEffect(()=>{
     if(orderId){
@@ -56,8 +62,13 @@ const Policy = ({
     }
   };
 
-  const CreateOrder = async(params) => {
-    setLoading(true);
+  //接单政策说明
+  const CreatePolicyInfo = async(params) => {
+    setPolicyButtonLoading(true);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
     try {
       const res = await CreateOrderApi.PolicyRequirement(params);
       console.log('res', res);
@@ -65,11 +76,13 @@ const Policy = ({
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      toast.show('保存成功！', {type: 'success'});
+      toast.show('保存接单政策成功！', {type: 'success'});
+      refresh && refresh();
     }catch(error){
-      console.log('CreateOrderInfo->error', error);
+      console.log('CreatePolicyInfo->error', error);
+      setPolicyButtonLoading(false);
     }finally{
-      setLoading(false);
+      setPolicyButtonLoading(false);
     }
   };
 
@@ -80,7 +93,7 @@ const Policy = ({
       applyPolicyRemark: values.applyPolicyRemark,
       orderId
     };
-    CreateOrder(newObject);
+    CreatePolicyInfo(newObject);
   };
 
   return (
@@ -101,7 +114,6 @@ const Policy = ({
           onSubmit={onSubmit}>
           {({ handleSubmit, ...rest }) => {
             restForm = rest;
-            console.log('rest', rest);
             return (
               <View style={{ flex: 1, paddingHorizontal: 28}}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
@@ -112,17 +124,17 @@ const Policy = ({
                       component={SelectPhotos}
                     />
                   </View>
-                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
+                  {!policyButtonLoading ? <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : <View style={{backgroundColor: '#999999', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}}>
+                    <ActivityIndicator size={36} color="#ffffff"/>
+                  </View>}
                 </View>
                 <Field
                   name="applyPolicyRemark"
                   label="接单政策文字说明"
                   placeholder="请输入接单政策文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
                   isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
@@ -154,4 +166,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Policy;
+export default forwardRef(Policy);

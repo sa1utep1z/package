@@ -8,12 +8,12 @@ export const WORKBENCH_LIST = [
       {
       key: 'businessManage',
       title: '企业管理',
-      imgBackground: require('../../assets/images/企业管理.png'),
+      imgBackground: require('../../assets/images/CompanyManage.png'),
       routeName: NAVIGATION_KEYS.BUSINESS_MANAGE
     }, {
       key: 'orderManage',
       title: '订单管理',
-      imgBackground: require('../../assets/images/订单管理.png'),
+      imgBackground: require('../../assets/images/orderManage.png'),
       routeName: NAVIGATION_KEYS.ORDER_MANAGE
     }
   ]},
@@ -83,14 +83,12 @@ export const WORKBENCH_LIST = [
     }, {
       key: 'complaintFeedback',
       title: '投诉反馈',
-      imgBackground: require('../../assets/images/lightBlue.png'),
-      iconSource: require('../../assets/images/NewestState.png'),
+      imgBackground: require('../../assets/images/Complain.png'),
       routeName: NAVIGATION_KEYS.COMPLAINT_FEEDBACK
     }, {
       key: 'advanceManage',
       title: '预支审核',
-      imgBackground: require('../../assets/images/lightBlue.png'),
-      iconSource: require('../../assets/images/NewestState.png'),
+      imgBackground: require('../../assets/images/borrow.png'),
       routeName: NAVIGATION_KEYS.ADVANCE_MANAGE
     },
   ]

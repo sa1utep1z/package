@@ -19,35 +19,35 @@ const LittleSingleInput = ({
     if(inputLength.length){
       const inputValue = inputLength[0].value;
       switch(inputValue){
-        case 'WORK_FEE':
+        case 'WAGE':
           setInputMaxLength(2);
           break;
-        case 'LOW_FEE':
+        case 'BASIC_SALARY':
           setInputMaxLength(5);
           break;
-        case 'DAY_FEE':
+        case 'DAY_SALARY':
           setInputMaxLength(3);
           break;
-        case 'DAY_END':
+        case 'DAY_SETTLEMENT':
           setInputMaxLength(3);
           break;
-        case 'RETURN_FEE':
+        case 'REBATE':
           setInputMaxLength(5);
           break;
-        case 'DISTANCE_FEE':
+        case 'SPREAD':
           setInputMaxLength(2);
           break;
-        case 'SUPPLEMENT_FEE':
+        case 'FILL':
           setInputMaxLength(2);
           break;
-        case 'SUBSIDIES_FEE':
+        case 'SUBSIDY':
           setInputMaxLength(2);
           break;
-        case 'STABLE_WORK':
+        case 'STABLE':
           setInputMaxLength(2);
           break;
         default:
-          setInputMaxLength(3);
+          setInputMaxLength(2);
           break;
       }
     }

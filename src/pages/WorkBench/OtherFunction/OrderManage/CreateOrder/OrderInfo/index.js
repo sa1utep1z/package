@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
 import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -64,21 +64,68 @@ const initialValues = {
 };
 
 const OrderInfo = ({
+  orderId,
+  type,
   setOrderId,
-  orderId
-}) => {
+  refresh
+}, ref) => {
   const toast = useToast();
+
+  useImperativeHandle(ref, () => {
+    return { BasicRestForm: restForm };
+  }, []);
 
   useEffect(()=>{
     if(orderId){
       getBasicOrder(orderId);
     }
+    if(type === 'create'){
+      getOriginPhotos();
+    }
   },[orderId])
 
   const [showDetail, setShowDetail] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [basicButtonLoading, setBasicButtonLoading] = useState(false);
 
   const detailOnPress = () => setShowDetail(!showDetail);
+  
+  //订单基本信息
+  const CreateOrder = async(params) => {
+    setBasicButtonLoading(true);
+    try {
+      const res = await CreateOrderApi.CreateBasicOrder(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('订单保存成功！', {type: 'success'});
+      setOrderId(res.data);
+      refresh && refresh();
+    }catch(error){
+      console.log('CreateOrderInfo->error', error);
+      setBasicButtonLoading(false);
+    }finally{
+      setBasicButtonLoading(false);
+    }
+  };
+
+  const getOriginPhotos = async() => {
+    setLoading(true);
+    try {
+      const res = await CreateOrderApi.getOriginPhotos();
+      console.log('getOriginPhotos->res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      restForm.setFieldValue('pictureList', res.data);
+    }catch(error){
+      console.log('getBasicOrder->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
 
   const getBasicOrder = async(orderId) => {
     setLoading(true);
@@ -115,23 +162,6 @@ const OrderInfo = ({
     }
   };
 
-  const CreateOrderInfo = async(params) => {
-    setLoading(true);
-    try {
-      const res = await CreateOrderApi.CreateBasicOrder(params);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      toast.show('订单保存成功！', {type: 'success'});
-      setOrderId(res.data);
-    }catch(error){
-      console.log('CreateOrderInfo->error', error);
-    }finally{
-      setLoading(false);
-    }
-  };
-
   const onSubmit = async (values) => {
     console.log('origin-values', values);
     const newObject = {
@@ -151,7 +181,7 @@ const OrderInfo = ({
       self: true, //自招（固定字段）
       orderId
     };
-    CreateOrderInfo(newObject);
+    CreateOrder(newObject);
   };
 
   return (
@@ -182,9 +212,11 @@ const OrderInfo = ({
                     inputStyle={{flex: 1}}
                     selectTextOnFocus
                   />
-                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
+                  {!basicButtonLoading ? <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : <View style={{backgroundColor: '#999999', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}}>
+                    <ActivityIndicator size={36} color="#ffffff"/>
+                  </View>}
                 </View>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <Field
@@ -260,9 +292,7 @@ const OrderInfo = ({
                   name="salaryTitle"
                   label="小程序薪资详情"
                   placeholder="请输入小程序薪资详情文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
                   isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
@@ -298,4 +328,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default OrderInfo;
+export default forwardRef(OrderInfo);

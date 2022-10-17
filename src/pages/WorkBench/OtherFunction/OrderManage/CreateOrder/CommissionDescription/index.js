@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
 import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -46,12 +46,18 @@ const initialValues = {
 // 招聘员提成说明
 const CommissionDescription = ({
   orderId = '',
-}) => {
+  refresh
+}, ref) => {
   const toast = useToast();
+
+  useImperativeHandle(ref, () => {
+    return { CommissionForm: restForm };
+  }, []);
 
   const [showDetail, setShowDetail] = useState(true);
   const [rulesList, setRulesList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [commissionButtonLoading, setCommissionButtonLoading] = useState(false);
 
   useEffect(()=>{
     if(orderId){
@@ -116,6 +122,30 @@ const CommissionDescription = ({
       setLoading(false);
     }
   };
+  
+  //招聘员提成说明
+  const CreateCommissionInfo = async(params) => {
+    setCommissionButtonLoading(true);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
+    try {
+      const res = await CreateOrderApi.CommissionDescription(params, orderId);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存招聘员提成成功！', {type: 'success'});
+      refresh && refresh();
+    }catch(error){
+      console.log('CreateCommissionInfo->error', error);
+      setCommissionButtonLoading(false);
+    }finally{
+      setCommissionButtonLoading(false);
+    }
+  };
 
   const deleteRule = (rule) => {
     const copyList = deepCopy(rulesList);
@@ -157,24 +187,6 @@ const CommissionDescription = ({
     })
   };
 
-  const CreateOrder = async(params) => {
-    setLoading(true);
-    console.log('CreateOrder->params', params);
-    try {
-      const res = await CreateOrderApi.CommissionDescription(params, orderId);
-      console.log('res', res);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      toast.show('保存成功！', {type: 'success'});
-    }catch(error){
-      console.log('CreateOrderInfo->error', error);
-    }finally{
-      setLoading(false);
-    }
-  };
-
   const onSubmit = async (values) => {
     console.log('origin-values', values);
     if(!orderId){
@@ -214,7 +226,7 @@ const CommissionDescription = ({
         })
       }
     }
-    CreateOrder(newObject);
+    CreateCommissionInfo(newObject);
   };
 
   return (
@@ -246,9 +258,11 @@ const CommissionDescription = ({
                       component={RadioSelect}
                     />
                   </View>
-                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
+                  {!commissionButtonLoading ? <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : <View style={{backgroundColor: '#999999', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}}>
+                    <ActivityIndicator size={36} color="#ffffff"/>
+                  </View>}
                 </View>
                 <View>
                   <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -412,4 +426,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CommissionDescription;
+export default forwardRef(CommissionDescription);

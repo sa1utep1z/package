@@ -27,7 +27,6 @@ const SelectOrderId = ({
   }) => {
   const toast = useToast();
   const navigation = useNavigation();
-  console.log('rest', rest);
 
   const dialogRef = useRef(null);
 

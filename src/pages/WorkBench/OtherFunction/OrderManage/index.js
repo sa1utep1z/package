@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Image, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -28,6 +28,8 @@ let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const OrderManage = () => {
+  const scrollViewRef = useRef(null);
+
   const toast = useToast();
 
   const dispatch = useDispatch();
@@ -48,31 +50,37 @@ const OrderManage = () => {
     })
   },[])
 
-  useEffect(()=>{
-    console.log('searchContent', searchContent);
-    timer && clearTimeout(timer);
-    timer = setTimeout(()=>{
-      QueryOrderList(searchContent);
-      getTypeList();
-    }, 0)
-    return () => timer && clearTimeout(timer);
-  },[searchContent])
-
   const [listData, setListData] = useState([]);
   const [typeNum, setTypeNum] = useState(TAB_OF_LIST.ORDER_MANAGE);
   const [index, setIndex] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [listLoading, setListLoading] = useState(false);
   const [searchContent, setSearchContent] = useState({...firstPage});
+  const [nextPage, setNextPage] = useState(false);
+
+  useEffect(()=>{
+    timer = setTimeout(()=>{
+      QueryOrderList(searchContent);
+      getTypeList(searchContent);
+    }, 0)
+    return () => timer && clearTimeout(timer);
+  },[searchContent])
 
   const showQuestion = () => {
     dispatch(setTitle('温馨提示'));
     dispatch(openDialog(<Question />));
   };
 
-  const getTypeList = async() => {
+  const getTypeList = async(searchContent) => {
+    const params = {
+      companyId: searchContent.companyId || '',
+      recruitStart: searchContent.recruitStart || '',
+      recruitEnd: searchContent.recruitEnd || ''
+    };
     try {
-      const res = await CreateOrderApi.GetType();
+      console.log('getTypeList -> params', params);
+      const res = await CreateOrderApi.GetType(params);
+      console.log('getTypeList->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -89,7 +97,7 @@ const OrderManage = () => {
       })
       setTypeNum(newList);
     } catch (error) {
-      console.log('error', error);
+      console.log('getTypeList->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
@@ -97,15 +105,22 @@ const OrderManage = () => {
   const QueryOrderList = async(params) => {
     setListLoading(true);
     try {
+      console.log('QueryOrderList -> params', params);
       const res = await CreateOrderApi.QueryOrderList(params);
+      console.log('QueryOrderList->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      setListData(res.data.content);
       setHasNext(res.data.hasNext);
+      if(nextPage){
+        setListData([...listData, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      setListData(res.data.content);
     } catch (error) {
-      console.log('error', error);
+      console.log('QueryOrderList->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     } finally{
       setListLoading(false);
@@ -113,16 +128,21 @@ const OrderManage = () => {
   };
   
   const filter = values => {
+    console.log('执行了吗？2');
     const params = {
       ...searchContent,
       companyId: values.enterprise.length ? values.enterprise[0].value : '',
       recruitStart: values.dateRange.startDate,
       recruitEnd: values.dateRange.endDate
     }
-    QueryOrderList(params);
+    setSearchContent(params);
   };
 
-  const createOrder = (type, order) => navigation.navigate(NAVIGATION_KEYS.CERATE_ORDER, { type, orderId: order?.orderId});
+  const createOrder = (type, order) => navigation.navigate(NAVIGATION_KEYS.CERATE_ORDER, {
+    type, 
+    orderId: order?.orderId,
+    refresh
+  });
 
   const CopyOrder = async(order) => {
     const params = {
@@ -138,7 +158,7 @@ const OrderManage = () => {
       toast.show('复制成功', {type: 'success'});
       refresh();
     } catch (error) {
-      console.log('error', error);
+      console.log('CopyOrder->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
@@ -153,7 +173,7 @@ const OrderManage = () => {
       toast.show('续单成功', {type: 'success'});
       refresh();
     } catch (error) {
-      console.log('error', error);
+      console.log('ContinueOrder->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
@@ -177,7 +197,7 @@ const OrderManage = () => {
       }
       refresh();
     } catch (error) {
-      console.log('error', error);
+      console.log('changeOrder->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
@@ -192,7 +212,7 @@ const OrderManage = () => {
       toast.show('删除订单成功', {type: 'success'});
       refresh();
     } catch (error) {
-      console.log('error', error);
+      console.log('DeleteOrder->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
@@ -207,8 +227,8 @@ const OrderManage = () => {
         toast.show('复制成功', {type: 'success'});
       }
     } catch (error) {
-      toast.show('复制成功', {type: 'danger'});
-      console.log('复制失败error', error);
+      console.log('复制失败->error', error);
+      toast.show('复制失败', {type: 'danger'});
     }
   };
 
@@ -243,30 +263,61 @@ const OrderManage = () => {
     
   };
 
-  const deleteRow = (rowMap, rowKey) => {
-    DeleteOrder(rowKey.item.orderId);
-    console.log('rowMap', rowMap);
-    console.log('rowKey', rowKey);
-    if (rowMap[rowKey]) {
-      rowMap[rowKey].closeRow();
+  const selectIndex = (tab, index) => {
+    setListData([]);
+    setIndex(index);
+    const params = {...searchContent, ...firstPage};
+    switch(index){
+      case 0:
+        params.recruit = '';
+        break;
+      case 1:
+        params.recruit = true;
+        break;
+      case 2:
+        params.recruit = false;
+        break;
     }
+    setSearchContent(params);
   };
 
-  const selectIndex = (tab, index) => {
-    setIndex(index);
-    const params = {...searchContent};
+  const renderHiddenItem = (rowData) => (
+    <TouchableOpacity
+      style={styles.backRightBtn}
+      onPress={() => DeleteOrder(rowData.item.orderId)}>
+      <AntDesign
+        name='delete'
+        size={36}
+        color='#ffffff'
+      />
+    </TouchableOpacity>
+  );
+
+  const refresh = () => {
+    const params = {...searchContent, ...firstPage};
     if(index === 1){
       params.recruit = true;
     }else if(index === 2){
       params.recruit = false;
     }
-    QueryOrderList(params);
+    setSearchContent(params);
   };
 
+  const onEndReached = () => {
+    if(hasNext){
+      const params = {
+        ...searchContent,
+        pageNumber: searchContent.pageNumber += 1
+      };
+      setSearchContent(params);
+      setNextPage(true);
+    }
+  };
+  
   const renderItem = ({item}) => {
     return (
       <View style={styles.renderItem}>
-        <View style={styles.renderItem_item}>
+        <View style={[styles.renderItem_item, item?.ok && {backgroundColor: '#c8f5b4'}]}>
           <View style={{flexDirection: 'row'}}>
             <Image
               style={{width: 120, height: 120, marginRight: 20}}
@@ -333,37 +384,6 @@ const OrderManage = () => {
     )
   };
 
-  const renderHiddenItem = (data, rowMap) => (
-    <TouchableOpacity
-      style={styles.backRightBtn}
-      onPress={() => deleteRow(rowMap, data)}>
-      <AntDesign
-        name='delete'
-        size={36}
-        color='#ffffff'
-      />
-    </TouchableOpacity>
-  );
-
-  const refresh = () => {
-    const params = {...firstPage};
-    if(index === 1){
-      params.recruit = true;
-    }else if(index === 2){
-      params.recruit = false;
-    }
-    QueryOrderList(params);
-    getTypeList();
-  };
-
-  const onEndReached = () => {
-    if(hasNext){
-      console.log('还有下一页')
-    }else{
-      console.log('触底了！')
-    }
-  };
-
   return (
     <View style={styles.screen}>
       <HeaderSearch
@@ -387,10 +407,14 @@ const OrderManage = () => {
         })}
       </View>
       <SwipeListView
+        useFlatList={true}
+        ref={scrollViewRef}
         data={listData}
         rightOpenValue={-120}
         renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}
+        keyExtractor={(item,index) => item.orderId}
+        getItemLayout={(data, index)=>({length: 274, offset: 274 * index, index})}
         refreshing={listLoading}
         initialNumToRender={4}
         onRefresh={refresh}

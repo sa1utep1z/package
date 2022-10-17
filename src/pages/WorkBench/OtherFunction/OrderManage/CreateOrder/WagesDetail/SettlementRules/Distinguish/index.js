@@ -9,7 +9,7 @@ import LittleSingleDate from "../../../../../../../../components/OrderForm/Littl
 import { FEE_WAY_NAME, MEMBER_FEE_MODE, FEE_WAY_MODE } from "../../../../../../../../utils/const";
 
 const Unit = ({value}) => {
-  const unitValue = value.length ? value[0].value : 'WORK_FEE';
+  const unitValue = value.length ? value[0].value : 'WAGE';
   return (
     <View style={styles.unitArea}>
       <Text style={styles.unitArea_text}>{FEE_WAY_NAME[unitValue]}</Text>

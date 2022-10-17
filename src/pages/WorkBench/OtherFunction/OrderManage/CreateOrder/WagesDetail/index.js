@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -41,13 +41,20 @@ const initialValues = {
 // 会员工价详情
 const WagesDetail = ({
   orderId = '',
-  scrollRef
-}) => {
+  scrollRef,
+  refresh
+}, ref) => {
   const toast = useToast();
 
   const [showDetail, setShowDetail] = useState(true);
   const [rulesList, setRulesList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [settlementLoading, setSettlementLoading] = useState(false);
+  const [wagesDetailButtonLoading, setWagesDetailButtonLoading] = useState(false);
+  
+  useImperativeHandle(ref, () => {
+    return { WagesForm: restForm };
+  }, []);
 
   useEffect(()=>{
     return () => timer && clearTimeout(timer);
@@ -90,7 +97,7 @@ const WagesDetail = ({
   };
 
   const getWageSettlement = async(orderId) => {
-    setLoading(true);
+    setSettlementLoading(true);
     try {
       const res = await CreateOrderApi.getWageSettlement(orderId);
       console.log('查询会员结算规则res', res.data);
@@ -110,8 +117,35 @@ const WagesDetail = ({
       }
     }catch(error){
       console.log('getWageSettlement->error', error);
+      setSettlementLoading(false);
     }finally{
-      setLoading(false);
+      setSettlementLoading(false);
+    }
+  };
+
+  //会员工价详情
+  const CreateWagesInfo = async(params, rulesArray) => {
+    setWagesDetailButtonLoading(true);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
+    try {
+      const res = await CreateOrderApi.WageDetail(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('保存会员工价详情成功！', {type: 'success'});
+      if(rulesList.length){
+        CreateSettlement(rulesArray);
+      }
+      refresh();
+    }catch(error){
+      console.log('CreateWagesInfo->error', error);
+      setWagesDetailButtonLoading(false);
+    }finally{
+      setWagesDetailButtonLoading(false);
     }
   };
 
@@ -163,8 +197,7 @@ const WagesDetail = ({
   };
 
   const CreateSettlement = async(rules) => {
-    setLoading(true);
-    console.log('CreateOrder->rules', rules);
+    console.log('CreateSettlement->rules', rules);
     try {
       const res = await CreateOrderApi.WageSettlement(rules, orderId);
       if(res?.code !== SUCCESS_CODE){
@@ -172,38 +205,15 @@ const WagesDetail = ({
         return;
       }
       toast.show('保存结算规则成功！', {type: 'success'});
+      refresh && refresh();
     }catch(error){
       console.log('CreateOrderInfo->error', error);
-    }finally{
-      setLoading(false);
-    }
-  };
-
-  const CreateOrder = async(params, rulesArray) => {
-    setLoading(true);
-    if(!orderId){
-      toast.show('请先创建订单基本信息！', {type: 'danger'});
-      return;
-    }
-    try {
-      const res = await CreateOrderApi.WageDetail(params);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      toast.show('保存成功！', {type: 'success'});
-      if(!!rulesList.length){
-        CreateSettlement(rulesArray);
-      }
-    }catch(error){
-      console.log('CreateOrderInfo->error', error);
-    }finally{
-      setLoading(false);
     }
   };
 
   const onSubmit = async (values) => {
     console.log('origin-values', values);
+    //上部表单；
     const newObject = {
       explain: values.explain, //工价详情
       debtType: values.debtType.length ? values.debtType[0].value : '', //借支类型
@@ -218,8 +228,11 @@ const WagesDetail = ({
       remark: values.remark, //备注说明
       orderId
     };
+
+    //下部规则；
     const rulesArray = transformFormValue(rulesList, values); //获取会员结算规则；
-    CreateOrder(newObject, rulesArray);
+
+    CreateWagesInfo(newObject, rulesArray);
   };
 
   return (
@@ -247,16 +260,17 @@ const WagesDetail = ({
                     name="explain"
                     label="工价详情"
                     placeholder="请输入工价详情文本"
-                    maxLength={200}
                     multiline
-                    lengthLimit
+                    longText
                     isRequire
                     inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                     component={SingleInput}
                   />
-                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
+                  {!wagesDetailButtonLoading ? <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : <View style={{backgroundColor: '#999999', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}}>
+                    <ActivityIndicator size={36} color="#ffffff"/>
+                  </View>}
                 </View>
                 <Field
                   name="debtType"
@@ -298,9 +312,7 @@ const WagesDetail = ({
                   name="commercial"
                   label="购买商保"
                   placeholder="请输入商保文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -310,9 +322,8 @@ const WagesDetail = ({
                   name="socialSecurity"
                   label="购买社保"
                   placeholder="请输入社保文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
+                  longText
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -322,9 +333,8 @@ const WagesDetail = ({
                   name="leaveSalary"
                   label="自离薪资"
                   placeholder="请输入自离薪资文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
+                  longText
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -334,9 +344,8 @@ const WagesDetail = ({
                   name="memberAward"
                   label="会员入职奖"
                   placeholder="请输入会员入职奖文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
+                  longText
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -346,9 +355,8 @@ const WagesDetail = ({
                   name="remark"
                   label="备注说明"
                   placeholder="请输入备注说明文本"
-                  maxLength={200}
                   multiline
-                  lengthLimit
+                  longText
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -366,6 +374,7 @@ const WagesDetail = ({
                 <SettlementRules
                   scrollRef={scrollRef}
                   values={values}
+                  loading={settlementLoading}
                   restForm={restForm}
                   initialValues={initialValues}
                   rulesList={rulesList}
@@ -412,4 +421,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default WagesDetail;
+export default forwardRef(WagesDetail);

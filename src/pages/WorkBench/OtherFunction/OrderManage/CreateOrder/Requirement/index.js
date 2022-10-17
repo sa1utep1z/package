@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
 import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
@@ -41,9 +41,14 @@ const initialValues = {
 };
 
 const Requirement = ({
-  orderId = ''
-}) => {
+  orderId = '',
+  refresh
+}, ref) => {
   const toast = useToast();
+  
+  useImperativeHandle(ref, () => {
+    return { RequirementForm: restForm };
+  }, []);
 
   useEffect(()=>{
     if(orderId){
@@ -53,6 +58,7 @@ const Requirement = ({
 
   const [showDetail, setShowDetail] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [requirementButtonLoading, setRequirementButtonLoading] = useState(false);
 
   const detailOnPress = () => setShowDetail(!showDetail);
 
@@ -86,8 +92,13 @@ const Requirement = ({
     }
   };
 
-  const CreateOrder = async(params) => {
-    setLoading(true);
+  //录用要求
+  const CreateRequirementInfo = async(params) => {
+    setRequirementButtonLoading(true);
+    if(!orderId){
+      toast.show('请先创建订单基本信息！', {type: 'danger'});
+      return;
+    }
     try {
       const res = await CreateOrderApi.RequirementOrder(params);
       console.log('res', res);
@@ -95,11 +106,13 @@ const Requirement = ({
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      toast.show('保存成功！', {type: 'success'});
+      toast.show('保存录用要求成功！', {type: 'success'});
+      refresh && refresh();
     }catch(error){
-      console.log('CreateOrderInfo->error', error);
+      console.log('CreateRequirementInfo->error', error);
+      setRequirementButtonLoading(false);
     }finally{
-      setLoading(false);
+      setRequirementButtonLoading(false);
     }
   };
 
@@ -122,7 +135,7 @@ const Requirement = ({
       newObject.male = values.male;
       newObject.female = values.female;
     }
-    CreateOrder(newObject);
+    CreateRequirementInfo(newObject);
   };
 
   return (
@@ -154,9 +167,11 @@ const Requirement = ({
                     inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>人</Text>}
                     selectTextOnFocus
                   />
-                  <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
+                  {!requirementButtonLoading ? <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>
                     <Text style={{fontSize: 28, color: '#fff', fontWeight: 'bold'}}>保存</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : <View style={{backgroundColor: '#999999', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}}>
+                    <ActivityIndicator size={36} color="#ffffff"/>
+                  </View>}
                 </View>
                 <Field
                   name="sexGroup"
@@ -280,4 +295,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Requirement;
+export default forwardRef(Requirement);
