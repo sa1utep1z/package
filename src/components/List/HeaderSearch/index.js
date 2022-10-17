@@ -45,7 +45,7 @@ const HeaderSearch = ({
   typeResult = false,
   batchOperate, // 批量操作函数
   leavingList = false,
-  noSearchInput = false, 
+  noSearchInput = false,
   clearRangeDate, //进入页面时不要筛选时间
   startText,
   endText,
@@ -123,7 +123,7 @@ const HeaderSearch = ({
     }
   };
 
-  const getRecruiterList = async() => {
+  const getRecruiterList = async () => {
     try {
       const res = await MyMembersApi.RecruiterList();
       if (res.code !== SUCCESS_CODE) {
@@ -192,7 +192,7 @@ const HeaderSearch = ({
           staffList = [];
         }
         return (
-          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }, noSearchInput && {marginBottom: 6}]}>
+          <Animated.View style={[styles.topView, { opacity: fadeAnim }, !showSearch && { display: 'none' }, noSearchInput && { marginBottom: 6 }]}>
             {!noCompanyAndStatus && <View style={[{ flexDirection: 'row', marginBottom: 20 }, withoutCompanyFilter && { marginBottom: 0 }]}>
               {
                 companyShow && <Field

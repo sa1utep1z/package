@@ -10,7 +10,7 @@ import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
 import FormComplaintDetail from "../../../../components/NormalDialog/FormComplaintDetail";
 import MemberDetail from "../../../../components/NormalDialog/MemberDetail";
-import StatusChangeInInterviewList from "../../../../components/NormalDialog/StatusChangeInInterviewList";
+import SelectItem from '../../../../components/Form/SelectItem';
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import NAVIGATION_KEYS from "../../../../navigator/key";
@@ -78,7 +78,7 @@ const ComplaintManage = () => {
   useEffect(() => {
     dispatch(openListSearch());
     navigation.setOptions({
-      headerRight: () => <HeaderRightButtonOfList />,
+      // headerRight: () => <HeaderRightButtonOfList />,
       headerCenterArea: ({ ...rest }) => <HeaderCenterSearch routeParams={rest} />
     })
     clearRangeDate();
@@ -114,7 +114,7 @@ const ComplaintManage = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
-      role
+      // role
     });
   }, [role])
 
@@ -209,7 +209,6 @@ const ComplaintManage = () => {
   const pressTransfer = (item) => {
     setVisible4(true);
     setFeedbackId(item.feedbackId);
-    // restForm.setFieldValue('transferUserId', item.handlerId);
   };
 
   // 转单提交
@@ -225,7 +224,6 @@ const ComplaintManage = () => {
         return;
       }
       toast.show('转单成功');
-      console.log('打印全部数量：', params)
       getList(searchContent);
       setVisible4(false);
     } catch (error) {
@@ -265,11 +263,13 @@ const ComplaintManage = () => {
     console.log('打印数据格式4444：', copyList);
     let arr = [];
     for (let key in copyList) {
-      arr.push([copyList[key].title, copyList[key].value])
+      arr.push([copyList[key].title, copyList[key].value]);
     }
+    const dd = arr.pop();
     let newArr = arr.join('、').replace(/、/g, "\n");
     newArr = newArr.replace(/\,/g, ":");
     copyContentRef.current = newArr;
+    console.log('复制的内容：', newArr, dd);
   }, [complainInfo, copyContentRef.current])
 
   //复制文本
@@ -506,8 +506,8 @@ const ComplaintManage = () => {
           renderItem={renderItem}
           onRefresh={refresh}
           onEndReached={onEndReached}
-          keyExtractor={(item, index) => item.feedbackId}
-          getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
+          keyExtractor={(item) => item.feedbackId}
+          getItemLayout={(data, index) => ({ length: 460, offset: 460 * index, index })}
           refreshing={isLoading}
           initialNumToRender={20}
           ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext} />}
@@ -531,9 +531,10 @@ const ComplaintManage = () => {
                   <View style={{ flex: 1 }}>
                     <Field
                       name='transferUserId'
-                      label="处理人"
+                      title="处理人"
+                      placeholder='请选择'
                       selectList={userList}
-                      inputStyle={{ width: 200, height: 30 }}
+                      inputStyle={{ width: 240, height: 30 }}
                       component={UserSelect}
                     />
                     <View style={{ flexDirection: 'row', marginTop: 40, justifyContent: 'center' }}>
@@ -565,9 +566,6 @@ const ComplaintManage = () => {
           containerStyle={styles.buttonContainerStyle}
           titleStyle={styles.titleStyle}
         />
-        {/* <View style={styles.buttonStyle}>
-          <Text style={styles.titleStyle}>新增投诉</Text>
-        </View> */}
       </View>
       <NormalDialog
         ref={dialogRef}
@@ -589,7 +587,8 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     borderRadius: 10,
     paddingBottom: 10,
-    paddingTop: 10
+    paddingTop: 10,
+    minHeight: 460,
   },
   textArea: {
     minHeight: 40,

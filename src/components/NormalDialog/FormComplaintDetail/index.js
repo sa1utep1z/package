@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, Image } from 'react-native';
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     // margin: 30,
   },
   imags: {
-    width: 290,
-    height: 200,
+    width: 100,
+    height: 100,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#999999',

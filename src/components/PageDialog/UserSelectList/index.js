@@ -48,10 +48,11 @@ const UserSelectList = ({
       });
     }
     setShowList(copyList);
-  }, [fieldValue])
+  }, [])
 
   const selectItem = (item) => {
-    const copyList = deepCopy(selectList);
+    const copyList = deepCopy(showList);
+    console.log('搜索以后的数据：',copyList);
     copyList.map(data => {
       if(data.id === item.id){
         data.isChecked = true;
@@ -74,9 +75,13 @@ const UserSelectList = ({
   };
 
   const close = () => dispatch(closeDialog());
-
-  const onChangeText = value => setInputValue(value);
-
+  console.log('selectList的值：', selectList);
+  const onChangeText = (value) => {
+    setInputValue(value);
+    const copyList = deepCopy(selectList);
+    let newArr = copyList?.length && copyList.filter(item => item.userName.includes(value));
+    setShowList(newArr);
+  }
   const clearInput = () => inputValue.length && setInputValue('');
 
   return (

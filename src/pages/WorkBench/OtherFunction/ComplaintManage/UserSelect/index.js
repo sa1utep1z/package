@@ -12,8 +12,10 @@ const UserSelect = ({
   field, 
   form, 
   label,
+  title,
   selectList = [],
   inputStyle,
+  canSearch = true,
   ...rest
 }) => {
   const dispatch = useDispatch();
@@ -28,19 +30,19 @@ const UserSelect = ({
   console.log('传过来的数组值：', field, label, formData);
   const selectOnPress = () => {
     dispatch(setTitle('请选择姓名'));
-    dispatch(openDialog(<UserSelectList selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
+    dispatch(openDialog(<UserSelectList canSearch={canSearch} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
   };
 
   return (
     <View style={[{flex: 1, flexDirection: 'row'}, !form.errors[field.name] && styles.selectArea]}>
       <View style={[styles.container, inputStyle]}>
-        <Text style={styles.labelText}>处理人：</Text>
+        <Text style={styles.labelText}>{title}：</Text>
         <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && styles.errorBorder]} onPress={selectOnPress}>
-          {field.value && <>
+          {/* {field.value && <> */}
             <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
-              {!!field.value.length ? field.value[0].userName : `请选择处理人`}
+              {!!field.value.length ? field.value[0].userName : `请选择${title}`}
             </Text>
-          </>}
+          {/* </>} */}
           <AntDesign
             name='down'
             size={16}
@@ -49,7 +51,7 @@ const UserSelect = ({
         </TouchableOpacity>
       </View>
       {!!form.errors[field.name] && <View style={{flexDirection: 'row'}}>
-        <Text style={[styles.labelText, {opacity: 0}]}>{label}：</Text>
+        <Text style={[styles.labelText, {opacity: 0}]}>{title}：</Text>
         <ErrorMessage
           name={field.name}
           style={styles.errorMessage}

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { Button } from '@rneui/themed';
 import { Formik, Field, validateYupSchema } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
 import moment from 'moment';
+import { deepCopy } from "../../../../../utils";
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
 import SelectDate from '../../../../../components/Form/SelectDate';
@@ -70,6 +71,11 @@ const EditComplaint = (props) => {
       if (msg.createdDate) {
         const createdDate = moment(msg.createdDate).format('YYYY-MM-DD HH:mm:ss');
         restForm.setFieldValue('createdDate', createdDate);
+      }
+      if (msg.imgs) {
+        const imgs = msg.imgs;
+        restForm.setFieldValue('imgs', imgs);
+        setCompanyImage(imgs);
       }
     }
   };
@@ -426,8 +432,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   imags: {
-    width: 290,
-    height: 200,
+    width: 200,
+    height: 150,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#999999',

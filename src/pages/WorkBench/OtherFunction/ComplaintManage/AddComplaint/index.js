@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { Button } from '@rneui/themed';
 import { Formik, Field, validateYupSchema } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
+import { deepCopy } from "../../../../../utils";
 import Entypo from 'react-native-vector-icons/Entypo';
 import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
@@ -47,13 +48,13 @@ const AddComplaint = (props) => {
 
   // 上传图片
   const uploadImage = async (fileName, localFilePath) => {
-    const data = new FormData();
-    const file = {
-      uri: localFilePath, type: 'multipart/form-data', name: fileName,
-    };
-    data.append('file', file);
-    console.log('选择图库照片data的值：', data);
     try {
+      const data = new FormData();
+      const file = {
+        uri: localFilePath, type: 'multipart/form-data', name: fileName,
+      };
+      data.append('file', file);
+      console.log('选择图库照片data的值：', data);
       const res = await ComplaintApi.UploadImages(data)
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
@@ -100,7 +101,7 @@ const AddComplaint = (props) => {
   }
 
   const onSubmit = async (values) => {
-    console.log('打印上传的参数：',values)
+    console.log('打印上传的参数：', values)
     try {
       const params = {
         ...values,
@@ -345,8 +346,8 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   imags: {
-    width: 290,
-    height: 200,
+    width: 100,
+    height: 100,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#999999',
