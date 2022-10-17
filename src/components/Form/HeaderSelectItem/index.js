@@ -1,20 +1,20 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import {StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {ErrorMessage} from 'formik';
+import { ErrorMessage } from 'formik';
 
 import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
 import { deepCopy } from '../../../utils';
 
-const FlattListItem = ({item, pressItem, isChecked, isLastIndex}) => {
+const FlattListItem = ({ item, pressItem, isChecked, isLastIndex }) => {
 
-  const onChange = useCallback(() => pressItem(item),[item]);
+  const onChange = useCallback(() => pressItem(item), [item]);
 
-  return useMemo(()=>(
-    <TouchableOpacity 
-      style={[styles.scrollItem, isLastIndex && {borderBottomWidth: 0}]} 
+  return useMemo(() => (
+    <TouchableOpacity
+      style={[styles.scrollItem, isLastIndex && { borderBottomWidth: 0 }]}
       onPress={onChange}>
       <Text>{item.title}</Text>
       <CheckBox
@@ -26,44 +26,66 @@ const FlattListItem = ({item, pressItem, isChecked, isLastIndex}) => {
         uncheckedIcon={<Text style={[styles.checkBox_icon, !isChecked && styles.falseColor]}>{'\ue68d'}</Text>}
       />
     </TouchableOpacity>
-  ),[item])
+  ), [item])
 };
 
 const HeaderSelectItem = ({
-    field, 
-    form, 
-    originList,
-    title,
-    placeholder,
-    singleSelect = false, //是否单选
-    lastButton, //外部表单后部是否要增加按钮
-    ...rest
+  field,
+  form,
+  originList,
+  title,
+  placeholder,
+  singleSelect = false, //是否单选
+  lastButton, //外部表单后部是否要增加按钮
+  ...rest
 }) => {
   const [list, setList] = useState([]);
   const [showSelectItems, setShowSelectItems] = useState(false);
-
+  const [isOrigning, setIsOrigning] = useState(false);
   useEffect(() => {
     const copyList = deepCopy(originList);
-    if(field.value.length){
+    if (field.value.length) {
       const fieldValueIds = field.value.map(item => item.id);
       copyList.map(item => {
-        if(fieldValueIds.includes(item.id)){
+        if (fieldValueIds.includes(item.id)) {
           item.isChecked = true;
-        }else{
+        } else {
           item.isChecked = false;
         }
       })
     }
     setList(copyList);
   }, [showSelectItems])
-  
+
   const pressItem = (item) => {
     // 单选
+    // if (singleSelect) {
+    //   if (!!isOrigning) {
+    //     const copyList = deepCopy(list);
+    //     const findOutItem = copyList.find(list => list.id === item.id);
+    //     findOutItem.isChecked = !item.isChecked;
+    //     setList(copyList);
+    //     return;
+    //   } else {
+    //     const copyList = deepCopy(originList);
+    //     const findOutItem = copyList.find(list => list.id === item.id);
+    //     findOutItem.isChecked = !item.isChecked;
+    //     setList(copyList);
+    //     return;
+    //   }
+    // }
     if(singleSelect){
-      const copyList = deepCopy(originList);
-      const findOutItem = copyList.find(list => list.id === item.id);
-      findOutItem.isChecked = !item.isChecked;
-      setList(copyList);
+      const newList = [item];
+      // setSelectedItemList(newList);
+      const newArr = deepCopy(list);
+      newArr.map(data => {
+        if(data.id === item.id){
+          data.isChecked = true;
+        }else{
+          data.isChecked = false
+        }
+      });
+      setList(newArr);
       return;
     }
 
@@ -75,36 +97,38 @@ const HeaderSelectItem = ({
   };
 
   const textContent = () => {
-    if(field.value.length){
+    if (field.value.length) {
       return field.value.map(item => item.title).join('、');
-    }else if (placeholder){
+    } else if (placeholder) {
       return placeholder;
-    }else{
+    } else {
       return `请选择${title}`;
     }
   };
 
   const onChanging = value => {
-    if(!list.length) return;
+    if (!list.length) return;
     let newArr = originList?.length && originList.filter(item => item.title.includes(value));
     setList(newArr);
+    setIsOrigning(true);
   };
 
   const confirm = () => {
     setShowSelectItems(!showSelectItems);
-    if(field.name === 'store'){
-      if(form.values.staff.length){
+    setIsOrigning(false);
+    if (field.name === 'store') {
+      if (form.values.staff.length) {
         form.setFieldValue('staff', []);
       }
     }
     const selectedItemList = list.filter(list => list.isChecked === true);
     form.setFieldValue(field.name, selectedItemList);
-    form.handleSubmit();  
+    form.handleSubmit();
   };
 
   const clearFieldValue = () => {
     setList(originList);
-    if(field.name === 'store'){
+    if (field.name === 'store') {
       form.setFieldValue('staff', []);
     }
     form.setFieldValue(field.name, []);
@@ -118,27 +142,27 @@ const HeaderSelectItem = ({
       <View style={[styles.selectItemArea]}>
         <Text style={styles.showLittleTitleText}>{title}：</Text>
         <View style={styles.rightArea}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.selectArea}
             onPress={touchItem}>
             <Text
-              style={[styles.selectText, !field.value.length && styles.noItem]} 
-              ellipsizeMode="tail" 
+              style={[styles.selectText, !field.value.length && styles.noItem]}
+              ellipsizeMode="tail"
               numberOfLines={1}>
               {textContent()}
             </Text>
-            {!field.value.length && 
+            {!field.value.length &&
               <AntDesign
                 name={showSelectItems ? 'up' : 'down'}
                 size={30}
-                style={{paddingHorizontal: 10}}
+                style={{ paddingHorizontal: 10 }}
                 color={!!field.value.length ? 'black' : '#E3E3E3'}
               />}
           </TouchableOpacity>
-          {!!field.value.length && 
-            <TouchableOpacity onPress={clearFieldValue} style={{height: '100%', paddingHorizontal: 10, justifyContent: 'center'}}>
+          {!!field.value.length &&
+            <TouchableOpacity onPress={clearFieldValue} style={{ height: '100%', paddingHorizontal: 10, justifyContent: 'center' }}>
               <AntDesign
-                name='closecircle' 
+                name='closecircle'
                 size={30}
                 color='#999999'
               />
@@ -149,54 +173,54 @@ const HeaderSelectItem = ({
       <ErrorMessage
         name={field.name}
         component={Text}
-        style={{color: 'red', fontSize: 22, textAlign: 'center'}}
+        style={{ color: 'red', fontSize: 22, textAlign: 'center' }}
       />
-        
+
       <Dialog
         animationType="fade"
         isVisible={showSelectItems}
         overlayStyle={styles.overlayStyle}
-        onBackdropPress={()=> setShowSelectItems(!showSelectItems)}>
-          <View style={styles.dialogTitleArea}>
-            <Text style={styles.dialogTitle}>请选择{title}</Text>
-          </View>
-          <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
-            <SearchInput
-              borderRadius = {8}
-              placeholder={`请输入${title}名称`}
-              smallSize
-              allowFontScaling={false}
-              withoutButton
-              keyboardType='default'
-              onChange={onChanging}
-              fontStyle={{fontSize: 14}}
-              searchInputStyle={styles.searchInputStyle}
-            />
-            {list.length ? 
-              <FlatList 
-                data={list}
-                style={styles.scrollArea}
-                renderItem={({item, index})=>{
-                  const isChecked = item.isChecked === true;
-                  const isLastIndex = index === list.length - 1;
-                  return <FlattListItem item={item} pressItem={pressItem} isChecked={isChecked} isLastIndex={isLastIndex}/>
-                }}
-                ListEmptyComponent={<ActivityIndicator size={36} />}
-                keyboardShouldPersistTaps="handled"
-                keyExtractor={item => item.id}
-                getItemLayout={(data, index)=>({length: 35, offset: 35 * index, index})}
-                initialNumToRender={15}
-              /> : <EmptyArea withSearch />
-            }
-          </View>
-          <View style={styles.bottomButtonArea}>
-            <TouchableOpacity style={styles.bottomLeft} onPress={() => setShowSelectItems(!showSelectItems)}>
-              <Text style={styles.leftText}>取消</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomRight} onPress={confirm}>
-              <Text style={styles.rightText}>确认</Text>
-            </TouchableOpacity>
-          </View>
+        onBackdropPress={() => setShowSelectItems(!showSelectItems)}>
+        <View style={styles.dialogTitleArea}>
+          <Text style={styles.dialogTitle}>请选择{title}</Text>
+        </View>
+        <View style={{ paddingHorizontal: 10, paddingBottom: 10 }}>
+          <SearchInput
+            borderRadius={8}
+            placeholder={`请输入${title}名称`}
+            smallSize
+            allowFontScaling={false}
+            withoutButton
+            keyboardType='default'
+            onChange={onChanging}
+            fontStyle={{ fontSize: 14 }}
+            searchInputStyle={styles.searchInputStyle}
+          />
+          {list.length ?
+            <FlatList
+              data={list}
+              style={styles.scrollArea}
+              renderItem={({ item, index }) => {
+                const isChecked = item.isChecked === true;
+                const isLastIndex = index === list.length - 1;
+                return <FlattListItem item={item} pressItem={pressItem} isChecked={isChecked} isLastIndex={isLastIndex} />
+              }}
+              ListEmptyComponent={<ActivityIndicator size={36} />}
+              keyboardShouldPersistTaps="handled"
+              keyExtractor={item => item.id}
+              getItemLayout={(data, index) => ({ length: 35, offset: 35 * index, index })}
+              initialNumToRender={15}
+            /> : <EmptyArea withSearch />
+          }
+        </View>
+        <View style={styles.bottomButtonArea}>
+          <TouchableOpacity style={styles.bottomLeft} onPress={() => setShowSelectItems(!showSelectItems)}>
+            <Text style={styles.leftText}>取消</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bottomRight} onPress={confirm}>
+            <Text style={styles.rightText}>确认</Text>
+          </TouchableOpacity>
+        </View>
       </Dialog>
     </>
   )
@@ -205,14 +229,14 @@ const HeaderSelectItem = ({
 const styles = StyleSheet.create({
   selectItemArea: {
     flex: 1,
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
     height: 60
   },
   pageFieldStyle: {
-    paddingHorizontal: 28, 
-    height: 91, 
-    borderBottomWidth: 2, 
+    paddingHorizontal: 28,
+    height: 91,
+    borderBottomWidth: 2,
     borderColor: 'rgba(0, 0, 0, .05)'
   },
   showLittleTitleText: {
@@ -221,8 +245,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   rightArea: {
-    flex: 1, 
-    flexDirection: 'row', 
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     height: '100%',
     backgroundColor: '#fff',
@@ -231,8 +255,8 @@ const styles = StyleSheet.create({
   selectArea: {
     flex: 1,
     height: '100%',
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 0
   },
@@ -249,50 +273,50 @@ const styles = StyleSheet.create({
     color: '#999999'
   },
   overlayStyle: {
-    padding: 0, 
-    paddingTop: 20, 
+    padding: 0,
+    paddingTop: 20,
     borderRadius: 6
   },
   dialogTitleArea: {
     marginBottom: 10
   },
   dialogTitle: {
-    textAlign: 'center', 
+    textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold'
   },
   selectAll: {
-    position: 'absolute', 
+    position: 'absolute',
     right: 20
   },
   selectAll_text: {
     color: '#409EFF'
   },
   searchInputStyle: {
-    height: 35, 
-    marginBottom: 0, 
-    paddingHorizontal: 0, 
-    borderWidth: 1, 
-    borderColor: '#E3E3E3', 
-    borderTopRightRadius: 8, 
-    borderTopLeftRadius: 8, 
+    height: 35,
+    marginBottom: 0,
+    paddingHorizontal: 0,
+    borderWidth: 1,
+    borderColor: '#E3E3E3',
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
     borderBottomWidth: 0
   },
   scrollArea: {
-    borderWidth: 1, 
-    borderColor: '#E3E3E3', 
+    borderWidth: 1,
+    borderColor: '#E3E3E3',
     maxHeight: 300,
     borderRadius: 8,
-    borderTopLeftRadius: 0, 
+    borderTopLeftRadius: 0,
     borderTopRightRadius: 0
   },
   scrollItem: {
-    minHeight: 35, 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    paddingHorizontal: 15, 
-    borderBottomWidth: 1, 
+    minHeight: 35,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
     borderColor: '#E3E3E3'
   },
   checkBox_containerStyle: {
@@ -305,8 +329,8 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   checkBox_icon: {
-    fontFamily: "iconfont", 
-    color: '#409EFF', 
+    fontFamily: "iconfont",
+    color: '#409EFF',
     fontSize: 20
   },
   falseColor: {
@@ -314,38 +338,38 @@ const styles = StyleSheet.create({
   },
 
   bottomButtonArea: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     height: 45
   },
   bottomLeft: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    borderBottomLeftRadius: 6, 
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomLeftRadius: 6,
     borderTopWidth: 1,
     borderRightWidth: 1,
     borderColor: '#E3E3E3'
   },
   leftText: {
-    fontSize: 16, 
+    fontSize: 16,
     color: '#999999'
   },
   bottomRight: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderBottomRightRadius: 6,
     borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
   rightText: {
-    fontSize: 16, 
+    fontSize: 16,
     color: '#409EFF'
   },
   labelArea: {
     height: '100%',
-    flexDirection: 'row',  
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center'
   },
   label: {
@@ -353,10 +377,10 @@ const styles = StyleSheet.create({
     fontSize: 32
   },
   required: {
-    color: 'red', 
-    textAlign: 'center', 
-    textAlignVertical: 'top', 
-    alignSelf: 'flex-start', 
+    color: 'red',
+    textAlign: 'center',
+    textAlignVertical: 'top',
+    alignSelf: 'flex-start',
     marginTop: 7
   },
 })

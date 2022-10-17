@@ -327,7 +327,7 @@ const NewestState = () => {
         {NEWEST_STATE_LIST_HEAD.map((item,index) => <Text key={index} style={styles.list_head_text}>{item.title}</Text>)}
       </View>
       <View style={{flex: 1}}>
-        <FlatList 
+        <FlatList
           ref={flatListRef}
           data={memoList}
           style={{backgroundColor: '#fff'}}
