@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
-import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -12,8 +12,8 @@ import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDate";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
-import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE, SUCCESS_CODE } from "../../../../../../utils/const";
 import CreateOrderApi from '../../../../../../request/CreateOrderApi';
+import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE, SUCCESS_CODE } from "../../../../../../utils/const";
 
 let restForm;
 const validationSchema = Yup.object().shape({
@@ -35,13 +35,6 @@ const validationSchema = Yup.object().shape({
   showTitle: Yup.string().required('请输入小程序职位标题'),
   salaryTitle: Yup.string().required('请输入小程序薪资详情文本'),
 });
-
-//默认的图片列表；
-const normalImg = {
-  name: 'default_Image_Of_Order_In_Mobile.jpg',
-  fileKey: 'laborMgt/labor/normal.jpg.jpg',
-  url: 'https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/normal.jpg.jpg'
-};
 
 const initialValues = {
   orderName: '',
@@ -66,8 +59,7 @@ const initialValues = {
 const OrderInfo = ({
   orderId,
   type,
-  setOrderId,
-  refresh
+  setOrderId
 }, ref) => {
   const toast = useToast();
 
@@ -101,7 +93,6 @@ const OrderInfo = ({
       }
       toast.show('订单保存成功！', {type: 'success'});
       setOrderId(res.data);
-      refresh && refresh();
     }catch(error){
       console.log('CreateOrderInfo->error', error);
       setBasicButtonLoading(false);
@@ -292,6 +283,7 @@ const OrderInfo = ({
                   name="salaryTitle"
                   label="小程序薪资详情"
                   placeholder="请输入小程序薪资详情文本"
+                  longText
                   multiline
                   isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}

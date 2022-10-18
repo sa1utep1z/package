@@ -819,6 +819,6 @@ export const FEE_WAY_NAME = {
 //订单管理-页面-工种；
 export const WORK_TYPE_NAME = {
   'FORMAL_WORKER': '正式工',
-  'DISPATH_HOURLY_WORKER': '派遣工-小时工',
-  'DISPATH_EQUAL_PAY': '派遣工-同工同酬'
+  'DISPATCH_HOURLY_WORKER': '小时工',
+  'DISPATCH_HOURLY_WORKER': '同工同酬'
 };

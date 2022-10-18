@@ -41,8 +41,7 @@ const initialValues = {
 };
 
 const Requirement = ({
-  orderId = '',
-  refresh
+  orderId = ''
 }, ref) => {
   const toast = useToast();
   
@@ -101,13 +100,12 @@ const Requirement = ({
     }
     try {
       const res = await CreateOrderApi.RequirementOrder(params);
-      console.log('res', res);
+      console.log('CreateRequirementInfo->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show('保存录用要求成功！', {type: 'success'});
-      refresh && refresh();
     }catch(error){
       console.log('CreateRequirementInfo->error', error);
       setRequirementButtonLoading(false);

@@ -45,8 +45,7 @@ const initialValues = {
 
 // 招聘员提成说明
 const CommissionDescription = ({
-  orderId = '',
-  refresh
+  orderId = ''
 }, ref) => {
   const toast = useToast();
 
@@ -78,7 +77,7 @@ const CommissionDescription = ({
       }
       restForm.setFieldValue('mode', res.data ? [REWARD_MODE.find(item => item.value === res.data)] : []);
     }catch(error){
-      console.log('CreateOrderInfo->error', error);
+      console.log('getCommissionOrder->error', error);
     }finally{
       setLoading(false);
     }
@@ -108,7 +107,6 @@ const CommissionDescription = ({
           newValue[`rule${itemIndex + 1}`].recruiter = String(item.result.recruiter);
           newValue[`rule${itemIndex + 1}`].groupLeader = String(item.result.groupLeader);
           newValue[`rule${itemIndex + 1}`].storeLeader = String(item.result.storeLeader);
-          console.log('newValue111', newValue);
           restForm.setValues({
             ...restForm.values,
             ...newValue
@@ -132,13 +130,12 @@ const CommissionDescription = ({
     }
     try {
       const res = await CreateOrderApi.CommissionDescription(params, orderId);
-      console.log('res', res);
+      console.log('CreateCommissionInfo->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show('保存招聘员提成成功！', {type: 'success'});
-      refresh && refresh();
     }catch(error){
       console.log('CreateCommissionInfo->error', error);
       setCommissionButtonLoading(false);
@@ -188,7 +185,6 @@ const CommissionDescription = ({
   };
 
   const onSubmit = async (values) => {
-    console.log('origin-values', values);
     if(!orderId){
       toast.show('请先创建订单基本信息！', {type: 'danger'});
       return;

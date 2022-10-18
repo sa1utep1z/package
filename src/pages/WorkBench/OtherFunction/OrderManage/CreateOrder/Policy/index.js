@@ -21,8 +21,7 @@ const initialValues = {
 };
 
 const Policy = ({
-  orderId = '',
-  refresh
+  orderId = ''
 }, ref) => {
   const toast = useToast();
 
@@ -56,7 +55,7 @@ const Policy = ({
       };
       restForm.setValues(formValues);
     }catch(error){
-      console.log('CreateOrderInfo->error', error);
+      console.log('getPolicyOrder->error', error);
     }finally{
       setLoading(false);
     }
@@ -71,13 +70,12 @@ const Policy = ({
     }
     try {
       const res = await CreateOrderApi.PolicyRequirement(params);
-      console.log('res', res);
+      console.log('CreatePolicyInfo->res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show('保存接单政策成功！', {type: 'success'});
-      refresh && refresh();
     }catch(error){
       console.log('CreatePolicyInfo->error', error);
       setPolicyButtonLoading(false);
@@ -87,7 +85,6 @@ const Policy = ({
   };
 
   const onSubmit = async (values) => {
-    console.log('origin-values', values);
     const newObject = {
       applyPolicyImage: values.applyPolicyImage,
       applyPolicyRemark: values.applyPolicyRemark,
@@ -134,6 +131,7 @@ const Policy = ({
                   name="applyPolicyRemark"
                   label="接单政策文字说明"
                   placeholder="请输入接单政策文本"
+                  longText
                   multiline
                   isRequire
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
