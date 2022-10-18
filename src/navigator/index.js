@@ -12,6 +12,7 @@ const Stack = createNativeStackNavigator();
 
 export default Navigator = () => {
 
+  //登录
   const login = (
     <>
       <Stack.Screen
@@ -43,6 +44,7 @@ export default Navigator = () => {
     </>
   );
 
+  //首页
   const home = (
     <>
       <Stack.Screen
@@ -62,6 +64,7 @@ export default Navigator = () => {
     </>
   );
 
+  //名单
   const list = (
     <>
       <Stack.Screen
@@ -135,8 +138,9 @@ export default Navigator = () => {
         }}
       />
     </>
-  )
+  );
 
+  //工作台
   const workbench = (
     <>
       <Stack.Screen
@@ -296,6 +300,7 @@ export default Navigator = () => {
     </>
   );
 
+  //我的会员
   const myMembers = (
     <>
       <Stack.Screen
@@ -320,8 +325,9 @@ export default Navigator = () => {
         }}
       />
     </>
-  )
+  );
 
+  //我的
   const mine = (
     <>
       <Stack.Screen
@@ -381,6 +387,40 @@ export default Navigator = () => {
       />
     </>
   );
+  
+  //宿舍
+  const dormitory = (
+    <>
+      <Stack.Screen
+        name={NAVIGATION_KEYS.DORMITORY_LIST}
+        component={NAVIGATION_PAGES.RESIGNATION_MESSAGE}
+        options={{
+          headerTitle: '在离宿名单'
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.DORMITORY_CHECK}
+        component={NAVIGATION_PAGES.REVISIT_MESSAGE}
+        options={{
+          headerTitle: '宿舍点检'
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.DORMITORY_RECORD}
+        component={NAVIGATION_PAGES.SYSTEM_MESSAGE}
+        options={{
+          headerTitle: '宿舍抄表'
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.DORMITORY_VIOLATION}
+        component={NAVIGATION_PAGES.NOTICE_MESSAGE}
+        options={{
+          headerTitle: '宿舍违纪'
+        }}
+      />
+    </>
+  );
 
   return (
     <NavigationContainer ref={navigationRef}>
@@ -399,6 +439,7 @@ export default Navigator = () => {
         {myMembers}
         {mine}
         {message}
+        {/* {dormitory} */}
         <Stack.Screen
           name={NAVIGATION_KEYS.TABBAR}
           component={Tabbar}

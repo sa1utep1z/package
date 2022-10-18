@@ -48,7 +48,12 @@ const NAVIGATION_KEYS = {
   BUSINESS_EDIT: 'business_edit',
   ORDER_MANAGE: 'order_manage',
   CERATE_ORDER: 'create_order',
- 
+
+  //宿舍管理
+  DORMITORY_LIST: 'dormitory_list',
+  DORMITORY_CHECK: 'dormitory_check',
+  DORMITORY_RECORD: 'dormitory_record',
+  DORMITORY_VIOLATION: 'dormitory_violation',
 
   //我的会员
   EDIT_RETURN_VISIT: 'edit_return_visit',

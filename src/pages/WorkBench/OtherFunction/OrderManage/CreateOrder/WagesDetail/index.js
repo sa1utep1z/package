@@ -41,8 +41,7 @@ const initialValues = {
 // 会员工价详情
 const WagesDetail = ({
   orderId = '',
-  scrollRef,
-  refresh
+  scrollRef
 }, ref) => {
   const toast = useToast();
 
@@ -100,7 +99,7 @@ const WagesDetail = ({
     setSettlementLoading(true);
     try {
       const res = await CreateOrderApi.getWageSettlement(orderId);
-      console.log('查询会员结算规则res', res.data);
+      console.log('getWageSettlement->res', res.data);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -140,7 +139,6 @@ const WagesDetail = ({
       if(rulesList.length){
         CreateSettlement(rulesArray);
       }
-      refresh();
     }catch(error){
       console.log('CreateWagesInfo->error', error);
       setWagesDetailButtonLoading(false);
@@ -205,9 +203,8 @@ const WagesDetail = ({
         return;
       }
       toast.show('保存结算规则成功！', {type: 'success'});
-      refresh && refresh();
     }catch(error){
-      console.log('CreateOrderInfo->error', error);
+      console.log('CreateSettlement->error', error);
     }
   };
 
@@ -312,6 +309,7 @@ const WagesDetail = ({
                   name="commercial"
                   label="购买商保"
                   placeholder="请输入商保文本"
+                  longText
                   multiline
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
@@ -322,8 +320,8 @@ const WagesDetail = ({
                   name="socialSecurity"
                   label="购买社保"
                   placeholder="请输入社保文本"
-                  multiline
                   longText
+                  multiline
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -333,8 +331,8 @@ const WagesDetail = ({
                   name="leaveSalary"
                   label="自离薪资"
                   placeholder="请输入自离薪资文本"
-                  multiline
                   longText
+                  multiline
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -344,8 +342,8 @@ const WagesDetail = ({
                   name="memberAward"
                   label="会员入职奖"
                   placeholder="请输入会员入职奖文本"
-                  multiline
                   longText
+                  multiline
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}
@@ -355,8 +353,8 @@ const WagesDetail = ({
                   name="remark"
                   label="备注说明"
                   placeholder="请输入备注说明文本"
-                  multiline
                   longText
+                  multiline
                   selectTextOnFocus
                   inputContainerStyle={styles.inputContainerStyle}
                   labelStyle={{width: 170}}

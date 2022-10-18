@@ -1031,7 +1031,6 @@ export const transformFormValue = (rulesList, values) => {
 };
 
 export const setFormValue = (res) => {
-  console.log('res', res);
   const newValue = {};
   let newArr = [];
   res.data.map((rule, ruleIndex) => {

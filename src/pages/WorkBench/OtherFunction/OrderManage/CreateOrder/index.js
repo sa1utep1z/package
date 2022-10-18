@@ -16,8 +16,7 @@ const CreateOrder = ({
   route: {
     params: {
       type, 
-      orderId: originOrderId,
-      refresh
+      orderId: originOrderId
   }}
 }) => {
   const toast = useToast();
@@ -87,11 +86,11 @@ const CreateOrder = ({
           ref={scrollRef}
           style={styles.screen}
           keyboardShouldPersistTaps="handled">
-            <OrderInfo ref={basicOrderRef} type={type} orderId={orderId} setOrderId={setOrderId} refresh={refresh} />
-            <Requirement ref={requirementRef} orderId={orderId} refresh={refresh} />
-            <Policy ref={policyRef} orderId={orderId} refresh={refresh} />
-            <CommissionDescription ref={commissionRef} orderId={orderId} refresh={refresh} />
-            <WagesDetail scrollRef={scrollRef} ref={wagesRef} orderId={orderId} refresh={refresh} />
+            <OrderInfo ref={basicOrderRef} type={type} orderId={orderId} setOrderId={setOrderId} />
+            <Requirement ref={requirementRef} orderId={orderId} />
+            <Policy ref={policyRef} orderId={orderId} />
+            <CommissionDescription ref={commissionRef} orderId={orderId} />
+            <WagesDetail scrollRef={scrollRef} ref={wagesRef} orderId={orderId} />
         </ScrollView>
         <Button
           title="保存并上架"
@@ -116,7 +115,9 @@ const styles = StyleSheet.create({
     flex: 1
   },
   buttonContainerStyle: {
-    margin: 30
+    paddingHorizontal: 30,
+    paddingVertical: 20,
+    backgroundColor: '#ffffff'
   },  
   buttonStyle: {
     height: 80,

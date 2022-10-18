@@ -16,7 +16,8 @@ export const WORKBENCH_LIST = [
       imgBackground: require('../../assets/images/orderManage.png'),
       routeName: NAVIGATION_KEYS.ORDER_MANAGE
     }
-  ]},
+    ]
+  }, 
   {
     key: 'list',
     moduleName: '名单合集',
@@ -70,7 +71,8 @@ export const WORKBENCH_LIST = [
     //   iconSource: require('../../assets/images/MyCommissionIcon.png'),
     //   routeName: NAVIGATION_KEYS.MY_COMMISSION
     // }
-  ]},
+      ]
+  }, 
   {
     key: 'factoryManage',
     moduleName: '会员服务',
@@ -91,8 +93,34 @@ export const WORKBENCH_LIST = [
       imgBackground: require('../../assets/images/borrow.png'),
       routeName: NAVIGATION_KEYS.ADVANCE_MANAGE
     },
-  ]
-  },
+    ]
+  }, 
+  // {
+  //   key: 'dormitory',
+  //   moduleName: '宿舍管理',
+  //   list: [{
+  //     key: 'dormitoryList',
+  //     title: '在离宿名单',
+  //     imgBackground: require('../../assets/images/dormitoryList.png'),
+  //     routeName: NAVIGATION_KEYS.DORMITORY_LIST
+  //   }, {
+  //     key: 'dormitoryCheck',
+  //     title: '宿舍点检',
+  //     imgBackground: require('../../assets/images/dormitoryCheck.png'),
+  //     routeName: NAVIGATION_KEYS.DORMITORY_CHECK
+  //   }, {
+  //     key: 'dormitoryRecord',
+  //     title: '宿舍抄表',
+  //     imgBackground: require('../../assets/images/dormitoryCheck.png'),
+  //     routeName: NAVIGATION_KEYS.DORMITORY_RECORD
+  //   }, {
+  //     key: 'dormitoryViolation',
+  //     title: '宿舍违纪',
+  //     imgBackground: require('../../assets/images/dormitoryViolation.png'),
+  //     routeName: NAVIGATION_KEYS.DORMITORY_VIOLATION
+  //   }
+  //   ]
+  // }, 
   {
     key: 'dataPanel',
     moduleName: '数据看板',
@@ -122,6 +150,6 @@ export const WORKBENCH_LIST = [
     //   iconSource: require('../../assets/images/fissionIcon.png'),
     //   routeName: NAVIGATION_KEYS.INTERNATIONAL_SEA
     // }
-  ]
+    ]
   }
 ];

@@ -1,5 +1,6 @@
-import React, {useRef, useState, useEffect} from "react";
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Image, ScrollView } from 'react-native';
+import React, {useRef, useState, useEffect, useCallback} from "react";
+import { useIsFocused } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import moment from "moment";
@@ -36,6 +37,16 @@ const OrderManage = () => {
 
   const navigation = useNavigation();
 
+  const isFocused = useIsFocused();
+
+  const [listData, setListData] = useState([]);
+  const [typeNum, setTypeNum] = useState(TAB_OF_LIST.ORDER_MANAGE);
+  const [index, setIndex] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
+  const [searchContent, setSearchContent] = useState({...firstPage});
+  const [nextPage, setNextPage] = useState(false);
+
   useEffect(()=>{
     dispatch(openListSearch());
     navigation.setOptions({
@@ -50,26 +61,19 @@ const OrderManage = () => {
     })
   },[])
 
-  const [listData, setListData] = useState([]);
-  const [typeNum, setTypeNum] = useState(TAB_OF_LIST.ORDER_MANAGE);
-  const [index, setIndex] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
-  const [listLoading, setListLoading] = useState(false);
-  const [searchContent, setSearchContent] = useState({...firstPage});
-  const [nextPage, setNextPage] = useState(false);
-
+  const showQuestion = () => {
+    dispatch(setTitle('温馨提示'));
+    dispatch(openDialog(<Question />));
+  };
+  
   useEffect(()=>{
+    if(!isFocused) return;
     timer = setTimeout(()=>{
       QueryOrderList(searchContent);
       getTypeList(searchContent);
     }, 0)
     return () => timer && clearTimeout(timer);
-  },[searchContent])
-
-  const showQuestion = () => {
-    dispatch(setTitle('温馨提示'));
-    dispatch(openDialog(<Question />));
-  };
+  },[searchContent, isFocused])
 
   const getTypeList = async(searchContent) => {
     const params = {
@@ -128,7 +132,6 @@ const OrderManage = () => {
   };
   
   const filter = values => {
-    console.log('执行了吗？2');
     const params = {
       ...searchContent,
       companyId: values.enterprise.length ? values.enterprise[0].value : '',
@@ -140,8 +143,7 @@ const OrderManage = () => {
 
   const createOrder = (type, order) => navigation.navigate(NAVIGATION_KEYS.CERATE_ORDER, {
     type, 
-    orderId: order?.orderId,
-    refresh
+    orderId: order?.orderId
   });
 
   const CopyOrder = async(order) => {
@@ -222,7 +224,6 @@ const OrderManage = () => {
     Clipboard.setString(content);
     try {
       const text = await Clipboard.getString();
-      console.log('text', text);
       if(text){
         toast.show('复制成功', {type: 'success'});
       }
@@ -317,60 +318,61 @@ const OrderManage = () => {
   const renderItem = ({item}) => {
     return (
       <View style={styles.renderItem}>
-        <View style={[styles.renderItem_item, item?.ok && {backgroundColor: '#c8f5b4'}]}>
+        <View style={[styles.renderItem_item, {backgroundColor: item?.orderNo ? '#ffffff' : '#c8f5b4'}]}>
           <View style={{flexDirection: 'row'}}>
             <Image
-              style={{width: 120, height: 120, marginRight: 20}}
-              source={{uri: item.imageUrl || 'https://reactnative.dev/img/tiny_logo.png'}}
+              style={styles.imgBpx}
+              source={{uri: item.imageUrl || 'https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/zdrl_logo.jpg'}}
+              defaultSource={require('../../../../assets/images/logo.png')}
             />
-            <View style={{flex: 1, height: 120}}>
-              <TouchableOpacity style={{flex: 1}} onPress={()=>titleOnPress(item)}>
-                <Text style={{fontSize: 32, color: '#409EFF'}}>{item.orderName}</Text>
+            <View style={styles.topArea}>
+              <TouchableOpacity style={styles.topTitle} onPress={()=>titleOnPress(item)}>
+                <Text style={styles.topTitle_text} numberOfLines={1} ellipsizeMode="tail">{item.orderName}</Text>
               </TouchableOpacity>
-              <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
-                <Text style={{fontSize: 26, color: '#FF4040', marginRight: 5}}>{item.enterpriseName}</Text>
-                <Text style={{fontSize: 26, color: '#000000', marginHorizontal: 10}}>|</Text>
-                <Text style={{fontSize: 26, color: '#333333'}}>{WORK_TYPE_NAME[item.workType]}</Text>
-                <Text style={{fontSize: 26, color: '#000000', marginHorizontal: 10}}>|</Text>
-                <Text style={{fontSize: 26, color: '#333333'}}>{item.recruitNumber}人</Text>
+              <View style={styles.centerArea}>
+                <Text style={styles.enterpriseName}>{item.enterpriseName}</Text>
+                <Text style={styles.centerLine}>|</Text>
+                <Text style={styles.normalText}>{WORK_TYPE_NAME[item.workType] || '无'}</Text>
+                <Text style={styles.centerLine}>|</Text>
+                <Text style={styles.normalText}>{item.recruitNumber || '0'}人</Text>
               </View>
-              <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
+              <View style={styles.bottomArea}>
                 <View style={{flexDirection: 'row'}}>
-                  <Text style={{fontSize: 26, color: '#333333'}}>招聘时段：</Text>
-                  <Text style={{fontSize: 26, color: '#409EFF'}}>{`${moment(item.recruitStart).format('MM-DD')}~${moment(item.recruitEnd).format('MM-DD')}`}</Text>
+                  <Text style={styles.normalText}>招聘时段：</Text>
+                  <Text style={styles.rangeTime_text}>{`${moment(item.recruitStart).format('MM-DD')}~${moment(item.recruitEnd).format('MM-DD')}`}</Text>
                 </View>
                 <View style={{flexDirection: 'row', marginLeft: 20}}>
-                  <Text style={{fontSize: 26, color: '#333333'}}>工期：</Text>
-                  <Text style={{fontSize: 26, color: '#409EFF'}}>{moment(item.orderDuration).format('YYYY-MM-DD')}</Text>
+                  <Text style={styles.normalText}>工期：</Text>
+                  <Text style={styles.rangeTime_text}>{moment(item.orderDuration).format('YYYY-MM-DD')}</Text>
                 </View>
               </View>
             </View>
           </View>
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-                <Text style={{fontSize: 20, color: '#ffffff', backgroundColor: '#409EFF', padding: 10, borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>{item.debitType === 'DAILY'? '日借支': item.debitType === 'WEEKLY' ? '周借支': item.debitType === 'MONTHLY' ? '月借支' : '借支'}</Text>
-                <Text style={{fontSize: 20, color: '#ffffff', backgroundColor: '#E6A042', padding: 10, borderTopRightRadius: 6, borderBottomRightRadius: 6}}>{`${item.debitLimit || '无'}${item.debitType === 'DAILY' ? '元/天' : item.debitType === 'WEEKLY' ? '元/周': item.debitType === 'MONTHLY' ? '元/月' : ''}`}</Text>
+          <View style={styles.itemBottomArea}>
+            <View style={styles.leftArea}>
+              <View style={styles.leftArea_title}>
+                <Text style={styles.leftArea_title_leftType}>{item.debitType === 'DAILY'? '日借支': item.debitType === 'WEEKLY' ? '周借支': item.debitType === 'MONTHLY' ? '月借支' : '借支'}</Text>
+                <Text style={styles.leftArea_title_rightType}>{`${item.debitLimit || '无'}${item.debitType === 'DAILY' ? '元/天' : item.debitType === 'WEEKLY' ? '元/周': item.debitType === 'MONTHLY' ? '元/月' : ''}`}</Text>
               </View>
-              <View style={{flexDirection: 'row', alignItems: 'flex-end', marginRight: 20, flex: 1, justifyContent: 'center'}}>
-                <Text style={{fontSize: 26, color: '#333333'}}>创建日期：</Text>
-                <Text style={{fontSize: 26, color: '#409EFF'}}>{moment(item.createdDate).format('YYYY-MM-DD')}</Text>
+              <View style={styles.leftArea_rightDate}>
+                <Text style={styles.leftArea_rightDate_text}>创建日期：</Text>
+                <Text style={styles.rangeTime_text}>{moment(item.createDate).format('YYYY-MM-DD')}</Text>
               </View>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-              <TouchableOpacity style={{padding: 10, backgroundColor: '#409EFF', borderRadius: 6, marginRight: 10}} onPress={()=>CopyOrder(item)}>
-                <Text style={{fontSize: 20, color: '#ffffff'}}>复制</Text>
+            <View style={styles.rightArea}>
+              <TouchableOpacity style={styles.rightArea_button} onPress={()=>CopyOrder(item)}>
+                <Text style={styles.rightArea_button_text}>复制</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{padding: 10, backgroundColor: '#409EFF', borderRadius: 6, marginRight: 10}} onPress={()=>ContinueOrder(item)}>
-                <Text style={{fontSize: 20, color: '#ffffff'}}>续单</Text>
+              <TouchableOpacity style={styles.rightArea_button} onPress={()=>ContinueOrder(item)}>
+                <Text style={styles.rightArea_button_text}>续单</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{padding: 10, backgroundColor: item.ifShelf ? '#E6A042' : '#409EFF', borderRadius: 6}} onPress={()=>changeOrder(item, item.ifShelf)}>
-                <Text style={{fontSize: 20, color: '#ffffff' }}>{item.ifShelf ? '下架' : '上架'}</Text>
+              <TouchableOpacity style={[styles.rightArea_rightButton, {backgroundColor: item.ifShelf ? '#E6A042' : '#409EFF'}]} onPress={()=>changeOrder(item, item.ifShelf)}>
+                <Text style={styles.rightArea_button_text}>{item.ifShelf ? '下架' : '上架'}</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity style={{width: 110, height: 110, position: 'absolute', right: 0, paddingHorizontal: 30, paddingTop: 30}} onPress={() => createOrder('change', item)}>
-            <View style={{width: 50, height: 50, backgroundColor: '#3F9EFE', borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}>
+          <TouchableOpacity style={styles.comeInArea} onPress={() => createOrder('change', item)}>
+            <View style={styles.comeInArea_text}>
               <AntDesign
                 name='right'
                 size={36}
@@ -421,7 +423,7 @@ const OrderManage = () => {
         onEndReached={onEndReached}
         onEndReachedThreshold={0.01}
         ListFooterComponent={<Footer showFooter={listData.length} hasNext={hasNext}/>}
-        ListEmptyComponent={<Empty otherEmptyStyle={{height: 500}} />}
+        ListEmptyComponent={<Empty otherEmptyStyle={{height: 900}} />}
       />
       <Button
         title="新建订单"
@@ -432,7 +434,7 @@ const OrderManage = () => {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   screen: {
@@ -462,7 +464,6 @@ const styles = StyleSheet.create({
   },
   renderItem_item: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     padding: 30
   },
   backRightBtn: {
@@ -489,6 +490,124 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     letterSpacing: 10
+  },
+  imgBpx: {
+    width: 120, 
+    height: 120, 
+    marginRight: 20
+  },
+  topArea: {
+    flex: 1,
+    height: 120
+  },
+  topTitle: {
+    flex: 1, 
+    marginRight: 60
+  },
+  topTitle_text: { 
+    fontSize: 32, 
+    color: '#409EFF'
+  },
+  centerArea: {
+    flex: 1, 
+    flexDirection: 'row', 
+    alignItems: 'flex-end'
+  },
+  enterpriseName: {
+    fontSize: 26, 
+    color: '#FF4040', 
+    marginRight: 5
+  },
+  centerLine: {
+    fontSize: 26, 
+    color: '#000000',
+    marginHorizontal: 10
+  },
+  normalText: {
+    fontSize: 26, 
+    color: '#333333'
+  },
+  bottomArea: {
+    flex: 1, 
+    flexDirection: 'row', 
+    alignItems: 'flex-end'
+  },
+  rangeTime_text: {
+    fontSize: 26, 
+    color: '#409EFF'
+  },
+  itemBottomArea: {
+    flex: 1, 
+    flexDirection: 'row'
+  },
+  leftArea: {
+    flex: 1, 
+    flexDirection: 'row'
+  },
+  leftArea_title: {
+    flexDirection: 'row', 
+    alignItems: 'flex-end'
+  },
+  leftArea_title_leftType: {
+    fontSize: 20, 
+    color: '#ffffff', 
+    backgroundColor: '#409EFF', 
+    padding: 10, 
+    borderTopLeftRadius: 6, 
+    borderBottomLeftRadius: 6
+  },
+  leftArea_title_rightType: {
+    fontSize: 20, 
+    color: '#ffffff', 
+    backgroundColor: '#E6A042', 
+    padding: 10, 
+    borderTopRightRadius: 6, 
+    borderBottomRightRadius: 6
+  },
+  leftArea_rightDate: {
+    flex: 1, 
+    flexDirection: 'row', 
+    alignItems: 'flex-end', 
+    marginRight: 20, 
+    justifyContent: 'center'
+  },
+  leftArea_rightDate_text: {
+    fontSize: 26, 
+    color: '#333333'
+  },
+  comeInArea: {
+    width: 110, 
+    height: 110, 
+    position: 'absolute', 
+    right: 0, 
+    paddingHorizontal: 30, 
+    paddingTop: 30
+  },
+  comeInArea_text: {
+    width: 50, 
+    height: 50, 
+    backgroundColor: '#3F9EFE',
+    borderRadius: 10, 
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  rightArea: {
+    flexDirection: 'row', 
+    alignItems: 'flex-end'
+  },
+  rightArea_button: {
+    padding: 10, 
+    backgroundColor: '#409EFF', 
+    borderRadius: 6, 
+    marginRight: 10
+  },
+  rightArea_rightButton: {
+    padding: 10, 
+    borderRadius: 6
+  },
+  rightArea_button_text: {
+    fontSize: 20, 
+    color: '#ffffff'
   }
 });
 
