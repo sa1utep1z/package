@@ -173,10 +173,10 @@ export const TAB_OF_LIST = {
     { title: '已结案', type: 'END' },
   ],
   ADVANCE_LIST: [
-    { title: '全部', type: 'total' },
-    { title: '审核中', type: 'pending' },
-    { title: '拒绝', type: 'fail' },
-    { title: '通过', type: 'pass' }
+    { title: '全部', type: 'allNums' },
+    { title: '审核中', type: 'pendingNums' },
+    { title: '拒绝', type: 'failNums' },
+    { title: '通过', type: 'passNums' }
   ],
 };
 
@@ -325,11 +325,19 @@ export const STATUS_LIST_KEY = {
 };
 
 export const TYPERESULT = [
-  { title: '薪资类型', value: 'SALARY', id: 1 },
-  { title: '借支类型', value: 'BORROW', id: 2 },
-  { title: '驻场类型', value: 'RESIDENTIAL', id: 3 },
-  { title: '投诉类型', value: 'COMPLAINT', id: 4 },
-  { title: '宿舍类型', value: 'DORMITORY', id: 5 },
+  { title: '薪资问题', value: 'SALARY', id: 1 },
+  { title: '借支问题', value: 'BORROW', id: 2 },
+  { title: '驻厂问题', value: 'RESIDENTIAL', id: 3 },
+  { title: '投诉问题', value: 'COMPLAINT', id: 4 },
+  { title: '宿舍问题', value: 'DORMITORY', id: 5 },
+];
+
+export const ADVANCERESULT = [
+  { title: '审核中', value: 'PREPARING', id: 1 },
+  { title: '拒绝', value: 'FAIL', id: 2 },
+  { title: '通过', value: 'PASS', id: 3 },
+  { title: '撤回', value: 'CANCEL', id: 4 },
+  { title: '废弃', value: 'INVALID', id: 5 },
 ];
 
 export const STATUSRESULT = [

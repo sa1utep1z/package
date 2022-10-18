@@ -183,6 +183,7 @@ const NewestState = () => {
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
+      console.log('打印会员数据：', res.data);
       res.data.flowId = item.flowId;
       dialogRef.current.setShowDialog(true);
       setDialogContent({

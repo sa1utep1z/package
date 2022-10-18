@@ -12,6 +12,7 @@ import SelectItem from '../../../../../components/Form/SelectItem';
 import SelectDate from '../../../../../components/Form/SelectDate';
 import MyMembersApi from '../../../../../request/MyMembersApi';
 import SelectTags from '../../../../../components/Form/SelectTags';
+import ImageZoom from '../../../../../components/ImageZoom';
 import { SUCCESS_CODE, SOURCETYPES, TYPERESULT, STATUSRESULT, ISEND } from '../../../../../utils/const';
 import ImagePicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -48,6 +49,8 @@ const EditComplaint = (props) => {
   const { route: { params: { msg } } } = props;
   const toast = useToast();
   const [companyImage, setCompanyImage] = useState([]); // 企业图片
+  const [isVisible, setIsVisible] = useState(false);
+  const [imageUrls, setImageUrls] = useState([]);
 
   useEffect(() => {
     setFieldValue();
@@ -76,10 +79,29 @@ const EditComplaint = (props) => {
         const imgs = msg.imgs;
         restForm.setFieldValue('imgs', imgs);
         setCompanyImage(imgs);
+        let arr = msg.imgs;
+        let newArr = [];
+        arr.map((item) => {
+          const arry = Object.assign({}, { url: item.url })
+          newArr.push(arry);
+          return item
+        });
+        setImageUrls(newArr);
+        console.log('打印处理的图片数组：', arr, newArr);
       }
     }
   };
   console.log('打印传过来的值：', msg);
+
+  // 打开图片预览
+  const openModal = () => {
+    setIsVisible(true);
+  }
+
+  // 关闭图片预览
+  const cancelModal = () => {
+    setIsVisible(false);
+  }
 
   // 上传图片
   const uploadImage = async (fileName, localFilePath) => {
@@ -157,180 +179,185 @@ const EditComplaint = (props) => {
 
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={SignUpValidationSchema}
-      onSubmit={onSubmit}>
-      {({ handleSubmit, ...rest }) => {
-        restForm = rest;
-        return (
-          <View style={{ flex: 1 }}>
-            <ScrollView style={styles.scrollArea}>
-              <View style={[styles.cardArea, { marginTop: 28 }]}>
-                <Field
-                  name="userName"
-                  title="会员姓名"
-                  placeholder="无"
-                  inputStyle={{ color: '#333' }}
-                  editable={false}
-                  component={FormItem}
-                />
-                <Field
-                  name="mobile"
-                  title="手机号码"
-                  placeholder="无"
-                  inputStyle={{ color: '#333' }}
-                  maxLength={11}
-                  editable={false}
-                  component={FormItem}
-                />
-                <Field
-                  name="idNo"
-                  title="身份证号"
-                  placeholder="无"
-                  editable={false}
-                  inputStyle={{ color: '#333' }}
-                  component={FormItem}
-                />
-                <Field
-                  name="companyShortName"
-                  title="企业简称"
-                  placeholder="无"
-                  editable={false}
-                  inputStyle={{ fontSize: 28 }}
-                  component={FormItem}
-                />
-                <Field
-                  name="sourceType"
-                  title="渠道来源"
-                  editable={false}
-                  inputStyle={{ color: '#333' }}
-                  component={FormItem}
-                />
-                <Field
-                  name="storeName"
-                  title="所属门店"
-                  editable={false}
-                  placeholder="无"
-                  inputStyle={{ color: '#333' }}
-                  component={FormItem}
-                />
-                <Field
-                  name="recruiterName"
-                  title="归属招聘员"
-                  editable={false}
-                  placeholder="无"
-                  inputStyle={{ color: '#333' }}
-                  component={FormItem}
-                />
-                <Field
-                  name="type"
-                  title="问题类型"
-                  editable={false}
-                  placeholder="无"
-                  inputStyle={{ fontSize: 28 }}
-                  component={FormItem}
-                />
-                <Field
-                  name="createdDate"
-                  title="提交日期"
-                  editable={false}
-                  inputStyle={{ color: '#333' }}
-                  component={FormItem}
-                />
-                <Field
-                  name="content"
-                  title="反馈内容"
-                  placeholder="无"
-                  inputStyle={{ color: '#333' }}
-                  editable={false}
-                  component={FormItem}
-                />
-                <View style={styles.title}>
-                  <Text style={styles.text}>上传照片：</Text>
-                </View>
-                <View style={styles.cardArea1}>
-                  <View style={styles.imageBox}>
-                    {
-                      companyImage.length > 0 && companyImage.map((item, index) => {
-                        return (
-                          <View style={styles.imags} key={index}>
-                            <Image
-                              style={{ width: '100%', height: '100%' }}
-                              source={{ uri: `${item.url}` }}
-                            />
-                            <TouchableOpacity style={styles.closeStyle} onPress={() => delImage(item.md5)}>
-                              <AntDesign
-                                name='close'
-                                color='#FFFEFE'
-                                size={50}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        )
-                      })
-                    }
-                    <TouchableOpacity style={styles.uploadStyle} onPress={openPick}>
-                      <AntDesign
-                        name='plus'
-                        color='#333'
-                        size={50}
-                      />
-                    </TouchableOpacity>
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={SignUpValidationSchema}
+        onSubmit={onSubmit}>
+        {({ handleSubmit, ...rest }) => {
+          restForm = rest;
+          return (
+            <View style={{ flex: 1 }}>
+              <ScrollView style={styles.scrollArea}>
+                <View style={[styles.cardArea, { marginTop: 28 }]}>
+                  <Field
+                    name="userName"
+                    title="会员姓名"
+                    placeholder="无"
+                    inputStyle={{ color: '#333' }}
+                    editable={false}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="mobile"
+                    title="手机号码"
+                    placeholder="无"
+                    inputStyle={{ color: '#333' }}
+                    maxLength={11}
+                    editable={false}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="idNo"
+                    title="身份证号"
+                    placeholder="无"
+                    editable={false}
+                    inputStyle={{ color: '#333' }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="companyShortName"
+                    title="企业简称"
+                    placeholder="无"
+                    editable={false}
+                    inputStyle={{ fontSize: 28 }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="sourceType"
+                    title="渠道来源"
+                    editable={false}
+                    inputStyle={{ color: '#333' }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="storeName"
+                    title="所属门店"
+                    editable={false}
+                    placeholder="无"
+                    inputStyle={{ color: '#333' }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="recruiterName"
+                    title="归属招聘员"
+                    editable={false}
+                    placeholder="无"
+                    inputStyle={{ color: '#333' }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="type"
+                    title="问题类型"
+                    editable={false}
+                    placeholder="无"
+                    inputStyle={{ fontSize: 28 }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="createdDate"
+                    title="提交日期"
+                    editable={false}
+                    inputStyle={{ color: '#333' }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="content"
+                    title="反馈内容"
+                    placeholder="无"
+                    inputStyle={{ color: '#333' }}
+                    editable={false}
+                    component={FormItem}
+                  />
+                  <View style={styles.title}>
+                    <Text style={styles.text}>上传照片：</Text>
                   </View>
+                  <View style={styles.cardArea1}>
+                    <View style={styles.imageBox}>
+                      {
+                        companyImage.length > 0 && companyImage.map((item, index) => {
+                          return (
+                            <TouchableOpacity style={styles.imags} key={index} onPress={openModal}>
+                              <Image
+                                style={{ width: '100%', height: '100%' }}
+                                source={{ uri: `${item.url}` }}
+                              />
+                              <TouchableOpacity style={styles.closeStyle} onPress={() => delImage(item.md5)}>
+                                <AntDesign
+                                  name='close'
+                                  color='#FFFEFE'
+                                  size={50}
+                                />
+                              </TouchableOpacity>
+                            </TouchableOpacity>
+                          )
+                        })
+                      }
+                      <TouchableOpacity style={styles.uploadStyle} onPress={openPick}>
+                        <AntDesign
+                          name='plus'
+                          color='#333'
+                          size={50}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <Field
+                    name="status"
+                    title="处理进度"
+                    inputStyle={{ color: '#333' }}
+                    editable={false}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="handlerName"
+                    title="处理人"
+                    inputStyle={{ color: '#333' }}
+                    editable={false}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="processHours"
+                    title="处理时长"
+                    inputStyle={{ color: '#333' }}
+                    editable={false}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="handleResult"
+                    title="处理结果"
+                    isRequired
+                    inputStyle={{ color: '#333' }}
+                    component={FormItem}
+                  />
+                  <Field
+                    name="end"
+                    title="是否结案"
+                    noBorder
+                    isRequired
+                    isRemark={false}
+                    arryDate={ISEND}
+                    component={RadioGroup}
+                  />
                 </View>
-                <Field
-                  name="status"
-                  title="处理进度"
-                  inputStyle={{ color: '#333' }}
-                  editable={false}
-                  component={FormItem}
-                />
-                <Field
-                  name="handlerName"
-                  title="处理人"
-                  inputStyle={{ color: '#333' }}
-                  editable={false}
-                  component={FormItem}
-                />
-                <Field
-                  name="processHours"
-                  title="处理时长"
-                  inputStyle={{ color: '#333' }}
-                  editable={false}
-                  component={FormItem}
-                />
-                <Field
-                  name="handleResult"
-                  title="处理结果"
-                  isRequired
-                  inputStyle={{ color: '#333' }}
-                  component={FormItem}
-                />
-                <Field
-                  name="end"
-                  title="是否结案"
-                  noBorder
-                  isRequired
-                  isRemark={false}
-                  arryDate={ISEND}
-                  component={RadioGroup}
+              </ScrollView>
+              <View style={styles.btnArea}>
+                <Button
+                  title="保存"
+                  onPress={handleSubmit}
+                  buttonStyle={styles.buttonStyle}
+                  containerStyle={styles.buttonContainerStyle}
+                  titleStyle={styles.titleStyle}
                 />
               </View>
-            </ScrollView>
-            <View style={styles.btnArea}>
-              <Button
-                title="保存"
-                onPress={handleSubmit}
-                buttonStyle={styles.buttonStyle}
-                containerStyle={styles.buttonContainerStyle}
-                titleStyle={styles.titleStyle}
-              />
             </View>
-          </View>
-        )
-      }}
-    </Formik>
+          )
+        }}
+      </Formik>
+      {
+        isVisible && <ImageZoom isVisible={isVisible} imageUrls={imageUrls} onShowModal={openModal} onCancel={cancelModal} />
+      }
+    </>
   )
 }
 

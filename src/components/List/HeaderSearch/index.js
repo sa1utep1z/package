@@ -29,7 +29,8 @@ const initialValues = {
   leaving: { startDate: '', endDate: '' },
   dateRange: {},
   staffSearch: '',
-  search: ''
+  search: '',
+  
 };
 
 const HeaderSearch = ({
@@ -49,6 +50,7 @@ const HeaderSearch = ({
   clearRangeDate, //进入页面时不要筛选时间
   startText,
   endText,
+  status,
   ...rest
 }) => {
   const toast = useToast();
@@ -221,7 +223,7 @@ const HeaderSearch = ({
                 placeholder="请选择状态"
                 lastButton={batch}
                 singleSelect={singleSelect}
-                originList={STATUS_LIST}
+                originList={status}
                 component={HeaderSelectItem}
               />}
             </View>}

@@ -167,9 +167,9 @@ const ComplaintManage = () => {
       companyId: searchContent?.companyId || '',
       storeId: searchContent?.storeId || '',
       recruiterId: searchContent?.recruiterId || '',
-      createDateStart: searchContent?.startDate || '',
-      createDateEnd: searchContent?.endDate || '',
-      str: searchContent?.str || '',
+      createDateStart: searchContent?.createDateStart || '',
+      createDateEnd: searchContent?.createDateEnd || '',
+      nameOrIdNoOrMobile: searchContent?.nameOrIdNoOrMobile || '',
       type: searchContent?.type || '',
       // role
     };
@@ -336,7 +336,7 @@ const ComplaintManage = () => {
     const companyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].value : '';
     const recruiterId = values.staff.length ? values.staff[0].value : '';
-    const str = values.search;
+    const nameOrIdNoOrMobile = values.search;
     const type = values.type.length ? values.type[0].value : '';
 
     setSearchContent({
@@ -344,7 +344,7 @@ const ComplaintManage = () => {
       ...firstPage,
       createDateStart,
       createDateEnd,
-      str,
+      nameOrIdNoOrMobile,
       companyId,
       storeId,
       recruiterId,
@@ -631,9 +631,12 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   pressBtn: {
-    height: 40,
+    flexDirection: 'row',
+    alignContent: 'center',
+    height: 50,
     marginRight: 10,
     paddingHorizontal: 20,
+    alignItems:'center',
     paddingVertical: 2,
     borderRadius: 8,
     backgroundColor: '#409EFF',

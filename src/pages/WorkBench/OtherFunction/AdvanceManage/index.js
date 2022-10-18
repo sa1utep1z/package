@@ -9,9 +9,10 @@ import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButt
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { SUCCESS_CODE, MEMBERS_STATUS, ADVANCE_STATE_LIST_HEAD, TAB_OF_LIST } from "../../../../utils/const";
+import { SUCCESS_CODE, MEMBERS_STATUS, ADVANCE_STATE_LIST_HEAD, TAB_OF_LIST, ADVANCERESULT } from "../../../../utils/const";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import ListApi from "../../../../request/ListApi";
+import AdvanceApi from "../../../../request/AdvanceApi";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
 import NormalDialog from "../../../../components/NormalDialog";
 import FormCompanyDetail from "../../../../components/NormalDialog/FormCompanyDetail";
@@ -63,6 +64,7 @@ const AdvanceManage = () => {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
       getList(searchContent);
+      getTypeTotal(searchContent);
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
@@ -72,15 +74,31 @@ const AdvanceManage = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
-      role
+      // role
     });
   }, [role])
+
+  // 获取数据总数
+  const getTypeTotal = async (params) => {
+    try {
+      const res = await AdvanceApi.AdvanceTotalList(params);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      setTabNumberList(res.data);
+      console.log('打印全部数量：', res, params)
+    } catch (err) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   const getList = async (params) => {
     setIsLoading(true);
     try {
-      const res = await ListApi.NewestList(params);
-      console.log('getList --> res', res);
+      const res = await AdvanceApi.AdvanceList(params);
+      console.log('获取预支数据：', res);
+      console.log('获取预支数据参数：', params);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
@@ -122,22 +140,25 @@ const AdvanceManage = () => {
   };
 
   const filter = (values) => {
-    const startDate = values.dateRange.startDate;
-    const endDate = values.dateRange.endDate;
-    const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
-    const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
-    const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
-    const str = values.search;
+    console.log('打印筛选框的值：', values);
+    const jobStartDate = values.dateRange.startDate;
+    const jobEndDate = values.dateRange.endDate;
+    const companyId = values.enterprise.length ? values.enterprise[0].value : '';
+    const storeId = values.store.length ? values.store[0].value : '';
+    const recruiterId = values.staff.length ? values.staff[0].value : '';
+    const nameOrIdNoOrMobile = values.search;
+    // const type = values.type.length ? values.type[0].value : '';
 
     setSearchContent({
       ...searchContent,
       ...firstPage,
-      startDate,
-      endDate,
-      str,
-      companyIds,
-      storeIds,
-      recruitIds
+      jobStartDate,
+      jobEndDate,
+      nameOrIdNoOrMobile,
+      companyId,
+      storeId,
+      recruiterId,
+      // type
     });
   };
 
@@ -184,12 +205,13 @@ const AdvanceManage = () => {
 
   const pressName = async (item) => {
     try {
-      const res = await ListApi.MemberMessage(item.flowId);
+      const res = await AdvanceApi.MemberMessage(item.recruitFlowId);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
-      res.data.flowId = item.flowId;
+      console.log('打印会员数据：', res.data);
+      res.data.flowId = item.recruitFlowId;
       dialogRef.current.setShowDialog(true);
       setDialogContent({
         dialogTitle: '会员信息',
@@ -212,7 +234,7 @@ const AdvanceManage = () => {
 
   const pressFactory = async (item) => {
     try {
-      const res = await ListApi.FactoryMessage(item.flowId);
+      const res = await AdvanceApi.OrderInfo(item.recruitFlowId);
       if (res?.code !== SUCCESS_CODE) {
         if (res?.code === 2) {
           toast.show(`${res?.msg}`, { type: 'warning' });
@@ -225,8 +247,8 @@ const AdvanceManage = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data} />,
-        rightTitle: '转厂/转单',
-        rightTitleOnPress: () => transferFactory(item)
+        // rightTitle: '转厂/转单',
+        // rightTitleOnPress: () => transferFactory(item)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -347,18 +369,18 @@ const AdvanceManage = () => {
     )
   };
 
-  // const memoList = useMemo(() => showList, [showList])
-  const memoList = [
-    { userName: '张三', flowId: '1' },
-    { userName: '李四', flowId: '2' },
-  ]
+  const memoList = useMemo(() => showList, [showList])
+  
   return (
     <View style={[styles.screen]}>
       <HeaderSearch
         startText="入职开始："
         endText="入职结束"
         filterFun={filter}
-        batchOperate={batchOperate}
+        status={ADVANCERESULT}
+        clearRangeDate
+        singleSelect
+        canFilterStatus
       />
       <CenterSelectDate centerDateStyle={{ marginBottom: 0 }} />
       <View style={styles.tab_containerStyle}>
@@ -381,7 +403,7 @@ const AdvanceManage = () => {
           data={memoList}
           style={{ backgroundColor: '#fff' }}
           renderItem={renderItem}
-          keyExtractor={(item, index) => item.flowId}
+          keyExtractor={(item, index) => item.applyId}
           getItemLayout={(data, index) => ({ length: 100, offset: 100 * index, index })}
           refreshing={isLoading}
           onRefresh={refresh}

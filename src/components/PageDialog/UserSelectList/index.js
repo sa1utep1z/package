@@ -106,6 +106,7 @@ const UserSelectList = ({
         <FlatList
           data={showList}
           renderItem={renderItem}
+          keyboardShouldPersistTaps='handled'
           getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
         />
       </View>

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE } from "../../../../utils/const";
+import { TAB_OF_LIST, MEMBERS_STATUS, SUCCESS_CODE, STATUS_LIST } from "../../../../utils/const";
 import MyMembersApi from "../../../../request/MyMembersApi";
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
@@ -325,6 +325,7 @@ const MyMembers = () => {
         filterFun={filter} 
         canFilterStatus 
         // staffSearch
+        status={STATUS_LIST}
         singleSelect
         clearRangeDate
         startText="开始日期："

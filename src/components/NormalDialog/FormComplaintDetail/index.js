@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, Image } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, Image, Modal } from 'react-native';
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-
+import ImageZoom from '../../ImageZoom';
 import EmptyArea from '../../EmptyArea';
 import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, COMPLAINT_INFO } from '../../../utils/const';
 import { deepCopy } from '../../../utils';
+import { object } from 'joi';
 
 const FormComplaintDetail = ({
   memberInfoList = COMPLAINT_INFO,
 }) => {
   const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
-
+  const [isVisible, setIsVisible] = useState(false);
+  const [imageUrls, setImageUrls] = useState([]);
   const [showList, setShowList] = useState([
     { type: 'type', title: '问题类型', value: '' },
     { type: 'userName', title: '会员姓名', value: '' },
@@ -55,14 +57,20 @@ const FormComplaintDetail = ({
       }
     }
     setShowList(copyList);
-    // console.log('打印数据格式4444：', copyList);
     let arr = [];
+    let newArr = [];
     for (let key in copyList) {
-      // console.log('打印遍历的数据：', copyList[key].title, copyList[key].value);
-      arr.push([copyList[key].title, copyList[key].value])
+      if (copyList[key].title === '上传照片') {
+        arr.push(copyList[key].value)
+      }
     }
-    const newArr = arr.join('、');
-    // console.log('newArrnewArrnewArrnewArrnewArrs', newArr)
+    arr[0].map((item) => {
+      const arry = Object.assign({}, { url: item.url })
+      newArr.push(arry);
+      return item
+    });
+    setImageUrls(newArr);
+    console.log('打印处理的图片数组：', arr[0], newArr);
   }, [memberInfoList])
 
   const callPhone = (item) => {
@@ -70,6 +78,16 @@ const FormComplaintDetail = ({
   };
   // console.log('打印数据格式3333：', memberInfoList);
   const newDate = showList.filter((item) => (item.type !== 'jobDate' && item.type !== 'resignDate'));
+
+  // 打开图片预览
+  const openModal = () => {
+    setIsVisible(true);
+  }
+
+  // 关闭图片预览
+  const cancelModal = () => {
+    setIsVisible(false);
+  }
 
   return (
     <ScrollView style={styles.msgArea}>
@@ -95,12 +113,12 @@ const FormComplaintDetail = ({
                       {
                         item.value.length > 0 && item.value.map((img, index) => {
                           return (
-                            <View style={styles.imags} key={index}>
+                            <TouchableOpacity style={styles.imags} key={index} onPress={openModal}>
                               <Image
                                 style={{ width: '100%', height: '100%' }}
                                 source={{ uri: `${img.url}` }}
                               />
-                            </View>
+                            </TouchableOpacity>
                           )
                         })
                       }
@@ -122,6 +140,9 @@ const FormComplaintDetail = ({
           )
         })}
       </View>
+      {
+        isVisible && <ImageZoom isVisible={isVisible} imageUrls={imageUrls} onShowModal={openModal} onCancel={cancelModal} />
+      }
     </ScrollView>
   )
 };
