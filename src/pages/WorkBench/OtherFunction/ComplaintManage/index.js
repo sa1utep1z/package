@@ -669,8 +669,8 @@ const styles = StyleSheet.create({
     minHeight: 30,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'rgba(0, 0, 0, .05)',
+    // borderBottomWidth: 2,
+    // borderBottomColor: 'rgba(0, 0, 0, .05)',
     width: '100%',
     paddingHorizontal: 20,
     color: '#000'
