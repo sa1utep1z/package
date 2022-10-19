@@ -332,12 +332,22 @@ export const TYPERESULT = [
   { title: '宿舍问题', value: 'DORMITORY', id: 5 },
 ];
 
+export const JOB_ON_Result = [
+  { title: '在职', value: 'JOB_ON', id: 1 },
+  { title: '离职', value: 'JOB_RESIGN', id: 2 },
+];
+
 export const ADVANCERESULT = [
-  { title: '审核中', value: 'PREPARING', id: 1 },
+  { title: '审核中', value: 'PENDING', id: 1 },
   { title: '拒绝', value: 'FAIL', id: 2 },
   { title: '通过', value: 'PASS', id: 3 },
   { title: '撤回', value: 'CANCEL', id: 4 },
   { title: '废弃', value: 'INVALID', id: 5 },
+];
+
+export const BANCKWAY = [
+  { title: '放款方式-银行卡', value: 'PAYMENT_BANK', id: 1 },
+  { title: '放款方式-无卡发薪', value: 'PAYMENT_NO_CARD', id: 2 },
 ];
 
 export const STATUSRESULT = [

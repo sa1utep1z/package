@@ -1,11 +1,11 @@
 import httpRequest from '../httpRequest';
 
 const AdvanceApi = {
-  AddComplaint: async (params) => await httpRequest.post('admin/app/feedback', params), //新增投诉建议
+  AddApprove: async (detailId, params) => await httpRequest.post(`admin/approve/process/${detailId}`, params), //审批接口
   AdvanceList: async (params) => await httpRequest.post('admin/app/advance/list', params), // 获取预支薪资列表
   AdvanceTotalList: async (params) => await httpRequest.post('admin/app/advance/list/statistics', params), // 获取预支薪资数据统计
   EditComplaint: async (feedbackId, params) => await httpRequest.put(`admin/app/feedback/${feedbackId}/edit`, params), // 编辑投诉信息
-  Transfer: async (feedbackId, params) => await httpRequest.put(`admin/app/feedback/${feedbackId}/transfer`, params), // 转单
+  AdvanceFlow: async (applyId) => await httpRequest.get(`/advance/${applyId}/flow`), // 获取预支审核进度
   UrgeComplaint: async (feedbackId) => await httpRequest.put(`admin/app/feedback/${feedbackId}/urge`), // 催单
   BatchTransfer: async (params) => await httpRequest.post('admin/app/feedback/transfer/batch', params), // 批量转单
   GetCompanyInfo: async (feedbackId) => await httpRequest.get(`admin/app/feedback/${feedbackId}`), // 获取反馈详情

@@ -6,12 +6,14 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import EmptyArea from '../../../../../components/EmptyArea';
-import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, ADVANCE_INFO } from '../../../../../utils/const';
+import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, ADVANCE_INFO, JOB_ON_Result } from '../../../../../utils/const';
 import { deepCopy } from '../../../../../utils';
 import { TextInput } from 'react-native';
+import AdvanceApi from '../../../../../request/AdvanceApi';
 
-const AdvanceAudit = () => {
+const AdvanceAudit = (props) => {
   const memberInfo = useSelector(state => state.MemberInfo.memberInfo);
+  const { route: { params: { msg } } } = props;
   const [memberInfoList, setMemberInfoList] = useState(ADVANCE_INFO); // 详情信息
   const [inputValue, setInputValue] = useState(''); // 输入金额
   const [showList, setShowList] = useState([
@@ -19,47 +21,65 @@ const AdvanceAudit = () => {
     { type: 'idNo', title: '身份证号', value: '' },
     { type: 'mobile', title: '手机号码', value: '' },
     { type: 'companyShortName', title: '企业名称', value: '' },
-    { type: 'jobName', title: '订单名称', value: '' },
-    { type: 'jobFrom', title: '渠道来源', value: '' },
-    { type: 'belongOfPeople', title: '招聘员', value: '' },
-    { type: 'belongOfStore', title: '归属门店', value: '' },
-    { type: 'jobOn', title: '在职状态', value: '' },
+    { type: 'orderName', title: '订单名称', value: '' },
+    { type: 'signUpType', title: '渠道来源', value: '' },
+    { type: 'recruiterName', title: '招聘员', value: '' },
+    { type: 'supplierName', title: '供应商', value: '' },
+    { type: 'storeName', title: '归属门店', value: '' },
+    { type: 'memberStatus', title: '在职状态', value: '' },
     { type: 'jobDate', title: '入职日期', value: '' },
-    { type: 'momney', title: '借支金额', value: '' },
-    { type: 'content', title: '银行名称', value: '' },
-    { type: 'imgs', title: '银行卡号', value: '' },
-    { type: 'createdDate', title: '提交时间', value: '' },
+    { type: 'advanceAmount', title: '借支金额', value: '' },
+    { type: 'bankName', title: '银行名称', value: '' },
+    { type: 'bankAccount', title: '银行卡号', value: '' },
+    { type: 'status', title: '申请状态', value: '' },
+    { type: 'applyDate', title: '提交时间', value: '' },
   ]);
-
+  console.log('打印传过来的参数：', msg);
   useMemo(() => {
     const copyList = deepCopy(showList);
-    for (let key in memberInfoList) {
+    for (let key in msg) {
       if (copyList.length) {
         const findItem = copyList.find(item => item.type === key);
         if (findItem) {
           switch (key) {
             case 'type':
-              const chanelName = TYPERESULT.find(name => name.value === memberInfoList[key]);
+              const chanelName = TYPERESULT.find(name => name.value === msg[key]);
               findItem.value = chanelName?.title;
               break;
-            case 'createdDate':
-              findItem.value = memberInfoList[key] ? moment(memberInfoList[key]).format('YYYY-MM-DD HH:mm:ss') : '无';
+            case 'applyDate':
+              findItem.value = msg[key] ? moment(msg[key]).format('YYYY-MM-DD HH:mm:ss') : '无';
               break;
             case 'jobDate':
-              findItem.value = memberInfoList[key] ? moment(memberInfoList[key]).format('YYYY-MM-DD') : '无';
+              findItem.value = msg[key] ? moment(msg[key]).format('YYYY-MM-DD') : '无';
               break;
-            case 'jobOn':
-              findItem.value = memberInfoList[key] ? memberInfoList[key] === true ? '是' : '否' : '无';
+            case 'memberStatus':
+              const chanelStatu = JOB_ON_Result.find(name => name.value === msg[key]);
+              findItem.value = chanelStatu?.title;
               break;
             default:
-              findItem.value = memberInfoList[key];
+              findItem.value = msg[key];
               break;
           }
         }
       }
     }
     setShowList(copyList);
-  }, [memberInfoList])
+  }, [msg])
+
+  // 获取审批流程数据
+  // const getTypeTotal = async () => {
+  //   try {
+  //     const res = await AdvanceApi.AdvanceTotalList(params);
+  //     if (res?.code !== SUCCESS_CODE) {
+  //       toast.show(`${res?.msg}`, { type: 'danger' });
+  //       return;
+  //     }
+  //     setTabNumberList(res.data);
+  //     console.log('打印全部数量：', res, params)
+  //   } catch (err) {
+  //     toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+  //   }
+  // };
 
   const callPhone = (item) => {
     Linking.openURL(`tel:${item.value}`);
