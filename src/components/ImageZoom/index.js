@@ -35,7 +35,7 @@ const ImageZoom = ({
         result.promise.then((val) => {
           console.log('val',val)
           console.log("文件下载成功：" + androidDownPath)
-          let promise = CameraRoll.saveToCameraRoll(androidDownPath);
+          let promise = CameraRoll.save(androidDownPath);
           promise.then((result) => {
             console.log('保存成功！', result)
             Toast.show('保存成功！', {type: 'success'});
@@ -58,7 +58,7 @@ const ImageZoom = ({
         <TouchableOpacity onPress={() => onCancel()}>
           <AntDesign
             name='close'
-            color='#FFFEFE'
+            color='red'
             size={30}
           />
         </TouchableOpacity>

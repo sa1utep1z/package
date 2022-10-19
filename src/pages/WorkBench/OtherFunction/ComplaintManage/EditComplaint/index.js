@@ -11,7 +11,7 @@ import FormItem from '../../../../../components/Form/FormItem';
 import SelectItem from '../../../../../components/Form/SelectItem';
 import SelectDate from '../../../../../components/Form/SelectDate';
 import MyMembersApi from '../../../../../request/MyMembersApi';
-import SelectTags from '../../../../../components/Form/SelectTags';
+import NAVIGATION_KEYS from "../../../../../navigator/key";
 import ImageZoom from '../../../../../components/ImageZoom';
 import { SUCCESS_CODE, SOURCETYPES, TYPERESULT, STATUSRESULT, ISEND } from '../../../../../utils/const';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -41,7 +41,7 @@ const initialValues = {
   storeName: '',
   recruiterName: '',
   createdDate: '',
-  end: '',
+  end: 'true',
 };
 
 const EditComplaint = (props) => {
@@ -170,6 +170,7 @@ const EditComplaint = (props) => {
         return;
       }
       toast.show('编辑投诉成功');
+      navigation.navigate(NAVIGATION_KEYS.COMPLAINT_FEEDBACK);
       console.log('保存提交成功：', params);
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });

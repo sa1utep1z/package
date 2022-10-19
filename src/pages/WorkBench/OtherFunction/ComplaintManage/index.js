@@ -15,6 +15,7 @@ import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import NAVIGATION_KEYS from "../../../../navigator/key";
 import ListApi from "../../../../request/ListApi";
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import ComplaintApi from "../../../../request/ComplaintApi";
 import { SUCCESS_CODE, TYPERESULT, TAB_OF_LIST, COMPLAINT_INFO } from "../../../../utils/const";
 import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
@@ -260,7 +261,6 @@ const ComplaintManage = () => {
       }
     }
     setShowInfoList(copyList);
-    console.log('打印数据格式4444：', copyList);
     let arr = [];
     for (let key in copyList) {
       arr.push([copyList[key].title, copyList[key].value]);
@@ -296,6 +296,65 @@ const ComplaintManage = () => {
       dialogComponent: <FormComplaintDetail memberInfoList={item} />,
       confirmText: '一键复制',
       confirmOnPress: handleClipboardContent,
+      rightCloseIcon: true,
+    });
+  }, [complainInfo, copyContentRef.current]);
+
+  const Result = (item) => {
+    return (
+      <View style={styles.textArea}>
+        <View style={styles.titleArea}>
+          <Text style={styles.text}>处理人：</Text>
+        </View>
+        <View>
+          <Text style={styles.text}>{item.handlerName || '无'}</Text>
+        </View>
+      </View>
+    )
+  }
+
+  // 查看处理结果详情
+  const pressResult = useCallback(async (item) => {
+    dialogRef.current.setShowDialog(true);
+    console.log('打印详情：', item);
+    setDialogContent({
+      dialogTitle: '处理结果详情',
+      dialogComponent: <View>
+        <View style={styles.resultArea}>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>处理人：</Text>
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>{item.handlerName || '无'}</Text>
+          </View>
+        </View>
+        <View style={styles.resultArea}>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>处理时长：</Text>
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>{item.processHours || '无'}</Text>
+          </View>
+        </View>
+        <View style={styles.resultArea}>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>处理结果：</Text>
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>{item.handleResult || '无'}</Text>
+          </View>
+        </View>
+        <View style={styles.resultArea}>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>是否结案：</Text>
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, color: '#333' }}>{item.status === 'END' ? '是' : '否' || '无'}</Text>
+          </View>
+        </View>
+      </View>,
+      confirmText: '返回',
+      rightCloseIcon: true,
     });
   }, [complainInfo, copyContentRef.current]);
 
@@ -436,7 +495,7 @@ const ComplaintManage = () => {
           <View style={styles.titleArea}>
             <Text style={styles.text}>是否在职：</Text>
           </View>
-          <Text style={styles.text}>{item.jobOn ? '在职' : '离职'}</Text>
+          <Text style={styles.text}>{item.jobOn === 'JOB_ON' ? '在职' : '离职'}</Text>
         </View>
         <View style={styles.textArea}>
           <View style={styles.titleArea}>
@@ -457,6 +516,22 @@ const ComplaintManage = () => {
             <Text style={styles.text}>反馈时间：</Text>
           </View>
           <Text style={styles.text}>{item.createdDate ? moment(item.createdDate).format('YYYY-MM-DD HH:mm:ss') : '无'}</Text>
+        </View>
+        <View style={styles.textArea}>
+          <View style={styles.titleArea}>
+            <Text style={styles.text}>处理人：</Text>
+          </View>
+          <TouchableOpacity onPress={() => memberDetailOnPress(item)}>
+            <Text style={[styles.text, { color: '#409EFF' }]}>{item.handlerName || '无'}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.textArea}>
+          <View style={styles.titleArea}>
+            <Text style={styles.text}>处理结果：</Text>
+          </View>
+          <TouchableOpacity onPress={() => pressResult(item)}>
+            <Text style={[styles.text, { color: '#409EFF' }]}>查看详情</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.operationStyle}>
           <TouchableOpacity style={styles.pressBtn} onPress={() => pressTransfer(item)}>
@@ -507,7 +582,7 @@ const ComplaintManage = () => {
           onRefresh={refresh}
           onEndReached={onEndReached}
           keyExtractor={(item) => item.feedbackId}
-          getItemLayout={(data, index) => ({ length: 460, offset: 460 * index, index })}
+          getItemLayout={(data, index) => ({ length: 520, offset: 520 * index, index })}
           refreshing={isLoading}
           initialNumToRender={20}
           ListFooterComponent={<Footer showFooter={memoList.length} hasNext={originData.hasNext} />}
@@ -588,7 +663,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingBottom: 10,
     paddingTop: 10,
-    minHeight: 460,
+    minHeight: 520,
+  },
+  resultArea: {
+    minHeight: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // borderBottomWidth: 2,
+    // borderBottomColor: 'rgba(0, 0, 0, .05)',
+    width: '100%',
+    paddingHorizontal: 20,
+    color: '#000'
   },
   textArea: {
     minHeight: 40,
@@ -636,7 +721,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginRight: 10,
     paddingHorizontal: 20,
-    alignItems:'center',
+    alignItems: 'center',
     paddingVertical: 2,
     borderRadius: 8,
     backgroundColor: '#409EFF',

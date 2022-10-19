@@ -37,12 +37,16 @@ const AdvanceManage = () => {
   const toast = useToast();
 
   const navigation = useNavigation();
-
+  const getEnumValue = (optionsData, enumKey) => optionsData.find((val) => val.value === enumKey)?.title;
   const role = useSelector(state => state.roleSwitch.role);
   // 跳转预支审核进度详情
-  const toAdvanceAudit = () => navigation.navigate(NAVIGATION_KEYS.ADVANCE_AUDIT);
+  const toAdvanceAudit = (value) => {
+    navigation.navigate(NAVIGATION_KEYS.ADVANCE_AUDIT, {
+      msg: value,
+    })
+  }
 
-  const [searchContent, setSearchContent] = useState({ role, ...firstPage });
+  const [searchContent, setSearchContent] = useState({ ...firstPage });
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [dialogContent, setDialogContent] = useState({});
@@ -98,7 +102,6 @@ const AdvanceManage = () => {
     try {
       const res = await AdvanceApi.AdvanceList(params);
       console.log('获取预支数据：', res);
-      console.log('获取预支数据参数：', params);
       if (res?.code !== SUCCESS_CODE) {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
@@ -120,25 +123,6 @@ const AdvanceManage = () => {
     }
   };
 
-  const gotoRecordOfWorking = () => {
-    toast.show('敬请期待...');
-    return;
-    //TODO待开发
-    navigation.navigate(NAVIGATION_KEYS.RECORD_OF_WORKING);
-  }
-
-  const checkStatus = (message) => {
-    if (message.backAccount && message.idNo) {
-      return '两卡全';
-    } else if (message.backAccount && !message.idNo) {
-      return '缺身份证';
-    } else if (!message.backAccount && message.idNo) {
-      return '缺银行卡';
-    } else {
-      return '两卡不全';
-    }
-  };
-
   const filter = (values) => {
     console.log('打印筛选框的值：', values);
     const jobStartDate = values.dateRange.startDate;
@@ -147,7 +131,7 @@ const AdvanceManage = () => {
     const storeId = values.store.length ? values.store[0].value : '';
     const recruiterId = values.staff.length ? values.staff[0].value : '';
     const nameOrIdNoOrMobile = values.search;
-    // const type = values.type.length ? values.type[0].value : '';
+    const status = values.status.length ? values.status[0].value : '';
 
     setSearchContent({
       ...searchContent,
@@ -158,33 +142,8 @@ const AdvanceManage = () => {
       companyId,
       storeId,
       recruiterId,
-      // type
+      status
     });
-  };
-
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_LIST, { list: 'newestStatus' });
-
-  const editMemberMessage = (item) => {
-    dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.EDIT_MEMBER, {
-      fieldList: item
-    });
-  };
-
-  const changeStatusFunc = async (flowId, params) => {
-    try {
-      const res = await ListApi.ChangeStatusInNewestList(flowId, params);
-      if (res?.code !== SUCCESS_CODE) {
-        toast.show(`${res?.msg}`, { type: 'danger' });
-        return;
-      }
-      toast.show(`修改成功`, { type: 'success' });
-      refresh && refresh();
-    } catch (err) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    } finally {
-      dialogRef.current.setShowDialog(false);
-    }
   };
 
   const callPhone = (item) => {
@@ -216,20 +175,10 @@ const AdvanceManage = () => {
       setDialogContent({
         dialogTitle: '会员信息',
         dialogComponent: <FormMemberDetail memberInfoList={res.data} showDate={true} />
-        // rightTitle: '编辑',
-        // rightTitleOnPress: () => editMemberMessage(res.data)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-  };
-
-  const transferFactory = (item) => {
-    dialogRef.current.setShowDialog(false);
-    navigation.navigate(NAVIGATION_KEYS.TRANSFER_FACTORY, {
-      item,
-      refresh
-    });
   };
 
   const pressFactory = async (item) => {
@@ -247,40 +196,15 @@ const AdvanceManage = () => {
       setDialogContent({
         dialogTitle: '岗位信息',
         dialogComponent: <FormCompanyDetail message={res.data} />,
-        // rightTitle: '转厂/转单',
-        // rightTitleOnPress: () => transferFactory(item)
       });
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 
-  const showTwoCard = item => {
-    // dialogRef.current.setShowDialog(true);
-    // setDialogContent({
-    //   bottomButton: false,
-    //   rightClose: <AntDesign
-    //     name='closecircleo'
-    //     size={20}
-    //     onPress={() => dialogRef.current.setShowDialog(false)}
-    //   />,
-    //   dialogTitle: '会员信息',
-    //   dialogComponent: <TwoCard message={item} />
-    // });
-  };
-
-  const changeStatus = item => {
-    dialogRef.current.setShowDialog(true);
-    setDialogContent({
-      dialogTitle: '状态修改',
-      bottomButton: false,
-      dialogComponent: <NewestStatus message={item} dialog={dialogRef} confirmOnPress={changeStatusFunc} refresh={refresh} />
-    });
-  };
-
   const selectIndex = (selectIndex) => {
     setIndex(selectIndex);
-    const selectItem = TAB_OF_LIST.COMPLAINT_LIST.find((item, index) => index === selectIndex);
+    const selectItem = TAB_OF_LIST.ADVANCE_LIST.find((item, index) => index === selectIndex);
     const tabName = selectItem.type;
     dispatch(setTabName(tabName));
     if (showList.length) {
@@ -294,13 +218,13 @@ const AdvanceManage = () => {
         searchContent.status = '';
         break;
       case 1:
-        searchContent.status = 'PREPARING';
+        searchContent.status = 'PENDING';
         break;
       case 2:
-        searchContent.status = 'PROCESSING';
+        searchContent.status = 'FAIL';
         break;
       case 3:
-        searchContent.status = 'END';
+        searchContent.status = 'PASS';
         break;
     }
     setSearchContent({ ...searchContent, ...firstPage });
@@ -317,8 +241,6 @@ const AdvanceManage = () => {
   };
 
   const renderItem = ({ item }) => {
-    const status = checkStatus(item);
-
     return (
       <View style={styles.listStyle}>
         <Text
@@ -343,20 +265,20 @@ const AdvanceManage = () => {
           ]}
           numberOfLines={2}
           onPress={() => showTwoCard(item)}
-          ellipsizeMode="tail">{item.store || '总部店'}</Text>
+          ellipsizeMode="tail">{item.storeName || '无'}</Text>
         <Text
           style={[
             styles.itemText,
           ]}
           numberOfLines={2}
-          ellipsizeMode="tail">200</Text>
+          ellipsizeMode="tail">{item.advanceAmount || '无'}</Text>
         <Text
           style={[
             styles.itemText,
           ]}
           numberOfLines={2}
-          onPress={toAdvanceAudit}
-          ellipsizeMode="tail">{MEMBERS_STATUS[item.status] || '通过'}</Text>
+          onPress={() => toAdvanceAudit(item)}
+          ellipsizeMode="tail">{getEnumValue(ADVANCERESULT, item.status) || '无'}</Text>
         <Text
           style={[
             styles.itemText,
