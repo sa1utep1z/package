@@ -495,7 +495,7 @@ const ComplaintManage = () => {
           <View style={styles.titleArea}>
             <Text style={styles.text}>是否在职：</Text>
           </View>
-          <Text style={styles.text}>{item.jobOn ? '在职' : '离职'}</Text>
+          <Text style={styles.text}>{item.jobOn === 'JOB_ON' ? '在职' : '离职'}</Text>
         </View>
         <View style={styles.textArea}>
           <View style={styles.titleArea}>
