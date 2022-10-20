@@ -130,7 +130,7 @@ const AdvanceManage = () => {
     const companyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].value : '';
     const recruiterId = values.staff.length ? values.staff[0].value : '';
-    const nameOrIdNoOrMobile = values.search;
+    const nameOrIdNo = values.search;
     const status = values.status.length ? values.status[0].value : '';
 
     setSearchContent({
@@ -138,7 +138,7 @@ const AdvanceManage = () => {
       ...firstPage,
       jobStartDate,
       jobEndDate,
-      nameOrIdNoOrMobile,
+      nameOrIdNo,
       companyId,
       storeId,
       recruiterId,

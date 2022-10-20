@@ -75,6 +75,10 @@ const EditComplaint = (props) => {
         const createdDate = moment(msg.createdDate).format('YYYY-MM-DD HH:mm:ss');
         restForm.setFieldValue('createdDate', createdDate);
       }
+      if (msg.status) {
+        const end = msg.status === 'END' ? true : false;
+        restForm.setFieldValue('end', end);
+      }
       if (msg.imgs) {
         const imgs = msg.imgs;
         restForm.setFieldValue('imgs', imgs);
@@ -164,20 +168,23 @@ const EditComplaint = (props) => {
         end: values.end,
         handleResult: values.handleResult,
       }
-      const res = await ComplaintApi.EditComplaint(msg.feedbackId, params);
-      if (res?.code !== SUCCESS_CODE) {
-        toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
-        return;
+      if (values.end && values.handleResult) {
+        const res = await ComplaintApi.EditComplaint(msg.feedbackId, params);
+        if (res?.code !== SUCCESS_CODE) {
+          toast.show(`请求失败，${res?.msg}`, { type: 'danger' });
+          return;
+        }
+        toast.show('编辑投诉成功');
+        navigation.navigate(NAVIGATION_KEYS.COMPLAINT_FEEDBACK);
+        console.log('保存提交成功：', params);
+      } else {
+        toast.show('请完善信息再保存', { type: 'danger' });
       }
-      toast.show('编辑投诉成功');
-      navigation.navigate(NAVIGATION_KEYS.COMPLAINT_FEEDBACK);
-      console.log('保存提交成功：', params);
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
       console.log('编辑失败：', error);
     }
   };
-
 
   return (
     <>

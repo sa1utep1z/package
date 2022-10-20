@@ -464,6 +464,13 @@ export const COMPANY_SCALE = [
   { id: 4, title: '3001-5000人', value: 'SCALE_FOURTH' },
   { id: 5, title: '5000人以上', value: 'SCALE_FIFTH' },
 ];
+export const ADVANCE_AMOUNT = [
+  { id: 1, title: '100', value: '100' },
+  { id: 2, title: '200', value: '200' },
+  { id: 3, title: '300', value: '300' },
+  { id: 4, title: '400', value: '400' },
+  { id: 5, title: '500', value: '500' },
+];
 export const COMPANY_TYPE = [
   { id: 1, title: 'A', value: 'TYPE_A' },
   { id: 2, title: 'B', value: 'TYPE_B' },
