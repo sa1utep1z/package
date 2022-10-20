@@ -44,6 +44,7 @@ const SelectItem = ({
   selectContainerStyle,
   selectAreaStyle,
   selectAreaTextStyle,
+  labelText,
   autoSubmit = false,
   inPageField = false, // 由于跟顶部筛选栏及表单内部公用一个选择项，所以在这里配置一个“是否在页面中表单”的配置项用来控制他们不同位置的外观表现；
   otherPressFunc,
@@ -221,7 +222,7 @@ const SelectItem = ({
         {formalLabel &&
           <View style={[styles.labelArea, labelAreaStyle]}>
             {rest.isRequired && <Text style={styles.required}>*</Text>}
-            <Text style={styles.label}>{title}：</Text>
+            <Text style={[styles.label, labelText]}>{title}：</Text>
           </View>
         }
         <View style={styles.rightArea}>
