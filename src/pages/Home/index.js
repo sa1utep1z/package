@@ -15,6 +15,7 @@ import HomeApi from "../../request/HomeApi";
 import MineApi from "../../request/MineApi";
 import { setRoleInfo } from "../../redux/features/RoleInfo";
 import { setMemberInfo } from "../../redux/features/MemberInfo";
+import { setUserPermission } from "../../redux/features/UserPermission";
 import { openHomeSearch } from "../../redux/features/homeSearch";
 import Empty from '../../components/FlatList/Empty';
 import Footer from '../../components/FlatList/Footer';
@@ -108,8 +109,25 @@ const Home = (props) => {
         return;
       }
       dispatch(setRoleInfo(res.data.systemIdentities));
+      getUserPermission();
     }catch(err){
       toast.show(`获取用户角色失败，请确认网络是否开启。`, { type: 'danger' });
+    }
+  };
+
+  const getUserPermission = async() => {
+    try{
+      const res = await HomeApi.getUserPermission();
+      // console.log('getUserPermission --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      if(res.data.length){
+        dispatch(setUserPermission(res.data));
+      }
+    }catch(err){
+      toast.show(`获取用户权限失败，请确认网络是否开启。`, { type: 'danger' });
     }
   };
 

@@ -116,6 +116,7 @@ const WagesDetail = ({
       }
     }catch(error){
       console.log('getWageSettlement->error', error);
+      toast.show(`解析会员结算规则错误`, {type: 'danger'});
       setSettlementLoading(false);
     }finally{
       setSettlementLoading(false);

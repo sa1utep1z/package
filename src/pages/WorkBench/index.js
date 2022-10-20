@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
+import { useSelector } from 'react-redux';
 
 import Card from "../../components/Card";
 import NAVIGATION_KEYS from "../../navigator/key";
@@ -13,6 +14,8 @@ const WorkBench = (props) => {
   const {navigation} = props;
 
   const toast = useToast();
+
+  const permission = useSelector((state) => state.UserPermission.permission);
 
   const [showList, setShowList] = useState(WORKBENCH_LIST);
 
@@ -38,6 +41,34 @@ const WorkBench = (props) => {
       setShowList(WORKBENCH_LIST);
     } catch (error) {
       toast.show('获取公海权限失败,请联系管理员', {type: 'danger'});
+    } finally{
+      filterShowIcons();
+    }
+  };
+
+  const filterShowIcons = () => {
+    if(permission.length){
+      if(!permission.includes('menu-affairsManage')){
+        const filterShowList = showList.filter(module => module.key !== 'businessManage');
+        setShowList(filterShowList);
+        return;
+      }
+      if(!permission.includes('menu-affairsManage-orderManage')){
+        const copyList = deepCopy(WORKBENCH_LIST);
+        const findOutModule = copyList.find(module => module.key === 'businessManage');
+        const orderIndex = findOutModule.list.findIndex(icon => icon.key === 'orderManage');
+        findOutModule.list.splice(orderIndex, 1);
+        setShowList(copyList);
+        return;
+      }
+      if(!permission.includes('menu-affairsManage-companyManage')){
+        const copyList = deepCopy(WORKBENCH_LIST);
+        const findOutModule = copyList.find(module => module.key === 'businessManage');
+        const orderIndex = findOutModule.list.findIndex(icon => icon.key === 'businessManage');
+        findOutModule.list.splice(orderIndex, 1);
+        setShowList(copyList);
+        return;
+      }
     }
   };
 

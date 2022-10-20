@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ErrorMessage} from 'formik';
 import { CheckBox } from '@rneui/themed';
@@ -17,6 +17,9 @@ const LittleSingleDate = ({
   const [showPicker, setShowPicker] = useState(false);
   const [dateTime, setDateTime] = useState(new Date());
 
+  useEffect(()=>{
+    setDateTime(new Date(field.value));
+  },[field.value])
 
   const pickerOnPress = () => {
     setShowPicker(!showPicker);
