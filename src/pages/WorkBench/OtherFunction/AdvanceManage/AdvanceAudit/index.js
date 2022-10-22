@@ -11,7 +11,7 @@ import SelectItem from '../../../../../components/Form/SelectItem';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import NormalDialog from "../../../../../components/NormalDialog";
 import EmptyArea from '../../../../../components/EmptyArea';
-import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, SUCCESS_CODE, JOB_ON_Result, ADVANCERESULT, ADVANCE_AMOUNT } from '../../../../../utils/const';
+import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, SUCCESS_CODE, JOB_ON_Result, ADVANCERESULT, ADVANCE_AMOUNT, CHANEL_SOURCE_LIST } from '../../../../../utils/const';
 import { deepCopy } from '../../../../../utils';
 import { TextInput } from 'react-native';
 import AdvanceApi from '../../../../../request/AdvanceApi';
@@ -29,7 +29,7 @@ const AdvanceAudit = (props) => {
   const [inputRemark, setInputRemark] = useState(''); // 输入审核意见
   const [isApply, setIsApply] = useState(false); // 审核同意/拒绝状态
   const [visible4, setVisible4] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState({}); // 点击的审核数据
   const [showList, setShowList] = useState([
     { type: 'userName', title: '会员姓名', value: '' },
     { type: 'idNo', title: '身份证号', value: '' },
@@ -42,7 +42,7 @@ const AdvanceAudit = (props) => {
     { type: 'storeName', title: '归属门店', value: '' },
     { type: 'memberStatus', title: '在职状态', value: '' },
     { type: 'jobDate', title: '入职日期', value: '' },
-    { type: 'advanceAmount', title: '借支金额', value: '' },
+    { type: 'advanceAmount', title: '借支金额', value: [] },
     { type: 'bankName', title: '银行名称', value: '' },
     { type: 'bankAccount', title: '银行卡号', value: '' },
     { type: 'status', title: '申请状态', value: '' },
@@ -50,9 +50,8 @@ const AdvanceAudit = (props) => {
   ]);
 
   const initialValues = {
-    advanceAmount: ''
+    advanceAmount: [],
   }
-  console.log('打印传过来的参数：', msg);
   const statusPress = [
     {
       title: '拒绝',
@@ -63,7 +62,7 @@ const AdvanceAudit = (props) => {
       value: 'PASS',
     }
   ]
-  useMemo(() => {
+  useEffect(() => {
     const copyList = deepCopy(showList);
     for (let key in msg) {
       if (copyList.length) {
@@ -73,6 +72,10 @@ const AdvanceAudit = (props) => {
             case 'type':
               const chanelName = TYPERESULT.find(name => name.value === msg[key]);
               findItem.value = chanelName?.title;
+              break;
+            case 'signUpType':
+              const chanelType = CHANEL_SOURCE_LIST.find(name => name.value === msg[key]);
+              findItem.value = chanelType?.title;
               break;
             case 'applyDate':
               findItem.value = msg[key] ? moment(msg[key]).format('YYYY-MM-DD HH:mm:ss') : '无';
@@ -89,9 +92,10 @@ const AdvanceAudit = (props) => {
               findItem.value = chanelStatus?.title;
               break;
             case 'advanceAmount':
-              const chanelAmount = ADVANCE_AMOUNT.find(name => name.value === msg[key]);
-              findItem.value = chanelAmount?.title;
-              restForm.setFieldValue('advanceAmount', chanelAmount.title);
+              const chanelAmount = ADVANCE_AMOUNT.filter(item => item.value === String(msg[key]));
+              console.log('advanceAmount', chanelAmount, msg[key]);
+              restForm.setFieldValue('advanceAmount', chanelAmount);
+              setInputValue(msg[key]);
               break;
             default:
               findItem.value = msg[key];
@@ -131,78 +135,96 @@ const AdvanceAudit = (props) => {
     console.log('打印审核意见：', value);
     setInputRemark(value);
   };
+
   // 拒绝
   const pressFail = (item) => {
-    console.log('打印拒绝的值222：', isApply, item);
+    console.log('打印通过的值111：', isApply, item);
     setIsApply(true);
   }
 
-  // 通过
-  const pressPass = (item) => {
-    console.log('打印通过的值111：', isApply, item);
-    setIsApply(false);
+  // 审批意见通过
+  const pressPass = async (item) => {
+    try {
+      const prams = {
+        pass: true,
+        remark: '',
+        billMonth: '',
+        approveData: {
+          advanceAmount: inputValue ? inputValue : '',
+        },
+      };
+      console.log('打印通过的值111：', prams, msg.approveDetailId);
+      setIsApply(false);
+      const res = await AdvanceApi.AddApprove(msg.approveDetailId, prams);
+      if (res?.code !== SUCCESS_CODE) {
+        toast.show(`${res?.msg}`, { type: 'danger' });
+        return;
+      }
+      if (selectedIndex.role === 'BELONG_RESIDENT_SINGLE') {
+        toast.show('审批通过，进入财务审批流程', 2000);
+      } else if (selectedIndex.role === 'FINANCE') {
+        toast.show('审批通过，进入会计审批流程', 2000);
+      } else {
+        toast.show('审批通过，发放款项', 2000);
+      }
+      getAdvanceFlow();
+      setVisible4(false);
+      console.log('打印审核进度：', res)
+    } catch (err) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印错误信息：', err)
+    }
   }
 
-  const contentItem = (item) => {
-    return (
-      <View>
-        <View style={styles.resultArea}>
-          {
-            statusPress && statusPress.map((item, index) => {
-              return (
-                <TouchableOpacity key={index} style={[styles.buttom, { backgroundColor: item.title === '拒绝' ? 'red' : '#409EFF' }]} onPress={item.title === '同意' ? () => pressPass(item) : () => pressFail(item)} >
-                  <Text style={styles.buttomText}>{item.title}</Text>
-                </TouchableOpacity>
-              )
-            })
-          }
-        </View>
-        {
-          isApply && <>
-            <View style={styles.reason}>
-              <Text>审核意见：</Text>
-              <TextInput
-                style={styles.inputStyle}
-                placeholder="请输入审核意见"
-                multiline
-                value={inputRemark}
-                onChangeText={onChangeRemark}
-              />
-            </View>
-            <View>
-              <Text style={styles.remark}>注：审批拒绝后，审批流程将终止。</Text>
-            </View>
-          </>
+  // 拒绝申请
+  const handleSubmit = async () => {
+    try {
+      const prams = {
+        pass: false,
+        remark: inputRemark,
+        billMonth: '',
+        approveData: {
+          advanceAmount: inputValue ? inputValue : '',
+        },
+      };
+      console.log('打印请求的参数：', prams);
+      if (inputRemark) {
+        const res = await AdvanceApi.AddApprove(msg.approveDetailId, prams);
+        if (res?.code !== SUCCESS_CODE) {
+          toast.show(`${res?.msg}`, { type: 'danger' });
+          return;
         }
-      </View>
-    )
+        toast.show('审批流程已终止');
+        getAdvanceFlow();
+        setVisible4(false);
+      } else {
+        toast.show('审批意见不能为空！', { type: 'danger' });
+      }
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      console.log('打印错误信息：', error)
+    }
   }
 
-  // 审批流程处理
-  const pressResult = useCallback(async (item) => {
-    dialogRef.current.setShowDialog(true);
-    console.log('打印详情：', item);
-    setDialogContent({
-      dialogTitle: '审核意见',
-      dialogComponent: contentItem(),
-      confirmText: '确认',
-      rightCloseIcon: true,
-    });
-  }, [msg, isApply]);
 
+  //打开审批弹窗
   const applyResult = (item) => {
     setVisible4(true);
+    setSelectedIndex(item);
   }
 
   const callPhone = (item) => {
     Linking.openURL(`tel:${item.value}`);
   };
-  const onChangeText = value => setInputValue(value);
+
+  const callPhones = (item) => {
+    Linking.openURL(`tel:${item.mobile}`);
+  };
+
   // 提交报名表单
   const onSubmit = async (values) => {
     try {
       console.log('提交参数11：', values)
-
     } catch (error) {
       console.log('errorerrorerrorerrorerrorerror', error)
     }
@@ -217,7 +239,6 @@ const AdvanceAudit = (props) => {
               {
                 item.type != 'advanceAmount' && <Text style={styles.memberItem_text}>{item.title}：</Text>
               }
-              {/* <Text style={styles.memberItem_text}>{item.title}：</Text> */}
               {item.type === 'mobile' ?
                 item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF', fontSize: 28 }}>{item.value}</Text>
@@ -229,6 +250,12 @@ const AdvanceAudit = (props) => {
                       handleChange={(e) => console.log('e', e)}
                       onSubmit={onSubmit}>
                       {({ handleSubmit, ...rest }) => {
+                        const amount = rest.values;
+                        console.log('values', amount)
+                        if (amount.advanceAmount.length) {
+                          const newAmount = amount.advanceAmount[0].value;
+                          setInputValue(newAmount);
+                        }
                         restForm = rest;
                         return (
                           <View style={{ flex: 1 }}>
@@ -249,7 +276,6 @@ const AdvanceAudit = (props) => {
                         )
                       }}
                     </Formik>
-                    {/* <Text style={styles.vauleStyle}>{item.value || '无'}</Text> */}
                   </View> : item.type === 'idNo' ? <View style={styles.memberItem_value}>
                     <Text selectable={true} style={{ color: item.value ? '#409EFF' : '#333', fontSize: 28 }}>{item.value || '无'}</Text>
                   </View> : <View style={styles.memberItem_value}>
@@ -274,7 +300,7 @@ const AdvanceAudit = (props) => {
                 <View style={{ flexDirection: 'row' }}>
                   <Text style={styles.timeText}>会员</Text>
                   <Text style={styles.box}>[<Text style={styles.nameText}>{advanceFlow.userName}</Text>]</Text>
-                  <Text style={styles.nameText}>{advanceFlow.mobile}</Text>
+                  <TouchableOpacity onPress={() => callPhones(advanceFlow)}><Text style={styles.nameText}>{advanceFlow.mobile}</Text></TouchableOpacity>
                   <Text style={styles.timeText}>{advanceFlow.createDate ? moment(advanceFlow.createDate).format('YYYY-MM-DD HH:mm:ss') : ''}</Text>
                 </View>
               </View>
@@ -299,7 +325,7 @@ const AdvanceAudit = (props) => {
                       <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.timeText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}</Text>
                         {item.userName && <Text style={styles.box}>[<Text style={styles.nameText}>{item.userName}</Text>]</Text>}
-                        <Text style={styles.nameText}>{item.mobile}</Text>
+                        <TouchableOpacity onPress={() => callPhones(item)}><Text style={styles.nameText}>{item.mobile}</Text></TouchableOpacity>
                         <Text style={styles.timeText}>{item.time ? moment(item.time).format('YYYY-MM-DD HH:mm:ss') : ''}</Text>
                       </View>
                     </View>
@@ -327,11 +353,13 @@ const AdvanceAudit = (props) => {
           <View style={styles.dialogContent}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ color: '#333', textAlign: 'center', fontWeight: 'bold', fontSize: 20, marginLeft: 80 }} >审批意见</Text>
-              <AntDesign
-                name='closecircle'
-                size={20}
-                style={{ textAlign: 'right' }}
-              />
+              <TouchableOpacity onPress={() => setVisible4(false)}>
+                <AntDesign
+                  name='closecircle'
+                  size={20}
+                  style={{ textAlign: 'right' }}
+                />
+              </TouchableOpacity>
             </View>
             <View style={styles.resultArea}>
               {
@@ -352,7 +380,6 @@ const AdvanceAudit = (props) => {
                     style={styles.inputStyle}
                     placeholder="请输入审核意见"
                     multiline
-                    // value={inputRemark}
                     onChangeText={onChangeRemark}
                   />
                 </View>
@@ -369,7 +396,7 @@ const AdvanceAudit = (props) => {
                   />
                   <Button
                     title="确认"
-                    // onPress={handleSubmit}
+                    onPress={handleSubmit}
                     buttonStyle={styles.comfirmStyle}
                     titleStyle={styles.comfirmText}
                     containerStyle={styles.buttonContainerStyle}
@@ -549,11 +576,12 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flexDirection: 'row',
-    // width: 200,
+    width: 150,
     minHeight: 60,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, .05)',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    paddingHorizontal: 10
   },
   remark: {
     fontSize: 14,

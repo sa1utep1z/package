@@ -261,10 +261,8 @@ const AdvanceManage = () => {
         <Text
           style={[
             styles.itemText,
-            { color: '#409EFF' }
           ]}
           numberOfLines={2}
-          onPress={() => showTwoCard(item)}
           ellipsizeMode="tail">{item.storeName || '无'}</Text>
         <Text
           style={[
@@ -275,6 +273,7 @@ const AdvanceManage = () => {
         <Text
           style={[
             styles.itemText,
+            { color: '#409EFF' }
           ]}
           numberOfLines={2}
           onPress={() => toAdvanceAudit(item)}
