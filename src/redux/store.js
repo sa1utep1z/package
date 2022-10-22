@@ -9,6 +9,7 @@ import RoleInfoReducer from './features/RoleInfo';
 import HireReportDialogReducer from './features/HireReport/HireReportDialog';
 import PageDialogReducer from './features/PageDialog';
 import MemberInfoReducer from './features/MemberInfo';
+import UserPermissionReducer from './features/UserPermission';
 
 export default configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export default configureStore({
     HireReportDialog: HireReportDialogReducer, //招聘看板中的悬浮窗
     PageDialog: PageDialogReducer, //所有页面的悬浮窗
     MemberInfo: MemberInfoReducer, //登陆人信息
+    UserPermission: UserPermissionReducer, //用户权限
   },
   
   //解决redux更新数据无法传入Moment的问题；

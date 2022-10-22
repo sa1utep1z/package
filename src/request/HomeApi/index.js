@@ -8,6 +8,7 @@ const HomeApi = {
   SignUp: async (orderId, prams) => await httpRequest.post(`admin/app/orderDetail/${orderId}`, prams),
   GetBannerList: async () => await httpRequest.get(`admin/app/banner/list`),
   getRoleInfo: async () => await httpRequest.get(`admin/user/info`),
+  getUserPermission: async () => await httpRequest.get(`admin/userPermission`),
   ocrReq: async (prams) => await httpRequest.post('admin/app/ocr', prams, 
     {
       headers: {

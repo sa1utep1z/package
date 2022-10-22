@@ -350,7 +350,7 @@ const CommissionDescription = ({
                                     name={`rule${rule.index}.recruiter`}
                                     showLabel={false}
                                     placeholder="输入"
-                                    maxLength={3}
+                                    maxLength={4}
                                     centerInput
                                     keyboardType="numeric"
                                     selectTextOnFocus
@@ -362,7 +362,7 @@ const CommissionDescription = ({
                                     name={`rule${rule.index}.groupLeader`}
                                     showLabel={false}
                                     placeholder="输入"
-                                    maxLength={3}
+                                    maxLength={4}
                                     centerInput
                                     keyboardType="numeric"
                                     selectTextOnFocus
@@ -374,7 +374,7 @@ const CommissionDescription = ({
                                     name={`rule${rule.index}.storeLeader`}
                                     showLabel={false}
                                     placeholder="输入"
-                                    maxLength={3}
+                                    maxLength={4}
                                     centerInput
                                     keyboardType="numeric"
                                     selectTextOnFocus

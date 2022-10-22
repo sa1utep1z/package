@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, View, Text, TextInput} from 'react-native';
 import {ErrorMessage} from 'formik';
 
@@ -19,16 +19,6 @@ const SingleInput = ({
   longText = false, //是否长文本，长文本则需要过滤<br/>标签
   ...rest
 }) => {
-  const [value, setValue] = useState('');
-
-  useEffect(()=>{
-    if(longText){
-      const filterValue = field.value.replace(/<br\/>/g,"\n");
-      setValue(filterValue);
-      return;
-    }
-    setValue(field.value);
-  },[field.value])
 
   return (
     <View style={[styles.inputArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}, inputStyle]}>
@@ -40,7 +30,7 @@ const SingleInput = ({
           <View style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, inputContainerStyle]}>
             <View style={{flexDirection: 'row'}}>
               <TextInput
-                value={value}
+                value={field.value.replace(/<br\/>/g,"\n")}
                 placeholder={placeholder || `请输入${label}`}
                 placeholderTextColor="#999999"
                 onChangeText={form.handleChange(field.name)}
@@ -58,7 +48,7 @@ const SingleInput = ({
             name={field.name}
             style={styles.errorMessage}
             component={Text}
-        />
+          />
         </View>
       </View>
     </View>

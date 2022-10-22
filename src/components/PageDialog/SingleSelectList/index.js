@@ -52,6 +52,19 @@ const SingleSelectList = ({
   }, [fieldValue])
 
   const selectItem = (item) => {
+    if(inputValue.length){
+      const copyList = deepCopy(showList);
+      copyList.map(data => {
+        if(data.value === item.value){
+          data.isChecked = true;
+        }else{
+          data.isChecked = false;
+        }
+      });
+      setShowList(copyList);
+      return;
+    }
+
     const copyList = deepCopy(selectList);
     copyList.map(data => {
       if(data.value === item.value){
@@ -76,9 +89,27 @@ const SingleSelectList = ({
 
   const close = () => dispatch(closeDialog());
 
-  const onChangeText = value => setInputValue(value);
+  const onChangeText = value => {
+    setInputValue(value);
+    const copyList = deepCopy(selectList);
+    const filterList = copyList.filter(factoryName => factoryName.label.includes(value));
+    setShowList(filterList);
+  };
 
-  const clearInput = () => inputValue.length && setInputValue('');
+  const clearInput = () => {
+    inputValue.length && setInputValue('');
+    const copyList = deepCopy(selectList);
+    if(fieldValue.length){
+      copyList.map(item => {
+        if(item.value === fieldValue[0].value){
+          item.isChecked = true;
+        }else{
+          item.isChecked = false;
+        }
+      });
+    }
+    setShowList(copyList);
+  };
 
   return (
     <View style={{maxHeight: 900}}>

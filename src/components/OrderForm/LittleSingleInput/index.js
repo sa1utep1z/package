@@ -64,6 +64,7 @@ const LittleSingleInput = ({
           style={{flex: 1, fontSize: 22, textAlign: 'center', padding: 0}}
           selectionColor="#409EFF"
           maxLength={!!maxLength ? maxLength : inputMaxLength}
+          selectTextOnFocus
           {...rest}
         />
       </View>

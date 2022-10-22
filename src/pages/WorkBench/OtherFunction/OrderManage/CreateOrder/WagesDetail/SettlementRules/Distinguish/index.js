@@ -50,6 +50,7 @@ const Distinguish = ({
             <Field  
               name={`${type}${ruleIndex + 1}.distinguish.male.fee_mode.value`}
               label="模式"
+              canSearch={false}
               selectList={MEMBER_FEE_MODE}
               labelStyle={{minWidth: 0}}
               component={SingleSelect}
@@ -378,6 +379,7 @@ const Distinguish = ({
             <Field  
               name={`${type}${ruleIndex + 1}.distinguish.female.fee_mode.value`}
               label="模式"
+              canSearch={false}
               selectList={MEMBER_FEE_MODE}
               labelStyle={{minWidth: 0}}
               component={SingleSelect}
