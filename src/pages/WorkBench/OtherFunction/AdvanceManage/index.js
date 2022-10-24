@@ -254,6 +254,7 @@ const AdvanceManage = () => {
         <Text
           style={[
             styles.itemText,
+            { color: '#409EFF' }
           ]}
           numberOfLines={2}
           onPress={() => pressFactory(item)}
@@ -295,8 +296,8 @@ const AdvanceManage = () => {
   return (
     <View style={[styles.screen]}>
       <HeaderSearch
-        startText="入职开始："
-        endText="入职结束"
+        startText="申请开始："
+        endText="申请结束"
         filterFun={filter}
         status={ADVANCERESULT}
         clearRangeDate

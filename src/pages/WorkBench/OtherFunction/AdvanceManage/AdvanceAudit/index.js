@@ -316,10 +316,10 @@ const AdvanceAudit = (props) => {
                       <Text style={styles.borderText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}</Text>
                     </View>
                     <View style={styles.content}>
-                      <View style={{ flexDirection: 'row' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={styles.titleText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}审核.</Text>
                         <TouchableOpacity onPress={() => applyResult(item)}>
-                          <Text style={[styles.titleText, { color: '#409EFF' }]}>{item.pass === null ? '待审核' : item.pass === true ? '通过' : '拒绝'}</Text>
+                          <Text style={[styles.titleText, { color: '#409EFF', fontSize: item.pass === null ? 35 : 26 }]}>{item.pass === null ? '待审核' : item.pass === true ? '通过' : '拒绝'}</Text>
                         </TouchableOpacity>
                       </View>
                       <View style={{ flexDirection: 'row' }}>
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 26,
     color: '#409EFF',
-    marginRight: 30
+    marginRight: 20
   },
   timeText: {
     fontSize: 26,
