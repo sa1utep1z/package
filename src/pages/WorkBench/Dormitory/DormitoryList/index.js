@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
+import CenterSelectDate from '../../../../components/List/CenterSelectDate';
+
 const DormitoryList = () => {
+
   return (
     <View style={styles.screen}>
-      <Text>在离宿名单</Text>
+      <HeaderSearchOfDormitory />
+      {/* <CenterSelectDate /> */}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    flex: 1
   }
 });
 
