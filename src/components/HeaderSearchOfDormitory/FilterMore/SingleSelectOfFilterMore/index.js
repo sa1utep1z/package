@@ -4,8 +4,10 @@ import { CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 
-import { deepCopy } from "../../../utils";
-import { closeDialog } from "../../../redux/features/PageDialog";
+import { deepCopy } from "../../../../utils";
+import { closeDialog } from "../../../../redux/features/PageDialog";
+import { openDialog, setTitle } from '../../../../redux/features/PageDialog'; 
+// import FilterMore from '../../FilterMore';
 
 const FlattListItem = ({item, pressItem, isLastIndex}) => {
   const onChange = useCallback(() => pressItem(item),[item]);
@@ -26,11 +28,12 @@ const FlattListItem = ({item, pressItem, isLastIndex}) => {
   ),[item])
 };
 
-const SingleSelectList = ({
+const SingleSelectOfFilterMore = ({
   selectList,
   fieldValue,
   confirm,
   canSearch = true, //是否可以搜索（default: true）
+  originForm
 }) => {
   const dispatch = useDispatch();
 
@@ -87,7 +90,8 @@ const SingleSelectList = ({
     dispatch(closeDialog());
   };
 
-  const close = () => dispatch(closeDialog());
+  // const close = () => dispatch(openDialog(<FilterMore originForm={originForm} />));
+  const close = () => console.log('你点击了关闭');
 
   const onChangeText = value => {
     setInputValue(value);
@@ -221,4 +225,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SingleSelectList;
+export default SingleSelectOfFilterMore;

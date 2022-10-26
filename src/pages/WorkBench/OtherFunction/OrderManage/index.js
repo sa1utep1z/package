@@ -282,18 +282,6 @@ const OrderManage = () => {
     setSearchContent(params);
   };
 
-  const renderHiddenItem = (rowData) => (
-    <TouchableOpacity
-      style={styles.backRightBtn}
-      onPress={() => DeleteOrder(rowData.item.orderId)}>
-      <AntDesign
-        name='delete'
-        size={36}
-        color='#ffffff'
-      />
-    </TouchableOpacity>
-  );
-
   const refresh = () => {
     const params = {...searchContent, ...firstPage};
     if(index === 1){
@@ -314,6 +302,18 @@ const OrderManage = () => {
       setNextPage(true);
     }
   };
+
+  const renderHiddenItem = (rowData) => (
+    <TouchableOpacity
+      style={styles.backRightBtn}
+      onPress={() => DeleteOrder(rowData.item.orderId)}>
+      <AntDesign
+        name='delete'
+        size={36}
+        color='#ffffff'
+      />
+    </TouchableOpacity>
+  );
   
   const renderItem = ({item}) => {
     return (
@@ -339,7 +339,7 @@ const OrderManage = () => {
               <View style={styles.bottomArea}>
                 <View style={{flexDirection: 'row'}}>
                   <Text style={styles.normalText}>招聘时段：</Text>
-                  <Text style={styles.rangeTime_text}>{`${moment(item.recruitStart).format('MM-DD')}~${moment(item.recruitEnd).format('MM-DD')}`}</Text>
+                  <Text style={styles.rangeTime_text}>{`${moment(item.recruitStart).format('MM/DD')}~${moment(item.recruitEnd).format('MM/DD')}`}</Text>
                 </View>
                 <View style={{flexDirection: 'row', marginLeft: 20}}>
                   <Text style={styles.normalText}>工期：</Text>
