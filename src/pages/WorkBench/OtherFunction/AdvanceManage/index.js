@@ -125,8 +125,8 @@ const AdvanceManage = () => {
 
   const filter = (values) => {
     console.log('打印筛选框的值：', values);
-    const jobStartDate = values.dateRange.startDate;
-    const jobEndDate = values.dateRange.endDate;
+    const createStartDate = values.dateRange.startDate;
+    const createEndDate = values.dateRange.endDate;
     const companyId = values.enterprise.length ? values.enterprise[0].value : '';
     const storeId = values.store.length ? values.store[0].value : '';
     const recruiterId = values.staff.length ? values.staff[0].value : '';
@@ -136,8 +136,8 @@ const AdvanceManage = () => {
     setSearchContent({
       ...searchContent,
       ...firstPage,
-      jobStartDate,
-      jobEndDate,
+      createStartDate,
+      createEndDate,
       nameOrIdNo,
       companyId,
       storeId,

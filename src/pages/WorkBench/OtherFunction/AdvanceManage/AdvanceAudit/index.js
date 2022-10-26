@@ -321,6 +321,7 @@ const AdvanceAudit = (props) => {
                         <TouchableOpacity onPress={() => applyResult(item)}>
                           <Text style={[styles.titleText, { color: '#409EFF', fontSize: item.pass === null ? 35 : 26 }]}>{item.pass === null ? '待审核' : item.pass === true ? '通过' : '拒绝'}</Text>
                         </TouchableOpacity>
+                        {item.remark && <Text style={[styles.timeText, { marginLeft: 10 }]}>原因：{item.remark}</Text>}
                       </View>
                       <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.timeText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}</Text>
