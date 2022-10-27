@@ -20,7 +20,13 @@ const HeaderSearchOfDormitory = () => {
   const [isFilterMore, setIsFilterMore] = useState(false);
 
   const onSubmit = values => {
-    console.log('onSubmit->values', values);
+    console.log('onSubmit-values', values);
+    if(values?.floorNum || values?.roomNum || values?.bedNum || values?.startDate || values?.endDate){
+      const {floorNum, roomNum, bedNum, startDate, endDate} = values;
+      if(floorNum.length || roomNum.length || bedNum.length || !!startDate || !!endDate){
+        setIsFilterMore(true);
+      }
+    }
   };
 
   const filterOnPress = () => {
@@ -35,26 +41,26 @@ const HeaderSearchOfDormitory = () => {
       {({...rest}) => {
         restForm = rest;
         return (
-          <View style={{padding: 30}}>
-            <View style={{flexDirection: 'row', height: 60, marginBottom: 20}}>
+          <View style={styles.totalArea}>
+            <View style={styles.lineArea}>
               <Field
                 name="enterprise"
                 label="企业"
                 type="enterprise"
                 component={HeaderSelectItem}
               />
-              <TouchableOpacity style={{height: 60, backgroundColor: '#409EFF', marginLeft: 20, borderRadius: 10, justifyContent: 'center'}}>
-                <Text style={{fontSize: 24, marginHorizontal: 10, color: '#ffffff'}}>批量操作</Text>
+              <TouchableOpacity style={styles.buttonArea}>
+                <Text style={styles.buttonText}>批量操作</Text>
               </TouchableOpacity>
             </View>
-            <View style={{flexDirection: 'row', height: 60, marginBottom: 20}}>
+            <View style={styles.lineArea}>
               <Field
                 name="enterprise"
                 label="宿舍楼栋"
                 component={HeaderSelectItem}
               />
-              <TouchableOpacity style={{height: 60,  marginLeft: 20, borderRadius: 10, justifyContent: 'center', borderColor: '#409EFF', borderWidth: isFilterMore ? 0 : 1, backgroundColor: isFilterMore ? '#409EFF' : '#ffffff'}} onPress={filterOnPress}>
-                <Text style={{fontSize: 24, marginHorizontal: 10, color: isFilterMore ? '#ffffff' : '#409EFF'}}>筛选更多</Text>
+              <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
+                <Text style={[styles.filterMoreText, isFilterMore && styles.filteringText]}>筛选更多</Text>
               </TouchableOpacity>
             </View>
             <Field
@@ -67,10 +73,50 @@ const HeaderSearchOfDormitory = () => {
       }}
     </Formik>
   )
-}
+};
 
 const styles = StyleSheet.create({
-
+  totalArea: {
+    padding: 30
+  },
+  lineArea: {
+    flexDirection: 'row', 
+    height: 60, 
+    marginBottom: 20
+  },
+  buttonArea: {
+    height: 60, 
+    backgroundColor: '#409EFF', 
+    marginLeft: 20, 
+    borderRadius: 10, 
+    justifyContent: 'center'
+  },
+  buttonText: {
+    fontSize: 24, 
+    marginHorizontal: 10,
+    color: '#ffffff' 
+  },
+  filterMoreButton: {
+    height: 60, 
+    marginLeft: 20,
+    borderRadius: 10, 
+    justifyContent: 'center', 
+    borderColor: '#409EFF', 
+    borderWidth: 1, 
+    backgroundColor: '#ffffff'
+  },
+  filteringArea: {
+    borderWidth: 0, 
+    backgroundColor: '#409EFF'
+  },
+  filterMoreText: {
+    fontSize: 24, 
+    marginHorizontal: 10, 
+    color: '#409EFF'
+  },
+  filteringText: {
+    color: '#ffffff'
+  }
 });
 
 export default HeaderSearchOfDormitory;

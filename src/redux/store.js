@@ -8,6 +8,7 @@ import NowSelectTabNameInListReducer from './features/NowSelectTabNameInList';
 import RoleInfoReducer from './features/RoleInfo';
 import HireReportDialogReducer from './features/HireReport/HireReportDialog';
 import PageDialogReducer from './features/PageDialog';
+import PageDialog2Reducer from './features/PageDialog2';
 import MemberInfoReducer from './features/MemberInfo';
 import UserPermissionReducer from './features/UserPermission';
 
@@ -21,6 +22,7 @@ export default configureStore({
     roleInfo: RoleInfoReducer, //登录应用保存的角色信息
     HireReportDialog: HireReportDialogReducer, //招聘看板中的悬浮窗
     PageDialog: PageDialogReducer, //所有页面的悬浮窗
+    PageDialog2: PageDialog2Reducer, //所有页面的二级悬浮窗
     MemberInfo: MemberInfoReducer, //登陆人信息
     UserPermission: UserPermissionReducer, //用户权限
   },
