@@ -340,7 +340,7 @@ const ComplaintManage = () => {
           <View>
             <Text style={{ fontSize: 16, color: '#333' }}>处理结果：</Text>
           </View>
-          <View>
+          <View style={{ minWidth: 200, flexDirection: 'row', flexWrap: 'wrap', }}>
             <Text style={{ fontSize: 16, color: '#333' }}>{item.handleResult || '无'}</Text>
           </View>
         </View>
@@ -666,14 +666,13 @@ const styles = StyleSheet.create({
     minHeight: 520,
   },
   resultArea: {
+    width: 200,
     minHeight: 30,
     flexDirection: 'row',
     alignItems: 'center',
-    // borderBottomWidth: 2,
-    // borderBottomColor: 'rgba(0, 0, 0, .05)',
-    width: '100%',
     paddingHorizontal: 20,
-    color: '#000'
+    color: '#000',
+    padding: 0
   },
   textArea: {
     minHeight: 40,
