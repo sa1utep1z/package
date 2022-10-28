@@ -4,21 +4,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScaleView from 'react-native-scale-view';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import { closeDialog, setLeftArea, setRightArea } from '../../redux/features/PageDialog';
+import { closeDialog, setRightArea } from '../../redux/features/PageDialog2';
 
 export const DefaultTitle = ({title}) => {
-  const leftArea = useSelector((state) => state.PageDialog.leftArea);
-  const rightArea = useSelector((state) => state.PageDialog.rightArea);
+  const dispatch = useDispatch();
+
+  const rightArea = useSelector((state) => state.PageDialog2.rightArea);
+
+  const close = () => {
+    dispatch(closeDialog());
+    dispatch(setRightArea({
+      title: '',
+      press: () => {}
+    }));
+  };
+
   return (
     <View style={styles.defaultTitle}>
-      {!!leftArea.title && <TouchableOpacity style={styles.leftArea} onPress={leftArea.press}>
+      <TouchableOpacity style={styles.leftArea} onPress={close}>
         <AntDesign
           name='left'
           size={32}
           color='#409EFF'
         />
-        <Text style={styles.leftArea_text}>{leftArea.title}</Text>
-      </TouchableOpacity>}
+        <Text style={styles.leftArea_text}>返回</Text>
+      </TouchableOpacity>
       <Text style={styles.title}>{title || '温馨提示'}</Text>
       {!!rightArea.title && <TouchableOpacity style={styles.rightArea} onPress={rightArea.press}>
         <Text style={styles.rightArea_text}>{rightArea.title}</Text>
@@ -33,24 +43,10 @@ export const DefaultEmptyArea = () => (
   </View>
 );
 
-const PageDialog = () => {
-  const dispatch = useDispatch();
-
-  const dialogSwitch = useSelector((state) => state.PageDialog.showDialog);
-  const dialogContent = useSelector((state) => state.PageDialog.dialogComponent);
-  const dialogTitle = useSelector((state) => state.PageDialog.dialogTitle);
-
-  const close = () => {
-    dispatch(closeDialog());
-    dispatch(setLeftArea({
-      title: '',
-      press: () => {}
-    }));
-    dispatch(setRightArea({
-      title: '',
-      press: () => {}
-    }));
-  };
+const PageDialog2 = () => {
+  const dialogSwitch = useSelector((state) => state.PageDialog2.showDialog);
+  const dialogContent = useSelector((state) => state.PageDialog2.dialogComponent);
+  const dialogTitle = useSelector((state) => state.PageDialog2.dialogTitle);
 
   return (
     <Modal
@@ -59,7 +55,6 @@ const PageDialog = () => {
       visible={dialogSwitch}>
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
-          <TouchableOpacity style={styles.backPress} activeOpacity={1} onPress={close}/>
           <View style={styles.showArea}>
             <DefaultTitle title={dialogTitle}/>
             {dialogContent || <DefaultEmptyArea />}
@@ -75,10 +70,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center'
   },
-  backPress: {
-    flex: 1, 
-    backgroundColor: 'rgba(0,0,0,0.2)'
-  },
+
   showArea: {
     width: '80%', 
     maxHeight: 1000, 
@@ -122,4 +114,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default PageDialog;
+export default PageDialog2;

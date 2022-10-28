@@ -1,14 +1,21 @@
 import React, {useState, useEffect, useMemo, useCallback} from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Formik, Field } from 'formik';
+import moment from 'moment';
 
 import { closeDialog } from "../../../redux/features/PageDialog";
 import SelectItemOfFilterMore from './SelectItemOfFilterMore';
+import SelectTimeOfFilterMore from './SelectTimeOfFilterMore';
+import { setStartDate, setEndDate } from "../../../redux/features/RangeDateOfList";
 
 let restForm;
 const initialValues = {
-  floor: []
+  floorNum: [],
+  roomNum: [],
+  bedNum: [],
+  startDate: '',
+  endDate: '',
 };
 
 const FilterMore = ({
@@ -16,14 +23,27 @@ const FilterMore = ({
 }) => {
   const dispatch = useDispatch();
 
-  const confirmOnPress = () => {
-    console.log('originForm', originForm);
-    originForm.submitForm();
-    dispatch(closeDialog());
-  };
+  const rangeDate = useSelector(state => state.RangeDateOfList);
+  const startDate = rangeDate.startDate ? moment(rangeDate.startDate).format('YYYY-MM-DD') : '';
+  const endDate = rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : '';
+
+  useEffect(() => {
+    restForm.setFieldValue('startDate', startDate);
+    restForm.setFieldValue('endDate', endDate);
+  }, [])
+
+  const confirmOnPress = () => restForm.submitForm();
 
   const onSubmit = values => {
-    console.log('values', values);
+    console.log('confirm->values', values);
+    originForm.setValues({
+      ...originForm.values,
+      ...values
+    });
+    originForm.submitForm();
+    dispatch(closeDialog());
+    dispatch(setStartDate(moment.utc(values.startDate)));
+    dispatch(setEndDate(moment.utc(values.endDate)));
   };
 
   const close = () => dispatch(closeDialog());
@@ -37,13 +57,43 @@ const FilterMore = ({
         {({...rest}) => {
           restForm = rest;
           return (
-            <View style={{flex: 1, paddingHorizontal: 30}}>
-              <View style={{height: 60}}>
+            <View style={styles.fieldArea}>
+              <View style={styles.lineArea}>
                 <Field
-                  name="floor"
+                  name="floorNum"
                   label="楼层"
                   originForm={originForm}
                   component={SelectItemOfFilterMore}
+                />
+              </View>
+              <View style={styles.lineArea}>
+                <Field
+                  name="roomNum"
+                  label="房间号"
+                  originForm={originForm}
+                  component={SelectItemOfFilterMore}
+                />
+              </View>
+              <View style={styles.lineArea}>
+                <Field
+                  name="bedNum"
+                  label="床位号"
+                  originForm={originForm}
+                  component={SelectItemOfFilterMore}
+                />
+              </View>
+              <View style={styles.lineArea}>
+                <Field
+                  name="startDate"
+                  label="开始日期"
+                  component={SelectTimeOfFilterMore}
+                />
+              </View>
+              <View style={styles.lineArea}>
+                <Field
+                  name="endDate"
+                  label="结束日期"
+                  component={SelectTimeOfFilterMore}
                 />
               </View>
             </View>
@@ -68,12 +118,9 @@ const FilterMore = ({
 };
 
 const styles = StyleSheet.create({
-  totalArea: {
-    height: 900
-  },
+  totalArea: { },
   topArea: {
-    flex: 1,
-    borderWidth: 1
+    flex: 1
   },
   bottomArea: {
     height: 100, 
@@ -102,6 +149,14 @@ const styles = StyleSheet.create({
   confirmText: {
     fontSize: 28, 
     color: '#409EFF'
+  },
+  fieldArea: {
+    flex: 1, 
+    paddingHorizontal: 30
+  },
+  lineArea: {
+    height: 60, 
+    marginBottom: 30
   }
 })
 

@@ -56,7 +56,7 @@ export const getWeekName = (weekNumber) => {
 };
 
 // 检测数据类型
-export const checkedType = target => Object.prototype.toString.call(target).slice(8, -1)
+export const checkedType = target => Object.prototype.toString.call(target).slice(8, -1);
 
 /**
  * 简易深复制（可复制对象、数组

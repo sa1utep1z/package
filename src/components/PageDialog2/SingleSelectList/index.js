@@ -4,9 +4,8 @@ import { CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 
-import { deepCopy } from "../../../../utils";
-import { closeDialog } from "../../../../redux/features/PageDialog";
-import { openDialog, setTitle } from '../../../../redux/features/PageDialog'; 
+import { deepCopy } from "../../../utils";
+import { closeDialog } from "../../../redux/features/PageDialog2";
 
 const FlattListItem = ({item, pressItem, isLastIndex}) => {
   const onChange = useCallback(() => pressItem(item),[item]);
@@ -27,12 +26,11 @@ const FlattListItem = ({item, pressItem, isLastIndex}) => {
   ),[item])
 };
 
-const SingleSelectOfFilterMore = ({
+const SingleSelectList = ({
   selectList,
   fieldValue,
-  confirm,
+  pressItem,
   canSearch = true, //是否可以搜索（default: true）
-  originForm
 }) => {
   const dispatch = useDispatch();
 
@@ -54,42 +52,14 @@ const SingleSelectOfFilterMore = ({
   }, [fieldValue])
 
   const selectItem = (item) => {
-    if(inputValue.length){
-      const copyList = deepCopy(showList);
-      copyList.map(data => {
-        if(data.value === item.value){
-          data.isChecked = true;
-        }else{
-          data.isChecked = false;
-        }
-      });
-      setShowList(copyList);
-      return;
-    }
-
-    const copyList = deepCopy(selectList);
-    copyList.map(data => {
-      if(data.value === item.value){
-        data.isChecked = true;
-      }else{
-        data.isChecked = false;
-      }
-    });
-    setShowList(copyList);
+    dispatch(closeDialog());
+    pressItem(item);
   };
 
   const renderItem = ({item, index}) => {
     const isLastIndex = index === showList.length - 1;
     return <FlattListItem item={item} pressItem={selectItem} isLastIndex={isLastIndex}/>
   };
-  
-  const confirmOnPress = () => {
-    const selectedList = showList.filter(item => item.isChecked === true);
-    confirm(selectedList);
-    dispatch(closeDialog());
-  };
-
-  const close = () => dispatch(closeDialog());
 
   const onChangeText = value => {
     setInputValue(value);
@@ -168,34 +138,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: 'center'
   },
-  bottomArea: {
-    height: 100, 
-    flexDirection: 'row'
-  },
-  leftArea: {
-    flex: 1, 
-    borderTopWidth: 1, 
-    borderRightWidth: 1, 
-    borderColor: '#E3E3E3'
-  },
-  rightArea: {
-    flex: 1, 
-    borderTopWidth: 1, 
-    borderColor: '#E3E3E3'
-  },
-  buttonArea: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center'
-  },
-  closeText: {
-    fontSize: 28, 
-    color: '#999999'
-  },
-  confirmText: {
-    fontSize: 28, 
-    color: '#409EFF'
-  },
   itemArea: {
     height: 60, 
     flexDirection: 'row', 
@@ -211,4 +153,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SingleSelectOfFilterMore;
+export default SingleSelectList;

@@ -9,7 +9,7 @@ const DormitoryList = () => {
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory />
-      {/* <CenterSelectDate /> */}
+      <CenterSelectDate />
     </View>
   )
 }
