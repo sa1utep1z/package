@@ -261,7 +261,6 @@ const OrderManage = () => {
       console.log('titleOnPress->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
-    
   };
 
   const selectIndex = (tab, index) => {

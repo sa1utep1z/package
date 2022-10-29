@@ -28,6 +28,17 @@ const FilterMore = ({
   const endDate = rangeDate.endDate ? moment(rangeDate.endDate).format('YYYY-MM-DD') : '';
 
   useEffect(() => {
+    if(originForm.values){
+      if(originForm.values.hasOwnProperty('floorNum') && originForm.values.hasOwnProperty('roomNum') && originForm.values.hasOwnProperty('bedNum')){
+        restForm.setValues({
+          ...restForm.values,
+          floorNum: originForm.values.floorNum,
+          roomNum: originForm.values.roomNum,
+          bedNum: originForm.values.bedNum,
+        });
+      }
+    }
+
     restForm.setFieldValue('startDate', startDate);
     restForm.setFieldValue('endDate', endDate);
   }, [])

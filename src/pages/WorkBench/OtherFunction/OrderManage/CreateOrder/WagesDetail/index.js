@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useImperativeHandle, forwardRef} from "react";
-import { View, StyleSheet, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -9,7 +9,7 @@ import { useToast } from "react-native-toast-notifications";
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
-import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, SUCCESS_CODE, FEE_WAY_MODE, MODE_LIST } from "../../../../../../utils/const";
+import { SALARY_TYPE, FOOD_LIST, DORMITORY_LIST, WATER_FEE_LIST, SUCCESS_CODE } from "../../../../../../utils/const";
 import SettlementRules from "./SettlementRules";
 import {originRule} from './SettlementRules/const';
 import { deepCopy } from "../../../../../../utils";

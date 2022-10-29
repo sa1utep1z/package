@@ -29,7 +29,6 @@ const BusinessManage = () => {
   const onEndReached = () => {
     if (!load) return;
     if (originData.hasNext) {
-      console.log('6666666')
       const nextPage = { ...searchContent, pageNumber: searchContent.pageNumber += 1 };
       setSearchContent(nextPage);
       setNextPage(true);

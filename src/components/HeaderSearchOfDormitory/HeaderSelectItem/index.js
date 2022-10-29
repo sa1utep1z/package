@@ -9,7 +9,7 @@ import EmptyArea from '../../EmptyArea';
 import { deepCopy } from '../../../utils';
 import { openDialog, setTitle } from '../../../redux/features/PageDialog'; 
 import MyMembersApi from '../../../request/MyMembersApi';
-import SingleSelectList from '../../PageDialog/SingleSelectList';
+import SingleSelectList from '../../PageDialog2/SingleSelectList';
 import { SUCCESS_CODE } from '../../../utils/const';
 
 const HeaderSelectItem = ({
@@ -17,7 +17,8 @@ const HeaderSelectItem = ({
   form,
   originList,
   type = '',
-  label
+  label,
+  canSearch = true
 }) => {
   const dispatch = useDispatch();
 
@@ -59,9 +60,9 @@ const HeaderSelectItem = ({
     try {
       let arr = [];
       for(let i = 0; i < 30; i++){
-        arr.push({label: `楼栋${i+1}`});
+        arr.push({label: `楼栋${i+1}`, value: `${label}-${i+1}`});
       }
-      dispatch(openDialog(<SingleSelectList canSearch selectList={arr} fieldValue={field.value} confirm={confirm}/>));
+      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={arr} fieldValue={field.value} confirm={confirm}/>));
     }catch(error){
       console.log('setNormalList->error', error);
     }finally{
@@ -69,24 +70,29 @@ const HeaderSelectItem = ({
     }
   };
 
+  const clearFieldValue = () => form.setFieldValue(field.name, []);
+
   return (
     <View style={styles.selectItemArea}>
       <Text style={styles.showLittleTitleText}>{label}：</Text>
-      <TouchableOpacity
-        style={styles.selectArea}
-        onPress={selectOnPress}>
-        <Text
-          style={[styles.selectText, !field.value.length && styles.noItem]}
-          ellipsizeMode="tail"
-          numberOfLines={1}>
-          {`请选择${label}`}
-        </Text>
-        {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <AntDesign
-          name='down'
-          size={36}
-          color={!!field?.value?.length ? '#000000' : '#999999'}
-        />}
-      </TouchableOpacity>
+      <View style={{flex: 1, flexDirection: 'row', backgroundColor: '#ffffff', borderRadius: 10}}>
+        <TouchableOpacity
+          style={styles.selectArea}
+          onPress={selectOnPress}>
+          <Text
+            style={[styles.selectText, !field.value.length && styles.noItem]}
+            ellipsizeMode="tail"
+            numberOfLines={1}>
+            {!!field.value.length ? field.value[0].label : `请选择${label}`}
+          </Text>
+          {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <>
+            {!field.value.length && <AntDesign name='down' size={36} color='#999999'/>}
+          </>}
+        </TouchableOpacity>
+        {!!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
+            <AntDesign name='closecircle' size={32} style={styles.clearIcon} color='#999999'/>
+          </TouchableOpacity>}
+      </View>
     </View>
   )
 };
@@ -103,14 +109,12 @@ const styles = StyleSheet.create({
   },
   selectArea: {
     flex: 1,
-    height: '100%',
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#fff',
     paddingLeft: 20,
-    paddingRight: 10,
-    borderRadius: 10
+    paddingRight: 10
   },
   selectText: {
     flex: 1,
@@ -119,6 +123,18 @@ const styles = StyleSheet.create({
   },
   noItem: {
     color: '#999999'
+  },
+  clearIconArea: {
+    height: 60, 
+    paddingHorizontal: 10,
+    justifyContent: 'center', 
+    alignItems: 'flex-end'
+  },
+  clearIcon: {
+    width: 40, 
+    height: 40, 
+    textAlign: 'center', 
+    textAlignVertical: 'center'
   }
 })
 
