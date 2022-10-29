@@ -396,7 +396,7 @@ const AdvanceAudit = (props) => {
                     containerStyle={styles.buttonContainerStyle}
                   />
                   <Button
-                    title="确认"
+                    title="提交"
                     onPress={handleSubmit}
                     buttonStyle={styles.comfirmStyle}
                     titleStyle={styles.comfirmText}
@@ -547,13 +547,11 @@ const styles = StyleSheet.create({
   },
   dialogContent: {
     paddingHorizontal: 0,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   resultArea: {
-    width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    // marginHorizontal: 30,
+    justifyContent: 'space-between',
     marginTop: 20,
   },
   buttom: {
@@ -571,14 +569,13 @@ const styles = StyleSheet.create({
   },
   reason: {
     flexDirection: 'row',
-    marginHorizontal: 20,
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   inputStyle: {
     flexDirection: 'row',
-    width: 150,
-    minHeight: 60,
+    width: 180,
+    minHeight: 30,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, .05)',
     flexWrap: 'wrap',
@@ -587,7 +584,6 @@ const styles = StyleSheet.create({
   remark: {
     fontSize: 14,
     color: '#FF4040',
-    marginHorizontal: 20,
     marginTop: 10
   },
   comfirmStyle: {

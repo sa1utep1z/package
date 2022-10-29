@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Linking, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Dialog, CheckBox, ListItem } from '@rneui/themed';
@@ -101,14 +101,19 @@ const ComplaintManage = () => {
     dispatch(setEndDate(''));
   };
 
-  useEffect(() => {
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
-      getList(searchContent);
+  // useEffect(() => {
+  //   timer && clearTimeout(timer);
+  //   timer = setTimeout(() => {
+  //     getList(searchContent);
+  //     getTypeList();
+  //   }, 0)
+  //   return () => timer && clearTimeout(timer);
+  // }, [searchContent])
+
+  useFocusEffect(React.useCallback(() => {
+    getList(searchContent);
       getTypeList();
-    }, 0)
-    return () => timer && clearTimeout(timer);
-  }, [searchContent])
+  }, [searchContent]));
 
   //修改角色时
   useMemo(() => {
@@ -521,7 +526,7 @@ const ComplaintManage = () => {
           <View style={styles.titleArea}>
             <Text style={styles.text}>处理人：</Text>
           </View>
-          <TouchableOpacity onPress={() => memberDetailOnPress(item)}>
+          <TouchableOpacity>
             <Text style={[styles.text, { color: '#409EFF' }]}>{item.handlerName || '无'}</Text>
           </TouchableOpacity>
         </View>
