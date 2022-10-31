@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Linking } from 'react-native';
-import { ButtonGroup, Dialog, Button } from '@rneui/themed';
+import { ButtonGroup, Dialog, Button, Input } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useToast } from "react-native-toast-notifications";
 import moment from 'moment';
@@ -11,7 +11,7 @@ import SelectItem from '../../../../../components/Form/SelectItem';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import NormalDialog from "../../../../../components/NormalDialog";
 import EmptyArea from '../../../../../components/EmptyArea';
-import { TYPERESULT, MEMBERS_STATUS, WAY_TO_GO, WATERMARK_LIST_SMALL, SUCCESS_CODE, JOB_ON_Result, ADVANCERESULT, ADVANCE_AMOUNT, CHANEL_SOURCE_LIST } from '../../../../../utils/const';
+import { TYPERESULT, MEMBERS_STATUS, ADVANCE_RESONE, WATERMARK_LIST_SMALL, SUCCESS_CODE, JOB_ON_Result, ADVANCERESULT, ADVANCE_AMOUNT, CHANEL_SOURCE_LIST } from '../../../../../utils/const';
 import { deepCopy } from '../../../../../utils';
 import { TextInput } from 'react-native';
 import AdvanceApi from '../../../../../request/AdvanceApi';
@@ -23,13 +23,18 @@ const AdvanceAudit = (props) => {
   const { route: { params: { msg } } } = props;
   const toast = useToast();
   const dialogRef = useRef(null);
+  const inputRef = useRef(null);
   const [dialogContent, setDialogContent] = useState({});
   const [advanceFlow, setAdvanceFlow] = useState({}); // 进度详情
   const [inputValue, setInputValue] = useState(''); // 输入金额
   const [inputRemark, setInputRemark] = useState(''); // 输入审核意见
-  const [isApply, setIsApply] = useState(false); // 审核同意/拒绝状态
+  const [isApply, setIsApply] = useState(true); // 审核同意/拒绝状态
   const [visible4, setVisible4] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState({}); // 点击的审核数据
+  const [statusList, setStatusList] = useState(ADVANCE_RESONE); // 拒绝默认理由
+  const [reasonList, setReasonList] = useState([]);
+  const [inputContent, setInputContent] = useState('');
+  const [selectStatus, setSelectStatus] = useState('fail');
   const [showList, setShowList] = useState([
     { type: 'userName', title: '会员姓名', value: '' },
     { type: 'idNo', title: '身份证号', value: '' },
@@ -55,13 +60,18 @@ const AdvanceAudit = (props) => {
   const statusPress = [
     {
       title: '拒绝',
-      value: 'FAIL',
+      value: 'fail',
     },
     {
       title: '同意',
-      value: 'PASS',
+      value: 'pass',
     }
   ]
+  useEffect(() => {
+    setStatusList(ADVANCE_RESONE);
+    return () => setStatusList([]);
+  }, [])
+
   useEffect(() => {
     const copyList = deepCopy(showList);
     for (let key in msg) {
@@ -106,7 +116,6 @@ const AdvanceAudit = (props) => {
     }
     setShowList(copyList);
   }, [msg])
-  console.log('isApply', isApply, inputRemark)
 
   useEffect(() => {
     if (msg) {
@@ -130,21 +139,16 @@ const AdvanceAudit = (props) => {
     }
   };
 
-  // 输入审核意见
-  const onChangeRemark = (value) => {
-    console.log('打印审核意见：', value);
-    setInputRemark(value);
-  };
-
   // 拒绝
-  const pressFail = (item) => {
-    console.log('打印通过的值111：', isApply, item);
+  const pressFail = (status) => {
     setIsApply(true);
+    setSelectStatus(status);
   }
 
   // 审批意见通过
-  const pressPass = async (item) => {
+  const pressPass = async (status) => {
     try {
+      setSelectStatus(status);
       const prams = {
         pass: true,
         remark: '',
@@ -160,19 +164,20 @@ const AdvanceAudit = (props) => {
         toast.show(`${res?.msg}`, { type: 'danger' });
         return;
       }
-      if (selectedIndex.role === 'BELONG_RESIDENT_SINGLE') {
-        toast.show('审批通过，进入财务审批流程', 2000);
-      } else if (selectedIndex.role === 'FINANCE') {
-        toast.show('审批通过，进入会计审批流程', 2000);
-      } else {
-        toast.show('审批通过，发放款项', 2000);
-      }
+      toast.show('审批通过', 2000);
+      // if (selectedIndex.role === 'BELONG_RESIDENT_SINGLE') {
+      //   toast.show('审批通过，进入财务审批流程', 2000);
+      // } else if (selectedIndex.role === 'FINANCE') {
+      //   toast.show('审批通过，进入会计审批流程', 2000);
+      // } else {
+      //   toast.show('审批通过，发放款项', 2000);
+      // }
       getAdvanceFlow();
       setVisible4(false);
+      setInputRemark('');
       console.log('打印审核进度：', res)
     } catch (err) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-      console.log('打印错误信息：', err)
     }
   }
 
@@ -197,6 +202,7 @@ const AdvanceAudit = (props) => {
         toast.show('审批流程已终止');
         getAdvanceFlow();
         setVisible4(false);
+        setInputRemark('');
       } else {
         toast.show('审批意见不能为空！', { type: 'danger' });
       }
@@ -206,6 +212,33 @@ const AdvanceAudit = (props) => {
     }
   }
 
+  // 选择拒绝理由
+  const pressReason = (reason) => {
+    const originArr = deepCopy(statusList);
+    const pressItem = originArr.find(item => item.value === reason.value);
+    pressItem.isSelected = !pressItem.isSelected;
+    setStatusList(originArr);
+
+    if (reasonList.includes(reason.value)) {
+      reasonList.splice(reasonList.findIndex(item => item === reason.value), 1);
+      setReasonList(reasonList);
+      return;
+    }
+    reasonList.push(reason.value);
+    setReasonList(reasonList);
+    let newArr = reasonList.join('、').replace(/、/g, ",");
+    setInputRemark(String(newArr));
+  };
+
+  const increaseReason = () => {
+    setInputContent('');
+    const newArr = deepCopy(statusList);
+    newArr.push({
+      value: inputContent,
+      title: inputContent
+    })
+    setStatusList(newArr);
+  };
 
   //打开审批弹窗
   const applyResult = (item) => {
@@ -347,6 +380,19 @@ const AdvanceAudit = (props) => {
               )
             })
           }
+          {
+            advanceFlow && advanceFlow.flowDetails && advanceFlow.flowDetails[advanceFlow.flowDetails.length - 1].pass === 'null' && <View style={styles.resultArea}>
+              {
+                statusPress && statusPress.map((item, index) => {
+                  return (
+                    <TouchableOpacity key={index} style={styles.buttom} onPress={item.value === 'fail' ? () => setVisible4(true) : () => pressPass('pass')}>
+                      <Text style={styles.buttomText}>{item.title}</Text>
+                    </TouchableOpacity>
+                  )
+                })
+              }
+            </View>
+          }
         </View>
         <Dialog
           isVisible={visible4}
@@ -362,64 +408,71 @@ const AdvanceAudit = (props) => {
                 />
               </TouchableOpacity>
             </View>
-            <View style={styles.resultArea}>
-              {
-                statusPress && statusPress.map((item, index) => {
-                  return (
-                    <TouchableOpacity key={index} style={[styles.buttom, { backgroundColor: item.title === '拒绝' ? 'red' : '#409EFF' }]} onPress={item.title === '同意' ? () => pressPass(item) : () => pressFail(item)} >
-                      <Text style={styles.buttomText}>{item.title}</Text>
-                    </TouchableOpacity>
-                  )
-                })
-              }
-            </View>
-            {
-              isApply && <>
-                <View style={styles.reason}>
-                  <Text>审批意见：</Text>
-                  <TextInput
-                    style={styles.inputStyle}
-                    placeholder="请输入审核意见"
-                    multiline
-                    onChangeText={onChangeRemark}
-                  />
-                </View>
-                <View>
-                  <Text style={styles.remark}>注：审批拒绝后，审批流程将终止。</Text>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
-                  <Button
-                    title="取消"
-                    onPress={() => setVisible4(!visible4)}
-                    buttonStyle={[styles.comfirmStyle]}
-                    titleStyle={styles.comfirmText}
-                    containerStyle={styles.buttonContainerStyle}
-                  />
-                  <Button
-                    title="提交"
-                    onPress={handleSubmit}
-                    buttonStyle={styles.comfirmStyle}
-                    titleStyle={styles.comfirmText}
-                    containerStyle={styles.buttonContainerStyle}
-                  />
-                </View>
-              </>
-            }
-            {/* <>
-              <View style={styles.reason}>
-                <Text>费用记账月份：</Text>
-                <TouchableOpacity style={styles.pickerTouchable}>
-                  <AntDesign
-                    name='calendar'
-                    size={16}
-                  />
-                  <Text style={styles.font}>2022-10-20</Text>
+            <View style={[styles.tagArea, { paddingBottom: 0 }]}>
+              <Text style={styles.tagArea_title}>审批状态选择</Text>
+              <View style={styles.tags}>
+                <TouchableOpacity style={[styles.tag, selectStatus === 'fail' && { backgroundColor: '#409EFF' }]} onPress={() => pressFail('fail')}>
+                  <Text style={[styles.tag_text, selectStatus === 'fail' && { color: '#fff' }]}>拒绝</Text>
+                </TouchableOpacity>
+                <View style={{ width: 10 }}></View>
+                <TouchableOpacity style={[styles.tag, selectStatus === 'pass' && { backgroundColor: '#409EFF' }]} onPress={() => pressPass('pass')}>
+                  <Text style={[styles.tag_text, selectStatus === 'pass' && { color: '#fff' }]}>同意</Text>
                 </TouchableOpacity>
               </View>
-              <View>
-                <Text style={styles.remark}>注:财务审核时，务必填写费用归属记账月份，便于发薪前扣除已发生的所有借款、预支薪资。</Text>
-              </View>
-            </> */}
+            </View>
+            {isApply && <View style={[styles.tagArea, { marginBottom: 0 }]}>
+              <Text style={styles.tagArea_title}>审批意见：</Text>
+              <ScrollView style={{ maxHeight: 150 }} keyboardShouldPersistTaps="handled">
+                <View style={styles.tags_little}>
+                  {statusList.length && statusList.map((item, index) => {
+                    const isFill = statusList.length % 3 === 2;
+                    const isLastElement = index === statusList.length - 1;
+                    return (
+                      <View key={index}>
+                        <TouchableOpacity style={styles.tag_little} onPress={() => pressReason(item)}>
+                          <Text style={[styles.tag_littleText, item.isSelected === true && styles.tag_littleText_selected]}>{item.title}</Text>
+                        </TouchableOpacity>
+                        {isLastElement && isFill && (<View style={{ width: '33.33%' }}></View>)}
+                      </View>
+                    )
+                  })}
+                </View>
+              </ScrollView>
+              <Input
+                ref={inputRef}
+                value={inputContent}
+                onChangeText={text => setInputContent(text)}
+                placeholder='手动输入原因'
+                allowFontScaling={false}
+                containerStyle={styles.input_containerStyle}
+                inputContainerStyle={styles.input_inputContainerStyle}
+                inputStyle={styles.inputStyle}
+                rightIcon={
+                  <TouchableOpacity style={styles.input_rightIcon} onPress={increaseReason}>
+                    <Text style={styles.input_rightIconText}>保存</Text>
+                  </TouchableOpacity>
+                }
+              />
+            </View>}
+            <View>
+              <Text style={styles.remark}>注：审批拒绝后，审批流程将终止。</Text>
+            </View>
+            <View style={{ flexDirection: 'row', marginTop: 30, justifyContent: 'space-between' }}>
+              <Button
+                title="取消"
+                onPress={() => setVisible4(!visible4)}
+                buttonStyle={[styles.comfirmStyle]}
+                titleStyle={styles.comfirmText}
+                containerStyle={styles.buttonContainerStyle}
+              />
+              <Button
+                title="提交"
+                onPress={handleSubmit}
+                buttonStyle={styles.comfirmStyle}
+                titleStyle={styles.comfirmText}
+                containerStyle={styles.buttonContainerStyle}
+              />
+            </View>
           </View>
         </Dialog>
       </View>
@@ -551,12 +604,12 @@ const styles = StyleSheet.create({
   },
   resultArea: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     marginTop: 20,
   },
   buttom: {
-    width: 80,
-    height: 35,
+    width: 100,
+    height: 45,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -564,7 +617,7 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   buttomText: {
-    fontSize: 20,
+    fontSize: 24,
     color: '#fff'
   },
   reason: {
@@ -626,6 +679,84 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#999999',
     fontSize: 14
+  },
+  tagArea: {
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10
+  },
+  tags: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  tagArea_title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 10
+  },
+  tag_little: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginRight: 8
+  },
+  tag_littleText: {
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    fontSize: 14,
+    backgroundColor: '#EEEEEE',
+    borderRadius: 3,
+    color: '#999999'
+  },
+  tag_littleText_selected: {
+    backgroundColor: '#409EFF',
+    color: '#fff'
+  },
+  tags_little: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  input_containerStyle: {
+    paddingHorizontal: 5,
+    height: 28,
+    backgroundColor: '#EEEEEE',
+    borderRadius: 4,
+    marginTop: 10
+  },
+  input_inputContainerStyle: {
+    height: 28,
+    borderBottomWidth: 0
+  },
+  inputStyle: {
+    fontSize: 14,
+    color: '#999999'
+  },
+  input_rightIcon: {
+    height: '100%',
+    justifyContent: 'center'
+  },
+  input_rightIconText: {
+    color: '#fff',
+    backgroundColor: '#409EFF',
+    paddingHorizontal: 5,
+    borderRadius: 3,
+    paddingVertical: 1
+  },
+  tag: {
+    flex: 1,
+    height: 36,
+    backgroundColor: '#EEEEEE',
+    borderRadius: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  tag_text: {
+    paddingHorizontal: 13,
+    fontSize: 15,
+    color: '#999999'
   },
 })
 

@@ -122,6 +122,14 @@ export const DEFAULT_STATUS_LIST_OF_INTERVIEW_LIST = [
   { value: 'failInComprehensiveExam', title: '综合考试不过' }
 ];
 
+// 预支审核拒绝原因
+export const ADVANCE_RESONE = [
+  { value: '该企业不借支', title: '该企业不借支' },
+  { value: '不符合借支条件', title: '不符合借支条件' },
+  { value: '发薪当周不借支', title: '发薪当周不借支' },
+  { value: '入职不满出勤天数', title: '入职不满出勤天数' },
+];
+
 export const TAB_OF_LIST = {
   SIGN_UP_LIST: [
     { title: '全部', type: 'total', },
