@@ -73,7 +73,6 @@ const FilterMore = ({
                 <Field
                   name="floorNum"
                   label="楼层"
-                  originForm={originForm}
                   component={SelectItemOfFilterMore}
                 />
               </View>
@@ -81,7 +80,6 @@ const FilterMore = ({
                 <Field
                   name="roomNum"
                   label="房间号"
-                  originForm={originForm}
                   component={SelectItemOfFilterMore}
                 />
               </View>
@@ -89,7 +87,6 @@ const FilterMore = ({
                 <Field
                   name="bedNum"
                   label="床位号"
-                  originForm={originForm}
                   component={SelectItemOfFilterMore}
                 />
               </View>

@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     minWidth: 140,
     fontSize: 28,
     color: '#000',
+    textAlignVertical: 'center'
   },
   touchArea: {
     flex: 1,

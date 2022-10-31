@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
   showLittleTitleText: {
     minWidth: 140,
     fontSize: 28,
-    color: '#000'
+    color: '#000',
+    textAlignVertical: 'center'
   },
   selectArea: {
     flex: 1,

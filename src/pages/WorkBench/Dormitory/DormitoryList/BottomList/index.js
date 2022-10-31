@@ -11,7 +11,8 @@ import Footer from '../../../../../components/FlatList/Footer';
 import HomeApi from '../../../../../request/HomeApi';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import OrderDetail from "../../../../../components/PageDialog/OrderMessage/OrderDetail";
-import WaitToEntry from '../../../../../components/PageDialog/Dormitory/DormitoryList';
+import WaitToEntry from '../../../../../components/PageDialog/Dormitory/DormitoryList/WaitToEntry';
+import StayInDormitory from '../../../../../components/PageDialog/Dormitory/DormitoryList/StayInDormitory';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -94,11 +95,10 @@ const Total = ({
   };
 
   const statusOnPress = async(item) => {
-    console.log('item', item);
     dispatch(setTitle('状态处理'));
     switch(item.status){
       case 0:
-        dispatch(openDialog(<View style={{height: 100, width: 100, borderWidth: 1, backgroundColor: 'red'}}></View>));
+        dispatch(openDialog(<StayInDormitory />));
         break;
       case 1:
         dispatch(openDialog(<WaitToEntry />));
