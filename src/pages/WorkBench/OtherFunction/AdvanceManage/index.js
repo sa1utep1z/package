@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { View, StyleSheet, Text, Linking, FlatList, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -64,14 +64,19 @@ const AdvanceManage = () => {
     return () => dispatch(setTabName(''));
   }, [])
 
-  useEffect(() => {
-    timer && clearTimeout(timer);
-    timer = setTimeout(() => {
-      getList(searchContent);
-      getTypeTotal(searchContent);
-    }, 0)
-    return () => timer && clearTimeout(timer);
-  }, [searchContent])
+  // useEffect(() => {
+  //   timer && clearTimeout(timer);
+  //   timer = setTimeout(() => {
+  //     getList(searchContent);
+  //     getTypeTotal(searchContent);
+  //   }, 0)
+  //   return () => timer && clearTimeout(timer);
+  // }, [searchContent])
+
+  useFocusEffect(React.useCallback(() => {
+    getList(searchContent);
+    getTypeTotal(searchContent);
+  }, [searchContent]));
 
   //修改角色时
   useMemo(() => {
@@ -292,7 +297,7 @@ const AdvanceManage = () => {
   };
 
   const memoList = useMemo(() => showList, [showList])
-  
+
   return (
     <View style={[styles.screen]}>
       <HeaderSearch
