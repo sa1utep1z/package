@@ -151,7 +151,7 @@ const Mine = () => {
           })}
         </View>
       </View>
-      <Text style={styles.bottomText}>版本号：0.2.4(fixed)</Text>
+      <Text style={styles.bottomText}>版本号：0.2.5(review)</Text>
       <NormalDialog 
         ref={dialogRef} 
         dialogContent={dialogContent}

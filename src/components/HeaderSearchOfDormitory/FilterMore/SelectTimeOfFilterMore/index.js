@@ -1,8 +1,6 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Text, Dialog, CheckBox } from '@rneui/themed';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useDispatch } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import moment from 'moment';
@@ -10,10 +8,10 @@ import moment from 'moment';
 const SelectItemOfFilterMore = ({
   field,
   form,
-  label
+  label,
+  fontSize = 28,
+  canDelete = true,
 }) => {
-  const dispatch = useDispatch();
-
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateTime, setDateTime] = useState(new Date());
@@ -38,7 +36,7 @@ const SelectItemOfFilterMore = ({
   return (
     <>
       <View style={styles.selectItemArea}>
-        <Text style={styles.showLittleTitleText}>{label}：</Text>
+        <Text style={[styles.showLittleTitleText, fontSize && {fontSize}]}>{label}：</Text>
         <TouchableOpacity
           style={styles.selectArea}
           onPress={selectOnPress}>
@@ -49,7 +47,7 @@ const SelectItemOfFilterMore = ({
             style={{marginRight: 10}}
           />
           <Text
-            style={[styles.selectText, !field.value && styles.noItem]}
+            style={[styles.selectText, !field.value && styles.noItem, fontSize && {fontSize}]}
             ellipsizeMode="tail"
             numberOfLines={1}>
             {!!field.value ? `${field.value}` : `请选择${label}`}
@@ -57,7 +55,7 @@ const SelectItemOfFilterMore = ({
           {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <>
             {!field.value.length && <AntDesign name='down' size={36} style={{marginRight: 10}} color='#999999'/>}
           </>}
-          {!!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
+          {canDelete && !!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
             <AntDesign name='closecircle' size={32} style={styles.clearIcon} color='#999999'/>
           </TouchableOpacity>}
         </TouchableOpacity>
