@@ -13,6 +13,7 @@ import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import OrderDetail from "../../../../../components/PageDialog/OrderMessage/OrderDetail";
 import WaitToEntry from '../../../../../components/PageDialog/Dormitory/DormitoryList/WaitToEntry';
 import StayInDormitory from '../../../../../components/PageDialog/Dormitory/DormitoryList/StayInDormitory';
+import CallPhone from '../../../../../components/PageDialog/CallPhone';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -52,8 +53,8 @@ const Total = ({
         arr.push({
           id: i,
           name: `名单${i+1}`,
-          building: `${String(i+1)[0]*100}栋-男`,
-          room: `101-${i+1}`,
+          building: `${String(i+1)[0]*100}栋`,
+          room: `男-101-${i+1}`,
           date: `2022/3/${i+1}`,
           enterprise: `龙华AC${i+1}`,
           status: i%2 === 0 ? 0 : i %3 === 0 ? 1 : 2,
@@ -65,6 +66,17 @@ const Total = ({
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
+    }
+  };
+
+  const nameOnPress = async(item) => {
+    console.log('item', item);
+    try {
+      dispatch(setTitle('温馨提示'));
+      dispatch(openDialog(<CallPhone message={{mobile: '18888888888'}}/>));
+    } catch (error) {
+      console.log('enterpriseOnPress->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
     }
   };
 
@@ -104,7 +116,11 @@ const Total = ({
         dispatch(openDialog(<WaitToEntry />));
         break;
     }
-    
+  };
+
+  const originOnPress = async() => {
+    dispatch(setTitle('招聘来源'));
+    dispatch(openDialog(<View style={{height: 200, borderWidth: 1}}></View>));
   };
 
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
@@ -123,18 +139,18 @@ const Total = ({
         <Text 
           style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
-          onPress={() => console.log('你点击了姓名')}
+          onPress={() => nameOnPress(item)}
           ellipsizeMode="tail">{item.name || '无'}</Text>
-        <TouchableOpacity style={{flex: 1}} onPress={()=>console.log('你点击了宿舍信息')}>
+        <View style={{flex: 1}}>
           <Text 
-            style={styles.itemText}
+            style={[styles.itemText, {fontSize: 24}]}
             numberOfLines={2}
             ellipsizeMode="tail">{item.building}</Text>
             <Text 
-            style={styles.itemText}
+            style={[styles.itemText, {fontSize: 24}]}
             numberOfLines={2}
             ellipsizeMode="tail">{item.room}</Text>
-        </TouchableOpacity>
+        </View>
         <Text 
           style={[styles.itemText, {fontSize: 24}]}
           numberOfLines={2}
@@ -152,7 +168,7 @@ const Total = ({
         <Text 
           style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
-          onPress={() => console.log('点击了招聘来源')}
+          onPress={() => originOnPress(item)}
           ellipsizeMode="tail">查看</Text>
       </View>
     )

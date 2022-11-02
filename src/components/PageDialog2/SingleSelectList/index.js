@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     maxHeight: 900
   },
   topArea: {
-    maxHeight: 780, 
+    maxHeight: 850, 
     borderWidth: 1, 
     borderColor: '#E3E3E3', 
     borderRadius: 12,

@@ -2,20 +2,16 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
 import moment from 'moment';
 
-const SelectItemOfFilterMore = ({
+const SelectTime = ({
   field,
   form,
   label,
   iconSize = 32,
   fontSize = 28,
-  showLabel = true,
   canDelete = true,
-  showArrow = true,
   borderColor,
-  touchAreaStyle
 }) => {
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -41,13 +37,12 @@ const SelectItemOfFilterMore = ({
   return (
     <>
       <View style={styles.selectItemArea}>
-        {showLabel && <Text style={[styles.showLittleTitleText, fontSize && {fontSize}]}>{label}：</Text>}
         <TouchableOpacity
-          style={[styles.selectArea, borderColor && {borderColor}, touchAreaStyle]}
+          style={[styles.selectArea, borderColor && {borderColor}]}
           onPress={selectOnPress}>
           <AntDesign
             name='calendar'
-            size={iconSize}
+            size={45}
             color={!!field?.value ? '#000000' : '#999999'}
             style={{marginRight: 10}}
           />
@@ -58,10 +53,10 @@ const SelectItemOfFilterMore = ({
             {!!field.value ? `${field.value}` : `请选择${label}`}
           </Text>
           {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <>
-            {showArrow && !field.value.length && <AntDesign name='down' size={iconSize} style={{marginRight: 10}} color='#999999'/>}
+            {!field.value.length && <AntDesign name='down' size={36} style={{marginRight: 10}} color='#999999'/>}
           </>}
           {canDelete && !!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
-            <AntDesign name='closecircle' size={iconSize} style={styles.clearIcon} color='#999999'/>
+            <AntDesign name='closecircle' size={32} style={styles.clearIcon} color='#999999'/>
           </TouchableOpacity>}
         </TouchableOpacity>
       </View>
@@ -89,7 +84,7 @@ const styles = StyleSheet.create({
   },
   selectArea: {
     flex: 1,
-    height: 60,
+    height: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -121,4 +116,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SelectItemOfFilterMore;
+export default SelectTime;
