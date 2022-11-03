@@ -79,7 +79,15 @@ export const CHANEL_SOURCE_LIST = [
   { id: 2, title: '门店录入', value: 'RECRUITER' },
   { id: 3, title: '供应商', value: 'SUPPLIER' },
   { id: 4, title: '会员推荐', value: 'MEMBER_RECOMMEND' }
-]
+];
+
+//渠道来源对应的名字；
+export const CHANEL_SOURCE_NAME = {
+  'SELF': '自主报名',
+  'RECRUITER': '门店录入',
+  'SUPPLIER': '供应商',
+  'MEMBER_RECOMMEND': '会员推荐',
+};
 
 export const HANDLE_STATE = [
   { title: '待处理', value: 'waitToHandle' },
@@ -522,10 +530,18 @@ export const INTERVIEW_STATUS = {
   "INTERVIEW_FAIL": "未通过",
   "INTERVIEW_PASS": "已通过"
 };
+
+//到厂方式；
 export const WAY_TO_GO = [
   { label: '自行到厂', value: 'FACTORY' },
   { label: '门店集合', value: 'STORE' },
 ];
+
+//到厂方式；
+export const WAY_TO_GO_NAME = {
+  'FACTORY': '自行到厂',
+  'STORE': '门店集合'
+};
 
 export const NEWEST_STATE_LIST_HEAD = [
   { title: '姓名' },
@@ -854,4 +870,11 @@ export const DORMITORY_LEAVE_REASON = [
   {label: '临时住宿退宿', value: 'leaveOfBrief'},
   {label: '违纪取消床位', value: 'leaveOfViolation'},
   {label: '个人外租退宿', value: 'leaveOfOutside'}
+];
+
+//在离宿名单-入住类别-枚举；
+export const DORMITORY_STAY_TYPE = [
+  {label: '全部', value: 'ALL'},
+  {label: '临时住宿', value: 'TEMPORARY_LIVE'},
+  {label: '常规住宿', value: 'NORMAL_LIVE'},
 ];

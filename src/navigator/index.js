@@ -275,6 +275,13 @@ export default Navigator = () => {
         }}
       />
       <Stack.Screen
+        name={NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY}
+        component={NAVIGATION_PAGES.BATCH_OPERATE_DORMITORY}
+        options={{
+          headerTitle: '批量操作'
+        }}
+      />
+      <Stack.Screen
         name={NAVIGATION_KEYS.DORMITORY_CHECK}
         component={NAVIGATION_PAGES.DORMITORY_CHECK}
         options={{

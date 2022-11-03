@@ -2,19 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Formik, Field } from 'formik';
 import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 import HeaderSelectItem from './HeaderSelectItem';
 import HeaderSearchInput from './HeaderSearchInput';
+import HeaderRadioItem from './HeaderRadioItem';
 import FilterMore from './FilterMore';
 import { openDialog, setTitle } from '../../redux/features/PageDialog'; 
+import {DORMITORY_STAY_TYPE} from '../../utils/const';
+import NAVIGATION_KEYS from '../../navigator/key';
 
 let restForm;
 const initialValues = {
   enterprise: [],
   buildingNum: [],
+  liveType: [{label: '全部', value: 'ALL'}]
 };
 
 const HeaderSearchOfDormitory = () => {
+  const navigation = useNavigation();
+
   const dispatch = useDispatch();
 
   const [isFilterMore, setIsFilterMore] = useState(false);
@@ -29,6 +36,8 @@ const HeaderSearchOfDormitory = () => {
       }
     }
   };
+
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY);
 
   const filterOnPress = () => {
     dispatch(setTitle(`筛选更多`));
@@ -50,7 +59,7 @@ const HeaderSearchOfDormitory = () => {
                 type="enterprise"
                 component={HeaderSelectItem}
               />
-              <TouchableOpacity style={styles.buttonArea}>
+              <TouchableOpacity style={styles.buttonArea} onPress={batchOperate}>
                 <Text style={styles.buttonText}>批量操作</Text>
               </TouchableOpacity>
             </View>
@@ -64,6 +73,14 @@ const HeaderSearchOfDormitory = () => {
               <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
                 <Text style={[styles.filterMoreText, isFilterMore && styles.filteringText]}>筛选更多</Text>
               </TouchableOpacity>
+            </View>
+            <View style={styles.lineArea}>
+              <Field
+                name="liveType"
+                label="入住类别"
+                radioList={DORMITORY_STAY_TYPE}
+                component={HeaderRadioItem}
+              />
             </View>
             <Field
               name="search"
@@ -82,8 +99,8 @@ const styles = StyleSheet.create({
     padding: 30
   },
   lineArea: {
-    flexDirection: 'row', 
     height: 60, 
+    flexDirection: 'row', 
     marginBottom: 20
   },
   buttonArea: {

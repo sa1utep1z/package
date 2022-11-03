@@ -9,11 +9,13 @@ import { pageEmpty } from "../../../../Home/listComponent";
 import { SUCCESS_CODE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
 import HomeApi from '../../../../../request/HomeApi';
+import ListApi from '../../../../../request/ListApi';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import OrderDetail from "../../../../../components/PageDialog/OrderMessage/OrderDetail";
 import WaitToEntry from '../../../../../components/PageDialog/Dormitory/DormitoryList/WaitToEntry';
 import StayInDormitory from '../../../../../components/PageDialog/Dormitory/DormitoryList/StayInDormitory';
 import CallPhone from '../../../../../components/PageDialog/CallPhone';
+import MemberInfo from '../../../../../components/PageDialog/MemberInfo';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -119,8 +121,18 @@ const Total = ({
   };
 
   const originOnPress = async() => {
-    dispatch(setTitle('招聘来源'));
-    dispatch(openDialog(<View style={{height: 200, borderWidth: 1}}></View>));
+    try {
+      const res = await ListApi.MemberMessage('63631fec82124947376716e6');
+      console.log('res', res);
+      dispatch(setTitle('招聘来源'));
+      dispatch(openDialog(<MemberInfo memberInfoList={res.data} showDate={true}/>));
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const refresh = () => setSearchContent({...searchContent, ...firstPage});
@@ -131,7 +143,7 @@ const Total = ({
       setSearchContent(nextPage);
       setNextPage(true);
     }
-  };
+  };571704
 
   const renderItem = ({item}) => {
     return (

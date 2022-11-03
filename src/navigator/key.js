@@ -49,6 +49,7 @@ const NAVIGATION_KEYS = {
 
   //工作台（宿舍管理）
   DORMITORY_LIST: 'dormitory_list', //在离宿名单
+  BATCH_OPERATE_DORMITORY: 'batch_operate_dormitory', //批量处理在离宿名单
   DORMITORY_CHECK: 'dormitory_check', //宿舍点检
   DORMITORY_RECORD: 'dormitory_record', //宿舍抄表
   DORMITORY_VIOLATION: 'dormitory_violation', //宿舍违纪
