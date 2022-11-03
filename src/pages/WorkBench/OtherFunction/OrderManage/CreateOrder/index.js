@@ -61,12 +61,12 @@ const CreateOrder = ({
   const onShelf = async() => {
     try {
       const res = await CreateOrderApi.onOrder(orderId);
+      setButtonLoading(false);
         if(res?.code !== SUCCESS_CODE){
           toast.show(`${res?.msg}`, {type: 'danger'});
           return;
         }
         toast.show('上架成功！', {type: 'success'});
-        setButtonLoading(false);
         navigation.goBack();
     } catch (error) {
       console.log('save->error', error);

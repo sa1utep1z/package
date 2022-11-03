@@ -847,3 +847,11 @@ export const WORK_TYPE_NAME = {
   'DISPATCH_HOURLY_WORKER': '小时工', //派遣工-小时工
   'DISPATCH_EQUAL_PAY': '正式工' //派遣工-同工同酬
 };
+
+//退宿原因；
+export const DORMITORY_LEAVE_REASON = [
+  {label: '离职退宿', value: 'leaveOfLeavingJob'},
+  {label: '临时住宿退宿', value: 'leaveOfBrief'},
+  {label: '违纪取消床位', value: 'leaveOfViolation'},
+  {label: '个人外租退宿', value: 'leaveOfOutside'}
+];

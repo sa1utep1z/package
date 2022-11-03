@@ -262,8 +262,7 @@ const styles = StyleSheet.create({
   },
   bottomButtonArea: {
     flexDirection: 'row', 
-    height: 45,
-    marginTop: 10
+    height: 45
   },
   bottomLeft: {
     flex: 1, 

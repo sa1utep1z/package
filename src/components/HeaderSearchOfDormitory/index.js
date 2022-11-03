@@ -11,7 +11,7 @@ import { openDialog, setTitle } from '../../redux/features/PageDialog';
 let restForm;
 const initialValues = {
   enterprise: [],
-  building: [],
+  buildingNum: [],
 };
 
 const HeaderSearchOfDormitory = () => {
@@ -20,11 +20,12 @@ const HeaderSearchOfDormitory = () => {
   const [isFilterMore, setIsFilterMore] = useState(false);
 
   const onSubmit = values => {
-    console.log('onSubmit-values', values);
-    if(values?.floorNum || values?.roomNum || values?.bedNum || values?.startDate || values?.endDate){
-      const {floorNum, roomNum, bedNum, startDate, endDate} = values;
-      if(floorNum.length || roomNum.length || bedNum.length || !!startDate || !!endDate){
+    if(values?.floorNum || values?.roomNum || values?.bedNum){
+      const {floorNum, roomNum, bedNum} = values;
+      if(floorNum.length || roomNum.length || bedNum.length){
         setIsFilterMore(true);
+      }else{
+        setIsFilterMore(false);
       }
     }
   };
@@ -55,8 +56,9 @@ const HeaderSearchOfDormitory = () => {
             </View>
             <View style={styles.lineArea}>
               <Field
-                name="enterprise"
+                name="buildingNum"
                 label="宿舍楼栋"
+                canSearch={false}
                 component={HeaderSelectItem}
               />
               <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>

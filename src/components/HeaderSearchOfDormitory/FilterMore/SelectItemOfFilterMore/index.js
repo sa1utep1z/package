@@ -10,7 +10,14 @@ import SingleSelectList from '../../../PageDialog2/SingleSelectList';
 const SelectItemOfFilterMore = ({
   field,
   form,
-  label
+  label,
+  showLabel = true,
+  canDelete = true,
+  showArrow = true,
+  fontSize = 28,
+  iconSize = 32,
+  borderColor,
+  selectStyle
 }) => {
   const dispatch = useDispatch();
 
@@ -59,23 +66,23 @@ const SelectItemOfFilterMore = ({
 
   return (
     <View style={styles.selectItemArea}>
-      <Text style={styles.showLittleTitleText}>{label}：</Text>
-      <View style={styles.touchArea}>
+      {showLabel && <Text style={styles.showLittleTitleText}>{label}：</Text>}
+      <View style={[styles.touchArea, borderColor && {borderColor}]}>
         <TouchableOpacity
-          style={styles.selectArea}
+          style={[styles.selectArea, selectStyle]}
           onPress={selectOnPress}>
           <Text
-            style={[styles.selectText, !field.value.length && styles.noItem]}
+            style={[styles.selectText, !field.value.length && styles.noItem, fontSize && {fontSize}]}
             ellipsizeMode="tail"
             numberOfLines={1}>
             {!!field.value.length ? field.value[0].label : `请选择${label}`}
           </Text>
-          {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <>
-            {!field.value.length && <AntDesign name='down' size={36} color='#999999'/>}
+          {loading ? <ActivityIndicator color="#409EFF" size={iconSize} /> : <>
+            {showArrow && !field.value.length && <AntDesign name='down' size={iconSize} color='#999999'/>}
           </>}
         </TouchableOpacity>
-        {!!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
-          <AntDesign name='closecircle' size={32} style={styles.clearIcon} color='#999999'/>
+        {canDelete && !!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
+          <AntDesign name='closecircle' size={iconSize} style={styles.clearIcon} color='#999999'/>
         </TouchableOpacity>}
       </View>
     </View>
@@ -92,17 +99,18 @@ const styles = StyleSheet.create({
     minWidth: 140,
     fontSize: 28,
     color: '#000',
+    textAlignVertical: 'center'
   },
   touchArea: {
     flex: 1,
     flexDirection: 'row',
-    borderRadius: 6,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#999999'
   },
   selectArea: {
     flex: 1,
-    borderRadius: 6,
+    borderRadius: 4,
     height: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
