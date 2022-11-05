@@ -231,13 +231,17 @@ const AdvanceAudit = (props) => {
   };
 
   const increaseReason = () => {
-    setInputContent('');
-    const newArr = deepCopy(statusList);
-    newArr.push({
-      value: inputContent,
-      title: inputContent
-    })
-    setStatusList(newArr);
+    if (inputContent) {
+      const newArr = deepCopy(statusList);
+      newArr.push({
+        value: inputContent,
+        title: inputContent
+      })
+      setStatusList(newArr);
+      setInputContent('');
+    } else {
+      toast.show('不能添加空字段')
+    }
   };
 
   //打开审批弹窗
@@ -264,7 +268,7 @@ const AdvanceAudit = (props) => {
   }
 
   return (
-    <ScrollView style={styles.msgArea}>
+    <ScrollView style={styles.msgArea} keyboardShouldPersistTaps="handled">
       <View style={styles.topArea}>
         {showList?.length ? showList.map((item, index) => {
           return (
@@ -439,20 +443,20 @@ const AdvanceAudit = (props) => {
                 </View>
               </ScrollView>
               <Input
-                ref={inputRef}
-                value={inputContent}
-                onChangeText={text => setInputContent(text)}
-                placeholder='手动输入原因'
-                allowFontScaling={false}
-                containerStyle={styles.input_containerStyle}
-                inputContainerStyle={styles.input_inputContainerStyle}
-                inputStyle={styles.inputStyle}
-                rightIcon={
-                  <TouchableOpacity style={styles.input_rightIcon} onPress={increaseReason}>
-                    <Text style={styles.input_rightIconText}>保存</Text>
-                  </TouchableOpacity>
-                }
-              />
+                  ref={inputRef}
+                  value={inputContent}
+                  onChangeText={text => setInputContent(text)}
+                  placeholder='手动输入原因'
+                  allowFontScaling={false}
+                  containerStyle={styles.input_containerStyle}
+                  inputContainerStyle={styles.input_inputContainerStyle}
+                  inputStyle={styles.inputStyle}
+                  rightIcon={
+                    <TouchableOpacity style={styles.input_rightIcon} onPress={increaseReason}>
+                      <Text style={styles.input_rightIconText}>保存</Text>
+                    </TouchableOpacity>
+                  }
+                />
             </View>}
             <View>
               <Text style={styles.remark}>注：审批拒绝后，审批流程将终止。</Text>
