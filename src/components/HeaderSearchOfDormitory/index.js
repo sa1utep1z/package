@@ -42,7 +42,9 @@ const HeaderSearchOfDormitory = ({
     }
   };
 
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY);
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY, {
+    selectIndex
+  });
 
   const filterOnPress = () => {
     dispatch(setTitle(`筛选更多`));

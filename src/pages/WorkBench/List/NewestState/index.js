@@ -9,7 +9,7 @@ import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButt
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD } from "../../../../utils/const";
+import { SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD, STATUS_LIST } from "../../../../utils/const";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import ListApi from "../../../../request/ListApi";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
@@ -319,7 +319,12 @@ const NewestState = () => {
 
   return (
     <View style={[styles.screen]}>
-      <HeaderSearch filterFun={filter} batchOperate={batchOperate}/>
+      <HeaderSearch 
+        filterFun={filter} 
+        batchOperate={batchOperate} 
+        status={STATUS_LIST}
+        canFilterStatus
+      />
       <CenterSelectDate centerDateStyle={{marginBottom: 0}} />
       <View style={styles.numberOfList}>
         <Text style={styles.text}>共 <Text style={styles.number}>{originData?.total || 0}</Text> 条数据</Text>
