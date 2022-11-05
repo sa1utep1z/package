@@ -30,7 +30,7 @@ const SelectItemOfFilterMore = ({
       arr.push({label: `${label}-${i+1}`, value: `value${i}`});
     }
     dispatch(setTitle(`请选择${label}`));
-    dispatch(openDialog(<SingleSelectList canSearch={false} selectList={arr} fieldValue={field.value} pressItem={pressItem}/>));
+    dispatch(openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={arr} fieldValue={field.value} confirm={pressItem}/>));
   };
 
   const pressItem = (list) => {

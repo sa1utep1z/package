@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useDispatch } from "react-redux";
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import { closeDialog } from "../../../redux/features/PageDialog";
 
@@ -9,7 +10,10 @@ const CallPhone = ({ message }) => {
 
   const rejectOnPress = () => dispatch(closeDialog());
 
-  const confirmOnPress = (item) => Linking.openURL(`tel:${item.mobile}`);
+  const confirmOnPress = (item) => {
+    Linking.openURL(`tel:${item.mobile}`);
+    dispatch(closeDialog());
+  };
 
   return (
     <>
@@ -27,7 +31,8 @@ const CallPhone = ({ message }) => {
         </View>
         <View style={styles.rightArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={() => confirmOnPress(message)}>
-            <Text style={styles.confirmText}>确认</Text>
+            <Text style={styles.confirmText}>拨打</Text>
+            <Entypo name='phone' size={32} color='#409EFF' />
           </TouchableOpacity>
         </View>
       </View>
@@ -65,7 +70,8 @@ const styles = StyleSheet.create({
     borderColor: '#E3E3E3'
   },
   buttonArea: {
-    flex: 1, 
+    flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center', 
     alignItems: 'center'
   },

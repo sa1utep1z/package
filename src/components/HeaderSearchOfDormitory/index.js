@@ -2,19 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Formik, Field } from 'formik';
 import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 import HeaderSelectItem from './HeaderSelectItem';
 import HeaderSearchInput from './HeaderSearchInput';
+import HeaderRadioItem from './HeaderRadioItem';
 import FilterMore from './FilterMore';
 import { openDialog, setTitle } from '../../redux/features/PageDialog'; 
+import {DORMITORY_STAY_TYPE} from '../../utils/const';
+import NAVIGATION_KEYS from '../../navigator/key';
 
 let restForm;
 const initialValues = {
   enterprise: [],
   buildingNum: [],
+  liveType: [{label: '全部', value: 'ALL'}],
+  floorNum: [],
+  roomNum: [],
 };
 
-const HeaderSearchOfDormitory = () => {
+const HeaderSearchOfDormitory = ({
+  selectIndex = 0,
+  isBatchOperate = true
+}) => {
+  const navigation = useNavigation();
+
   const dispatch = useDispatch();
 
   const [isFilterMore, setIsFilterMore] = useState(false);
@@ -30,6 +42,8 @@ const HeaderSearchOfDormitory = () => {
     }
   };
 
+  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY);
+
   const filterOnPress = () => {
     dispatch(setTitle(`筛选更多`));
     dispatch(openDialog(<FilterMore originForm={restForm} />));
@@ -43,17 +57,17 @@ const HeaderSearchOfDormitory = () => {
         restForm = rest;
         return (
           <View style={styles.totalArea}>
-            <View style={styles.lineArea}>
+            {isBatchOperate && <View style={styles.lineArea}>
               <Field
                 name="enterprise"
                 label="企业"
                 type="enterprise"
                 component={HeaderSelectItem}
               />
-              <TouchableOpacity style={styles.buttonArea}>
+              {(selectIndex === 1 || selectIndex === 3) &&<TouchableOpacity style={styles.buttonArea} onPress={batchOperate}>
                 <Text style={styles.buttonText}>批量操作</Text>
-              </TouchableOpacity>
-            </View>
+              </TouchableOpacity>}
+            </View>}
             <View style={styles.lineArea}>
               <Field
                 name="buildingNum"
@@ -61,10 +75,33 @@ const HeaderSearchOfDormitory = () => {
                 canSearch={false}
                 component={HeaderSelectItem}
               />
-              <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
+              {isBatchOperate && <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
                 <Text style={[styles.filterMoreText, isFilterMore && styles.filteringText]}>筛选更多</Text>
-              </TouchableOpacity>
+              </TouchableOpacity>}
             </View>
+           {isBatchOperate && <View style={styles.lineArea}>
+              <Field
+                name="liveType"
+                label="入住类别"
+                radioList={DORMITORY_STAY_TYPE}
+                component={HeaderRadioItem}
+              />
+            </View>}
+           {!isBatchOperate && <View style={styles.lineArea}>
+              <Field
+                name="floorNum"
+                label="楼层"
+                type="enterprise"
+                component={HeaderSelectItem}
+              />
+              <View style={{width: 20}}></View>
+              <Field
+                name="roomNum"
+                label="房间号"
+                type="enterprise"
+                component={HeaderSelectItem}
+              />
+            </View>}
             <Field
               name="search"
               placeholder={'请输入会员姓名、身份证或手机号码'}
@@ -82,8 +119,8 @@ const styles = StyleSheet.create({
     padding: 30
   },
   lineArea: {
-    flexDirection: 'row', 
     height: 60, 
+    flexDirection: 'row', 
     marginBottom: 20
   },
   buttonArea: {

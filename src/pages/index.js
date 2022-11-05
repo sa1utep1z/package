@@ -48,6 +48,7 @@ const NAVIGATION_PAGES_LIST = {
 
   //工作台（宿舍管理）
   DORMITORY_LIST: require('./WorkBench/Dormitory/DormitoryList'), //在离宿名单
+  BATCH_OPERATE_DORMITORY: require('./WorkBench/Dormitory/DormitoryList/BatchOperateDormitory'), //批量操作在离宿名单
   DORMITORY_CHECK: require('./WorkBench/Dormitory/DormitoryCheck'), //宿舍点检
   DORMITORY_RECORD: require('./WorkBench/Dormitory/DormitoryRecord'), //宿舍抄表
   DORMITORY_VIOLATION: require('./WorkBench/Dormitory/DormitoryViolation'), //宿舍违纪

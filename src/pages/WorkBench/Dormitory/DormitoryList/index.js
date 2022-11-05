@@ -47,7 +47,7 @@ const DormitoryList = () => {
 
   return (
     <View style={styles.screen}>
-      <HeaderSearchOfDormitory />
+      <HeaderSearchOfDormitory selectIndex={index} />
       <CenterSelectDate />
       <TabView
         lazy

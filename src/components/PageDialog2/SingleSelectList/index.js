@@ -5,7 +5,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 
 import { deepCopy } from "../../../utils";
-import { closeDialog } from "../../../redux/features/PageDialog2";
+import { closeDialog } from "../../../redux/features/PageDialog";
+import * as PageDialog2 from "../../../redux/features/PageDialog2";
 
 const FlattListItem = ({item, pressItem, isLastIndex}) => {
   const onChange = useCallback(() => pressItem(item),[item]);
@@ -29,8 +30,9 @@ const FlattListItem = ({item, pressItem, isLastIndex}) => {
 const SingleSelectList = ({
   selectList,
   fieldValue,
-  pressItem,
-  canSearch = true, //是否可以搜索（default: true）
+  confirm,
+  canSearch = true, //是否可以搜索（default: true）；
+  isDialog2 = false, //判定是不是二层弹窗，如果是，则没有底部按钮； 
 }) => {
   const dispatch = useDispatch();
 
@@ -47,13 +49,30 @@ const SingleSelectList = ({
           item.isChecked = false;
         }
       });
+    }else{
+      copyList.map(item => item.isChecked = false);
     }
     setShowList(copyList);
   }, [fieldValue])
 
   const selectItem = (item) => {
-    dispatch(closeDialog());
-    pressItem(item);
+    if(isDialog2){
+      confirm(item);
+      dispatch(PageDialog2.closeDialog());
+      return;
+    }
+    if(inputValue.length){
+      const copyList = deepCopy(selectList);
+      const filterList = copyList.filter(list => list.label.includes(inputValue));
+      const findOutItem = filterList.find(list => list.value === item.value);
+      findOutItem.isChecked = !item.isChecked;
+      setShowList(filterList);
+      return;
+    }
+    const copyList = deepCopy(selectList);
+    const findOutItem = copyList.find(list => list.value === item.value);
+    findOutItem.isChecked = !item.isChecked;
+    setShowList(copyList);
   };
 
   const renderItem = ({item, index}) => {
@@ -71,6 +90,19 @@ const SingleSelectList = ({
   const clearInput = () => {
     inputValue.length && setInputValue('');
     const copyList = deepCopy(selectList);
+    const filterSelectedList = showList.filter(item => !!item.isChecked);
+    if(filterSelectedList.length){
+      copyList.map(item => {
+        if(item.value === filterSelectedList[0].value){
+          item.isChecked = true;
+        }else{
+          item.isChecked = false;
+        }
+      });
+      setShowList(copyList);
+      return;
+    }
+    
     if(fieldValue.length){
       copyList.map(item => {
         if(item.value === fieldValue[0].value){
@@ -81,6 +113,14 @@ const SingleSelectList = ({
       });
     }
     setShowList(copyList);
+  };
+
+  const rejectOnPress = () => dispatch(closeDialog());
+
+  const passOnPress = () => {
+    dispatch(closeDialog());
+    const filterSelectedList = showList.filter(item => !!item.isChecked);
+    confirm(filterSelectedList);
   };
 
   return (
@@ -104,20 +144,33 @@ const SingleSelectList = ({
         </View>}
         <FlatList
           data={showList}
+          style={{flex: 1}}
           renderItem={renderItem}
-          getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
+          getItemLayout={(data, index) => ({ length: 60, offset: 60 * index, index })}
         />
       </View>
+      {!isDialog2 && <View style={styles.bottomArea}>
+        <View style={styles.leftArea}>
+          <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
+            <Text style={styles.closeText}>取消</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.rightArea}>
+          <TouchableOpacity style={styles.buttonArea} onPress={passOnPress}>
+            <Text style={styles.confirmText}>提交</Text>
+          </TouchableOpacity>
+        </View>
+      </View>}
     </View>
   )
 };
 
 const styles = StyleSheet.create({
   totalArea: {
-    maxHeight: 900
+    height: 900
   },
   topArea: {
-    maxHeight: 850, 
+    flex: 1,
     borderWidth: 1, 
     borderColor: '#E3E3E3', 
     borderRadius: 12,
@@ -150,6 +203,33 @@ const styles = StyleSheet.create({
   labelArea: {
     fontSize: 26, 
     color: '#333333'
+  },
+  bottomArea: {
+    height: 100, 
+    flexDirection: 'row'
+  },
+  leftArea: {
+    flex: 1, 
+    borderTopWidth: 1, 
+    borderRightWidth: 1, 
+    borderColor: '#E3E3E3'
+  },
+  rightArea: {
+    flex: 1, 
+    borderTopWidth: 1, 
+    borderColor: '#E3E3E3'
+  },
+  buttonArea: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  closeText: {
+    fontSize: 28, 
+  },
+  confirmText: {
+    fontSize: 28, 
+    color: '#409EFF'
   }
 })
 
