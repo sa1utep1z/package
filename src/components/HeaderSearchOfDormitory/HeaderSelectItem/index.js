@@ -37,9 +37,7 @@ const HeaderSelectItem = ({
     }
   };
 
-  const confirm = (list) => {
-    form.setFieldValue(field.name, list);
-  };
+  const confirm = (list) => form.setFieldValue(field.name, list);
 
   const getEnterpriseList = async() => {
     try {

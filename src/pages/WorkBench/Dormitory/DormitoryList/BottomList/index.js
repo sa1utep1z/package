@@ -42,10 +42,6 @@ const Total = ({
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
-
-  useEffect(()=>{
-    console.log('type', type);
-  },[type])
   
   const getList = async(params) => {
     setIsLoading(true);
