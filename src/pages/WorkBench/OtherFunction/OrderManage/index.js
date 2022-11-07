@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
     right: 0
   },
   buttonContainerStyle: {
-    margin: 30
+    margin: 20
   },  
   buttonStyle: {
     height: 80,

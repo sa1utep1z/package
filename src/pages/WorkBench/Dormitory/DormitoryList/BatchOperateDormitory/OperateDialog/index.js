@@ -1,33 +1,45 @@
-import React, {useState} from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
-import { Formik, Field } from 'formik';
+import React, {useState, useEffect, useMemo, useCallback} from "react";
+import { FlatList, TextInput, Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { CheckBox } from '@rneui/themed';
-import { Shadow } from 'react-native-shadow-2';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useDispatch } from 'react-redux';
+import { Formik, Field } from 'formik';
 
-import { closeDialog } from "../../../../../redux/features/PageDialog";
-import SelectTimeOfFilterMore from '../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
+import { closeDialog } from "../../../../../../redux/features/PageDialog";
+import { DORMITORY_LEAVE_REASON } from "../../../../../../utils/const";
+import SelectTimeOfFilterMore from '../../../../../../components/HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
 
 let restForm;
 const initialValues = {
   buildingNum: [],
-  stayDate: ''
+  stayDate: '',
+  leaveDate: ''
 };
 
-const WaitToEntry = ({
+const OperateDialog = ({
+  selectIndex
 }) => {
+
   const dispatch = useDispatch();
 
   const [stayType, setStayType] = useState('normal');
-
-  const passOnPress = () => dispatch(closeDialog());
-
-  const rejectOnPress = () => dispatch(closeDialog());
+  const [selectReason, setSelectReason] = useState('');
 
   const onSubmit = values => {
     console.log('confirm->values', values);
   };
 
+  const rejectOnPress = () => dispatch(closeDialog());
+
+  const passOnPress = () => {
+    dispatch(closeDialog());
+  };
+
+  const reasonOnPress = (reason) => {
+    setSelectReason(reason);
+  };
+
+  console.log('selectIndex', selectIndex);
   return (
     <Formik
     initialValues={initialValues}
@@ -36,10 +48,7 @@ const WaitToEntry = ({
       restForm = rest;
       return (
         <>
-          <View style={styles.topArea}>
-            <Text style={styles.itemText}>会员姓名：张三</Text>
-            <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>188-8989-8989</Text></Text>
-            <Text selectable style={[styles.itemText, {marginBottom: 20}]}>会员身份证号：<Text selectable style={styles.blueText}>452123123412341234</Text></Text>
+          {selectIndex === 1 ?<View style={styles.topArea}>
             <View style={styles.typeArea}>
               <Text style={styles.typeArea_title}>入住类别：</Text>
               <View style={styles.typeArea_radio}>
@@ -76,55 +85,40 @@ const WaitToEntry = ({
                 component={SelectTimeOfFilterMore}
               />
             </View>
-            <Shadow style={styles.dormitoryArea}>
-              <View style={{borderRadius: 10}}>
-                <View style={styles.dormitoryArea_topArea}>
-                  <Text style={styles.dormitoryArea_topAreaText}>分配宿舍信息</Text>
-                </View>
-                <View style={styles.dormitoryArea_bottomArea}>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼栋</Text>
-                    </View>
-                    <Text style={styles.rightText}>241栋</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍分类</Text>
-                    </View>
-                    <Text style={styles.rightText}>男生宿舍</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼层</Text>
-                    </View>
-                    <Text style={styles.rightText}>1F</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>房间号</Text>
-                    </View>
-                    <Text style={styles.rightText}>101</Text>
-                  </View>
-                  <View style={styles.lastItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>床位号</Text>
-                    </View>
-                    <Text style={styles.rightText}>101-1</Text>
-                  </View>
-                </View>
+          </View> : <>
+            <View style={{height: 55, paddingHorizontal: 20, marginTop: 10}}>
+              <Field
+                name="leaveDate"
+                label="退宿日期"
+                fontSize={26}
+                canDelete={false}
+                borderColor='#999999'
+                component={SelectTimeOfFilterMore}
+              />
+            </View>
+            <View style={{height: 200, margin: 20}}>
+              <Text style={{fontSize: 26, color: '#333333', marginBottom: 10}}>退宿原因：</Text>
+              <View style={{flex: 1, borderWidth: 1, borderColor: '#999999', borderRadius: 10, flexDirection: 'row', flexWrap: 'wrap', padding: 20}}>
+                {DORMITORY_LEAVE_REASON.map((reason, reasonIndex) => {
+                  const isSelected = selectReason === reason.value;
+                  return (
+                    <TouchableOpacity key={reasonIndex} style={[{borderRadius: 6, backgroundColor: '#EFEFEF', paddingHorizontal: 15, paddingVertical: 5, marginRight: 20, marginBottom: 20}, isSelected && {backgroundColor: '#409EFF'}]} onPress={() => reasonOnPress(reason.value)}>
+                      <Text style={[{fontSize: 26, color: '#999999'}, isSelected && {color: '#ffffff'}]}>{reason.label}</Text>
+                    </TouchableOpacity>
+                  )
+                })}
               </View>
-            </Shadow>
-          </View>
+            </View>
+          </>}
           <View style={styles.bottomArea}>
             <View style={styles.leftArea}>
               <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
-                <Text style={styles.closeText}>拒绝</Text>
+                <Text style={styles.closeText}>取消</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.rightArea}>
               <TouchableOpacity style={styles.buttonArea} onPress={passOnPress}>
-                <Text style={styles.confirmText}>通过</Text>
+                <Text style={styles.confirmText}>确定</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -139,14 +133,6 @@ const styles = StyleSheet.create({
   topArea: {
     flex: 1, 
     paddingHorizontal: 30
-  },
-  blueText: {
-    color: '#409EFF'
-  },
-  itemText: {
-    fontSize: 28, 
-    color: '#333333', 
-    marginBottom: 15
   },
   typeArea: {
     height: 60, 
@@ -256,13 +242,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   closeText: {
-    fontSize: 28, 
-    color: 'red'
+    fontSize: 28
   },
   confirmText: {
     fontSize: 28, 
-    color: 'green'
+    color: '#409EFF'
   },
 })
 
-export default WaitToEntry;
+export default OperateDialog;

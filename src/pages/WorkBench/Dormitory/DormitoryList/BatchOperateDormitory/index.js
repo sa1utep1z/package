@@ -8,6 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HeaderSearchOfDormitory from '../../../../../components/HeaderSearchOfDormitory';
 import { openDialog, setTitle } from '../../../../../redux/features/PageDialog'; 
 import { deepCopy } from "../../../../../utils";
+import OperateDialog from './OperateDialog';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -32,7 +33,7 @@ const BatchOperateDormitory = ({
 
   useEffect(()=>{
     navigation.setOptions({
-      headerTitle: `批量操作（${selectIndex === 1 ? '待入住' : '退宿'}）`
+      headerTitle: `批量${selectIndex === 1 ? '入住' : '退宿'}`
     });
   },[])
 
@@ -98,8 +99,8 @@ const BatchOperateDormitory = ({
   const goBack = () => navigation.goBack();
 
   const confirmButton = () => {
-    dispatch(setTitle(`批量操作`));
-    dispatch(openDialog(<View style={{height: 200, borderWidth: 1, borderColor: 'red'}}></View>));
+    dispatch(setTitle(`批量${selectIndex === 1 ? '入住' : '退宿'}`));
+    dispatch(openDialog(<OperateDialog selectIndex={selectIndex} />));
   };
 
   const pressItem = (item) => {
@@ -157,7 +158,7 @@ const BatchOperateDormitory = ({
       />
       <View style={styles.buttonArea}>
         <Button
-          title="取 消"
+          title="取消"
           onPress={goBack}
           activeOpacity={1}
           buttonStyle={styles.cancelButton}
@@ -166,8 +167,9 @@ const BatchOperateDormitory = ({
         />
         <View style={{width: 20}}></View>
         <Button
-          title="确 认"
+          title="确认"
           onPress={confirmButton}
+          disabled={!selectedList.length}
           buttonStyle={styles.confirmButton}
           containerStyle={styles.buttonContainerStyle}
           titleStyle={styles.confirmButton_title}
@@ -201,10 +203,12 @@ const styles = StyleSheet.create({
   },
   cancelButton_title: {
     fontSize: 26, 
-    color: '#409EFF'
+    color: '#409EFF',
+    letterSpacing: 5
   },
   confirmButton_title: {
-    fontSize: 26
+    fontSize: 26,
+    letterSpacing: 5
   },
   buttonContainerStyle: {
     flex: 1

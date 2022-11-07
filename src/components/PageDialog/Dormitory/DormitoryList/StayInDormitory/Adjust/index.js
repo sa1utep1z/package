@@ -1,13 +1,15 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
 import { ScrollView, Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import { Formik, Field } from 'formik';
 import { Shadow } from 'react-native-shadow-2';
 import { CheckBox } from '@rneui/themed';
+import { Formik, Field } from 'formik';
+import moment from "moment";
 
 import SelectTimeOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
 import SelectItemOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectItemOfFilterMore';
 
 let restForm;
+
 const initialValues = {
   leaveDate: '',
   joinInDate: '',
@@ -17,21 +19,49 @@ const initialValues = {
   bedNum: []
 };
 
-const Leave = ({
-  reasonWrong = false
-}) => {
+const Adjust = ({}, ref) => {
   const scrollViewRef = useRef(null);
 
-  const [selectReason, setSelectReason] = useState('');
   const [dormitoryType, setDormitoryType] = useState('male');
+  const [bottomError, setBottomError] = useState(false);
+  const [topError, setTopError] = useState(false);
+
+  useImperativeHandle(ref, () => {
+    return { restForm };
+  }, [restForm]);
+
+  const checkValues = (values) => {
+    let returnValue = false;
+    let fieldNameList = ['bedNum', 'buildingNum', 'floorNum', 'roomNum'];
+    const isNoneFieldValue = fieldNameList.some(fieldName => !values[fieldName].length);
+    if(!values.leaveDate.length){
+      setTopError(true);
+      returnValue = true;
+    }else{
+      setTopError(false);
+      returnValue = false;
+    }
+    if(isNoneFieldValue || !values.joinInDate.length){
+      scrollViewRef?.current?.scrollToEnd();
+      setBottomError(true);
+      returnValue = true;
+    }else{
+      setBottomError(false);
+      returnValue = false;
+    }
+    return returnValue;
+  }
 
   const onSubmit = (values) => {
-    console.log('提交', values);
+    const hasError = checkValues(values);
+    console.log('hasError', hasError);
   };
 
-  const reasonOnPress = (reason) => {
-    setSelectReason(reason);
-    reasonWrong && setReasonWrong(false);
+  const selectOtherFunc = (type, date) => {
+    restForm.setFieldValue(type === 'leaveDate' ? 'joinInDate' : 'leaveDate', date);
+    if(type === 'leaveDate'){
+      scrollViewRef?.current?.scrollToEnd();
+    }
   };
 
   return (
@@ -41,7 +71,7 @@ const Leave = ({
       {({...rest}) => {
         restForm = rest;
         return (
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
             <View style={{padding: 20, paddingBottom: 0}}>
               <Text style={styles.itemText}>会员姓名：张三</Text>
               <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>15390913806</Text></Text>
@@ -91,7 +121,7 @@ const Leave = ({
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>退宿日期</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
+                    <View style={styles.lineArea}>
                       <Field
                         name="leaveDate"
                         label="退宿日期"
@@ -102,10 +132,13 @@ const Leave = ({
                         showArrow={false}
                         borderColor="#EFEFEF"
                         touchAreaStyle={{height: 40, borderRadius: 4}}
+                        startLimit={moment().add(1).format('YYYY-MM-DD')}
+                        selectOtherFunc={selectOtherFunc}
                         component={SelectTimeOfFilterMore}
                       />
                     </View>
                   </View>
+                  {topError && <Text style={{fontSize: 20, color: 'red', textAlign: 'center', marginVertical: 2}}>表单未填写完整！</Text>}
                 </View>
               </Shadow>
             </View>
@@ -114,12 +147,13 @@ const Leave = ({
                 <View style={styles.dormitoryArea_topArea}>
                   <Text style={styles.dormitoryArea_topAreaText}>调迁后宿舍</Text>
                 </View>
-                <View style={styles.dormitoryArea_bottomArea}>
+                {bottomError && <Text style={{fontSize: 20, color: 'red', textAlign: 'center', marginVertical: 2}}>表单未填写完整！</Text>}
+                <View style={[styles.dormitoryArea_bottomArea, bottomError && {marginTop: 0}]}>
                   <View style={styles.listItem}>
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>入住日期</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
+                    <View style={styles.lineArea}>
                       <Field
                         name="joinInDate"
                         label="入住日期"
@@ -130,6 +164,8 @@ const Leave = ({
                         showArrow={false}
                         borderColor="#EFEFEF"
                         touchAreaStyle={{height: 40, borderRadius: 4}}
+                        startLimit={moment().add(1).format('YYYY-MM-DD')}
+                        selectOtherFunc={selectOtherFunc}
                         component={SelectTimeOfFilterMore}
                       />
                     </View>
@@ -138,7 +174,7 @@ const Leave = ({
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>宿舍楼栋</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
+                    <View style={styles.lineArea}>
                       <Field
                         name="buildingNum"
                         label="宿舍楼栋"
@@ -157,31 +193,31 @@ const Leave = ({
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>宿舍分类</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
-                      <View style={{borderWidth: 1, height: 40, marginTop: 5, borderRadius: 4, borderColor: '#EFEFEF', flexDirection: 'row', paddingLeft: 10}}>
-                        <TouchableOpacity style={{flexDirection: 'row', paddingRight: 5}} onPress={()=>setDormitoryType('male')}>
+                    <View style={styles.lineArea}>
+                      <View style={styles.typeArea}>
+                        <TouchableOpacity style={styles.maleArea} onPress={()=>setDormitoryType('male')}>
                           <CheckBox
                             center
                             size={26}
                             pointerEvents={'none'}
                             checked={dormitoryType === 'male'}
-                            containerStyle={{padding: 0, marginRight: 0, alignSelf: 'center'}}
+                            containerStyle={styles.checkBoxContainerStyle}
                             checkedIcon="dot-circle-o"
                             uncheckedIcon="circle-o"
                           />
-                          <Text style={{textAlignVertical: 'center', fontSize: 22, color: '#333333'}}>男宿舍</Text>
+                          <Text style={styles.typeAreaText}>男宿舍</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{flexDirection: 'row', paddingRight: 20}} onPress={()=>setDormitoryType('female')}>
+                        <TouchableOpacity style={styles.femaleArea} onPress={()=>setDormitoryType('female')}>
                           <CheckBox
                             center
                             size={26}
                             pointerEvents={'none'}
                             checked={dormitoryType === 'female'}
-                            containerStyle={{padding: 0, marginRight: 0, alignSelf: 'center'}}
+                            containerStyle={styles.checkBoxContainerStyle}
                             checkedIcon="dot-circle-o"
                             uncheckedIcon="circle-o"
                           />
-                          <Text style={{textAlignVertical: 'center', fontSize: 22, color: '#333333'}}>女宿舍</Text>
+                          <Text style={styles.typeAreaText}>女宿舍</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -190,7 +226,7 @@ const Leave = ({
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>楼层</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
+                    <View style={styles.lineArea}>
                       <Field
                         name="floorNum"
                         label="楼层"
@@ -209,7 +245,7 @@ const Leave = ({
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>房间号</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
+                    <View style={styles.lineArea}>
                       <Field
                         name="roomNum"
                         label="房间号"
@@ -228,7 +264,7 @@ const Leave = ({
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>床位号</Text>
                     </View>
-                    <View style={{flex: 1, height: '100%', paddingHorizontal: 5}}>
+                    <View style={styles.lineArea}>
                       <Field
                         name="bedNum"
                         label="床位号"
@@ -261,10 +297,37 @@ const styles = StyleSheet.create({
     color: '#333333', 
     marginBottom: 10
   },
+  lineArea: {
+    flex: 1, 
+    height: '100%', 
+    paddingHorizontal: 5
+  },
   typeArea: {
-    height: 60, 
-    marginBottom: 20, 
-    flexDirection: 'row'
+    height: 40,
+    borderWidth: 1,
+    marginTop: 5, 
+    borderRadius: 4, 
+    borderColor: '#EFEFEF', 
+    flexDirection: 'row', 
+    paddingLeft: 10
+  },
+  typeAreaText: {
+    textAlignVertical: 'center', 
+    fontSize: 22, 
+    color: '#333333'
+  },
+  maleArea: {
+    flexDirection: 'row',
+    paddingRight: 5
+  },
+  femaleArea: {
+    flexDirection: 'row', 
+    paddingRight: 20
+  },
+  checkBoxContainerStyle: {
+    padding: 0, 
+    marginRight: 0, 
+    alignSelf: 'center'
   },
   typeArea_title: {
     minWidth: 140, 
@@ -311,7 +374,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   dormitoryArea_bottomArea: {
-    padding: 10
+    margin: 10
   },
   listItem: {
     height: 50, 
@@ -377,4 +440,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Leave;
+export default forwardRef(Adjust);

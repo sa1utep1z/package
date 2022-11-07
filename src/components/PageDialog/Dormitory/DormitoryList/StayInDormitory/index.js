@@ -15,18 +15,20 @@ const routes = [
 const StayInDormitory = ({
 }) => {
   const dispatch = useDispatch();
-  const scrollViewRef = useRef(null);
+
+  const leaveRef = useRef(null);
+  const adjustRef = useRef(null);
 
   const layout = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
-  const [selectReason, setSelectReason] = useState('');
-  const [reasonWrong, setReasonWrong] = useState(false);
 
   const passOnPress = () => {
-    if(index === 0 && !selectReason.length){
-      scrollViewRef?.current.scrollToEnd();
-      setReasonWrong(true);
+    if(index === 0 && !leaveRef?.current?.selectReason.length){
+      leaveRef?.current?.scrollViewRef?.current?.scrollToEnd();
+      leaveRef?.current?.setReasonWrong(true);
+    }else if(index === 1){
+      adjustRef?.current?.restForm.submitForm();
     }
   };
 
@@ -35,9 +37,9 @@ const StayInDormitory = ({
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'leave':
-        return <Leave />
+        return <Leave ref={leaveRef}/>
       case 'adjustment':
-        return <Adjust /> 
+        return <Adjust ref={adjustRef}/> 
     }
   };
 
