@@ -1,10 +1,21 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Modal, TouchableHighlight } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useToast } from "react-native-toast-notifications";
+import { Button } from '@rneui/themed';
+import moment from 'moment';
+import * as Yup from 'yup';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import ScaleView from 'react-native-scale-view';
 
 import SingleInput from "../../../../components/OrderForm/SingleInput";
+import RadioSelect from "../../../../components/OrderForm/RadioSelect";
+import SingleSelect from "../../../../components/OrderForm/SingleSelect";
+import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
+import ListApi from '../../../../request/ListApi';
+import { SUCCESS_CODE, CHANEL_SOURCE_NAME, DORMITORY_LIVE_TYPE, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE } from '../../../../utils/const';
 
 let restForm;
 const initialValues = {
@@ -12,94 +23,324 @@ const initialValues = {
   memberPhone: '',
   memberIdCard: '',
   memberFrom: '',
+  dormitoryType: [],
+  maleOrFemale: [],
+  buildingNum: [],
+  floorNum: [],
+  roomNum: [],
+  bedNum: [],
+  liveInDate: moment().format('YYYY-MM-DD')
 };
-const CreateDormitory = () => {
+const validationSchema = Yup.object().shape({
+  memberName: Yup.string().required('请输入姓名'),
+  memberPhone: Yup.string().required('请输入手机号'),
+  memberIdCard: Yup.string().required('请输入身份证号'),
+  memberFrom: Yup.string().required('请输入籍贯'),
+  dormitoryType: Yup.array().min(1, '请选择入住类别'),
+  maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
+  buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
+  floorNum: Yup.array().min(1, '请选择楼层'),
+  roomNum: Yup.array().min(1, '请选择房间号'),
+  bedNum: Yup.array().min(1, '请选择床位号'),
+  liveInDate: Yup.string().required('请选择入住日期')
+});
 
-  const onSubmit = () => {
-    console.log('提交了表单');
+const CreateDormitory = () => {
+  const toast = useToast();
+
+  const [signUpInfoLoading, setSignUpInfoLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [signUpInfo, setSignUpInfo] = useState({});
+  const [signUpNotice, setSignUpNotice] = useState('请输入身份证号或通过OCR拍照识别读取会员报名信息');
+
+  const onSubmit = (values) => {
+    console.log('提交了表单', values);
+  };
+
+  const openOCR = () => setModalVisible(true);
+
+  const closeOCR = () => setModalVisible(false);
+
+  const clearIconPress = () => {
+    setModalVisible(false);
+  }
+
+  const openPermission = () => {
+    console.log('点击了拍照上传');
+  };
+
+  const openPick = () => {
+    console.log('点击了从相册选择')
+  };
+
+  const IdCardOnInput = (value) => {
+    console.log('查询到value', value);
+    if(value.length === 18){
+      queryMemberFlowId(value);
+    }else{
+      setSignUpInfo({});
+      setSignUpNotice('请输入身份证号或通过OCR拍照识别读取会员报名信息');
+    }
+  };
+
+  const queryMemberFlowId = async(memberId) => {
+    setSignUpInfoLoading(true);
+    try {
+      const res = await ListApi.SignUpList({str: memberId, role: "RECRUIT"});
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      console.log('queryMemberFlowId -> res', res);
+      if(res.data.content.length){
+        const flowId = res.data.content[0].flowId;
+        queryMemberInfo(flowId, res.data.content[0].companyShortName);
+      }else{
+        setSignUpInfoLoading(false);
+        setSignUpNotice('暂无该会员报名信息，请确认身份证号是否正确！');
+      }
+    } catch (error) {
+      console.log('error', error)
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const queryMemberInfo = async(flowId, companyShortName) => {
+    try {
+      const res = await ListApi.MemberMessage(flowId);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      console.log('res', res);
+      res.data.companyShortName = companyShortName;
+      setSignUpInfo(res.data);
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally{
+      setSignUpInfoLoading(false);
+    }
   };
 
   return (
     <Formik
     initialValues={initialValues}
-    // validationSchema={validationSchema}
+    validationSchema={validationSchema}
     onSubmit={onSubmit}>
     {({...rest }) => {
       restForm = rest;
       return (
-        <View style={styles.screen}>
-          <Shadow style={styles.shadowArea}>
-            <View style={styles.content}>
-              <View style={styles.titleArea}>
-                <Text style={styles.titleText}>会员信息</Text>
-              </View>
-              <View style={styles.shadowContent}>
-                <View style={{flex: 1}}>
-                  <View style={{height: 60, marginBottom: 20}}>
-                    <Field
-                      name="memberName"
-                      label="会员姓名"
-                      selectTextOnFocus
-                      isRequire
-                      component={SingleInput}
-                    />
+        <>
+          <ScrollView style={styles.screen}>
+            <View style={{flex: 1, paddingHorizontal: 20, paddingTop: 30}}>
+              <Shadow style={styles.shadowArea}>
+                <View style={styles.content}>
+                  <View style={styles.titleArea}>
+                    <Text style={styles.titleText}>会员信息</Text>
                   </View>
-                  <View style={{height: 60, marginBottom: 20}}>
-                    <Field
-                      name="memberPhone"
-                      label="会员手机号"
-                      selectTextOnFocus
-                      isRequire
-                      component={SingleInput}
-                    />
-                  </View>
-                  <View style={{height: 60, marginBottom: 20}}>
-                    <Field
-                      name="memberIdCard"
-                      label="会员身份证号"
-                      selectTextOnFocus
-                      isRequire
-                      component={SingleInput}
-                    />
-                  </View>
-                  <View style={{height: 60}}>
-                    <Field
-                      name="memberFrom"
-                      label="籍贯"
-                      selectTextOnFocus
-                      isRequire
-                      component={SingleInput}
-                    />
+                  <View style={styles.shadowContent_memberInfo}>
+                    <View style={{flex: 1}}>
+                      <Field
+                        name="memberName"
+                        label="姓名"
+                        selectTextOnFocus
+                        isRequire
+                        clearIcon
+                        labelStyle={{width: 160}}
+                        component={SingleInput}
+                      />
+                      <Field
+                        name="memberPhone"
+                        label="手机号"
+                        selectTextOnFocus
+                        isRequire
+                        clearIcon
+                        maxLength={11}
+                        labelStyle={{width: 160}}
+                        component={SingleInput}
+                      />
+                      <Field
+                        name="memberIdCard"
+                        label="身份证号"
+                        selectTextOnFocus
+                        isRequire
+                        clearIcon
+                        maxLength={18}
+                        labelStyle={{width: 160}}
+                        onChangeOtherFunc={IdCardOnInput}
+                        component={SingleInput}
+                      />
+                      <Field
+                        name="memberFrom"
+                        label="籍贯"
+                        selectTextOnFocus
+                        isRequire
+                        multiline
+                        clearIcon
+                        labelStyle={{width: 160}}
+                        inputStyle={{flex: 0, minHeight: 60, marginBottom: 0}}
+                        component={SingleInput}
+                      />
+                    </View>
+                    <TouchableOpacity style={styles.OCR_button} onPress={openOCR}>
+                      <Entypo name="camera" size={32} color="#409EFF"/>
+                      <Text style={styles.OCR_text}>OCR</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <TouchableOpacity style={{marginLeft: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10, borderRadius: 8, backgroundColor: '#409EFF'}}>
-                  <Entypo name="camera" size={32} color="#FFFFFF"/>
-                  <Text style={{fontSize: 30, fontWeight: 'bold', color: '#FFFFFF'}}>OCR</Text>
-                </TouchableOpacity>
-              </View>
+              </Shadow>
+              <Shadow style={styles.shadowArea}>
+                <View style={styles.content}>
+                  <View style={styles.titleArea}>
+                    <Text style={styles.titleText}>报名信息</Text>
+                  </View>
+                  <View style={styles.shadowContent_signUpInfo}>
+                    {signUpInfoLoading && <ActivityIndicator style={{marginBottom: 10}} size={36} color="#409EFF"/>}
+                    {signUpInfo?.signUpType ? <>
+                      <View style={[styles.lineArea, {borderTopLeftRadius: 8, borderTopRightRadius: 8}]}>
+                        <View style={[styles.lineTitleArea, {borderTopLeftRadius: 8}]}>
+                          <Text style={styles.lineTitle}>渠道来源</Text>
+                        </View>
+                        <View style={styles.lineContentArea}>
+                          <Text style={styles.lineContentText}>{CHANEL_SOURCE_NAME[signUpInfo.signUpType]}</Text>
+                        </View>
+                      </View>
+                      {signUpInfo.signUpType === 'RECRUITER' &&<View style={styles.lineArea}>
+                        <View style={styles.lineTitleArea}>
+                          <Text style={styles.lineTitle}>经纪人</Text>
+                        </View>
+                        <View style={styles.lineContentArea}>
+                          <Text style={styles.lineContentText}>{signUpInfo.recruitName || '无'}</Text>
+                        </View>
+                      </View>}
+                      {signUpInfo.signUpType === 'SUPPLIER' &&<View style={styles.lineArea}>
+                        <View style={styles.lineTitleArea}>
+                          <Text style={styles.lineTitle}>供应商</Text>
+                        </View>
+                        <View style={styles.lineContentArea}>
+                          <Text style={styles.lineContentText}>{signUpInfo.supplier || '无'}</Text>
+                        </View>
+                      </View>}
+                      <View style={styles.lineArea}>
+                        <View style={styles.lineTitleArea}>
+                          <Text style={styles.lineTitle}>归属门店</Text>
+                        </View>
+                        <View style={styles.lineContentArea}>
+                          <Text style={styles.lineContentText}>{signUpInfo.storeName}</Text>
+                        </View>
+                      </View>
+                      <View style={[styles.lineArea, {borderBottomWidth: 1, borderBottomLeftRadius: 8, borderBottomRightRadius: 8}]}>
+                        <View style={[styles.lineTitleArea, {borderBottomLeftRadius: 8}]}>
+                          <Text style={styles.lineTitle}>入职企业</Text>
+                        </View>
+                        <View style={styles.lineContentArea}>
+                          <Text style={styles.lineContentText}>{signUpInfo.companyShortName}</Text>
+                        </View>
+                      </View>
+                    </> : <Text style={[styles.noticeText, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice}</Text>}
+                  </View>
+                </View>
+              </Shadow>
+              <Shadow style={[styles.shadowArea, {marginBottom: 15}]}>
+                <View style={styles.content}>
+                  <View style={styles.titleArea}>
+                    <Text style={styles.titleText}>住宿信息</Text>
+                  </View>
+                  <View style={styles.shadowContent_liveInfo}>
+                    <Field
+                      name="dormitoryType"
+                      label="入住类别"
+                      isRequire
+                      labelStyle={{width: 160}}
+                      radioList={DORMITORY_LIVE_TYPE}
+                      component={RadioSelect}
+                    />
+                    <Field
+                      name="maleOrFemale"
+                      label="宿舍分类"
+                      isRequire
+                      labelStyle={{width: 160}}
+                      radioList={DORMITORY_TYPE}
+                      component={RadioSelect}
+                    />
+                    <Field
+                      name="buildingNum"
+                      label="宿舍楼栋"
+                      isRequire
+                      canSearch={false}
+                      labelStyle={{width: 160}}
+                      selectList={CREATE_ORDER_JOB_TYPE}
+                      component={SingleSelect}
+                    />
+                    <Field
+                      name="floorNum"
+                      label="楼层"
+                      isRequire
+                      canSearch={false}
+                      labelStyle={{width: 160}}
+                      selectList={CREATE_ORDER_JOB_TYPE}
+                      component={SingleSelect}
+                    />
+                    <Field
+                      name="roomNum"
+                      label="房间号"
+                      isRequire
+                      canSearch={false}
+                      labelStyle={{width: 160}}
+                      selectList={CREATE_ORDER_JOB_TYPE}
+                      component={SingleSelect}
+                    />
+                    <Field
+                      name="bedNum"
+                      label="床位号"
+                      isRequire
+                      canSearch={false}
+                      labelStyle={{width: 160}}
+                      selectList={CREATE_ORDER_JOB_TYPE}
+                      component={SingleSelect}
+                    />
+                    <View style={{height: 60, marginBottom: 20}}>
+                      <Field
+                        name="liveInDate"
+                        label="入住日期"
+                        isRequire
+                        labelStyle={{width: 160}}
+                        component={OrderSingleDate}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </Shadow>
             </View>
-          </Shadow>
-          <Shadow style={styles.shadowArea}>
-            <View style={styles.content}>
-              <View style={styles.titleArea}>
-                <Text style={styles.titleText}>报名信息</Text>
-              </View>
-              <View style={styles.shadowContent}>
-
-              </View>
-            </View>
-          </Shadow>
-          <Shadow style={styles.shadowArea}>
-            <View style={styles.content}>
-              <View style={styles.titleArea}>
-                <Text style={styles.titleText}>住宿信息</Text>
-              </View>
-              <View style={styles.shadowContent}>
-
-              </View>
-            </View>
-          </Shadow>
-        </View>
+          </ScrollView>
+          <Button
+            title="保存"
+            onPress={restForm.submitForm}
+            containerStyle={styles.buttonContainerStyle}
+            buttonStyle={styles.buttonStyle}
+            titleStyle={styles.titleStyle}
+          />
+          <Modal
+            animationType="fade"
+            transparent
+            visible={modalVisible}
+            onRequestClose={closeOCR}>
+            <ScaleView designWidth={750}>
+              <TouchableOpacity activeOpacity={1} style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.2)', justifyContent: 'center'}} onPress={closeOCR}>
+                <View style={{backgroundColor: '#FFFFFF', borderRadius: 32, marginHorizontal: 40, padding: 30}}>
+                  <Text style={{fontSize: 36, color: '#333333', textAlign: 'center', fontWeight: 'bold'}}>请选择图片来源</Text>
+                  <AntDesign style={{position: 'absolute', right: 30, top: 30}} name="closecircle" size={48} color="#999999" onPress={closeOCR}/>
+                  <TouchableOpacity style={{backgroundColor: '#409EFF', borderRadius: 50, paddingVertical: 20, marginTop: 40, marginHorizontal: 20}}>
+                    <Text style={{fontSize: 28, color: '#FFFFFF', fontWeight: 'bold', textAlign: 'center'}}>拍照上传</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{backgroundColor: '#409EFF', borderRadius: 50, paddingVertical: 20, marginTop: 40, marginBottom: 40, marginHorizontal: 20}}>
+                    <Text style={{fontSize: 29, color: '#FFFFFF', fontWeight: 'bold', textAlign: 'center'}}>从相册选择</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </ScaleView>
+          </Modal>
+        </>
       )
     }}
   </Formik>
@@ -109,9 +350,7 @@ const CreateDormitory = () => {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 30
+    flex: 1
   },
   shadowArea: {
     width: '100%',
@@ -132,13 +371,128 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     textAlign: 'center'
   },
-  shadowContent: {
+  OCR_button: {
+    marginLeft: 20, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    paddingHorizontal: 10, 
+    borderRadius: 8, 
+    borderWidth: 3,
+    borderColor: '#409EFF',
+    backgroundColor: '#ECF5FF'
+  },
+  OCR_text: {
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#409EFF'
+  },
+  shadowContent_memberInfo: {
     backgroundColor: '#FFFFFF', 
     borderBottomLeftRadius: 10, 
     borderBottomRightRadius: 10,
     padding: 20,
     flexDirection: 'row'
-  }
+  },
+  shadowContent_signUpInfo: {
+    backgroundColor: '#FFFFFF', 
+    borderBottomLeftRadius: 10, 
+    borderBottomRightRadius: 10,
+    padding: 20
+  },
+  shadowContent_liveInfo: {
+    backgroundColor: '#FFFFFF', 
+    borderBottomLeftRadius: 10, 
+    borderBottomRightRadius: 10,
+    padding: 20
+  },
+  lineArea: {
+    height: 60, 
+    flexDirection: 'row', 
+    borderWidth: 1, 
+    borderBottomWidth: 0, 
+    borderColor: '#409EFF',
+  },
+  lineTitleArea: {
+    width: 160, 
+    borderRightWidth: 1, 
+    borderColor: '#409EFF', 
+    justifyContent: 'center', 
+    backgroundColor: '#ECF5FF'
+  },
+  lineTitle: {
+    fontSize: 26, 
+    color: '#333333', 
+    minWidth: 160, 
+    textAlign: 'center'
+  },
+  lineContentArea: {
+    flex: 1, 
+    justifyContent: 'center', 
+    paddingLeft: 20
+  },
+  lineContentText: {
+    fontSize: 26, 
+    color: '#333333'
+  },
+  noticeText: {
+    fontSize: 24, 
+    color: '#409EFF', 
+    textAlign: 'center'
+  },
+  buttonContainerStyle: {
+    margin: 20
+  },  
+  buttonStyle: {
+    height: 80,
+    backgroundColor: '#409EFF',
+    borderWidth: 0,
+    borderRadius: 50
+  },
+  titleStyle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 10
+  },
+  modalView: {
+    margin: 20,
+    marginTop: 150,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    paddingTop: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    // borderWidth: 1,
+  },
+  imageTitle: {
+    fontSize: 18,
+    // color: '#2196F3'
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  openButton: {
+    width: 300,
+    // backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    // marginBottom: 15,
+    marginTop: 25
+  },
 });
 
 export default CreateDormitory;

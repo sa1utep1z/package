@@ -44,6 +44,7 @@ const HeaderSearch = ({
   companyShow = true,
   withoutCompanyFilter = false,
   typeResult = false,
+  statusSingleSelect = false,
   batchOperate, // 批量操作函数
   leavingList = false,
   noSearchInput = false,
@@ -222,7 +223,7 @@ const HeaderSearch = ({
                 name="status"
                 placeholder="请选择状态"
                 lastButton={batch}
-                singleSelect={singleSelect}
+                singleSelect={statusSingleSelect || singleSelect}
                 originList={status}
                 component={HeaderSelectItem}
               />}

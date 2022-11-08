@@ -9,7 +9,7 @@ import HeaderRightButtonOfList from '../../../../components/List/HeaderRightButt
 import HeaderSearch from "../../../../components/List/HeaderSearch";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import NAVIGATION_KEYS from "../../../../navigator/key";
-import { SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD, STATUS_LIST } from "../../../../utils/const";
+import { SUCCESS_CODE, MEMBERS_STATUS, NEWEST_STATE_LIST_HEAD, NEWEST_STATE_KEY } from "../../../../utils/const";
 import CenterSelectDate from "../../../../components/List/CenterSelectDate";
 import ListApi from "../../../../request/ListApi";
 import FormMemberDetail from "../../../../components/NormalDialog/FormMemberDetail";
@@ -71,6 +71,7 @@ const NewestState = () => {
   },[role])
 
   const getList = async(params) => {
+    console.log('getList -> params', params);
     setIsLoading(true);
     try{
       const res = await ListApi.NewestList(params);
@@ -121,6 +122,7 @@ const NewestState = () => {
     const companyIds = values.enterprise.length ? values.enterprise.map(item => item.value) : [];
     const storeIds = values.store.length ? values.store.map(item => item.storeId) : [];
     const recruitIds = values.staff.length ? values.staff.map(item => item.value) : [];
+    const status = values.status.length ? values.status[0].value : '';
     const str = values.search;
 
     setSearchContent({
@@ -129,6 +131,7 @@ const NewestState = () => {
       startDate,
       endDate,
       str,
+      status,
       companyIds,
       storeIds,
       recruitIds
@@ -322,7 +325,8 @@ const NewestState = () => {
       <HeaderSearch 
         filterFun={filter} 
         batchOperate={batchOperate} 
-        status={STATUS_LIST}
+        statusSingleSelect
+        status={NEWEST_STATE_KEY}
         canFilterStatus
       />
       <CenterSelectDate centerDateStyle={{marginBottom: 0}} />

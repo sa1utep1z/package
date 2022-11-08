@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {ErrorMessage} from 'formik';
-import { CheckBox } from '@rneui/themed';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -12,6 +10,7 @@ const OrderSingleDate = ({
   form, 
   label,
   isRequire = false,
+  labelStyle,
   ...rest
 }) => {
 
@@ -32,7 +31,7 @@ const OrderSingleDate = ({
   return (
     <View style={{flex: 1, marginBottom: form.errors[field.name] && form.touched[field.name] ? 10 : 20}}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>
+        <Text style={[styles.labelText, labelStyle]}>
           {isRequire && <Text style={{color: 'red'}}>*</Text>}
           {label}：</Text>
         <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]}>

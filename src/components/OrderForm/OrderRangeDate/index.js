@@ -13,6 +13,7 @@ const OrderRangeDate = ({
   field, 
   form, 
   label,
+  labelStyle,
   isRequire = false,
   canSelect = true, //是否可以选择
   limitCrossDate = false, //设置多个时间范围内是否可以交叉。（多个时间不支持交叉的话就需要修改对应的时间）
@@ -156,7 +157,7 @@ const OrderRangeDate = ({
   return (
     <View style={{marginBottom: form.errors[field.name] && form.touched[field.name]?.startDate && form.touched[field.name]?.endDate ? 10 : 20}}>
       <View style={styles.container}>
-        <Text style={styles.labelText}>
+        <Text style={[styles.labelText, labelStyle]}>
           {isRequire && <Text style={{color: 'red'}}>*</Text>}
           {label}：</Text>
         {canSelect ? <View style={[{flex: 1, flexDirection: 'row'}, form.errors[field.name] && form.touched[field.name]?.startDate && form.touched[field.name]?.endDate && styles.errorBorder]}>
