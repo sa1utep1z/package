@@ -279,7 +279,7 @@ const AdvanceAudit = (props) => {
               {item.type === 'mobile' ?
                 item.value ? <TouchableOpacity style={[styles.memberItem_value, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }]} onPress={() => callPhone(item)}>
                   <Text style={{ color: '#409EFF', fontSize: 28 }}>{item.value}</Text>
-                  <Entypo name='phone' size={16} color='#409EFF' />
+                  <Entypo name='phone' size={26} color='#409EFF' />
                 </TouchableOpacity> : <Text style={{ textAlignVertical: 'center', paddingLeft: 3, fontSize: 28 }}>无</Text> : item.type === 'advanceAmount' ?
                   <View style={styles.memberItem_value}>
                     <Formik
@@ -353,12 +353,12 @@ const AdvanceAudit = (props) => {
                       <Text style={styles.borderText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}</Text>
                     </View>
                     <View style={styles.content}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                         <Text style={styles.titleText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}审核.</Text>
                         <TouchableOpacity onPress={() => applyResult(item)}>
                           <Text style={[styles.titleText, { color: '#409EFF', fontSize: item.pass === null ? 35 : 26 }]}>{item.pass === null ? '待审核' : item.pass === true ? '通过' : '拒绝'}</Text>
                         </TouchableOpacity>
-                        {item.remark && <Text style={[styles.timeText, { marginLeft: 10 }]}>原因：{item.remark}</Text>}
+                        {item.remark && <Text style={[styles.timeText]}>原因：{item.remark}</Text>}
                       </View>
                       <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.timeText}>{item.role === 'FINANCE' ? '财务' : item.role === 'TREASURER' ? '会计' : '驻厂'}</Text>
@@ -385,7 +385,7 @@ const AdvanceAudit = (props) => {
             })
           }
           {
-            advanceFlow && advanceFlow.flowDetails && advanceFlow.flowDetails[advanceFlow.flowDetails.length - 1].pass === 'null' && <View style={styles.resultArea}>
+            advanceFlow && advanceFlow.flowDetails && advanceFlow.flowDetails[advanceFlow.flowDetails.length - 1].pass === null && <View style={styles.resultArea}>
               {
                 statusPress && statusPress.map((item, index) => {
                   return (
@@ -554,7 +554,8 @@ const styles = StyleSheet.create({
   },
   stepBoxStyle: {
     flexDirection: 'row',
-    marginHorizontal: 0
+    marginHorizontal: 0,
+    alignItems: 'center',
   },
   border: {
     flexDirection: 'row',
@@ -597,7 +598,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   line: {
-    height: 50,
+    height: 55,
     borderLeftWidth: 4,
     borderColor: '#409EFF',
     marginHorizontal: 33,
