@@ -106,20 +106,20 @@ export const WORKBENCH_LIST = [
         imgBackground: require('../../assets/images/dormitoryList.png'),
         routeName: NAVIGATION_KEYS.DORMITORY_LIST
       }, {
-        key: 'dormitoryCheck',
+        key: 'dormitoryCheckList',
         title: '宿舍点检',
         imgBackground: require('../../assets/images/dormitoryCheck.png'),
-        routeName: NAVIGATION_KEYS.DORMITORY_CHECK
+        routeName: NAVIGATION_KEYS.DORMITORY_CHECK_LIST
       }, {
         key: 'dormitoryViolation',
         title: '宿舍违纪',
         imgBackground: require('../../assets/images/dormitoryViolation.png'),
         routeName: NAVIGATION_KEYS.DORMITORY_VIOLATION
       }, {
-        key: 'dormitoryRecord',
-        title: '宿舍抄表',
+        key: 'dormitoryData',
+        title: '宿舍态势',
         imgBackground: require('../../assets/images/dormitoryRecord.png'),
-        routeName: NAVIGATION_KEYS.DORMITORY_RECORD
+        routeName: NAVIGATION_KEYS.DORMITORY_DATA
       }
     ]
   }, 

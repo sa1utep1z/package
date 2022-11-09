@@ -53,7 +53,14 @@ const DormitoryList = () => {
 
   return (
     <View style={styles.screen}>
-      <HeaderSearchOfDormitory selectIndex={index} />
+      <HeaderSearchOfDormitory 
+        selectIndex={index}
+        filterMore
+        filterMemberInfo
+        filterEnterprise
+        filterBuilding
+        filterLiveType
+      />
       <CenterSelectDate />
       <TabView
         lazy

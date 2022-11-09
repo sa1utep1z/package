@@ -7,9 +7,10 @@ import { useNavigation } from '@react-navigation/native';
 import HeaderSelectItem from './HeaderSelectItem';
 import HeaderSearchInput from './HeaderSearchInput';
 import HeaderRadioItem from './HeaderRadioItem';
+import HeaderDateRange from './HeaderDateRange';
 import FilterMore from './FilterMore';
 import { openDialog, setTitle } from '../../redux/features/PageDialog'; 
-import {DORMITORY_STAY_TYPE} from '../../utils/const';
+import {DORMITORY_STAY_TYPE, DORMITORY_ALL_TYPE} from '../../utils/const';
 import NAVIGATION_KEYS from '../../navigator/key';
 
 let restForm;
@@ -19,11 +20,20 @@ const initialValues = {
   liveType: [{label: '全部', value: 'ALL'}],
   floorNum: [],
   roomNum: [],
+  dormitoryType: [{label: '全部', value: 'ALL'}],
 };
 
 const HeaderSearchOfDormitory = ({
   selectIndex = 0,
-  isBatchOperate = true
+  otherHeaderStyle,
+  filterMore = false, //是否筛选更多；
+  filterEnterprise = false, //是否筛选企业；
+  filterBuilding = false, //是否筛选楼栋；
+  filterLiveType = false, //是否入住类别；
+  filterFloorAndRoom = false, //是否筛选楼层及房间号；
+  filterDormitoryType = false, //是否筛选宿舍分类，默认为否；
+  filterMemberInfo = false, //是否筛选会员姓名及身份证；
+  filterDateRange = false, //是否筛选日期范围；
 }) => {
   const navigation = useNavigation();
 
@@ -33,7 +43,11 @@ const HeaderSearchOfDormitory = ({
 
   const onSubmit = values => {
     if(values?.floorNum || values?.roomNum || values?.bedNum){
+      console.log('执行到这里了？');
       const {floorNum, roomNum, bedNum} = values;
+      console.log('floorNum', floorNum);
+      console.log('roomNum', roomNum);
+      console.log('bedNum', bedNum);
       if(floorNum.length || roomNum.length || bedNum.length){
         setIsFilterMore(true);
       }else{
@@ -58,8 +72,8 @@ const HeaderSearchOfDormitory = ({
       {({...rest}) => {
         restForm = rest;
         return (
-          <View style={styles.totalArea}>
-            {isBatchOperate && <View style={styles.lineArea}>
+          <View style={[styles.totalArea, otherHeaderStyle]}>
+            {filterEnterprise && <View style={styles.lineArea}>
               <Field
                 name="enterprise"
                 label="企业"
@@ -70,18 +84,18 @@ const HeaderSearchOfDormitory = ({
                 <Text style={styles.buttonText}>批量操作</Text>
               </TouchableOpacity>}
             </View>}
-            <View style={styles.lineArea}>
+            {filterBuilding && <View style={styles.lineArea}>
               <Field
                 name="buildingNum"
                 label="宿舍楼栋"
                 canSearch={false}
                 component={HeaderSelectItem}
               />
-              {isBatchOperate && <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
+              {filterMore && <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
                 <Text style={[styles.filterMoreText, isFilterMore && styles.filteringText]}>筛选更多</Text>
               </TouchableOpacity>}
-            </View>
-           {isBatchOperate && <View style={styles.lineArea}>
+            </View>}
+           {filterLiveType && <View style={styles.lineArea}>
               <Field
                 name="liveType"
                 label="入住类别"
@@ -89,7 +103,15 @@ const HeaderSearchOfDormitory = ({
                 component={HeaderRadioItem}
               />
             </View>}
-           {!isBatchOperate && <View style={styles.lineArea}>
+           {filterDormitoryType && <View style={styles.lineArea}>
+              <Field
+                name="dormitoryType"
+                label="宿舍分类"
+                radioList={DORMITORY_ALL_TYPE}
+                component={HeaderRadioItem}
+              />
+            </View>}
+           {filterFloorAndRoom && <View style={styles.lineArea}>
               <Field
                 name="floorNum"
                 label="楼层"
@@ -104,11 +126,15 @@ const HeaderSearchOfDormitory = ({
                 component={HeaderSelectItem}
               />
             </View>}
-            <Field
+            {filterMemberInfo && <Field
               name="search"
               placeholder={'请输入会员姓名、身份证或手机号码'}
               component={HeaderSearchInput}
-            />
+            />}
+            {filterDateRange && <Field
+              name="dateRange"
+              component={HeaderDateRange}
+            />}
           </View>
         )
       }}

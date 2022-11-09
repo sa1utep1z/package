@@ -289,17 +289,17 @@ export default Navigator = () => {
         }}
       />
       <Stack.Screen
-        name={NAVIGATION_KEYS.DORMITORY_CHECK}
-        component={NAVIGATION_PAGES.DORMITORY_CHECK}
+        name={NAVIGATION_KEYS.DORMITORY_CHECK_LIST}
+        component={NAVIGATION_PAGES.DORMITORY_CHECK_LIST}
         options={{
           headerTitle: '宿舍点检'
         }}
       />
       <Stack.Screen
-        name={NAVIGATION_KEYS.DORMITORY_RECORD}
-        component={NAVIGATION_PAGES.DORMITORY_RECORD}
+        name={NAVIGATION_KEYS.DORMITORY_DATA}
+        component={NAVIGATION_PAGES.DORMITORY_DATA}
         options={{
-          headerTitle: '宿舍抄表'
+          headerTitle: '宿舍态势'
         }}
       />
       <Stack.Screen

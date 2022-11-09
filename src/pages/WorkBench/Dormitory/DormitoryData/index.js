@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from 'react-native';
 
-const DormitoryRecord = () => {
+const DormitoryData = () => {
   return (
     <View style={styles.screen}>
       <Text>宿舍抄表</Text>
@@ -17,4 +17,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DormitoryRecord;
+export default DormitoryData;

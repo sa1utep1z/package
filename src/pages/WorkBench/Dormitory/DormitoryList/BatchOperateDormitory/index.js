@@ -133,7 +133,11 @@ const BatchOperateDormitory = ({
 
   return (
     <View style={styles.screen}>
-      <HeaderSearchOfDormitory isBatchOperate={false} />
+      <HeaderSearchOfDormitory 
+        filterBuilding
+        filterFloorAndRoom
+        filterMemberInfo
+      />
       <View style={{flexDirection: 'row', paddingLeft: 25, justifyContent: 'space-between', marginBottom: 5}}>
         <Text style={{fontSize: 26, color: '#999999'}}>共<Text style={{color: '#409EFF'}}> {showList.length} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>1</Text>/3 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
         </Text>

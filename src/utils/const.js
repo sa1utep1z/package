@@ -905,3 +905,10 @@ export const DORMITORY_TYPE = [
   {label: '男生宿舍', value: 'MALE_DORMITORY'},
   {label: '女生宿舍', value: 'FEMALE_DORMITORY'},
 ];
+
+//宿舍分类（包括ALL）；
+export const DORMITORY_ALL_TYPE = [
+  {label: '全部', value: 'ALL'},
+  {label: '男生宿舍', value: 'MALE_DORMITORY'},
+  {label: '女生宿舍', value: 'FEMALE_DORMITORY'},
+];

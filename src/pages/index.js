@@ -50,8 +50,8 @@ const NAVIGATION_PAGES_LIST = {
   DORMITORY_LIST: require('./WorkBench/Dormitory/DormitoryList'), //在离宿名单
   CREATE_DORMITORY: require('./WorkBench/Dormitory/CreateDormitory'), //新增住宿
   BATCH_OPERATE_DORMITORY: require('./WorkBench/Dormitory/DormitoryList/BatchOperateDormitory'), //批量操作在离宿名单
-  DORMITORY_CHECK: require('./WorkBench/Dormitory/DormitoryCheck'), //宿舍点检
-  DORMITORY_RECORD: require('./WorkBench/Dormitory/DormitoryRecord'), //宿舍抄表
+  DORMITORY_CHECK_LIST: require('./WorkBench/Dormitory/DormitoryCheckList'), //宿舍点检
+  DORMITORY_DATA: require('./WorkBench/Dormitory/DormitoryData'), //房间态势
   DORMITORY_VIOLATION: require('./WorkBench/Dormitory/DormitoryViolation'), //宿舍违纪
 
   //工作台（数据看板）

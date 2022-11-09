@@ -234,12 +234,7 @@ const NewestState = () => {
   const showTwoCard = item => {
     dialogRef.current.setShowDialog(true);
     setDialogContent({
-      bottomButton: false,
-      rightClose: <AntDesign
-        name='closecircleo'
-        size={20}
-        onPress={() => dialogRef.current.setShowDialog(false)}
-      />,
+      // rightClose: <AntDesign style={{paddingRight: 20}} name='closecircleo' size={20} onPress={() => dialogRef.current.setShowDialog(false)} />,
       dialogTitle: '会员信息',
       dialogComponent: <TwoCard message={item}/>
     });
@@ -302,6 +297,7 @@ const NewestState = () => {
         <Text 
           style={[
             styles.itemText,
+            {fontSize: 24}
           ]}
           numberOfLines={2}
           onPress={() => changeStatus(item)}

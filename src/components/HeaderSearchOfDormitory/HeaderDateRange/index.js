@@ -6,10 +6,10 @@ import moment from "moment";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useToast } from "react-native-toast-notifications";
 
-import { getYMD } from "../../../../utils";
-import { setStartDate, setEndDate } from "../../../../redux/features/RangeDateOfList";
+import { getYMD } from "../../../utils";
+import { setStartDate, setEndDate } from "../../../redux/features/RangeDateOfList";
 
-const HeaderDateRange = ({
+const PickerOfDateRange = ({
   field,
   form,
   clearTimer = true, //时间组件默认支持清空
@@ -97,7 +97,7 @@ const HeaderDateRange = ({
     <>
       <View style={styles.dateArea}>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>{startText || '报名开始：'}</Text>
+          <Text style={styles.title}>开始日期：</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('start')}>
               <AntDesign
@@ -116,9 +116,9 @@ const HeaderDateRange = ({
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ width: 40 }}></View>
+        <View style={{ width: 20 }}></View>
         <View style={styles.datePicker}>
-          <Text style={styles.title}>{endText || '报名结束：'}</Text>
+          <Text style={styles.title}>结束日期：</Text>
           <View style={styles.pressArea}>
             <TouchableOpacity style={styles.pickerTouchable} onPress={() => showDate('end')}>
               <AntDesign
@@ -177,9 +177,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   title: {
-    fontSize: 26,
-    color: '#000',
-    fontWeight: 'bold'
+    fontSize: 28,
+    color: '#333333'
   },
   pressArea: {
     flex: 1,
@@ -192,4 +191,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HeaderDateRange;
+export default PickerOfDateRange;

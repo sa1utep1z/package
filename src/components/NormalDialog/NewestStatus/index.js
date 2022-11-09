@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     maxHeight: 400
   },
   scrollStyle: {
-    paddingHorizontal: 20
+    paddingHorizontal: 10
   },
   titleBox: {
     minHeight: 40,
