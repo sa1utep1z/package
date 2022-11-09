@@ -328,6 +328,21 @@ export const GENDER = {
   'MALE': '男'
 };
 
+export const NEWEST_STATE_KEY = [
+  { title: '报名-待处理', value: 'SIGN_UP_PENDING', id: 1}, 
+  { title: '报名-无意向', value: 'SIGN_UP_NO_INTENTION', id: 2},
+  { title: '报名-已报名', value: 'SIGN_UP_INTENTION', id: 3},
+  { title: '面试-待处理', value: 'INTERVIEW_PENDING', id: 4},
+  { title: '面试-通过', value: 'INTERVIEW_PASS', id: 5},
+  { title: '面试-未去面试', value: 'INTERVIEW_NO_ARRIVE', id: 6 },
+  { title: '面试-未通过', value: 'INTERVIEW_FAIL', id: 7 },
+  { title: '入职-待处理', value: 'ON_BOARDING_PENDING', id: 8},
+  { title: '入职-未报到', value: 'ON_BOARDING_FAIL', id: 9 },
+  { title: '入职-已入职', value: 'ON_BOARDING_PASS', id: 10 },
+  { title: '在职', value: 'JOB_ON', id: 11},
+  { title: '离职', value: 'JOB_RESIGN', id: 12 },
+];
+
 export const STATUS_LIST_KEY = {
   "ALL": '全部',
   "NULL": '空',
@@ -877,4 +892,16 @@ export const DORMITORY_STAY_TYPE = [
   {label: '全部', value: 'ALL'},
   {label: '临时住宿', value: 'TEMPORARY_LIVE'},
   {label: '常规住宿', value: 'NORMAL_LIVE'},
+];
+
+//入住类别；
+export const DORMITORY_LIVE_TYPE = [
+  {label: '临时住宿', value: 'TEMPORARY_LIVE'},
+  {label: '常规住宿', value: 'NORMAL_LIVE'},
+];
+
+//宿舍分类；
+export const DORMITORY_TYPE = [
+  {label: '男生宿舍', value: 'MALE_DORMITORY'},
+  {label: '女生宿舍', value: 'FEMALE_DORMITORY'},
 ];

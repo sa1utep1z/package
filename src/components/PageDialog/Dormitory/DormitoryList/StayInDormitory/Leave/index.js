@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
 import { ScrollView, Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Formik, Field } from 'formik';
 import moment from 'moment';
@@ -9,15 +9,18 @@ import SelectTimeOfFilterMore from '../../../../../HeaderSearchOfDormitory/Filte
 
 let restForm;
 const initialValues = {
-  stayDate: moment().format('YYYY-MM-DD')
+  leaveDate: moment().format('YYYY-MM-DD')
 };
 
-const Leave = ({
-  reasonWrong = false
-}) => {
+const Leave = ({}, ref) => {
   const scrollViewRef = useRef(null);
 
   const [selectReason, setSelectReason] = useState('');
+  const [reasonWrong, setReasonWrong] = useState(false);
+
+  useImperativeHandle(ref, () => {
+    return { scrollViewRef, selectReason, setReasonWrong };
+  }, [selectReason]);
 
   const onSubmit = (values) => {
     console.log('提交', values);
@@ -84,8 +87,8 @@ const Leave = ({
             </View>
             <View style={{height: 55, paddingHorizontal: 20}}>
               <Field
-                name="stayDate"
-                label="入住日期"
+                name="leaveDate"
+                label="退宿日期"
                 fontSize={26}
                 canDelete={false}
                 borderColor='#EFEFEF'
@@ -237,4 +240,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Leave;
+export default forwardRef(Leave);

@@ -21,6 +21,7 @@ const SingleSelect = ({
   filterStore = false, //type为store的时候需要对列表进行筛选。
   showLabel = true,
   isRequire = false,
+  touchStyle,
   labelStyle,
   canSearch = true, //默认可以搜索
   ...rest
@@ -139,7 +140,7 @@ const SingleSelect = ({
   };
 
   return (
-    <View style={[{flex: 1}, styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}]}>
+    <View style={[{flex: 1}, styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}, touchStyle]}>
       <View style={styles.container}>
         {showLabel ? <Text style={[styles.labelText, labelStyle]}>
           {isRequire && <Text style={{color: 'red'}}>*</Text>}

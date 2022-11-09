@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity,   useWindowDimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { TabView } from 'react-native-tab-view';
+import { Button } from '@rneui/themed';
 
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
 import BottomList from './BottomList';
+import NAVIGATION_KEYS from '../../../../navigator/key';
 
 const DormitoryList = () => {
   const layout = useWindowDimensions();
+  const navigation = useNavigation();
 
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([
@@ -18,6 +22,8 @@ const DormitoryList = () => {
   ]);
 
   const renderScene = () => <BottomList type={index} />
+
+  const createDormitory = () => navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY);
 
   const renderTabBar = ({navigationState}) => {
     return (
@@ -57,6 +63,13 @@ const DormitoryList = () => {
         renderTabBar={renderTabBar}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
+      />
+      <Button
+        title="新增住宿"
+        onPress={createDormitory}
+        containerStyle={styles.buttonContainerStyle}
+        buttonStyle={styles.buttonStyle}
+        titleStyle={styles.titleStyle}
       />
     </View>
   )
@@ -105,6 +118,20 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     fontSize: 26, 
     color: '#333333'
+  },
+  buttonContainerStyle: {
+    margin: 20
+  },  
+  buttonStyle: {
+    height: 80,
+    backgroundColor: '#409EFF',
+    borderWidth: 0,
+    borderRadius: 50
+  },
+  titleStyle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 10
   }
 });
 

@@ -14,7 +14,9 @@ const SelectItemOfFilterMore = ({
   showLabel = true,
   canDelete = true,
   showArrow = true,
+  startLimit,
   borderColor,
+  selectOtherFunc,
   touchAreaStyle
 }) => {
   const [loading, setLoading] = useState(false);
@@ -34,6 +36,7 @@ const SelectItemOfFilterMore = ({
     if (event.type !== 'set') return;
     const currentDate = moment(selectedDate).format('YYYY-MM-DD');
     form.setFieldValue(field.name, currentDate);
+    selectOtherFunc && selectOtherFunc(field.name, currentDate);
   };
 
   const clearFieldValue = () => form.setFieldValue(field.name, '');
@@ -68,6 +71,7 @@ const SelectItemOfFilterMore = ({
       {showDatePicker &&
         <DateTimePicker 
           value={dateTime} 
+          minimumDate={startLimit && new Date(startLimit)}
           onChange={dateChange} 
         />
       }

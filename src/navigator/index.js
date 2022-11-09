@@ -275,6 +275,13 @@ export default Navigator = () => {
         }}
       />
       <Stack.Screen
+        name={NAVIGATION_KEYS.CREATE_DORMITORY}
+        component={NAVIGATION_PAGES.CREATE_DORMITORY}
+        options={{
+          headerTitle: '新增住宿'
+        }}
+      />
+      <Stack.Screen
         name={NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY}
         component={NAVIGATION_PAGES.BATCH_OPERATE_DORMITORY}
         options={{
