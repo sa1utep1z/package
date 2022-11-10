@@ -77,7 +77,7 @@ const WorkBench = (props) => {
   };
 
   return (
-    <ScrollView style={styles.screen}>
+    <ScrollView style={styles.screen} showsVerticalScrollIndicator={false} >
       {showList?.length && showList.map((item, index) => (
         <Card
           key={index}

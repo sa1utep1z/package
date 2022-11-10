@@ -44,15 +44,26 @@ export const DefaultEmptyArea = () => (
 );
 
 const PageDialog2 = () => {
+  const dispatch = useDispatch();
+
   const dialogSwitch = useSelector((state) => state.PageDialog2.showDialog);
   const dialogContent = useSelector((state) => state.PageDialog2.dialogComponent);
   const dialogTitle = useSelector((state) => state.PageDialog2.dialogTitle);
+
+  const close = () => {
+    dispatch(closeDialog());
+    dispatch(setRightArea({
+      title: '',
+      press: () => {}
+    }));
+  };
 
   return (
     <Modal
       animationType="fade"
       transparent
-      visible={dialogSwitch}>
+      visible={dialogSwitch}
+      onRequestClose={close}>
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
           <View style={styles.showArea}>

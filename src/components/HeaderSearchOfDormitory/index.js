@@ -42,12 +42,8 @@ const HeaderSearchOfDormitory = ({
   const [isFilterMore, setIsFilterMore] = useState(false);
 
   const onSubmit = values => {
-    if(values?.floorNum || values?.roomNum || values?.bedNum){
-      console.log('执行到这里了？');
+    if(values?.floorNum && values?.roomNum && values?.bedNum){
       const {floorNum, roomNum, bedNum} = values;
-      console.log('floorNum', floorNum);
-      console.log('roomNum', roomNum);
-      console.log('bedNum', bedNum);
       if(floorNum.length || roomNum.length || bedNum.length){
         setIsFilterMore(true);
       }else{
@@ -103,14 +99,6 @@ const HeaderSearchOfDormitory = ({
                 component={HeaderRadioItem}
               />
             </View>}
-           {filterDormitoryType && <View style={styles.lineArea}>
-              <Field
-                name="dormitoryType"
-                label="宿舍分类"
-                radioList={DORMITORY_ALL_TYPE}
-                component={HeaderRadioItem}
-              />
-            </View>}
            {filterFloorAndRoom && <View style={styles.lineArea}>
               <Field
                 name="floorNum"
@@ -124,6 +112,14 @@ const HeaderSearchOfDormitory = ({
                 label="房间号"
                 type="enterprise"
                 component={HeaderSelectItem}
+              />
+            </View>}
+            {filterDormitoryType && <View style={styles.lineArea}>
+              <Field
+                name="dormitoryType"
+                label="宿舍分类"
+                radioList={DORMITORY_ALL_TYPE}
+                component={HeaderRadioItem}
               />
             </View>}
             {filterMemberInfo && <Field

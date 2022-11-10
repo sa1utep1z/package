@@ -56,7 +56,8 @@ const PageDialog = () => {
     <Modal
       animationType="fade"
       transparent
-      visible={dialogSwitch}>
+      visible={dialogSwitch}
+      onRequestClose={close}>
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
           <TouchableOpacity style={styles.backPress} activeOpacity={1} onPress={close}/>

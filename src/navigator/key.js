@@ -52,6 +52,8 @@ const NAVIGATION_KEYS = {
   CREATE_DORMITORY: 'create_dormitory', //新增住宿
   BATCH_OPERATE_DORMITORY: 'batch_operate_dormitory', //批量处理在离宿名单
   DORMITORY_CHECK_LIST: 'dormitory_check_list', //宿舍点检
+  ADD_PROPERTY: 'add_property', //添加资产
+  ADD_DORMITORY_CHECKED: 'add_dormitory_checked', //添加点检记录
   DORMITORY_DATA: 'dormitory_data', //房间态势
   DORMITORY_VIOLATION: 'dormitory_violation', //宿舍违纪
 

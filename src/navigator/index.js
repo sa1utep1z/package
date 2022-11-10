@@ -296,6 +296,20 @@ export default Navigator = () => {
         }}
       />
       <Stack.Screen
+        name={NAVIGATION_KEYS.ADD_PROPERTY}
+        component={NAVIGATION_PAGES.ADD_PROPERTY}
+        options={{
+          headerTitle: '添加资产'
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ADD_DORMITORY_CHECKED}
+        component={NAVIGATION_PAGES.ADD_DORMITORY_CHECKED}
+        options={{
+          headerTitle: '添加点检记录'
+        }}
+      />
+      <Stack.Screen
         name={NAVIGATION_KEYS.DORMITORY_DATA}
         component={NAVIGATION_PAGES.DORMITORY_DATA}
         options={{
