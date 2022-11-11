@@ -9,6 +9,7 @@ import Footer from '../../../../../components/FlatList/Footer';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import NAVIGATION_KEYS from "../../../../../navigator/key";
 import CheckedDetail from '../../../../../components/PageDialog/Dormitory/DormitoryChecked/CheckedDetail';
+import CheckedRecord from '../../../../../components/PageDialog/Dormitory/DormitoryChecked/CheckedRecord';
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -64,24 +65,24 @@ const Total = ({
     const detailList = {
       hygieneStatus: item.id % 3,
       hygieneImages: [
-        {
-          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-          "name": "1.png",
-          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-          "md5": "6BF745B469034A38026A0C049FFA1942"
-        },
-        {
-          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-          "name": "1.png",
-          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-          "md5": "6BF745B469034A38026A0C049FFA1942"
-        },
-        {
-          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-          "name": "1.png",
-          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-          "md5": "6BF745B469034A38026A0C049FFA1942"
-        },
+        // {
+        //   "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+        //   "name": "1.png",
+        //   "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+        //   "md5": "6BF745B469034A38026A0C049FFA1942"
+        // },
+        // {
+        //   "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+        //   "name": "1.png",
+        //   "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+        //   "md5": "6BF745B469034A38026A0C049FFA1942"
+        // },
+        // {
+        //   "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+        //   "name": "1.png",
+        //   "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+        //   "md5": "6BF745B469034A38026A0C049FFA1942"
+        // },
       ],
       facilityStatus: item.id % 5,
       facilityImages: [
@@ -143,7 +144,7 @@ const Total = ({
   const recordOnPress = async() => {
     try {
       dispatch(setTitle('点检记录'));
-      dispatch(openDialog(<View style={{height: 100, borderWidth: 1}}></View>));
+      dispatch(openDialog(<CheckedRecord />));
     } catch (error) {
       console.log('error', error);
     }

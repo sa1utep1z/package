@@ -9,6 +9,7 @@ import { useToast } from "react-native-toast-notifications";
 const ImageZoom = ({
   imageUrls = [],
   isVisible = false,
+  index = 0,
   onShowModal = () => {},
   onCancel = () => {},
 }) => {
@@ -68,8 +69,8 @@ const ImageZoom = ({
 
   return (
     <View>
-      <Modal visible={isVisible}>
-        <ImageViewer imageUrls={imageUrls} renderHeader={header} enableSwipeDown saveToLocalByLongPress menuContext={{ saveToLocal: '保存图片到相册', cancel: '取消' }} onSave={(url) => savePhoto(url)} onShowModal={onShowModal} onSwipeDown={onCancel} Onclick={onCancel} />
+      <Modal visible={isVisible} onRequestClose={onCancel}>
+        <ImageViewer index={index} imageUrls={imageUrls} renderHeader={header} enableSwipeDown saveToLocalByLongPress menuContext={{ saveToLocal: '保存图片到相册', cancel: '取消' }} onSave={(url) => savePhoto(url)} onShowModal={onShowModal} onSwipeDown={onCancel} onClick={onCancel} />
       </Modal>
     </View>
   )
