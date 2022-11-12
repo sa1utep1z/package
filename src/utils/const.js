@@ -912,3 +912,17 @@ export const DORMITORY_ALL_TYPE = [
   {label: '男生宿舍', value: 'MALE_DORMITORY'},
   {label: '女生宿舍', value: 'FEMALE_DORMITORY'},
 ];
+
+//宿舍卫生状况；
+export const DORMITORY_HYGIENE_LIST = [
+  {label: '合格', value: 'pass'},
+  {label: '不合格', value: 'fail'},
+];
+
+//宿舍设施状况；
+export const DORMITORY_FACILITY_LIST = [
+  {label: '正常', value: 'normal'},
+  {label: '维修中', value: 'fixing'},
+  {label: '损坏', value: 'broken'},
+  {label: '丢失', value: 'missing'},
+];

@@ -3,6 +3,7 @@ import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ErrorMessage} from 'formik';
 import { CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 /**单选*/
 const RadioSelect = ({
@@ -28,19 +29,12 @@ const RadioSelect = ({
           {isRequire && <Text style={{color: 'red'}}>*</Text>}
           {label}：</Text> : <></>}
         <View style={{flex: 1}}>
-          <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, radioItemsStyle]}>
+          <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingLeft: 10}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, radioItemsStyle]}>
             {radioList.map((radio, radioIndex) => {
+              const isChecked = !!field?.value?.length ? field.value[0].value === radio.value : false;
               return (
                 <TouchableOpacity key={radioIndex} style={{maxWidth: `${(1/radioList.length) * 100}%`, minHeight: 60,  flexDirection: 'row', alignItems: 'center', padding: 5}} onPress={() => radioOnPress(radio)}>
-                  <CheckBox
-                    center
-                    size={30}
-                    pointerEvents={'none'}
-                    checked={!!field?.value?.length ? field.value[0].value === radio.value : false}
-                    containerStyle={{padding: 0}}
-                    checkedIcon="dot-circle-o"
-                    uncheckedIcon="circle-o"
-                  />
+                  <MaterialIcons style={{textAlign: 'center', marginRight: 5}} name={isChecked ? 'radio-button-checked' : 'radio-button-off'} size={32} color={isChecked ? '#409EFF' : '#999999'} />
                   <Text style={[{fontSize: 26, color: '#333333', paddingRight: 10}, !field?.value?.length && styles.itemText_none]}>{radio.label}</Text>
                 </TouchableOpacity>
               )

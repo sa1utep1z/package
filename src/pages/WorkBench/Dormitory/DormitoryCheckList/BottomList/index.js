@@ -65,12 +65,12 @@ const Total = ({
     const detailList = {
       hygieneStatus: item.id % 3,
       hygieneImages: [
-        // {
-        //   "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-        //   "name": "1.png",
-        //   "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-        //   "md5": "6BF745B469034A38026A0C049FFA1942"
-        // },
+        {
+          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+          "name": "1.png",
+          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+          "md5": "6BF745B469034A38026A0C049FFA1942"
+        },
         // {
         //   "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
         //   "name": "1.png",
@@ -98,12 +98,12 @@ const Total = ({
           "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
           "md5": "6BF745B469034A38026A0C049FFA1942"
         },
-        {
-          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-          "name": "1.png",
-          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-          "md5": "6BF745B469034A38026A0C049FFA1942"
-        },
+        // {
+        //   "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+        //   "name": "1.png",
+        //   "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+        //   "md5": "6BF745B469034A38026A0C049FFA1942"
+        // },
       ],
       waterNum: 188,
       electricNum: 1888,
@@ -132,7 +132,9 @@ const Total = ({
     };
     switch(item.status){
       case 0:
-        navigation.navigate(NAVIGATION_KEYS.ADD_DORMITORY_CHECKED);
+        navigation.navigate(NAVIGATION_KEYS.ADD_DORMITORY_CHECKED, {
+          item
+        });
         break;
       case 1:
         dispatch(setTitle('点检详情'));
@@ -186,7 +188,7 @@ const Total = ({
       data={showList}
       style={{backgroundColor: '#fff'}}
       renderItem={renderItem}
-      keyExtractor={(item,index) => item.id}
+      keyExtractor={item => item.id}
       getItemLayout={(data, index)=>({length: 90, offset: 90 * index, index})}
       refreshing={isLoading}
       onRefresh={refresh}

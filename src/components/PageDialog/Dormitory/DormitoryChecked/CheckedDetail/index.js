@@ -8,7 +8,8 @@ import { closeDialog } from "../../../../../redux/features/PageDialog";
 import ImageZoom from '../../../../../components/ImageZoom';
 
 const CheckedDetail = ({
-  detailData
+  detailData,
+  isDialog2, //是否是二级弹窗，是的话则不显示底部按钮；
 }) => {
   const dispatch = useDispatch();
 
@@ -29,110 +30,83 @@ const CheckedDetail = ({
   };
 
   return (
-    <View style={{height: 900}}>
-      <View style={{paddingHorizontal: 30}}>
-        <View style={{backgroundColor: '#979797', borderWidth: 1, borderColor: '#999999', borderRadius: 10}}>
-          <Text style={{fontSize: 26, color: '#FFFFFF', textAlign: 'center', borderBottomWidth: 1, borderColor: '#FFFFFF', paddingVertical: 8}}>点检日期：2022-05-03</Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{flex: 1, fontSize: 24, color: '#FFFFFF', textAlign: 'center', borderRightWidth: 1, borderColor: '#FFFFFF', paddingVertical: 6}}>楼栋：241栋</Text>
-            <Text style={{flex: 1, fontSize: 24, color: '#FFFFFF', textAlign: 'center', paddingVertical: 6}}>房间：504</Text>
-          </View>
+    <View style={styles.totalArea}>
+      <View style={styles.topArea}>
+        <Text style={styles.dateText}>点检日期：2022-05-03</Text>
+        <View style={styles.bottomTextArea}>
+          <Text style={styles.bottomTextArea_left}>楼栋：241栋</Text>
+          <Text style={styles.bottomTextArea_right}>房间：504</Text>
         </View>
       </View>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <View style={{marginHorizontal: 30, marginVertical: 30}}>
+      <ScrollView style={styles.scrollViewArea} showsVerticalScrollIndicator={false}>
+        <View style={styles.scrollView_total}>
           <Shadow style={styles.dormitoryArea}>
             <View style={{borderRadius: 10}}>
               <View style={styles.dormitoryArea_topArea}>
                 <Text style={styles.dormitoryArea_topAreaText}>宿舍点检详情</Text>
               </View>
               <View style={styles.dormitoryArea_bottomArea}>
-                <View style={{height: 50, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF'}}>
-                  <View style={styles.leftTitle}>
-                    <Text style={styles.titleText}>宿舍卫生状况</Text>
-                  </View>
-                  <View style={{flexDirection: 'row', paddingRight: 20, alignItems: 'center'}}>
+                <View style={styles.textLine}>
+                  <Text style={styles.titleText}>宿舍卫生状况</Text>
+                  <View style={styles.textLine_right}>
                     <Text style={styles.rightText}>{detailData.hygieneStatus === 1 ? '合格' : '不合格'}</Text>
                     <AntDesign style={{marginLeft: 6}} name={detailData.hygieneStatus === 1 ? "checkcircle" : "closecircle"} size={28} color={detailData.hygieneStatus === 1 ? "#3dab6b" : "red"} />
                   </View>
                 </View>
-                <View style={{minHeight: 50, flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF'}}>
-                  <View style={{width: 230, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF', backgroundColor: '#ECF5FF'}}>
-                    <Text style={styles.titleText}>宿舍卫生照片</Text>
-                  </View>
-                  <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 10, paddingTop: 10}}>
+                <View style={styles.photoArea}>
+                  <Text style={styles.titleText}>宿舍卫生照片</Text>
+                  <View style={styles.rightPhotosArea}>
                     {detailData.hygieneImages.length ? <>
                       {detailData.hygieneImages.map((image, imageIndex) => (
                       <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.hygieneImages, imageIndex)}>
-                        <Image
-                          style={{ width: 120, height: 120, marginRight: 10, marginBottom: 10}}
-                          source={{ uri: `${image.url}` }}
-                        />
+                        <Image style={styles.image} source={{ uri: `${image.url}` }} />
                       </TouchableOpacity>))}
-                    </> : <Text style={{fontSize: 24, color: '#333333', paddingLeft: 10}}>无</Text>}
+                    </> : <Text style={styles.image_null_text}>无</Text>}
                   </View>
                 </View>
-                <View style={{height: 50, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF'}}>
-                  <View style={styles.leftTitle}>
-                    <Text style={styles.titleText}>宿舍设施状况</Text>
-                  </View>
-                  <View style={{flexDirection: 'row', paddingRight: 20, alignItems: 'center'}}>
+                <View style={styles.textLine}>
+                  <Text style={styles.titleText}>宿舍设施状况</Text>
+                  <View style={styles.textLine_right}>
                     <Text style={styles.rightText}>{detailData.facilityStatus === 1 ? '正常' : detailData.facilityStatus === 2 ? '维修中' : detailData.facilityStatus === 3 ? '损坏' : '丢失'}</Text>
                     <AntDesign style={{marginLeft: 6}} name={detailData.facilityStatus === 1 ? 'checkcircle' : detailData.facilityStatus === 2 ? 'pausecircle' : detailData.facilityStatus === 3 ? 'exclamationcircle' : 'questioncircle'} size={28} color={detailData.facilityStatus === 1 ? '#3dab6b' : detailData.facilityStatus === 2 ? '#d2d655' : detailData.facilityStatus === 3 ? '#a93d3d' : '#999999'} />
                   </View>
                 </View>
-                <View style={{flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF'}}>
-                  <View style={{width: 230, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF', backgroundColor: '#ECF5FF'}}>
-                    <Text style={styles.titleText}>宿舍设施照片</Text>
-                  </View>
-                  <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 10, paddingTop: 10}}>
-                    {detailData.facilityImages.map((image, imageIndex) => (
-                      <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.facilityImages, imageIndex)}>
-                        <Image
-                          style={{ width: 120, height: 120, marginRight: 10, marginBottom: 10}}
-                          source={{ uri: `${image.url}` }}
-                        />
-                      </TouchableOpacity>))}
+                <View style={styles.photoArea}>
+                  <Text style={styles.titleText}>宿舍设施照片</Text>
+                  <View style={styles.rightPhotosArea}>
+                    {detailData.facilityImages.length ? <>
+                      {detailData.facilityImages.map((image, imageIndex) => (
+                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.facilityImages, imageIndex)}>
+                          <Image style={styles.image} source={{ uri: `${image.url}` }} />
+                        </TouchableOpacity>))}
+                    </> : <Text style={styles.image_null_text}>无</Text>}
                   </View>
                 </View>
                 <View style={styles.listItem}>
-                  <View style={styles.leftTitle}>
-                    <Text style={styles.titleText}>本期水表数</Text>
-                  </View>
-                  <View style={{flexDirection: 'row', paddingRight: 20, alignItems: 'center'}}>
-                    <Text style={styles.rightText}>{`${detailData.waterNum} 立方`}</Text>
-                  </View>
+                  <Text style={styles.titleText}>本期水表数</Text>
+                  <Text style={styles.rightText}>{`${detailData.waterNum} 立方`}</Text>
                 </View>
                 <View style={styles.listItem}>
-                  <View style={styles.leftTitle}>
-                    <Text style={styles.titleText}>本期电表数</Text>
-                  </View>
+                  <Text style={styles.titleText}>本期电表数</Text>
                   <Text style={styles.rightText}>{`${detailData.electricNum} 度`}</Text>
                 </View>
-                <View style={{flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF'}}>
-                  <View style={{width: 230, justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: '#409EFF', backgroundColor: '#ECF5FF'}}>
-                    <Text style={styles.titleText}>水/电表现场照片</Text>
-                  </View>
-                  <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 10, paddingTop: 10}}>
-                    {detailData.waterAndElectricImages.map((image, imageIndex) => (
-                      <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.waterAndElectricImages, imageIndex)}>
-                        <Image
-                          style={{ width: 120, height: 120, marginRight: 10, marginBottom: 10}}
-                          source={{ uri: `${image.url}` }}
-                        />
-                      </TouchableOpacity>))}
+                <View style={styles.photoArea}>
+                  <Text style={styles.titleText}>水/电表现场照片</Text>
+                  <View style={styles.rightPhotosArea}>
+                    {detailData.waterAndElectricImages.length ? <>
+                      {detailData.waterAndElectricImages.map((image, imageIndex) => (
+                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.waterAndElectricImages, imageIndex)}>
+                          <Image style={styles.image} source={{ uri: `${image.url}` }} />
+                        </TouchableOpacity>))}
+                    </> : <Text style={styles.image_null_text}>无</Text>}
                   </View>
                 </View>
-                <View style={{height: 130, flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF', alignItems: 'center'}}>
-                  <View style={styles.leftTitle}>
-                    <Text style={styles.titleText}>本次点检情况描述</Text>
-                  </View>
-                  <Text style={{flex: 1, paddingHorizontal: 20, fontSize: 24, color: '#333333'}}>哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</Text>
+                <View style={styles.longTextArea}>
+                  <Text style={styles.longTextTitle}>本次点检情况描述</Text>
+                  <Text style={styles.longText}>哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</Text>
                 </View>
                 <View style={styles.lastItem}>
-                  <View style={styles.leftTitle}>
-                    <Text style={styles.titleText}>下次点检日期</Text>
-                  </View>
+                  <Text style={styles.titleText}>下次点检日期</Text>
                   <Text style={styles.rightText}>2022-05-17</Text>
                 </View>
               </View>
@@ -140,7 +114,7 @@ const CheckedDetail = ({
           </Shadow>
         </View>
       </ScrollView>
-      <View style={styles.bottomArea}>
+      {!isDialog2 && <View style={styles.bottomArea}>
         <View style={styles.leftArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
             <Text style={styles.closeText}>取消</Text>
@@ -151,14 +125,63 @@ const CheckedDetail = ({
             <Text style={styles.confirmText}>确认</Text>
           </TouchableOpacity>
         </View>
-      </View>
-      {isVisible && <ImageZoom index={imgIndex} isVisible={isVisible} imageUrls={imageUrls} onShowModal={modalOnPress} onCancel={modalOnPress} />
-      }
+      </View>}
+      <ImageZoom 
+        index={imgIndex} 
+        isVisible={isVisible} 
+        imageUrls={imageUrls} 
+        onShowModal={modalOnPress} 
+        onCancel={modalOnPress} 
+      />
     </View>
   )
 };
 
 const styles = StyleSheet.create({
+  totalArea: {
+    height: 900
+  },
+  topArea: {
+    marginHorizontal: 30,
+    backgroundColor: '#979797',
+    borderWidth: 1,
+    borderColor: '#999999',
+    borderRadius: 10
+  },
+  dateText: {
+    fontSize: 26, 
+    color: '#FFFFFF', 
+    textAlign: 'center', 
+    borderBottomWidth: 1, 
+    borderColor: '#FFFFFF', 
+    paddingVertical: 8
+  },
+  bottomTextArea: {
+    flexDirection: 'row'
+  },
+  bottomTextArea_left: {
+    flex: 1, 
+    fontSize: 24, 
+    color: '#FFFFFF', 
+    textAlign: 'center', 
+    borderRightWidth: 1, 
+    borderColor: '#FFFFFF', 
+    paddingVertical: 6
+  },
+  bottomTextArea_right: {
+    flex: 1, 
+    fontSize: 24, 
+    color: '#FFFFFF', 
+    textAlign: 'center', 
+    paddingVertical: 6
+  },
+  scrollViewArea: {
+    flex: 1
+  },
+  scrollView_total: {
+    marginHorizontal: 30, 
+    marginVertical: 30
+  },
   bottomArea: {
     height: 100, 
     flexDirection: 'row'
@@ -204,6 +227,82 @@ const styles = StyleSheet.create({
   dormitoryArea_bottomArea: {
     padding: 10
   },
+  textLine: {
+    height: 50, 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    borderTopWidth: 1, 
+    borderLeftWidth: 1, 
+    borderRightWidth: 1, 
+    borderColor: '#409EFF'
+  },
+  textLine_right: {
+    flexDirection: 'row', 
+    paddingRight: 20, 
+    alignItems: 'center'
+  },
+  photoArea: {
+    minHeight: 50, 
+    flexDirection: 'row', 
+    borderTopWidth: 1, 
+    borderLeftWidth: 1, 
+    borderRightWidth: 1, 
+    borderColor: '#409EFF'
+  },
+  photoArea_leftText: {
+    width: 230,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderColor: '#409EFF',
+    backgroundColor: '#ECF5FF'
+  },
+  rightPhotosArea: {
+    flex: 1, 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    paddingHorizontal: 10, 
+    paddingTop: 10
+  },
+  image: {
+    width: 120,
+    height: 120,
+    marginRight: 10,
+    marginBottom: 10
+  },
+  image_null_text: {
+    fontSize: 24, 
+    color: '#333333', 
+    paddingLeft: 10
+  },
+  longTextArea: {
+    minHeight: 100,
+    flexDirection: 'row', 
+    borderTopWidth: 1, 
+    borderLeftWidth: 1, 
+    borderRightWidth: 1, 
+    borderColor: '#409EFF', 
+    alignItems: 'center'
+  },
+  longTextTitle: {
+    width: 230, 
+    height: '100%', 
+    fontSize: 24, 
+    color: '#333333', 
+    fontWeight: 'bold', 
+    borderRightWidth: 1, 
+    borderColor: '#409EFF', 
+    backgroundColor: '#ECF5FF', 
+    textAlign: 'center', 
+    textAlignVertical: 'center'
+  },
+  longText: {
+    flex: 1, 
+    paddingVertical: 10,
+    paddingHorizontal: 20, 
+    fontSize: 24, 
+    color: '#333333'
+  },
   listItem: {
     height: 50, 
     flexDirection: 'row', 
@@ -220,16 +319,14 @@ const styles = StyleSheet.create({
     borderColor: '#409EFF', 
     alignItems: 'center'
   },
-  leftTitle: {
-    width: 230, 
+  titleText: {
+    width: 230,
     height: '100%', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    textAlign: 'center',
+    textAlignVertical: 'center',
     borderRightWidth: 1, 
     borderColor: '#409EFF', 
-    backgroundColor: '#ECF5FF'
-  },
-  titleText: {
+    backgroundColor: '#ECF5FF',
     fontSize: 24, 
     color: '#333333', 
     fontWeight: 'bold'

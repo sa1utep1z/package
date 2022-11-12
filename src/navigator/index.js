@@ -306,7 +306,7 @@ export default Navigator = () => {
         name={NAVIGATION_KEYS.ADD_DORMITORY_CHECKED}
         component={NAVIGATION_PAGES.ADD_DORMITORY_CHECKED}
         options={{
-          headerTitle: '添加点检记录'
+          headerTitle: '新增点检记录'
         }}
       />
       <Stack.Screen

@@ -283,7 +283,7 @@ const WagesDetail = ({
                   keyboardType="numeric"
                   maxLength={4}
                   component={SingleInput}
-                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>{values.debtType[0].value === 'DAILY' ? '元/天' : values.debtType[0].value === 'WEEKLY' ? '元/周' : '元/月'}</Text>}
+                  inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333', marginRight: 20}}>{values.debtType[0].value === 'DAILY' ? '元/天' : values.debtType[0].value === 'WEEKLY' ? '元/周' : '元/月'}</Text>}
                 /> : <></>}
                 <Field  
                   name='eat'

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Image, View, Text, TouchableOpacity, Modal} from 'react-native';
+import {StyleSheet, Image, View, Text, TouchableOpacity, Modal, Alert, PermissionsAndroid, Platform} from 'react-native';
 import {ErrorMessage} from 'formik';
 import { useToast } from 'react-native-toast-notifications';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,7 +16,10 @@ const SelectPhotos = ({
   form, 
   label,
   isRequire = false,
-  inputStyle
+  inputStyle,
+  labelStyle,
+  type = 'select', //选择照片方式，默认从相册上传；
+  maxPictureNum = 5, //最大上传图片数量，默认为5
 }) => {
   const toast = useToast();
 
@@ -57,6 +60,40 @@ const SelectPhotos = ({
     }
   };
 
+  //拍照上传捏；
+  const takePictureOnPress = async() => {
+    try {
+      let isOpen = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
+      if (Platform.OS === 'android' && !isOpen) {
+        let res = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+        if (res !== 'granted') {
+          Alert.alert('相机权限未开启', '请在手机的“设置”选项中允许访问您的摄像头和麦克风');
+        }
+      }
+      openCamera();
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  //调用相机拍照
+  const openCamera = async () => {
+    try {
+      const cameraImage = await ImagePicker.openCamera({
+        cropperChooseText: '确定',
+        cropperCancelText: '取消',
+        cropping: false,
+        multiple: false,
+        compressImageQuality: 0.2,
+      });
+      const fileName = `${cameraImage.modificationDate}${Math.round(Math.random() * 1000000000000) + '.jpg'}`;
+      uploadImage(fileName, cameraImage.path);
+    } catch (error) {
+      console.log('openCamera->err', error);
+      // toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
   const pressImage = image => {
     setModalVisible(true);
     setShowImage(image);
@@ -75,7 +112,7 @@ const SelectPhotos = ({
     <>
       <View style={[{marginBottom: form.errors[field.name] && form.touched[field.name] ? 10 : 20}, inputStyle]}>
         <View style={styles.container}>
-          <Text style={styles.labelText}>
+          <Text style={[styles.labelText, labelStyle]}>
             {isRequire && <Text style={{color: 'red'}}>*</Text>}
             {label}：</Text>
           <View style={{flex: 1}}>
@@ -88,14 +125,14 @@ const SelectPhotos = ({
                   />
                 </TouchableOpacity>
               )) : <></>}
-              <TouchableOpacity style={[{width: 120, height: 120, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 4, justifyContent: 'center', alignItems: 'center'}, !!form.errors[field.name] && form.touched[field.name] && {borderColor: 'red'}]} onPress={selectPhotosOnPress}>
+              {(field.value.length <= (maxPictureNum - 1)) && <TouchableOpacity style={[{width: 120, height: 120, borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 4, justifyContent: 'center', alignItems: 'center'}, !!form.errors[field.name] && form.touched[field.name] && {borderColor: 'red'}]} onPress={type === 'select' ? selectPhotosOnPress : takePictureOnPress}>
                 <AntDesign
                   name='plus'
                   size={36}
                   color='#999999'
                 />
-                <Text style={{fontSize: 20, color: '#999999'}}>上传</Text>
-              </TouchableOpacity>
+                <Text style={{fontSize: 20, color: '#999999'}}>{type === 'takePicture' ? '拍照上传' : '上传'}</Text>
+              </TouchableOpacity>}
             </View>
             <ErrorMessage
               name={field.name}

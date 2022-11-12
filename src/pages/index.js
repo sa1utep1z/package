@@ -52,7 +52,7 @@ const NAVIGATION_PAGES_LIST = {
   BATCH_OPERATE_DORMITORY: require('./WorkBench/Dormitory/DormitoryList/BatchOperateDormitory'), //批量操作在离宿名单
   DORMITORY_CHECK_LIST: require('./WorkBench/Dormitory/DormitoryCheckList'), //宿舍点检
   ADD_PROPERTY: require('./WorkBench/Dormitory/AddProperty'), //添加资产
-  ADD_DORMITORY_CHECKED: require('./WorkBench/Dormitory/AddDormitoryChecked'), //添加点检记录
+  ADD_DORMITORY_CHECKED: require('./WorkBench/Dormitory/AddDormitoryChecked'), //新增点检记录
   DORMITORY_DATA: require('./WorkBench/Dormitory/DormitoryData'), //房间态势
   DORMITORY_VIOLATION: require('./WorkBench/Dormitory/DormitoryViolation'), //宿舍违纪
 
