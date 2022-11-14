@@ -136,7 +136,7 @@ const Total = ({
           item
         });
         break;
-      case 1:
+      default:
         dispatch(setTitle('点检详情'));
         dispatch(openDialog(<CheckedDetail detailData={detailList} />));
         break;

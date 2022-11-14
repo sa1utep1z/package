@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
   dormitoryFacility: Yup.array().min(1, '请选择宿舍设施状况'),
   waterNum: Yup.string().required('请输入本期水表数'),
   electricNum: Yup.string().required('请输入本期电表数'),
-  waterAndElectricPicture: Yup.array().min(2, '请完整上传水/电表现场照片'),
+  waterAndElectricPicture: Yup.array().min(2, '请完整上传水/电表现场照片（需两张）'),
   remark: Yup.string().required('请输入点检情况描述'),
   nextCheckDate: Yup.string().required('请选择下次点检日期'),
 });
@@ -73,99 +73,101 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
                 <Text style={styles.bottomArea_rightText}>房间号：{item.room}</Text>
               </View>
             </View>
-            <ScrollView style={styles.scrollView}>
-              <View style={styles.shadowView}>
-                <Shadow style={styles.shadowArea}>
-                  <View style={styles.content}>
-                    <View style={styles.titleArea}>
-                      <Text style={styles.titleText}>点检详情</Text>
+            <KeyboardAvoidingView behavior='height' style={{flex: 1, flexDirection: 'column'}}>
+              <ScrollView style={styles.scrollView}>
+                <View style={styles.shadowView}>
+                  <Shadow style={styles.shadowArea}>
+                    <View style={styles.content}>
+                      <View style={styles.titleArea}>
+                        <Text style={styles.titleText}>点检详情</Text>
+                      </View>
+                      <View style={styles.shadowContent}>
+                        <Field
+                          name="dormitoryHygiene"
+                          label="宿舍卫生状况"
+                          isRequire
+                          labelStyle={{width: 220}}
+                          radioList={DORMITORY_HYGIENE_LIST}
+                          component={RadioSelect}
+                        />
+                        <Field
+                          name="dormitoryHygienePictureList"
+                          label="宿舍卫生照片"
+                          type="takePicture"
+                          maxPictureNum={3}
+                          labelStyle={{width: 220}}
+                          component={SelectPhotos}
+                        />
+                        <Field
+                          name="dormitoryFacility"
+                          label="宿舍设施状况"
+                          isRequire
+                          canSearch={false}
+                          selectList={DORMITORY_FACILITY_LIST}
+                          labelStyle={{width: 220}}
+                          component={SingleSelect}
+                        />
+                        <Field
+                          name="dormitoryFacilityPictureList"
+                          label="宿舍设施照片"
+                          type="takePicture"
+                          maxPictureNum={3}
+                          labelStyle={{width: 220}}
+                          component={SelectPhotos}
+                        />
+                        <Field
+                          name="waterNum"
+                          label="本期水表数"
+                          isRequire
+                          selectTextOnFocus
+                          keyboardType="numeric"
+                          maxLength={8}
+                          labelStyle={{width: 220}}
+                          component={SingleInput}
+                          inputRightComponent={waterInputRightComponent}
+                        />
+                        <Field
+                          name="electricNum"
+                          label="本期电表数"
+                          isRequire
+                          selectTextOnFocus
+                          keyboardType="numeric"
+                          maxLength={8}
+                          labelStyle={{width: 220}}
+                          component={SingleInput}
+                          inputRightComponent={electricInputRightComponent}
+                        />
+                        <Field
+                          name="waterAndElectricPicture"
+                          label="水/电表现场照片"
+                          type="takePicture"
+                          isRequire
+                          maxPictureNum={2}
+                          labelStyle={{width: 280}}
+                          component={SelectPhotos}
+                        />
+                        <Field
+                          name="remark"
+                          label="本次点检情况描述"
+                          isRequire
+                          selectTextOnFocus
+                          labelStyle={{width: 280}}
+                          inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
+                          component={SingleInput}
+                        />
+                        <Field
+                          name="nextCheckDate"
+                          label="下次点检日期"
+                          isRequire
+                          labelStyle={{width: 220}}
+                          component={OrderSingleDate}
+                        />
+                      </View>
                     </View>
-                    <View style={styles.shadowContent}>
-                      <Field
-                        name="dormitoryHygiene"
-                        label="宿舍卫生状况"
-                        isRequire
-                        labelStyle={{width: 220}}
-                        radioList={DORMITORY_HYGIENE_LIST}
-                        component={RadioSelect}
-                      />
-                      <Field
-                        name="dormitoryHygienePictureList"
-                        label="宿舍卫生照片"
-                        type="takePicture"
-                        maxPictureNum={3}
-                        labelStyle={{width: 220}}
-                        component={SelectPhotos}
-                      />
-                      <Field
-                        name="dormitoryFacility"
-                        label="宿舍设施状况"
-                        isRequire
-                        canSearch={false}
-                        selectList={DORMITORY_FACILITY_LIST}
-                        labelStyle={{width: 220}}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="dormitoryFacilityPictureList"
-                        label="宿舍设施照片"
-                        type="takePicture"
-                        maxPictureNum={3}
-                        labelStyle={{width: 220}}
-                        component={SelectPhotos}
-                      />
-                      <Field
-                        name="waterNum"
-                        label="本期水表数"
-                        isRequire
-                        selectTextOnFocus
-                        keyboardType="numeric"
-                        maxLength={8}
-                        labelStyle={{width: 220}}
-                        component={SingleInput}
-                        inputRightComponent={waterInputRightComponent}
-                      />
-                      <Field
-                        name="electricNum"
-                        label="本期电表数"
-                        isRequire
-                        selectTextOnFocus
-                        keyboardType="numeric"
-                        maxLength={8}
-                        labelStyle={{width: 220}}
-                        component={SingleInput}
-                        inputRightComponent={electricInputRightComponent}
-                      />
-                      <Field
-                        name="waterAndElectricPicture"
-                        label="水/电表现场照片"
-                        type="takePicture"
-                        isRequire
-                        maxPictureNum={2}
-                        labelStyle={{width: 280}}
-                        component={SelectPhotos}
-                      />
-                      <Field
-                        name="remark"
-                        label="本次点检情况描述"
-                        isRequire
-                        selectTextOnFocus
-                        labelStyle={{width: 280}}
-                        inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
-                        component={SingleInput}
-                      />
-                      <Field
-                        name="nextCheckDate"
-                        label="下次点检日期"
-                        isRequire
-                        labelStyle={{width: 220}}
-                        component={OrderSingleDate}
-                      />
-                    </View>
-                  </View>
-                </Shadow>
-              </View>
-            </ScrollView>
+                  </Shadow>
+                </View>
+              </ScrollView>
+            </KeyboardAvoidingView>
             <Button
               title="保存"
               onPress={restForm.handleSubmit}
@@ -173,13 +175,17 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
               buttonStyle={styles.buttonStyle}
               titleStyle={styles.titleStyle}
             />
-        </View>)
+          </View>
+        )
       }}
     </Formik>
   )
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   screen: {
     flex: 1,
     paddingTop: 30
@@ -229,7 +235,7 @@ const styles = StyleSheet.create({
   },
   shadowArea: {
     width: '100%',
-    marginBottom: 25
+    marginBottom: 10
   },
   content: {
     borderRadius: 10

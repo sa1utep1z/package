@@ -119,7 +119,7 @@ const WaitToEntry = ({
           <View style={styles.bottomArea}>
             <View style={styles.leftArea}>
               <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
-                <Text style={styles.closeText}>拒绝</Text>
+                <Text style={styles.closeText}>取消</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.rightArea}>
@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   closeText: {
-    fontSize: 28, 
-    color: 'red'
+    fontSize: 28,
+    color: '#999999'
   },
   confirmText: {
     fontSize: 28, 

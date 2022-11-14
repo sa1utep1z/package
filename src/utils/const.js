@@ -926,3 +926,10 @@ export const DORMITORY_FACILITY_LIST = [
   {label: '损坏', value: 'broken'},
   {label: '丢失', value: 'missing'},
 ];
+
+//入住类别；
+export const PROPERTY_STATUS_LIST = [
+  {label: '正常', value: 'normal'},
+  {label: '损坏', value: 'broken'},
+  {label: '维修中', value: 'fixing'},
+];

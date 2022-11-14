@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
 import {ErrorMessage} from 'formik';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -46,10 +46,10 @@ const SingleInput = ({
                 selectionColor="#409EFF"
                 {...rest}
               />
-              {inputRightComponent}
               {clearIcon && !!field.value.length && <TouchableOpacity activeOpacity={1} style={styles.clearIconArea} onPress={() => onChangeText('')}>
                 <AntDesign name="closecircle" size={28} color="#999999" />
               </TouchableOpacity>}
+              {inputRightComponent}
             </View>
             {lengthLimit ? <View style={styles.lengthLimitArea}>
               <Text style={styles.lengthLimitText}>{`${field.value.length}/${rest.maxLength}`}</Text>

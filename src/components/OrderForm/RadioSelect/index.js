@@ -40,11 +40,7 @@ const RadioSelect = ({
               )
             })}
           </View>
-          <ErrorMessage
-            name={field.name}
-            style={styles.errorMessage}
-            component={Text}
-        />
+          <ErrorMessage name={field.name} style={styles.errorMessage} component={Text} />
         </View>
       </View>
     </View>
