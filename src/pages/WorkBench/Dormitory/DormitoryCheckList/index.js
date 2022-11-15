@@ -6,8 +6,8 @@ import { Button } from '@rneui/themed';
 
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
-import BottomList from './BottomList';
 import NAVIGATION_KEYS from '../../../../navigator/key';
+import BottomList from './BottomList';
 
 const DormitoryCheckList = () => {
   const layout = useWindowDimensions();
@@ -52,7 +52,6 @@ const DormitoryCheckList = () => {
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory 
-        selectIndex={index}
         filterBuilding
         filterDormitoryType
         filterFloorAndRoom

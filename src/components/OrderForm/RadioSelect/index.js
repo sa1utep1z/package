@@ -15,6 +15,7 @@ const RadioSelect = ({
   labelStyle,
   isRequire = false,
   showLabel = true,
+  rightComponent,
   ...rest
 }) => {
 
@@ -39,6 +40,7 @@ const RadioSelect = ({
                 </TouchableOpacity>
               )
             })}
+            {rightComponent}
           </View>
           <ErrorMessage name={field.name} style={styles.errorMessage} component={Text} />
         </View>

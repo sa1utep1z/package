@@ -933,3 +933,22 @@ export const PROPERTY_STATUS_LIST = [
   {label: '损坏', value: 'broken'},
   {label: '维修中', value: 'fixing'},
 ];
+
+//违纪类别；
+export const VIOLATION_TYPE_LIST = [
+  {label: '违规使用大功率电器', value: 'useHighPowerElectricalAppliance'},
+  {label: '私拉乱接电线', value: 'connectWiresWithoutPermission'},
+  {label: '恶意损坏宿舍物品', value: 'brokeDormitoryThing'},
+  {label: '宿舍打架斗殴', value: 'fightInDormitory'},
+  {label: '私藏管制刀具', value: 'carryKnife'},
+  {label: '私自闯入异性宿舍', value: 'breakingIntoFemaleDormitory'}, //女性不大可能闯入男性宿舍吧-v-
+  {label: '违规带外人留宿', value: 'carryOtherPeopleIntoDormitory'},
+  {label: '其他', value: 'otherReason'},
+];
+
+//违纪类别；
+export const PUNISH_RESULT = [
+  {label: '警告', value: 'warning'},
+  {label: '二次警告', value: 'warningTwoSecond'},
+  {label: '取消住宿', value: 'cancelLiving'},
+];

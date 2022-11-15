@@ -36,13 +36,13 @@ const SingleInput = ({
           {label}：</Text>}
         <View style={{flex: 1}}>
           <View style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, inputContainerStyle]}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
               <TextInput
                 value={field.value.replace(/<br\/>/g,"\n")}
                 placeholder={placeholder || `请输入${label}`}
                 placeholderTextColor="#999999"
                 onChangeText={onChangeText}
-                style={[{flex: 1, fontSize: 26}, centerInput && {textAlign: 'center'}]}
+                style={[{flex: 1, fontSize: 26, textAlignVertical: 'top'}, centerInput && {textAlign: 'center'}]}
                 selectionColor="#409EFF"
                 {...rest}
               />

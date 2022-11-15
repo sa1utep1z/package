@@ -43,7 +43,7 @@ const OrderSingleDate = ({
                 color={field.value ? '#333333' : '#999999'}
                 style={{marginRight: 10}}
               />
-              <Text style={{fontSize: 26, color: field.value ? '#333333' : '#999999'}}>{field.value || '请选择日期'}</Text>
+              <Text style={{fontSize: 26, color: field.value ? '#333333' : '#999999'}}>{field.value || `请选择${label}`}</Text>
             </TouchableOpacity>
             {!!form.errors[field.name] && form.touched[field.name] && <Text style={[styles.errorMessage, !form.errors[field.name] && !form.touched[field.name] && {opacity: 0}]}>{form.errors[field.name]}</Text>}
           </View>

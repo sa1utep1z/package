@@ -310,17 +310,24 @@ export default Navigator = () => {
         }}
       />
       <Stack.Screen
+        name={NAVIGATION_KEYS.DORMITORY_VIOLATION}
+        component={NAVIGATION_PAGES.DORMITORY_VIOLATION}
+        options={{
+          headerTitle: '宿舍查房'
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ADD_VIOLATION}
+        component={NAVIGATION_PAGES.ADD_VIOLATION}
+        options={{
+          headerTitle: '住宿违纪处罚单'
+        }}
+      />
+      <Stack.Screen
         name={NAVIGATION_KEYS.DORMITORY_DATA}
         component={NAVIGATION_PAGES.DORMITORY_DATA}
         options={{
           headerTitle: '宿舍态势'
-        }}
-      />
-      <Stack.Screen
-        name={NAVIGATION_KEYS.DORMITORY_VIOLATION}
-        component={NAVIGATION_PAGES.DORMITORY_VIOLATION}
-        options={{
-          headerTitle: '宿舍违纪'
         }}
       />
     </>

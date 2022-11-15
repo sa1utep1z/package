@@ -54,8 +54,9 @@ const NAVIGATION_KEYS = {
   DORMITORY_CHECK_LIST: 'dormitory_check_list', //宿舍点检
   ADD_PROPERTY: 'add_property', //添加资产
   ADD_DORMITORY_CHECKED: 'add_dormitory_checked', //新增点检记录
+  DORMITORY_VIOLATION: 'dormitory_violation', //宿舍查房
+  ADD_VIOLATION: 'add_violation', //开罚单
   DORMITORY_DATA: 'dormitory_data', //房间态势
-  DORMITORY_VIOLATION: 'dormitory_violation', //宿舍违纪
 
   //工作台（数据看板）
   DATA_STATISTICS: 'DATA_statistics', //数据统计

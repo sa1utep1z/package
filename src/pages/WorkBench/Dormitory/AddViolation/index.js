@@ -4,6 +4,9 @@ import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useToast } from "react-native-toast-notifications";
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Button } from '@rneui/themed';
 import moment from 'moment';
 import * as Yup from 'yup';
@@ -11,10 +14,25 @@ import * as Yup from 'yup';
 import SingleInput from "../../../../components/OrderForm/SingleInput";
 import RadioSelect from "../../../../components/OrderForm/RadioSelect";
 import SingleSelect from "../../../../components/OrderForm/SingleSelect";
+import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
 import OCR_Scan from '../../../../components/OCR_Scan';
 import ListApi from '../../../../request/ListApi';
-import { SUCCESS_CODE, CHANEL_SOURCE_NAME, DORMITORY_LIVE_TYPE, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE } from '../../../../utils/const';
+import { SUCCESS_CODE, CHANEL_SOURCE_NAME, VIOLATION_TYPE_LIST, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PUNISH_RESULT } from '../../../../utils/const';
+
+const MaleOrFemaleRightIcon = ({value}) => value.length ? 
+<View style={styles.maleOrFemaleRightIconArea}>
+  <Ionicons 
+    size={40} 
+    name={value[0].value === 'MALE_DORMITORY' ? 'man' : 'woman'} 
+    color={value[0].value === 'MALE_DORMITORY' ? '#409EFF' : '#eb00d8'}
+  />
+</View> : <></>;
+
+const PunishResultRightIcon = ({value}) => value.length ?
+<View style={styles.punishResultRightIconArea}>
+  {value[0].value === 'cancelLiving' ? <MaterialCommunityIcons name="account-cancel" size={40} color="red" /> : <AntDesign name='warning' size={36} color={value[0].value === 'warning' ? '#ffcc00' : 'red'} />}
+</View> : <></>;
 
 let restForm;
 
@@ -23,29 +41,35 @@ const validationSchema = Yup.object().shape({
   memberPhone: Yup.string().required('请输入手机号'),
   memberIdCard: Yup.string().required('请输入身份证号'),
   memberFrom: Yup.string().required('请输入籍贯'),
-  dormitoryType: Yup.array().min(1, '请选择入住类别'),
   maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
   buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
   floorNum: Yup.array().min(1, '请选择楼层'),
   roomNum: Yup.array().min(1, '请选择房间号'),
   bedNum: Yup.array().min(1, '请选择床位号'),
-  liveInDate: Yup.string().required('请选择入住日期')
+  violationType: Yup.array().min(1, '请选择违纪类别'),
+  violationOtherReason: Yup.string().required('请输入违纪描述文本'),
+  violationPhotos: Yup.array().min(1, '请拍照上传违纪照片（最多两张）'),
+  punishResult: Yup.array().min(1, '请选择处罚结果'),
+  punishDate: Yup.string().required('请选择处罚日期'),
 });
 const initialValues = {
   memberName: '',
   memberPhone: '',
   memberIdCard: '',
   memberFrom: '',
-  dormitoryType: [],
   maleOrFemale: [],
   buildingNum: [],
   floorNum: [],
   roomNum: [],
   bedNum: [],
-  liveInDate: moment().format('YYYY-MM-DD')
+  violationType: [],
+  violationOtherReason: '',
+  violationPhotos: [],
+  punishResult: [],
+  punishDate: moment().format('YYYY-MM-DD')
 };
 
-const CreateDormitory = () => {
+const AddViolation = () => {
   const OCR_Ref = useRef(null);
   const toast = useToast();
 
@@ -166,8 +190,8 @@ const CreateDormitory = () => {
                           multiline
                           clearIcon
                           labelStyle={{width: 160}}
-                          inputContainerStyle={{minHeight: 120}}
                           inputStyle={{flex: 0, minHeight: 60, marginBottom: 0}}
+                          inputContainerStyle={{minHeight: 120}}
                           component={SingleInput}
                         />
                       </View>
@@ -231,26 +255,19 @@ const CreateDormitory = () => {
                     </View>
                   </View>
                 </Shadow>
-                <Shadow style={[styles.shadowArea, {marginBottom: 15}]}>
+                <Shadow style={styles.shadowArea}>
                   <View style={styles.content}>
                     <View style={styles.titleArea}>
                       <Text style={styles.titleText}>住宿信息</Text>
                     </View>
                     <View style={styles.shadowContent_liveInfo}>
                       <Field
-                        name="dormitoryType"
-                        label="入住类别"
-                        isRequire
-                        labelStyle={{width: 160}}
-                        radioList={DORMITORY_LIVE_TYPE}
-                        component={RadioSelect}
-                      />
-                      <Field
                         name="maleOrFemale"
                         label="宿舍分类"
                         isRequire
                         labelStyle={{width: 160}}
                         radioList={DORMITORY_TYPE}
+                        rightComponent={<MaleOrFemaleRightIcon value={rest.values.maleOrFemale} />}
                         component={RadioSelect}
                       />
                       <Field
@@ -289,22 +306,66 @@ const CreateDormitory = () => {
                         selectList={CREATE_ORDER_JOB_TYPE}
                         component={SingleSelect}
                       />
-                      <View style={{height: 60, marginBottom: 20}}>
-                        <Field
-                          name="liveInDate"
-                          label="入住日期"
-                          isRequire
-                          labelStyle={{width: 160}}
-                          component={OrderSingleDate}
-                        />
-                      </View>
+                    </View>
+                  </View>
+                </Shadow>
+                <Shadow style={[styles.shadowArea, {marginBottom: 10}]}>
+                  <View style={styles.content}>
+                    <View style={styles.titleArea}>
+                      <Text style={styles.titleText}>违纪信息</Text>
+                    </View>
+                    <View style={styles.shadowContent_violationInfo}>
+                      <Field
+                        name="violationType"
+                        label="违纪类别"
+                        isRequire
+                        canSearch={false}
+                        labelStyle={{width: 160}}
+                        selectList={VIOLATION_TYPE_LIST}
+                        component={SingleSelect}
+                      />
+                      {rest.values.violationType.length ? rest.values.violationType[0].value === 'otherReason' && <Field
+                        name="violationOtherReason"
+                        label="违纪文字描述"
+                        selectTextOnFocus
+                        isRequire
+                        clearIcon
+                        labelStyle={{width: 220}}
+                        inputContainerStyle={{minHeight: 120}}
+                        component={SingleInput}
+                      /> : <></>}
+                      <Field
+                        name="punishResult"
+                        label="处罚结果"
+                        isRequire
+                        labelStyle={{width: 160}}
+                        radioList={PUNISH_RESULT}
+                        rightComponent={<PunishResultRightIcon value={rest.values.punishResult} />}
+                        component={RadioSelect}
+                      />
+                      <Field
+                        name="violationPhotos"
+                        label="违纪照片"
+                        type="takePicture"
+                        isRequire
+                        maxPictureNum={2}
+                        labelStyle={{width: 160}}
+                        component={SelectPhotos}
+                      />
+                      <Field
+                        name="punishDate"
+                        label="处罚日期"
+                        isRequire
+                        labelStyle={{width: 160}}
+                        component={OrderSingleDate}
+                      />
                     </View>
                   </View>
                 </Shadow>
               </View>
             </ScrollView>
             <Button
-              title="保存"
+              title="开罚单"
               onPress={restForm.submitForm}
               containerStyle={styles.buttonContainerStyle}
               buttonStyle={styles.buttonStyle}
@@ -360,8 +421,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF', 
     borderBottomLeftRadius: 10, 
     borderBottomRightRadius: 10,
-    padding: 20,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    padding: 20
   },
   shadowContent_signUpInfo: {
     backgroundColor: '#FFFFFF', 
@@ -373,7 +434,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF', 
     borderBottomLeftRadius: 10, 
     borderBottomRightRadius: 10,
-    padding: 20
+    padding: 20,
+    paddingBottom: 0
+  },
+  shadowContent_violationInfo: {
+    backgroundColor: '#FFFFFF', 
+    borderBottomLeftRadius: 10, 
+    borderBottomRightRadius: 10,
+    padding: 20,
+    paddingBottom: 0
+  },
+  punishResultRightIconArea: {
+    flex: 1, 
+    height: 60, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  maleOrFemaleRightIconArea: {
+    flex: 1, 
+    height: 60, 
+    justifyContent: 'center', 
+    alignItems: 'flex-end', 
+    paddingRight: 10
   },
   lineArea: {
     height: 60, 
@@ -425,4 +507,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateDormitory;
+export default AddViolation;

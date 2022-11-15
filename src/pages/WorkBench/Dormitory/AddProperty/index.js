@@ -11,17 +11,26 @@ import SingleInput from "../../../../components/OrderForm/SingleInput";
 import RadioSelect from "../../../../components/OrderForm/RadioSelect";
 import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
-import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
-import { SUCCESS_CODE, DORMITORY_LIVE_TYPE, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PROPERTY_STATUS_LIST } from '../../../../utils/const';
+import { SUCCESS_CODE, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PROPERTY_STATUS_LIST } from '../../../../utils/const';
 
-const RightUnionOfNumber = ({restForm, number}) => (
+const RightUnionOfNumber = ({field, form}) => (
   <View style={styles.unionArea}>
-    <TouchableOpacity style={styles.touchArea} onPress={()=>restForm.setFieldValue(`property${number}.union`, 'ge')}>
-      <MaterialIcons style={styles.iconArea} name={restForm.values[`property${number}`][`union`] == 'ge' ? 'radio-button-checked' : 'radio-button-off'} size={32} color={restForm.values[`property${number}`][`union`] == 'ge' ? '#409EFF' : '#999999'} />
+    <TouchableOpacity style={styles.touchArea} onPress={() => form.setFieldValue(field.name, 'ge')}>
+      <MaterialIcons
+        style={styles.iconArea}
+        size={32}
+        color={field.value == 'ge' ? '#409EFF' : '#999999'}
+        name={field.value == 'ge' ? 'radio-button-checked' : 'radio-button-off'}
+      />
       <Text style={styles.iconText}>个</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.touchArea} onPress={()=>restForm.setFieldValue(`property${number}.union`, 'tai')}>
-      <MaterialIcons style={styles.iconArea} name={restForm.values[`property${number}`][`union`] == 'tai' ? 'radio-button-checked' : 'radio-button-off'} size={32} color={restForm.values[`property${number}`][`union`] == 'tai' ? '#409EFF' : '#333333'} />
+    <TouchableOpacity style={styles.touchArea} onPress={() => form.setFieldValue(field.name, 'tai')}>
+      <MaterialIcons
+        style={styles.iconArea}
+        size={32}
+        color={field.value == 'tai' ? '#409EFF' : '#333333'}
+        name={field.value == 'tai' ? 'radio-button-checked' : 'radio-button-off'}
+      />
       <Text style={styles.iconText}>台</Text>
     </TouchableOpacity>
   </View>
@@ -206,7 +215,7 @@ const AddProperty = () => {
                             keyboardType="numeric"
                             labelStyle={{width: 160}}
                             inputStyle={{flex: 0, minHeight: 60, flex: 1}}
-                            inputRightComponent={<RightUnionOfNumber restForm={restForm} number={propertyNameIndex} />}
+                            inputRightComponent={<Field name={`property${propertyNameIndex}.union`} component={RightUnionOfNumber} />}
                             component={SingleInput}
                           />
                           <Field

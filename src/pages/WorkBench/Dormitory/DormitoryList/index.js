@@ -6,8 +6,8 @@ import { Button } from '@rneui/themed';
 
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
-import BottomList from './BottomList';
 import NAVIGATION_KEYS from '../../../../navigator/key';
+import BottomList from './BottomList';
 
 const DormitoryList = () => {
   const layout = useWindowDimensions();

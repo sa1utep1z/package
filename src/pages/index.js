@@ -53,8 +53,9 @@ const NAVIGATION_PAGES_LIST = {
   DORMITORY_CHECK_LIST: require('./WorkBench/Dormitory/DormitoryCheckList'), //宿舍点检
   ADD_PROPERTY: require('./WorkBench/Dormitory/AddProperty'), //添加资产
   ADD_DORMITORY_CHECKED: require('./WorkBench/Dormitory/AddDormitoryChecked'), //新增点检记录
+  DORMITORY_VIOLATION: require('./WorkBench/Dormitory/DormitoryViolation'), //宿舍查房
+  ADD_VIOLATION: require('./WorkBench/Dormitory/AddViolation'), //开罚单
   DORMITORY_DATA: require('./WorkBench/Dormitory/DormitoryData'), //房间态势
-  DORMITORY_VIOLATION: require('./WorkBench/Dormitory/DormitoryViolation'), //宿舍违纪
 
   //工作台（数据看板）
   DATA_STATISTICS: require('./WorkBench/OtherFunction/DATA_Statistics'), //数据统计

@@ -112,7 +112,7 @@ export const WORKBENCH_LIST = [
         routeName: NAVIGATION_KEYS.DORMITORY_CHECK_LIST
       }, {
         key: 'dormitoryViolation',
-        title: '宿舍违纪',
+        title: '宿舍查房',
         imgBackground: require('../../assets/images/dormitoryViolation.png'),
         routeName: NAVIGATION_KEYS.DORMITORY_VIOLATION
       }, {
