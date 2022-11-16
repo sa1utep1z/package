@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Formik, Field } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 import HeaderSelectItem from './HeaderSelectItem';
 import HeaderSearchInput from './HeaderSearchInput';
@@ -25,19 +26,24 @@ const initialValues = {
 
 const HeaderSearchOfDormitory = ({
   selectIndex = 0,
+  enterpriseStyle,
   otherHeaderStyle,
   filterMore = false, //是否筛选更多；
   filterEnterprise = false, //是否筛选企业；
   filterBuilding = false, //是否筛选楼栋；
+  filterFloor = false, //是否筛选楼层；
   filterLiveType = false, //是否入住类别；
-  filterFloorAndRoom = false, //是否筛选楼层及房间号；
   filterDormitoryType = false, //是否筛选宿舍分类，默认为否；
   filterMemberInfo = false, //是否筛选会员姓名及身份证；
   filterDateRange = false, //是否筛选日期范围；
+  filterFloorAndRoom = false, //是否筛选楼层及房间号（在同一行中）；
+  filterBuildingAndFloor = false, //是否筛选楼栋跟楼层（在同一行中）；
 }) => {
   const navigation = useNavigation();
 
   const dispatch = useDispatch();
+
+  const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
 
   const [isFilterMore, setIsFilterMore] = useState(false);
 
@@ -68,70 +74,97 @@ const HeaderSearchOfDormitory = ({
       {({...rest}) => {
         restForm = rest;
         return (
-          <View style={[styles.totalArea, otherHeaderStyle]}>
-            {filterEnterprise && <View style={styles.lineArea}>
-              <Field
-                name="enterprise"
-                label="企业"
-                type="enterprise"
-                component={HeaderSelectItem}
-              />
-              {(selectIndex === 1 || selectIndex === 3) &&<TouchableOpacity style={styles.buttonArea} onPress={batchOperate}>
-                <Text style={styles.buttonText}>批量操作</Text>
-              </TouchableOpacity>}
-            </View>}
-            {filterBuilding && <View style={styles.lineArea}>
-              <Field
-                name="buildingNum"
-                label="宿舍楼栋"
-                canSearch={false}
-                component={HeaderSelectItem}
-              />
-              {filterMore && <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
-                <Text style={[styles.filterMoreText, isFilterMore && styles.filteringText]}>筛选更多</Text>
-              </TouchableOpacity>}
-            </View>}
-           {filterLiveType && <View style={styles.lineArea}>
-              <Field
-                name="liveType"
-                label="入住类别"
-                radioList={DORMITORY_STAY_TYPE}
-                component={HeaderRadioItem}
-              />
-            </View>}
-           {filterFloorAndRoom && <View style={styles.lineArea}>
-              <Field
-                name="floorNum"
-                label="楼层"
-                type="enterprise"
-                component={HeaderSelectItem}
-              />
-              <View style={{width: 20}}></View>
-              <Field
-                name="roomNum"
-                label="房间号"
-                type="enterprise"
-                component={HeaderSelectItem}
-              />
-            </View>}
-            {filterDormitoryType && <View style={styles.lineArea}>
-              <Field
-                name="dormitoryType"
-                label="宿舍分类"
-                radioList={DORMITORY_ALL_TYPE}
-                component={HeaderRadioItem}
-              />
-            </View>}
-            {filterMemberInfo && <Field
-              name="search"
-              placeholder={'请输入会员姓名、身份证或手机号码'}
-              component={HeaderSearchInput}
-            />}
-            {filterDateRange && <Field
-              name="dateRange"
-              component={HeaderDateRange}
-            />}
-          </View>
+          <>
+            {showSearch ? <View style={[styles.totalArea, otherHeaderStyle]}>
+              {filterEnterprise && <View style={styles.lineArea}>
+                <Field
+                  name="enterprise"
+                  label="企业"
+                  type="enterprise"
+                  otherLabelStyle={enterpriseStyle}
+                  component={HeaderSelectItem}
+                />
+                {(selectIndex === 1 || selectIndex === 3) &&<TouchableOpacity style={styles.buttonArea} onPress={batchOperate}>
+                  <Text style={styles.buttonText}>批量操作</Text>
+                </TouchableOpacity>}
+              </View>}
+              {filterBuilding && <View style={styles.lineArea}>
+                <Field
+                  name="buildingNum"
+                  label="宿舍楼栋"
+                  canSearch={false}
+                  component={HeaderSelectItem}
+                />
+                {filterMore && <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>
+                  <Text style={[styles.filterMoreText, isFilterMore && styles.filteringText]}>筛选更多</Text>
+                </TouchableOpacity>}
+              </View>}
+            {filterFloorAndRoom && <View style={styles.lineArea}>
+                <Field
+                  name="floorNum"
+                  label="楼层"
+                  type="enterprise"
+                  component={HeaderSelectItem}
+                />
+                <View style={{width: 20}}></View>
+                <Field
+                  name="roomNum"
+                  label="房间号"
+                  type="enterprise"
+                  component={HeaderSelectItem}
+                />
+              </View>}
+              {filterBuildingAndFloor && <View style={styles.lineArea}>
+                <Field
+                  name="buildingNum"
+                  label="宿舍楼栋"
+                  canSearch={false}
+                  component={HeaderSelectItem}
+                />
+                <View style={{width: 20}}></View>
+                <Field
+                  name="floorNum"
+                  label="楼层"
+                  type="enterprise"
+                  component={HeaderSelectItem}
+                />
+              </View>}
+              {filterFloor && <View style={styles.lineArea}>
+                <Field
+                  name="floorNum"
+                  label="楼层"
+                  type="enterprise"
+                  otherLabelStyle={{width: 140}}
+                  component={HeaderSelectItem}
+                />
+              </View>}
+              {filterLiveType && <View style={styles.lineArea}>
+                <Field
+                  name="liveType"
+                  label="入住类别"
+                  radioList={DORMITORY_STAY_TYPE}
+                  component={HeaderRadioItem}
+                />
+              </View>}
+              {filterDormitoryType && <View style={styles.lineArea}>
+                <Field
+                  name="dormitoryType"
+                  label="宿舍分类"
+                  radioList={DORMITORY_ALL_TYPE}
+                  component={HeaderRadioItem}
+                />
+              </View>}
+              {filterMemberInfo && <Field
+                name="search"
+                placeholder={'请输入会员姓名、身份证或手机号码'}
+                component={HeaderSearchInput}
+              />}
+              {filterDateRange && <Field
+                name="dateRange"
+                component={HeaderDateRange}
+              />}
+            </View> : <></>}
+          </>
         )
       }}
     </Formik>

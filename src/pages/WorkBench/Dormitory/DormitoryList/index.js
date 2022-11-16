@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TabView } from 'react-native-tab-view';
+import { useDispatch } from 'react-redux';
 import { Button } from '@rneui/themed';
 
+import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
+import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import NAVIGATION_KEYS from '../../../../navigator/key';
 import BottomList from './BottomList';
 
 const DormitoryList = () => {
+  const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
+    })
+    dispatch(openListSearch());
+  }, [])
 
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([
@@ -60,6 +71,7 @@ const DormitoryList = () => {
         filterEnterprise
         filterBuilding
         filterLiveType
+        enterpriseStyle={{width: 140}}
       />
       <CenterSelectDate />
       <TabView

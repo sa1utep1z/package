@@ -20,20 +20,7 @@ const DormitoryViolationDetail = ({
 
   const passOnPress = () => dispatch(closeDialog());
 
-  const violationList = [
-    {
-      "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-      "name": "1.png",
-      "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-      "md5": "6BF745B469034A38026A0C049FFA1942"
-    },
-    {
-      "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
-      "name": "1.png",
-      "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
-      "md5": "6BF745B469034A38026A0C049FFA1942"
-    }
-  ];
+
 
   const modalOnPress = () => setIsVisible(!isVisible);
 
@@ -74,13 +61,17 @@ const DormitoryViolationDetail = ({
                     <Text style={styles.titleText}>渠道来源</Text>
                     <Text style={styles.rightText}>{violationDetail.from}</Text>
                   </View>
-                  <View style={styles.textLine}>
-                    <Text style={styles.titleText}>所属部门</Text>
-                    <Text style={styles.rightText}>{violationDetail.bumen}</Text>
-                  </View>
+                  {violationDetail.from === 'SUPPLIER' && <View style={styles.textLine}>
+                    <Text style={styles.titleText}>供应商：</Text>
+                    <Text style={styles.rightText}>{violationDetail.supplier || '无'}</Text>
+                  </View>}
+                  {violationDetail.from === 'RECRUITER' && <View style={styles.textLine}>
+                    <Text style={styles.titleText}>经纪人：</Text>
+                    <Text style={styles.rightText}>{memberInfoList.recruitName || '无'}</Text>
+                  </View>}
                   <View style={styles.lastItem}>
-                    <Text style={styles.titleText}>归属招聘员</Text>
-                    <Text style={styles.rightText}>{violationDetail.person}</Text>
+                    <Text style={styles.titleText}>归属门店</Text>
+                    <Text style={styles.rightText}>{violationDetail.bumen}</Text>
                   </View>
                 </View>
               </View>
@@ -93,23 +84,23 @@ const DormitoryViolationDetail = ({
                 <View style={styles.dormitoryArea_bottomArea}>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>宿舍楼栋</Text>
-                    <Text style={styles.rightText}>241栋</Text>
+                    <Text style={styles.rightText}>{violationDetail.building}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>宿舍分类</Text>
-                    <Text style={styles.rightText}>男生宿舍</Text>
+                    <Text style={styles.rightText}>{violationDetail.dormitoryType}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>宿舍楼层</Text>
-                    <Text style={styles.rightText}>12F</Text>
+                    <Text style={styles.rightText}>{violationDetail.floor}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>房间号</Text>
-                    <Text style={styles.rightText}>1209</Text>
+                    <Text style={styles.rightText}>{violationDetail.room}</Text>
                   </View>
                   <View style={styles.lastItem}>
                     <Text style={styles.titleText}>床位号</Text>
-                    <Text style={styles.rightText}>1号床</Text>
+                    <Text style={styles.rightText}>{violationDetail.bed}</Text>
                   </View>
                 </View>
               </View>
@@ -122,18 +113,18 @@ const DormitoryViolationDetail = ({
                 <View style={styles.dormitoryArea_bottomArea}>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>违纪类别</Text>
-                    <Text style={styles.rightText}>违规使用大功率电器</Text>
+                    <Text style={styles.rightText}>{violationDetail.violationType}</Text>
                   </View>
-                  <View style={{minHeight: 50, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#409EFF', paddingRight: 10}}>
+                  <View style={styles.photos}>
                     <Text style={styles.titleText}>违纪文字描述</Text>
-                    <Text style={styles.rightText}>违纪问题很大很多救命啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</Text>
+                    <Text style={styles.rightText}>{violationDetail.violationRemark}</Text>
                   </View>
                   <View style={styles.photoArea}>
                     <Text style={styles.titleText}>违纪照片</Text>
                     <View style={styles.rightPhotosArea}>
-                      {violationList.length ? <>
-                        {violationList.map((image, imageIndex) => (
-                          <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(violationList, imageIndex)}>
+                      {violationDetail.violationList.length ? <>
+                        {violationDetail.violationList.map((image, imageIndex) => (
+                          <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(violationDetail.violationList, imageIndex)}>
                             <Image style={styles.image} source={{ uri: `${image.url}` }} />
                           </TouchableOpacity>))}
                       </> : <Text style={styles.image_null_text}>无</Text>}
@@ -141,11 +132,11 @@ const DormitoryViolationDetail = ({
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>处罚结果</Text>
-                    <Text style={styles.rightText}>警告</Text>
+                    <Text style={styles.rightText}>{violationDetail.punishResult}</Text>
                   </View>
                   <View style={styles.lastItem}>
                     <Text style={styles.titleText}>处罚日期</Text>
-                    <Text style={styles.rightText}>2022-05-24</Text>
+                    <Text style={styles.rightText}>{violationDetail.punishDate}</Text>
                   </View>
                 </View>
               </View>
@@ -232,6 +223,16 @@ const styles = StyleSheet.create({
   },
   dormitoryArea_bottomArea: {
     padding: 10
+  },
+  photos: {
+    minHeight: 50, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderTopWidth: 1, 
+    borderLeftWidth: 1, 
+    borderRightWidth: 1, 
+    borderColor: '#409EFF', 
+    paddingRight: 10
   },
   textLine: {
     height: 50, 

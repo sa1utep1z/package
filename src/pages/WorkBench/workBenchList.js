@@ -117,8 +117,8 @@ export const WORKBENCH_LIST = [
         routeName: NAVIGATION_KEYS.DORMITORY_VIOLATION
       }, {
         key: 'dormitoryData',
-        title: '宿舍态势',
-        imgBackground: require('../../assets/images/dormitoryRecord.png'),
+        title: '房间态势',
+        imgBackground: require('../../assets/images/roomData.png'),
         routeName: NAVIGATION_KEYS.DORMITORY_DATA
       }
     ]

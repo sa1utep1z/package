@@ -15,10 +15,10 @@ import { SUCCESS_CODE } from '../../../utils/const';
 const HeaderSelectItem = ({
   field,
   form,
-  originList,
   type = '',
   label,
-  canSearch = true
+  canSearch = true,
+  otherLabelStyle,
 }) => {
   const dispatch = useDispatch();
 
@@ -72,7 +72,7 @@ const HeaderSelectItem = ({
 
   return (
     <View style={styles.selectItemArea}>
-      <Text style={styles.showLittleTitleText}>{label}：</Text>
+      <Text style={[styles.showLittleTitleText, otherLabelStyle]}>{label}：</Text>
       <View style={{flex: 1, flexDirection: 'row', backgroundColor: '#ffffff', borderRadius: 10}}>
         <TouchableOpacity
           style={styles.selectArea}

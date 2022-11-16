@@ -952,3 +952,21 @@ export const PUNISH_RESULT = [
   {label: '二次警告', value: 'warningTwoSecond'},
   {label: '取消住宿', value: 'cancelLiving'},
 ];
+
+//房间类型；
+export const ROOM_TYPE_LIST = [
+   {label: '空房间', color: '#2BE211', value: 'emptyRoom'},
+   {label: '未住满', color: '#FAF005', value: 'notFull'},
+   {label: '已住满', color: '#ED0F0F', value: 'full'},
+   {label: '维修中', color: '#A305FA', value: 'fixing'},
+   {label: '占用中', color: '#057BFA', value: 'occupying'},
+];
+
+//房间类型对应颜色；
+export const ROOM_TYPE_COLOR = {
+  'emptyRoom': '#2BE211',
+  'notFull': '#FAF005',
+  'full': '#ED0F0F',
+  'fixing': '#A305FA',
+  'occupying': '#057BFA',
+};

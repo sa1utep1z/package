@@ -6,7 +6,8 @@ const HeaderRadioItem = ({
   field,
   form,
   label,
-  radioList
+  radioList,
+  otherLabelStyle,
 }) => {
 
   const radioOnPress = (radio) => {
@@ -16,7 +17,7 @@ const HeaderRadioItem = ({
 
   return (
     <View style={styles.radioArea}>
-      <Text style={styles.radioTitle}>{label}：</Text>
+      <Text style={[styles.radioTitle, otherLabelStyle]}>{label}：</Text>
       <View style={styles.radioControlArea}>
         {radioList.map((radio, radioIndex) => (
           <TouchableOpacity key={radioIndex} style={styles.radioItem} onPress={() => radioOnPress(radio)}>

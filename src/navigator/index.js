@@ -327,7 +327,7 @@ export default Navigator = () => {
         name={NAVIGATION_KEYS.DORMITORY_DATA}
         component={NAVIGATION_PAGES.DORMITORY_DATA}
         options={{
-          headerTitle: '宿舍态势'
+          headerTitle: '房间态势'
         }}
       />
     </>

@@ -67,9 +67,33 @@ const BottomList = ({
       no: 'zz6516516513198130',
       mobile: '18888888888',
       idNo: '448211156168413248',
-      from: '门店自招',
+      from: 'SUPPLIER',
       bumen: '哈哈哈',
-      person: '张三王五'
+      supplier: '欸嘿嘿',
+      recruitName: '招聘员',
+      building: '241栋',
+      dormitoryType: '男生宿舍',
+      floor: '12F',
+      room: '1202',
+      bed: '1号床位',
+      violationType: '违规使用大功率电器',
+      violationRemark: '违纪问题很大很多救命啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊',
+      violationList: [
+        {
+          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+          "name": "1.png",
+          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+          "md5": "6BF745B469034A38026A0C049FFA1942"
+        },
+        {
+          "fileKey": "laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg",
+          "name": "1.png",
+          "url": "https://labor-prod.oss-cn-shenzhen.aliyuncs.com/laborMgt/labor/fa82610d40274cb86d4b0fc5bcee0db.jpg?Expires=1668078019&OSSAccessKeyId=LTAI5tMBEPU2B5rv3XfYcC7m&Signature=QnUsmzEk1zgRbbWcWtunk5C6%2Fmg%3D",
+          "md5": "6BF745B469034A38026A0C049FFA1942"
+        }
+      ],
+      punishResult: '警告',
+      punishDate: '2022-05-24'
     };
     try {
       dispatch(setTitle('宿舍违纪详情'));
