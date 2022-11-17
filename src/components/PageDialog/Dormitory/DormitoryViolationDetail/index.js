@@ -20,8 +20,6 @@ const DormitoryViolationDetail = ({
 
   const passOnPress = () => dispatch(closeDialog());
 
-
-
   const modalOnPress = () => setIsVisible(!isVisible);
 
   const imageOnPress = (imgList, imgIndex) => {

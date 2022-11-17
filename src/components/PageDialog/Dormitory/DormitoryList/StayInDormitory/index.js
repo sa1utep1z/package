@@ -45,12 +45,12 @@ const StayInDormitory = ({
 
   const renderTabBar = ({navigationState}) => {
     return (
-      <View style={{height: 70, flexDirection: 'row', backgroundColor: '#FFFFFF'}}>
+      <View style={styles.tabBarArea}>
         {navigationState.routes.map((route, routeIndex) => {
           const isSelected = routeIndex === index;
           return (
-            <TouchableOpacity key={routeIndex} style={[{flex: 1, justifyContent: 'center', backgroundColor: '#EEEEEE'}, routeIndex === 0 && {borderRightWidth: 1, borderColor: '#999999'}, isSelected && {backgroundColor: '#409EFF'}]} activeOpacity={1} onPress={() => setIndex(routeIndex)}>
-              <Text style={[{fontSize: 26, color: '#999999', textAlign: 'center', fontWeight: 'bold'}, isSelected && {color: '#FFFFFF',  fontSize: 28}]}>{route.title}</Text>
+            <TouchableOpacity key={routeIndex} style={[styles.btnArea, routeIndex === 0 && styles.btn_not_selected, isSelected && styles.btn_selected]} activeOpacity={1} onPress={() => setIndex(routeIndex)}>
+              <Text style={[styles.btnText, isSelected && styles.btnText_selected]}>{route.title}</Text>
             </TouchableOpacity>
           )
         })}
@@ -63,7 +63,7 @@ const StayInDormitory = ({
       <TabView
         lazy
         bounces
-        style={{height: 760, marginHorizontal: 20, marginBottom: 20, borderWidth: 1, borderColor: '#EFEFEF', borderRadius: 10}}
+        style={styles.tabViewArea}
         navigationState={{ index, routes }}
         renderScene={renderScene}
         renderTabBar={renderTabBar}
@@ -87,6 +87,41 @@ const StayInDormitory = ({
 };
 
 const styles = StyleSheet.create({
+  tabViewArea: {
+    height: 760, 
+    marginHorizontal: 20, 
+    marginBottom: 20, 
+    borderWidth: 1, 
+    borderColor: '#EFEFEF', 
+    borderRadius: 10
+  },
+  tabBarArea: {
+    height: 70, 
+    flexDirection: 'row', 
+    backgroundColor: '#FFFFFF'
+  },
+  btnArea: {
+    flex: 1, 
+    justifyContent: 'center', 
+    backgroundColor: '#EEEEEE'
+  },
+  btn_not_selected: {
+    borderRightWidth: 1,
+    borderColor: '#999999'
+  },
+  btn_selected: {
+    backgroundColor: '#409EFF'
+  },
+  btnText: {
+    fontSize: 26, 
+    color: '#999999', 
+    textAlign: 'center', 
+    fontWeight: 'bold'
+  },
+  btnText_selected: {
+    color: '#FFFFFF',
+    fontSize: 28
+  },
   bottomArea: {
     height: 100, 
     flexDirection: 'row'
