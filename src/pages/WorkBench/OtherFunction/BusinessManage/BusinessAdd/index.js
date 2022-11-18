@@ -636,7 +636,6 @@ const BusinessAdd = (props) => {
                     name="line"
                     title="产线"
                     noBorder
-                    isRequired
                     label="lineExplain"
                     arryDate={COMPANY_LINE}
                     component={RadioGroup}
@@ -645,7 +644,6 @@ const BusinessAdd = (props) => {
                     name="microscope"
                     title="显微镜"
                     noBorder
-                    isRequired
                     label="microscopeExplain"
                     arryDate={MICROSCOPE}
                     component={RadioGroup}
@@ -654,7 +652,6 @@ const BusinessAdd = (props) => {
                     name="phone"
                     title="车间带手机"
                     noBorder
-                    isRequired
                     label="phoneExplain"
                     arryDate={COMPANY_PHONE}
                     component={RadioGroup}
@@ -679,7 +676,6 @@ const BusinessAdd = (props) => {
                     name="english"
                     title="英文字母"
                     noBorder
-                    isRequired
                     label="englishExplain"
                     arryDate={COMPANY_ENGLISH}
                     component={RadioGroup}
@@ -688,7 +684,6 @@ const BusinessAdd = (props) => {
                     name="returnFactory"
                     title="二次返厂"
                     noBorder
-                    isRequired
                     label="returnFactoryExplain"
                     arryDate={RETURNFACTORY}
                     component={RadioGroup}
@@ -724,7 +719,6 @@ const BusinessAdd = (props) => {
                     name="studentProve"
                     title="学生证明"
                     noBorder
-                    isRequired
                     label="studentProveExplain"
                     arryDate={STUDENTPROVE}
                     component={RadioGroup}
@@ -754,7 +748,6 @@ const BusinessAdd = (props) => {
                   <Field
                     name="idCardCopy"
                     title="身份证复印件"
-                    isRequired
                     placeholder="请输入身份证复印件要求"
                     inputStyle={{ fontSize: 28 }}
                     component={FormItem}
@@ -762,7 +755,6 @@ const BusinessAdd = (props) => {
                   <Field
                     name="graduateCopy"
                     title="毕业证原件/复印件"
-                    isRequired
                     placeholder="请输入毕业证要求"
                     inputStyle={{ fontSize: 28 }}
                     component={FormItem}
@@ -770,7 +762,6 @@ const BusinessAdd = (props) => {
                   <Field
                     name="photo"
                     title="照片"
-                    isRequired
                     placeholder="请输入照片要求"
                     noBorder
                     inputStyle={{ fontSize: 28 }}
