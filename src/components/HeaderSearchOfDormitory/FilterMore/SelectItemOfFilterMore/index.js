@@ -2,9 +2,13 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator, Touchable } from 'react-native';
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from 'react-redux';
 
-import { openDialog, setTitle } from '../../../../redux/features/PageDialog2'; 
+import TopSearchApi from '../../../../request/Dormitory/TopSearchApi';
+import * as PageDialog1 from '../../../../redux/features/PageDialog';
+import * as PageDialog2 from '../../../../redux/features/PageDialog2'; 
+import { SUCCESS_CODE } from '../../../../utils/const';
 import SingleSelectList from '../../../PageDialog2/SingleSelectList';
 
 const SelectItemOfFilterMore = ({
@@ -17,23 +21,60 @@ const SelectItemOfFilterMore = ({
   fontSize = 28,
   iconSize = 32,
   borderColor,
-  selectStyle
+  selectStyle,
+  type,
+  originForm
 }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const [loading, setLoading] = useState(false);
 
   const selectOnPress = () => {
     setLoading(true);
-    let arr = [];
-    for(let i = 0; i < 30; i++){
-      arr.push({label: `${label}-${i+1}`, value: `value${i}`});
+    dispatch(PageDialog2.setTitle(`请选择${label}`));
+    switch(type){
+      case 'floor':
+        getFloorList();
+        break;
+      case 'room':
+        getRoomList();
+        break;
+      case 'bed':
+        getBedList();
+        break;
+      default: //没传入type则自动使用外部传进的selectList。
+        setNormalList();
+        break;
     }
-    dispatch(setTitle(`请选择${label}`));
-    dispatch(openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={arr} fieldValue={field.value} confirm={pressItem}/>));
+  };
+
+  const getFloorList = async() => {
+    try {
+      const {values: {buildingNum}} = originForm;
+      if(!buildingNum.length){
+        toast.show(`请先选择宿舍楼栋！`, { type: 'danger' });
+        return;
+      }
+      const res = await TopSearchApi.getFloorList(buildingNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        console.log('获取楼层列表失败咯！');
+        // toast.show(`获取楼层列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}F`);
+      dispatch(PageDialog1.setDialogHidden(true));
+      dispatch(PageDialog2.openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={res.data} fieldValue={field.value} confirm={pressItem}/>));
+      // dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={floorConfirm}/>));
+    }catch(error){
+      console.log('getFloorList->error', error);
+    }finally{
+      setLoading(false);
+    }
   };
 
   const pressItem = (list) => {
+    dispatch(PageDialog1.setDialogHidden(false));
     //点击选择的时候已经是有值的；
     if(form.values[field.name].length){
       //选择的项和之前的表单值不一样-更新表单值；

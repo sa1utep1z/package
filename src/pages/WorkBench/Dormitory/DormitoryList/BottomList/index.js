@@ -145,11 +145,11 @@ const Total = ({
     return (
       <View style={styles.listStyle}>
         <Text 
-          style={[styles.itemText, styles.pressItem]}
+          style={[styles.itemText, styles.pressItem, {flex: 0, width: 100}]}
           numberOfLines={2}
           onPress={() => nameOnPress(item)}
           ellipsizeMode="tail">{item.name || '无'}</Text>
-        <View style={{flex: 1}}>
+        <View style={styles.dormitoryInfo}>
           <Text 
             style={[styles.itemText, {fontSize: 24}]}
             numberOfLines={2}
@@ -169,12 +169,12 @@ const Total = ({
           onPress={() => enterpriseOnPress(item)}
           ellipsizeMode="tail">{item.enterprise}</Text>
         <Text 
-          style={[styles.itemText, styles.pressItem, {color: item.status === 1 ? 'red' : '#31df07'}]}
+          style={[styles.itemText, styles.pressItem, {color: item.status === 1 ? 'red' : '#31df07'}, {flex: 0, width: 100}]}
           numberOfLines={2}
           onPress={() => statusOnPress(item)}
           ellipsizeMode="tail">{item.status === 0 ? '在宿' : item.status === 1 ? '待入住' : '离宿'}</Text>
         <Text 
-          style={[styles.itemText, styles.pressItem]}
+          style={[styles.itemText, styles.pressItem, {flex: 0, width: 120}]}
           numberOfLines={2}
           onPress={() => originOnPress(item)}
           ellipsizeMode="tail">查看</Text>
@@ -210,10 +210,14 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-    fontSize: 28,
+    fontSize: 26,
     color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center'
+  },
+  dormitoryInfo: {
+    flex: 1, 
+    paddingVertical: 10
   },
   pressItem: {
     color: '#409EFF'

@@ -4,6 +4,7 @@ import { Formik, Field } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import HeaderSelectItem from './HeaderSelectItem';
 import HeaderSearchInput from './HeaderSearchInput';
@@ -23,6 +24,15 @@ const initialValues = {
   roomNum: [],
   dormitoryType: [{label: '全部', value: 'ALL'}],
 };
+
+const MaleOrFemaleRightIcon = ({value}) => value.length ? 
+<View style={styles.maleOrFemaleRightIconArea}>
+  {value[0].value !== 'ALL' && <Ionicons 
+    size={36} 
+    name={value[0].value === 'MALE_DORMITORY' ? 'man' : 'woman'} 
+    color={value[0].value === 'MALE_DORMITORY' ? '#409EFF' : '#eb00d8'}
+  />}
+</View> : <></>;
 
 const HeaderSearchOfDormitory = ({
   selectIndex = 0,
@@ -92,6 +102,7 @@ const HeaderSearchOfDormitory = ({
                 <Field
                   name="buildingNum"
                   label="宿舍楼栋"
+                  type="building"
                   canSearch={false}
                   component={HeaderSelectItem}
                 />
@@ -103,14 +114,14 @@ const HeaderSearchOfDormitory = ({
                 <Field
                   name="floorNum"
                   label="楼层"
-                  type="enterprise"
+                  type="floor"
                   component={HeaderSelectItem}
                 />
                 <View style={{width: 20}}></View>
                 <Field
                   name="roomNum"
                   label="房间号"
-                  type="enterprise"
+                  type="room"
                   component={HeaderSelectItem}
                 />
               </View>}
@@ -118,14 +129,14 @@ const HeaderSearchOfDormitory = ({
                 <Field
                   name="buildingNum"
                   label="宿舍楼栋"
-                  canSearch={false}
+                  type="building"
                   component={HeaderSelectItem}
                 />
                 <View style={{width: 20}}></View>
                 <Field
                   name="floorNum"
                   label="楼层"
-                  type="enterprise"
+                  type="floor"
                   component={HeaderSelectItem}
                 />
               </View>}
@@ -151,6 +162,7 @@ const HeaderSearchOfDormitory = ({
                   name="dormitoryType"
                   label="宿舍分类"
                   radioList={DORMITORY_ALL_TYPE}
+                  rightComponent={<MaleOrFemaleRightIcon value={rest.values.dormitoryType} />}
                   component={HeaderRadioItem}
                 />
               </View>}
@@ -212,7 +224,14 @@ const styles = StyleSheet.create({
   },
   filteringText: {
     color: '#ffffff'
-  }
+  },
+  maleOrFemaleRightIconArea: {
+    flex: 1, 
+    height: 60, 
+    justifyContent: 'center', 
+    alignItems: 'flex-end', 
+    paddingRight: 10
+  },
 });
 
 export default HeaderSearchOfDormitory;

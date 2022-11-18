@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScaleView from 'react-native-scale-view';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import { closeDialog, setLeftArea, setRightArea } from '../../redux/features/PageDialog';
+import { closeDialog, setLeftArea, setRightArea, setDialogHidden } from '../../redux/features/PageDialog';
 
 export const DefaultTitle = ({title}) => {
   const leftArea = useSelector((state) => state.PageDialog.leftArea);
@@ -39,6 +39,12 @@ const PageDialog = () => {
   const dialogSwitch = useSelector((state) => state.PageDialog.showDialog);
   const dialogContent = useSelector((state) => state.PageDialog.dialogComponent);
   const dialogTitle = useSelector((state) => state.PageDialog.dialogTitle);
+  const dialogHidden = useSelector((state) => state.PageDialog.dialogHidden);
+
+  useEffect(()=>{
+    dispatch(setDialogHidden(false));
+    return () => dispatch(setDialogHidden(false));
+  },[])
 
   const close = () => {
     dispatch(closeDialog());
@@ -61,7 +67,7 @@ const PageDialog = () => {
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
           <TouchableOpacity style={styles.backPress} activeOpacity={1} onPress={close}/>
-          <View style={styles.showArea}>
+          <View style={[styles.showArea, dialogHidden && {display: 'none'}]}>
             <DefaultTitle title={dialogTitle}/>
             {dialogContent || <DefaultEmptyArea />}
           </View>

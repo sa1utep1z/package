@@ -29,7 +29,8 @@ const validationSchema = Yup.object().shape({
   floorNum: Yup.array().min(1, '请选择楼层'),
   roomNum: Yup.array().min(1, '请选择房间号'),
   bedNum: Yup.array().min(1, '请选择床位号'),
-  liveInDate: Yup.string().required('请选择入住日期')
+  liveInDate: Yup.string().required('请选择入住日期'),
+  temporaryLiving: Yup.string().required('请选择临时住宿期限'),
 });
 const initialValues = {
   memberName: '',
@@ -42,7 +43,8 @@ const initialValues = {
   floorNum: [],
   roomNum: [],
   bedNum: [],
-  liveInDate: moment().format('YYYY-MM-DD')
+  liveInDate: moment().format('YYYY-MM-DD'),
+  temporaryLiving: '',
 };
 
 const CreateDormitory = () => {
@@ -289,15 +291,22 @@ const CreateDormitory = () => {
                         selectList={CREATE_ORDER_JOB_TYPE}
                         component={SingleSelect}
                       />
-                      <View style={{height: 60, marginBottom: 20}}>
-                        <Field
-                          name="liveInDate"
-                          label="入住日期"
-                          isRequire
-                          labelStyle={{width: 160}}
-                          component={OrderSingleDate}
-                        />
-                      </View>
+                      <Field
+                        name="liveInDate"
+                        label="入住日期"
+                        isRequire
+                        labelStyle={{width: 160}}
+                        component={OrderSingleDate}
+                      />
+                      {rest.values.dormitoryType.length ? rest.values.dormitoryType[0].value === 'TEMPORARY_LIVE' && <Field
+                        name="temporaryLiving"
+                        label="临时住宿期限"
+                        isRequire
+                        labelStyle={{width: 220}}
+                        startLimit={moment().format('YYYY-MM-DD')}
+                        endLimit={moment().add(7, 'd').format('YYYY-MM-DD')}
+                        component={OrderSingleDate}
+                      /> : <></>}
                     </View>
                   </View>
                 </Shadow>
@@ -373,7 +382,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF', 
     borderBottomLeftRadius: 10, 
     borderBottomRightRadius: 10,
-    padding: 20
+    padding: 20,
+    paddingBottom: 0
   },
   lineArea: {
     height: 60, 

@@ -4,6 +4,7 @@ export const PageDialog = createSlice({
   name: 'PageDialog',
   initialState: {
     showDialog: false,
+    dialogHidden: false,
     dialogTitle: '',
     dialogComponent: '',
     leftArea: {
@@ -31,10 +32,13 @@ export const PageDialog = createSlice({
     },
     setRightArea: (state, {payload}) => {
       state.rightArea = payload;
+    },
+    setDialogHidden: (state, {payload}) => {
+      state.dialogHidden = payload;
     }
   }
 });
 
-export const { openDialog, closeDialog, setTitle, setLeftArea, setRightArea } = PageDialog.actions;
+export const { openDialog, closeDialog, setTitle, setLeftArea, setRightArea, setDialogHidden } = PageDialog.actions;
 
 export default PageDialog.reducer;

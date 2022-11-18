@@ -11,6 +11,8 @@ const OrderSingleDate = ({
   label,
   isRequire = false,
   labelStyle,
+  startLimit,
+  endLimit,
   ...rest
 }) => {
 
@@ -53,6 +55,8 @@ const OrderSingleDate = ({
         value={dateTime} 
         onChange={dateChange} 
         neutralButtonLabel='清除'
+        minimumDate={startLimit && new Date(startLimit)}
+        maximumDate={endLimit && new Date(endLimit)}
       />}
     </View>
   )

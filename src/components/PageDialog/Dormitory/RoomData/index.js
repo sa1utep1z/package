@@ -48,7 +48,7 @@ const RoomData = ({
     dispatch(closeDialog());
   };
 
-  const onVerticalScroll = ({nativeEvent: {contentOffset}}) => setShowTitle(contentOffset.y > 30);
+  const onVerticalScroll = ({nativeEvent: {contentOffset}}) => setShowTitle(contentOffset.y > 60);
 
   const onHorizontalScroll = ({nativeEvent: {contentOffset}}) => titleScrollViewRef && titleScrollViewRef?.current?.scrollTo({x: contentOffset.x, y: 0, animated: false, duration: 0});
 
@@ -71,7 +71,7 @@ const RoomData = ({
         <Text style={styles.roomInfo_left}>楼层：{room.floor}F</Text>   
         <Text style={styles.roomInfo_right}>房间：{room.roomName}</Text> 
       </View>
-      {showTitle && <View style={styles.titleArea}>
+      <View style={styles.titleArea}>
         <Text Text style={styles.nameText}>姓名</Text>
         <ScrollView ref={titleScrollViewRef} scrollEnabled={false} horizontal showsHorizontalScrollIndicator={false}>
           <View style={{flexDirection: 'row'}}>
@@ -83,25 +83,16 @@ const RoomData = ({
             <Text style={[styles.titleText, {width: 220, borderRightWidth: 0}]}>操作</Text>
           </View>
         </ScrollView>
-      </View>}
+      </View>
       <ScrollView style={styles.contentScrollView} onScroll={onVerticalScroll}>
         <View style={{flexDirection: 'row'}}>
           <View style={styles.contentScrollView_topArea}>
-            <Text style={styles.topArea_nameText}>姓名</Text>
             {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.topArea_titleArea, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
               <Text style={styles.topArea_titleText}>{room.name}</Text>
             </View>)}
           </View>
           <ScrollView horizontal onScroll={onHorizontalScroll} onMomentumScrollEnd={onMomentumScrollEnd}>
             <View>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={[styles.titleText, {width: 180}]}>入住日期</Text>
-                <Text style={[styles.titleText, {width: 80}]}>床位</Text>
-                <Text style={[styles.titleText, {width: 150}]}>企业</Text>
-                <Text style={[styles.titleText, {width: 120}]}>归属</Text>
-                <Text style={[styles.titleText, {width: 120}]}>门店</Text>
-                <Text style={[styles.titleText, {width: 220, borderRightWidth: 0}]}>操作</Text>
-              </View>
               {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.contentScrollView_item, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
                 <Text style={[styles.contentScrollView_itemText, {width: 180}]}>{room.date}</Text>
                 <Text style={[styles.contentScrollView_itemText, {width: 80}]}>{room.bedNum}</Text>
@@ -198,7 +189,6 @@ const styles = StyleSheet.create({
     color: '#000000', 
     textAlign: 'center', 
     textAlignVertical: 'center', 
-    borderBottomWidth: 1, 
     borderRightWidth: 1, 
     borderColor: '#409EFF'
   },

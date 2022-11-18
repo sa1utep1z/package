@@ -8,6 +8,7 @@ const HeaderRadioItem = ({
   label,
   radioList,
   otherLabelStyle,
+  rightComponent,
 }) => {
 
   const radioOnPress = (radio) => {
@@ -33,6 +34,7 @@ const HeaderRadioItem = ({
             <Text style={styles.radioItemText}>{radio.label}</Text>
           </TouchableOpacity>
         ))}
+        {rightComponent}
       </View>
     </View>
   )

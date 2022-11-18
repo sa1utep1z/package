@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScaleView from 'react-native-scale-view';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
+import { setDialogHidden } from '../../redux/features/PageDialog';
 import { closeDialog, setRightArea } from '../../redux/features/PageDialog2';
 
 export const DefaultTitle = ({title}) => {
@@ -12,6 +13,7 @@ export const DefaultTitle = ({title}) => {
   const rightArea = useSelector((state) => state.PageDialog2.rightArea);
 
   const close = () => {
+    dispatch(setDialogHidden(false));
     dispatch(closeDialog());
     dispatch(setRightArea({
       title: '',
@@ -51,6 +53,7 @@ const PageDialog2 = () => {
   const dialogTitle = useSelector((state) => state.PageDialog2.dialogTitle);
 
   const close = () => {
+    dispatch(setDialogHidden(false));
     dispatch(closeDialog());
     dispatch(setRightArea({
       title: '',
@@ -81,7 +84,6 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center'
   },
-
   showArea: {
     width: '80%', 
     maxHeight: 1000, 

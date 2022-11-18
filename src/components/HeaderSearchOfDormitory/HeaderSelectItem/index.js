@@ -3,12 +3,14 @@ import { StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator } from 
 import { Text, Dialog, CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
+import { useToast } from "react-native-toast-notifications";
 
 import SearchInput from '../../SearchInput';
 import EmptyArea from '../../EmptyArea';
 import { deepCopy } from '../../../utils';
 import { openDialog, setTitle } from '../../../redux/features/PageDialog'; 
 import MyMembersApi from '../../../request/MyMembersApi';
+import TopSearchApi from '../../../request/Dormitory/TopSearchApi';
 import SingleSelectList from '../../PageDialog2/SingleSelectList';
 import { SUCCESS_CODE } from '../../../utils/const';
 
@@ -20,9 +22,23 @@ const HeaderSelectItem = ({
   canSearch = true,
   otherLabelStyle,
 }) => {
+  const toast = useToast();
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
+
+  const confirm = (list) => form.setFieldValue(field.name, list);
+
+  const buildingConfirm = (list) => {
+    form.setFieldValue(field.name, list);
+    form.setFieldValue('floorNum', []);
+    form.setFieldValue('roomNum', []);
+  };
+
+  const floorConfirm = (list) => {
+    form.setFieldValue(field.name, list);
+    form.setFieldValue('roomNum', []);
+  };
 
   const selectOnPress = () => {
     setLoading(true);
@@ -31,13 +47,20 @@ const HeaderSelectItem = ({
       case 'enterprise':
         getEnterpriseList();
         break;
+      case 'building':
+        getBuildingList();
+        break;
+      case 'floor':
+        getFloorList();
+        break;
+      case 'room':
+        getRoomList();
+        break;
       default: //没传入type则自动使用外部传进的selectList。
         setNormalList();
         break;
     }
   };
-
-  const confirm = (list) => form.setFieldValue(field.name, list);
 
   const getEnterpriseList = async() => {
     try {
@@ -49,6 +72,63 @@ const HeaderSelectItem = ({
       dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
     }catch(error){
       console.log('getEnterpriseList->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const getBuildingList = async() => {
+    try {
+      const res = await TopSearchApi.getBuildingList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取宿舍楼栋列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={buildingConfirm}/>));
+    }catch(error){
+      console.log('getBuildingList->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const getFloorList = async() => {
+    try {
+      const {values: {buildingNum}} = form;
+      if(!buildingNum.length){
+        toast.show(`请先选择宿舍楼栋！`, { type: 'danger' });
+        return;
+      }
+      const res = await TopSearchApi.getFloorList(buildingNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取楼层列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}F`);
+      dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={floorConfirm}/>));
+    }catch(error){
+      console.log('getFloorList->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const getRoomList = async() => {
+    try {
+      const {values: {floorNum}} = form;
+      if(!floorNum.length){
+        toast.show(`请先选择宿舍楼层！`, { type: 'danger' });
+        return;
+      }
+      const res = await TopSearchApi.getRoomList(floorNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取房间号列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}房`);
+      dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
+    }catch(error){
+      console.log('getFloorList->error', error);
     }finally{
       setLoading(false);
     }

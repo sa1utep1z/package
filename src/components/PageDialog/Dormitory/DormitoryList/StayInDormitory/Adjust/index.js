@@ -54,7 +54,6 @@ const Adjust = ({}, ref) => {
 
   const onSubmit = (values) => {
     const hasError = checkValues(values);
-    console.log('hasError', hasError);
   };
 
   const selectOtherFunc = (type, date) => {

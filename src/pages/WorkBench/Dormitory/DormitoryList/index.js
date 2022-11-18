@@ -51,12 +51,12 @@ const DormitoryList = () => {
           })}
         </View>
         <View style={styles.listHeadArea}>
-          <Text style={styles.headTitle}>姓名</Text>
+          <Text style={[styles.headTitle, {flex: 0, width: 100}]}>姓名</Text>
           <Text style={styles.headTitle}>宿舍信息</Text>
           <Text style={styles.headTitle}>入住日期</Text>
           <Text style={styles.headTitle}>企业</Text>
-          <Text style={styles.headTitle}>状态</Text>
-          <Text style={styles.headTitle}>招聘来源</Text>
+          <Text style={[styles.headTitle, {flex: 0, width: 100}]}>状态</Text>
+          <Text style={[styles.headTitle, {flex: 0, width: 120}]}>招聘来源</Text>
         </View>
       </>
     )

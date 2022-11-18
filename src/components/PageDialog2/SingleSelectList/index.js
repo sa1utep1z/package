@@ -2,6 +2,7 @@ import React, {useState, useEffect, useMemo, useCallback} from "react";
 import { FlatList, TextInput, Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Foundation from 'react-native-vector-icons/Foundation';
 import { useDispatch } from 'react-redux';
 
 import { deepCopy } from "../../../utils";
@@ -124,7 +125,7 @@ const SingleSelectList = ({
   };
 
   return (
-    <View style={styles.totalArea}>
+    <>
       <View style={styles.topArea}>
         {canSearch && <View style={styles.searchArea}>
           <TextInput 
@@ -144,9 +145,14 @@ const SingleSelectList = ({
         </View>}
         <FlatList
           data={showList}
-          style={{flex: 1}}
+          style={{maxHeight: 700}}
           renderItem={renderItem}
+          keyboardShouldPersistTaps="handled"
           getItemLayout={(data, index) => ({ length: 60, offset: 60 * index, index })}
+          ListEmptyComponent={<View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}>
+            <Foundation name="page-remove" size={72} color="#999999" />
+            <Text style={styles.emptyText}>暂无数据</Text>
+          </View>}
         />
       </View>
       {!isDialog2 && <View style={styles.bottomArea}>
@@ -161,14 +167,11 @@ const SingleSelectList = ({
           </TouchableOpacity>
         </View>
       </View>}
-    </View>
+    </>
   )
 };
 
 const styles = StyleSheet.create({
-  totalArea: {
-    height: 900
-  },
   topArea: {
     flex: 1,
     borderWidth: 1, 
@@ -230,7 +233,12 @@ const styles = StyleSheet.create({
   confirmText: {
     fontSize: 28, 
     color: '#409EFF'
-  }
+  },
+  emptyText: {
+    fontSize: 24, 
+    color: '#999999', 
+    marginTop: 2
+  },
 })
 
 export default SingleSelectList;

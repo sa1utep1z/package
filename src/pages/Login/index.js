@@ -9,7 +9,9 @@ import {
 import {useToast} from 'react-native-toast-notifications';
 import {Text, Button, CheckBox} from '@rneui/themed';
 import { TabView, TabBar } from 'react-native-tab-view';
+import { useDispatch } from 'react-redux';
 
+import { closeDialog, setDialogHidden } from '../../redux/features/PageDialog';
 import NAVIGATION_KEYS from '../../navigator/key';
 import AccountLoginRoute from './AccountLoginRoute';
 import VerificationLoginRoute from './VerificationLoginRoute';
@@ -17,6 +19,7 @@ import VerificationLoginRoute from './VerificationLoginRoute';
 const Login = props => {
   const {navigation} = props;
 
+  const dispatch = useDispatch();
   const toast = useToast();
 
   const AccountLoginRef = useRef(null);
@@ -29,6 +32,8 @@ const Login = props => {
   useEffect(()=>{
     Keyboard.addListener('keyboardDidShow', keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", keyboardDidHide);
+    dispatch(setDialogHidden(false));
+    dispatch(closeDialog());
     return () => {
       Keyboard.removeAllListeners('keyboardDidShow', 'keyboardDidHide');
     };
