@@ -637,7 +637,6 @@ const BusinessEdit = (props) => {
                     name="line"
                     title="产线"
                     noBorder
-                    isRequired
                     label="lineExplain"
                     remark={rest.values.lineExplain}
                     arryDate={COMPANY_LINE}
@@ -647,7 +646,6 @@ const BusinessEdit = (props) => {
                     name="microscope"
                     title="显微镜"
                     noBorder
-                    isRequired
                     label="microscopeExplain"
                     remark={rest.values.microscopeExplain}
                     arryDate={MICROSCOPE}
@@ -657,7 +655,6 @@ const BusinessEdit = (props) => {
                     name="phone"
                     title="车间带手机"
                     noBorder
-                    isRequired
                     label="phoneExplain"
                     remark={rest.values.phoneExplain}
                     arryDate={COMPANY_PHONE}
@@ -684,7 +681,6 @@ const BusinessEdit = (props) => {
                     name="english"
                     title="英文字母"
                     noBorder
-                    isRequired
                     label="englishExplain"
                     remark={rest.values.englishExplain}
                     arryDate={COMPANY_ENGLISH}
@@ -694,7 +690,6 @@ const BusinessEdit = (props) => {
                     name="returnFactory"
                     title="二次返厂"
                     noBorder
-                    isRequired
                     label="returnFactoryExplain"
                     remark={rest.values.returnFactoryExplain}
                     arryDate={RETURNFACTORY}
@@ -734,7 +729,6 @@ const BusinessEdit = (props) => {
                     name="studentProve"
                     title="学生证明"
                     noBorder
-                    isRequired
                     label="studentProveExplain"
                     remark={rest.values.studentProveExplain}
                     arryDate={STUDENTPROVE}
@@ -765,7 +759,6 @@ const BusinessEdit = (props) => {
                   <Field
                     name="idCardCopy"
                     title="身份证复印件"
-                    isRequired
                     placeholder="请输入身份证复印件要求"
                     inputStyle={{ fontSize: 28 }}
                     component={FormItem}
@@ -773,7 +766,6 @@ const BusinessEdit = (props) => {
                   <Field
                     name="graduateCopy"
                     title="毕业证原件/复印件"
-                    isRequired
                     placeholder="请输入毕业证要求"
                     inputStyle={{ fontSize: 28 }}
                     component={FormItem}
@@ -781,7 +773,6 @@ const BusinessEdit = (props) => {
                   <Field
                     name="photo"
                     title="照片"
-                    isRequired
                     placeholder="请输入照片要求"
                     noBorder
                     inputStyle={{ fontSize: 28 }}
