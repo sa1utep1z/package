@@ -58,14 +58,11 @@ const SelectItemOfFilterMore = ({
       }
       const res = await TopSearchApi.getFloorList(buildingNum[0].value);
       if(res.code !== SUCCESS_CODE){
-        console.log('获取楼层列表失败咯！');
-        // toast.show(`获取楼层列表失败，${res.msg}`, { type: 'danger' });
+        toast.show(`获取楼层列表失败，${res.msg}`, { type: 'danger' });
         return;
       }
       res.data.length && res.data.forEach(item => item.label = `${item.label}F`);
-      dispatch(PageDialog1.setDialogHidden(true));
       dispatch(PageDialog2.openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={res.data} fieldValue={field.value} confirm={pressItem}/>));
-      // dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={floorConfirm}/>));
     }catch(error){
       console.log('getFloorList->error', error);
     }finally{
@@ -73,8 +70,49 @@ const SelectItemOfFilterMore = ({
     }
   };
 
+  const getRoomList = async() => {
+    try {
+      const {values: {floorNum}} = form;
+      if(!floorNum.length){
+        toast.show(`请先选择宿舍楼层！`, { type: 'danger' });
+        return;
+      }
+      const res = await TopSearchApi.getRoomList(floorNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取房间列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}房`);
+      dispatch(PageDialog2.openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={res.data} fieldValue={field.value} confirm={pressItem}/>));
+    }catch(error){
+      console.log('getRoomList->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const getBedList = async() => {
+    try {
+      const {values: {roomNum}} = form;
+      if(!roomNum.length){
+        toast.show(`请先选择宿舍房间！`, { type: 'danger' });
+        return;
+      }
+      const res = await TopSearchApi.getBedList(roomNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取床位列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}床`);
+      dispatch(PageDialog2.openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={res.data} fieldValue={field.value} confirm={pressItem}/>));
+    }catch(error){
+      console.log('getBedList->error', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
   const pressItem = (list) => {
-    dispatch(PageDialog1.setDialogHidden(false));
     //点击选择的时候已经是有值的；
     if(form.values[field.name].length){
       //选择的项和之前的表单值不一样-更新表单值；

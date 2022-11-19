@@ -3,6 +3,7 @@ import { FlatList, TextInput, Text, View, TouchableOpacity, StyleSheet } from "r
 import { CheckBox } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
+import Foundation from 'react-native-vector-icons/Foundation';
 
 import { deepCopy } from "../../../utils";
 import { closeDialog } from "../../../redux/features/PageDialog";
@@ -31,6 +32,7 @@ const SingleSelectList = ({
   fieldValue,
   confirm,
   canSearch = true, //是否可以搜索（default: true）
+  emptyText = '',
 }) => {
   const dispatch = useDispatch();
 
@@ -134,6 +136,10 @@ const SingleSelectList = ({
           data={showList}
           renderItem={renderItem}
           getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
+          ListEmptyComponent={<View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}>
+            <Foundation name="page-remove" size={72} color="#999999" />
+            <Text style={styles.emptyText}>{emptyText || '暂无数据'}</Text>
+          </View>}
         />
       </View>
       <View style={styles.bottomArea}>
@@ -218,7 +224,12 @@ const styles = StyleSheet.create({
   labelArea: {
     fontSize: 26, 
     color: '#333333'
-  }
+  },
+  emptyText: {
+    fontSize: 24, 
+    color: '#999999', 
+    marginTop: 2
+  },
 })
 
 export default SingleSelectList;

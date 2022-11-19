@@ -24,6 +24,8 @@ const SingleSelect = ({
   touchStyle,
   labelStyle,
   canSearch = true, //默认可以搜索
+  canSelect = true, //是否可以选择；
+  emptyText, //列表为空的时候需要显示的其他提示字段（例如级联关系中上一层未选中，则可以提示上一层未选中/操作的提醒）
   ...rest
 }) => {
   const toast = useToast();
@@ -43,6 +45,7 @@ const SingleSelect = ({
   };
 
   const selectOnPress = () => {
+    if(!canSelect) return;
     setLoading(true);
     dispatch(setTitle(`请选择${label}`));
     switch(type){
@@ -54,7 +57,7 @@ const SingleSelect = ({
         break;
       default: //没传入type则自动使用外部传进的selectList。
         setLoading(false);
-        dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
+        dispatch(openDialog(<SingleSelectList emptyText={emptyText} canSearch={canSearch} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
         break;
     }
   };
@@ -146,7 +149,7 @@ const SingleSelect = ({
           {isRequire && <Text style={{color: 'red'}}>*</Text>}
           {label}：</Text> : <></>}
         <View style={{flex: 1}}>
-          <TouchableOpacity style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
+          <TouchableOpacity activeOpacity={canSelect ? 0.2 : 1} style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
             {field.value && <>
               <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
                 {!!field.value.length ? field.value[0].label || '' : `请选择${label}`}

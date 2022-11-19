@@ -44,7 +44,9 @@ const RoomData = ({
   const cancelOnPress = () => dispatch(closeDialog());
 
   const createLiving = () => {
-    navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY);
+    navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY, {
+      type: 'fromRoom'
+    });
     dispatch(closeDialog());
   };
 

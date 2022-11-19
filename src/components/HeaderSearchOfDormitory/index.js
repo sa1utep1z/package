@@ -104,6 +104,7 @@ const HeaderSearchOfDormitory = ({
                   label="宿舍楼栋"
                   type="building"
                   canSearch={false}
+                  setIsFilterMore={setIsFilterMore}
                   component={HeaderSelectItem}
                 />
                 {filterMore && <TouchableOpacity style={[styles.filterMoreButton, isFilterMore && styles.filteringArea]} onPress={filterOnPress}>

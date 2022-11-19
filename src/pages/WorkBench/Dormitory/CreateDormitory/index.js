@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
@@ -6,6 +6,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useToast } from "react-native-toast-notifications";
 import { Button } from '@rneui/themed';
 import moment from 'moment';
+import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 
 import SingleInput from "../../../../components/OrderForm/SingleInput";
@@ -13,8 +14,8 @@ import RadioSelect from "../../../../components/OrderForm/RadioSelect";
 import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
 import OCR_Scan from '../../../../components/OCR_Scan';
-import ListApi from '../../../../request/ListApi';
-import { SUCCESS_CODE, CHANEL_SOURCE_NAME, DORMITORY_LIVE_TYPE, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE } from '../../../../utils/const';
+import DormitoryListApi from '../../../../request/Dormitory/DormitoryListApi';
+import { SUCCESS_CODE, CHANEL_SOURCE_NAME, DORMITORY_LIVE_TYPE, DORMITORY_TYPE } from '../../../../utils/const';
 
 let restForm;
 
@@ -47,17 +48,56 @@ const initialValues = {
   temporaryLiving: '',
 };
 
-const CreateDormitory = () => {
+const CreateDormitory = ({
+  route: {
+    params
+  }
+}) => {
   const OCR_Ref = useRef(null);
+  const scrollViewRef = useRef(null);
   const toast = useToast();
+  const navigation = useNavigation();
 
   const [signUpInfoLoading, setSignUpInfoLoading] = useState(false);
-  const [buttonLoading, setButtonLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false); //这是OCR按钮的loading；
+  const [bottomButtonLoading, setBottomButtonLoading] = useState(false); //这是保存按钮的loading；
+  const [dormitoryInfoLoading, setDormitoryInfoLoading] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState({});
+  const [dormitoryMsg, setDormitoryMsg] = useState([]);
   const [signUpNotice, setSignUpNotice] = useState('请输入身份证号或通过【OCR】拍照读取会员报名信息');
 
   const onSubmit = (values) => {
     console.log('提交了表单', values);
+    const formatFieldValue = {
+      userName: values.memberName,
+      mobile: values.memberPhone,
+      idNo: values.memberIdCard,
+      hometown: values.memberFrom,
+      liveInType: values.dormitoryType[0].value,
+      liveInDate: values.liveInDate,
+      liveExpireDate: values.dormitoryType[0].value === 'DORM_TEMPORARY' ? values.temporaryLiving : '',
+      roomBedId: values.bedNum[0].value,
+    };
+    addDormitoryInfo(formatFieldValue);
+  };
+
+  const addDormitoryInfo = async(value) => {
+    setBottomButtonLoading(true);
+    try {
+      const res = await DormitoryListApi.addDormitoryInfo(value);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show(`保存住宿信息成功！`, { type: 'success' });
+      navigation.goBack();
+    } catch (error) {
+      console.log('error', error)
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally{
+      setBottomButtonLoading(false);
+    }
   };
 
   const openOCR = () => !buttonLoading && OCR_Ref?.current.setModalVisible(true);
@@ -74,39 +114,77 @@ const CreateDormitory = () => {
   const queryMemberFlowId = async(memberId) => {
     setSignUpInfoLoading(true);
     try {
-      const res = await ListApi.SignUpList({str: memberId, role: "RECRUIT"});
+      const res = await DormitoryListApi.getSignUpInfo(memberId);
+      console.log('queryMemberFlowId -> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
+        setSignUpNotice('无该会员报名信息，请确认身份证号是否正确！');
+        restForm.setFieldValue('maleOrFemale', []);
         return;
       }
-      console.log('queryMemberFlowId -> res', res);
-      if(res.data.content.length){
-        const flowId = res.data.content[0].flowId;
-        queryMemberInfo(flowId, res.data.content[0].companyShortName);
-      }else{
-        setSignUpInfoLoading(false);
-        setSignUpNotice('暂无该会员报名信息，请确认身份证号是否正确！');
+      restForm.setFieldValue('memberName', res.data.userName);
+      restForm.setFieldValue('memberPhone', res.data.mobile);
+      const sexNum = memberId[16];
+      if(sexNum % 2 === 0){
+        restForm.setFieldValue('maleOrFemale', [{label: '女生宿舍', value: 'FEMALE_DORMITORY'}]);
+      }else {
+        restForm.setFieldValue('maleOrFemale', [{label: '男生宿舍', value: 'MALE_DORMITORY'}]);
       }
+      setSignUpInfo({...res.data});
     } catch (error) {
       console.log('error', error)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setSignUpInfoLoading(false);
     }
   };
 
-  const queryMemberInfo = async(flowId, companyShortName) => {
+  const getDormitoryList = async(dormitoryType) => {
+    if(!signUpInfo?.signUpType) return;
+    setDormitoryInfoLoading(true);
     try {
-      const res = await ListApi.MemberMessage(flowId);
+      let res, memberId = restForm.values.memberIdCard;
+      switch(dormitoryType){
+        case 'DORM_ROUTINE':
+          res = await DormitoryListApi.getNormalDormitoryList(memberId, signUpInfo.companyId);
+          break;
+        case 'DORM_TEMPORARY':
+          res = await DormitoryListApi.getTemporaryDormitoryList(memberId);
+          console.log('DORM_TEMPORARY -> res', res);
+          break;
+      }
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      console.log('res', res);
-      res.data.companyShortName = companyShortName;
-      setSignUpInfo(res.data);
+      scrollViewRef?.current?.scrollToEnd();
+      res.data.forEach(item => {
+        item.value = item.id;
+        item.label = item.name;
+        if(item.floors.length){
+          item.floors.forEach(item => {
+            item.value = item.id;
+            item.label = `${item.index}F`;
+            if(item.rooms.length){
+              item.rooms.forEach(item => {
+                item.value = item.id;
+                item.label = `${item.name}房`;
+                if(item.beds.length){
+                  item.beds.forEach(item => {
+                    item.value = item.id;
+                    item.label = `${item.bedNo}床`;
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+      setDormitoryMsg(res.data);
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     } finally{
-      setSignUpInfoLoading(false);
+      setDormitoryInfoLoading(false);
     }
   };
 
@@ -119,9 +197,14 @@ const CreateDormitory = () => {
       onSubmit={onSubmit}>
       {({...rest }) => {
         restForm = rest;
+        useEffect(()=>{
+          if(rest.values.dormitoryType.length){
+            getDormitoryList(rest.values.dormitoryType[0].value);
+          }
+        },[rest.values.dormitoryType])
         return (
           <>
-            <ScrollView style={styles.screen} keyboardShouldPersistTaps="handled">
+            <ScrollView ref={scrollViewRef} style={styles.screen} keyboardShouldPersistTaps="handled">
               <View style={{flex: 1, paddingHorizontal: 20, paddingTop: 30}}>
                 <Shadow style={styles.shadowArea}>
                   <View style={styles.content}>
@@ -202,7 +285,7 @@ const CreateDormitory = () => {
                             <Text style={styles.lineTitle}>经纪人</Text>
                           </View>
                           <View style={styles.lineContentArea}>
-                            <Text style={styles.lineContentText}>{signUpInfo.recruitName || '无'}</Text>
+                            <Text style={styles.lineContentText}>{signUpInfo.recruiterName || '无'}</Text>
                           </View>
                         </View>}
                         {signUpInfo.signUpType === 'SUPPLIER' &&<View style={styles.lineArea}>
@@ -210,7 +293,7 @@ const CreateDormitory = () => {
                             <Text style={styles.lineTitle}>供应商</Text>
                           </View>
                           <View style={styles.lineContentArea}>
-                            <Text style={styles.lineContentText}>{signUpInfo.supplier || '无'}</Text>
+                            <Text style={styles.lineContentText}>{signUpInfo.supplierName || '无'}</Text>
                           </View>
                         </View>}
                         <View style={styles.lineArea}>
@@ -226,7 +309,7 @@ const CreateDormitory = () => {
                             <Text style={styles.lineTitle}>入职企业</Text>
                           </View>
                           <View style={styles.lineContentArea}>
-                            <Text style={styles.lineContentText}>{signUpInfo.companyShortName}</Text>
+                            <Text style={styles.lineContentText}>{signUpInfo.shortCompanyName}</Text>
                           </View>
                         </View>
                       </> : <Text style={[styles.noticeText, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice}</Text>}
@@ -240,6 +323,15 @@ const CreateDormitory = () => {
                     </View>
                     <View style={styles.shadowContent_liveInfo}>
                       <Field
+                        name="maleOrFemale"
+                        label="宿舍分类"
+                        isRequire
+                        canSelect={false}
+                        labelStyle={{width: 160}}
+                        radioList={DORMITORY_TYPE}
+                        component={RadioSelect}
+                      />
+                      <Field
                         name="dormitoryType"
                         label="入住类别"
                         isRequire
@@ -247,50 +339,54 @@ const CreateDormitory = () => {
                         radioList={DORMITORY_LIVE_TYPE}
                         component={RadioSelect}
                       />
-                      <Field
-                        name="maleOrFemale"
-                        label="宿舍分类"
-                        isRequire
-                        labelStyle={{width: 160}}
-                        radioList={DORMITORY_TYPE}
-                        component={RadioSelect}
-                      />
-                      <Field
-                        name="buildingNum"
-                        label="宿舍楼栋"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="floorNum"
-                        label="楼层"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="roomNum"
-                        label="房间号"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="bedNum"
-                        label="床位号"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
+                      {dormitoryInfoLoading ? <ActivityIndicator size={32} color="#409EFF" /> : <>
+                        {signUpInfo?.signUpType ? rest.values.dormitoryType.length ? 
+                          <>
+                            <Field
+                              name="buildingNum"
+                              label="宿舍楼栋"
+                              isRequire
+                              canSearch={false}
+                              canSelect={!params?.type}
+                              labelStyle={{width: 160}}
+                              selectList={dormitoryMsg}
+                              component={SingleSelect}
+                            />
+                            <Field
+                              name="floorNum"
+                              label="楼层"
+                              emptyText='请选择宿舍楼栋'
+                              isRequire
+                              canSearch={false}
+                              canSelect={!params?.type}
+                              labelStyle={{width: 160}}
+                              selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
+                              component={SingleSelect}
+                            />
+                            <Field
+                              name="roomNum"
+                              label="房间号"
+                              emptyText='请选择楼层'
+                              isRequire
+                              canSearch={false}
+                              labelStyle={{width: 160}}
+                              canSelect={!params?.type}
+                              selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
+                              component={SingleSelect}
+                            />
+                            <Field
+                              name="bedNum"
+                              label="床位号"
+                              emptyText='请选择房间号'
+                              isRequire
+                              canSearch={false}
+                              labelStyle={{width: 160}}
+                              canSelect={!params?.type}
+                              selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
+                              component={SingleSelect}
+                            />
+                          </> : <Text style={[styles.noticeText, {marginBottom: 20}]}>请选择入住类别</Text> : <Text style={[styles.noticeText, {marginBottom: 20}, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice.includes('！') ? '请输入正确的会员身份证号' : '请输入会员身份证号'}</Text>}
+                      </>}
                       <Field
                         name="liveInDate"
                         label="入住日期"
@@ -298,7 +394,7 @@ const CreateDormitory = () => {
                         labelStyle={{width: 160}}
                         component={OrderSingleDate}
                       />
-                      {rest.values.dormitoryType.length ? rest.values.dormitoryType[0].value === 'TEMPORARY_LIVE' && <Field
+                      {rest.values.dormitoryType.length ? rest.values.dormitoryType[0].value === 'DORM_TEMPORARY' && <Field
                         name="temporaryLiving"
                         label="临时住宿期限"
                         isRequire
@@ -314,6 +410,7 @@ const CreateDormitory = () => {
             </ScrollView>
             <Button
               title="保存"
+              loading={bottomButtonLoading}
               onPress={restForm.submitForm}
               containerStyle={styles.buttonContainerStyle}
               buttonStyle={styles.buttonStyle}

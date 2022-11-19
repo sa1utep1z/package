@@ -890,14 +890,14 @@ export const DORMITORY_LEAVE_REASON = [
 //在离宿名单-入住类别-枚举；
 export const DORMITORY_STAY_TYPE = [
   {label: '全部', value: 'ALL'},
-  {label: '临时住宿', value: 'TEMPORARY_LIVE'},
-  {label: '常规住宿', value: 'NORMAL_LIVE'},
+  {label: '常规住宿', value: 'DORM_ROUTINE'},
+  {label: '临时住宿', value: 'DORM_TEMPORARY'},
 ];
 
 //入住类别；
 export const DORMITORY_LIVE_TYPE = [
-  {label: '临时住宿', value: 'TEMPORARY_LIVE'},
-  {label: '常规住宿', value: 'NORMAL_LIVE'},
+  {label: '常规住宿', value: 'DORM_ROUTINE'},
+  {label: '临时住宿', value: 'DORM_TEMPORARY'},
 ];
 
 //宿舍分类；

@@ -13,6 +13,7 @@ const RadioSelect = ({
   radioList = [],
   radioItemsStyle,
   labelStyle,
+  canSelect = true, //是否可以选择；
   isRequire = false,
   showLabel = true,
   rightComponent,
@@ -20,6 +21,7 @@ const RadioSelect = ({
 }) => {
 
   const radioOnPress = (radio) => {
+    if(!canSelect) return;
     form.setFieldValue(field.name, [radio]);
   };
 
@@ -30,13 +32,13 @@ const RadioSelect = ({
           {isRequire && <Text style={{color: 'red'}}>*</Text>}
           {label}：</Text> : <></>}
         <View style={{flex: 1}}>
-          <View style={[{flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6, paddingLeft: 10}, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, radioItemsStyle]}>
+          <View style={[styles.radiosArea, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, radioItemsStyle]}>
             {radioList.map((radio, radioIndex) => {
               const isChecked = !!field?.value?.length ? field.value[0].value === radio.value : false;
               return (
-                <TouchableOpacity key={radioIndex} style={{maxWidth: `${(1/radioList.length) * 100}%`, minHeight: 60,  flexDirection: 'row', alignItems: 'center', padding: 5}} onPress={() => radioOnPress(radio)}>
-                  <MaterialIcons style={{textAlign: 'center', marginRight: 5}} name={isChecked ? 'radio-button-checked' : 'radio-button-off'} size={32} color={isChecked ? '#409EFF' : '#999999'} />
-                  <Text style={[{fontSize: 26, color: '#333333', paddingRight: 10}, !field?.value?.length && styles.itemText_none]}>{radio.label}</Text>
+                <TouchableOpacity key={radioIndex} activeOpacity={canSelect ? 0.2 : 1} style={[styles.touchArea, {maxWidth: `${(1/radioList.length) * 100}%`}]} onPress={() => radioOnPress(radio)}>
+                  <MaterialIcons style={styles.icon} name={isChecked ? 'radio-button-checked' : 'radio-button-off'} size={32} color={canSelect ? isChecked ? '#409EFF' : '#999999' : '#999999'} />
+                  <Text style={[styles.itemText, !field?.value?.length && styles.itemText_none]}>{radio.label}</Text>
                 </TouchableOpacity>
               )
             })}
@@ -64,9 +66,28 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: '#333333'
   },
+  radiosArea: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderWidth: 2, 
+    borderColor: '#E5E5E5', 
+    borderRadius: 6, 
+    paddingLeft: 10
+  },
+  touchArea: {
+    minHeight: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5
+  },
   itemText: {
-    fontSize: 26,
-    color: '#333333'
+    fontSize: 26, 
+    color: '#333333', 
+    paddingRight: 10
+  },
+  icon: {
+    textAlign: 'center', 
+    marginRight: 5
   },
   itemText_none: {
     fontSize: 26,

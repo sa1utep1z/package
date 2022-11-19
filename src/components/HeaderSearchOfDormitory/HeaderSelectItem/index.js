@@ -21,6 +21,7 @@ const HeaderSelectItem = ({
   label,
   canSearch = true,
   otherLabelStyle,
+  setIsFilterMore, //顶部筛选框中的筛选更多按钮是否选中状态：如果切换宿舍楼栋，则需要将按钮点亮状态进行取消。
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
@@ -33,11 +34,14 @@ const HeaderSelectItem = ({
     form.setFieldValue(field.name, list);
     form.setFieldValue('floorNum', []);
     form.setFieldValue('roomNum', []);
+    form.setFieldValue('bedNum', []);
+    setIsFilterMore && setIsFilterMore(false);
   };
 
   const floorConfirm = (list) => {
     form.setFieldValue(field.name, list);
     form.setFieldValue('roomNum', []);
+    form.setFieldValue('bedNum', []);
   };
 
   const selectOnPress = () => {
