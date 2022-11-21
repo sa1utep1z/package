@@ -25,26 +25,26 @@ const MemberInfo = ({
       <View style={styles.msgArea}>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>姓名：</Text>
-          <Text selectable style={[styles.valueText, {color: '#409EFF'}]}>{memberInfoList.name}</Text>
+          <Text selectable style={[styles.valueText, {color: '#409EFF'}]}>{memberInfoList.name || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>身份证：</Text>
-          <Text selectable style={[styles.valueText, {color: '#409EFF'}]}>{memberInfoList.idNo}</Text>
+          <Text selectable style={[styles.valueText, {color: '#409EFF'}]}>{memberInfoList.idNo || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>手机号：</Text>
           <TouchableOpacity style={styles.phoneArea} onPress={callPhone}>
-            <Text selectable style={styles.phoneText}>{memberInfoList.mobile}</Text>
+            <Text selectable style={styles.phoneText}>{memberInfoList.mobile || '无'}</Text>
             <Entypo name='phone' size={32} color='#409EFF' />
           </TouchableOpacity>
         </View>
         <View style={styles.jobNameArea}>
           <Text style={styles.jobTitle}>职位名称：</Text>
-          <Text style={{flex: 1, fontSize: 26}}>{memberInfoList.orderName}</Text>
+          <Text style={{flex: 1, fontSize: 26}}>{memberInfoList.orderName || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>渠道来源：</Text>
-          <Text style={styles.valueText}>{CHANEL_SOURCE_NAME[memberInfoList.signUpType]}</Text>
+          <Text style={styles.valueText}>{CHANEL_SOURCE_NAME[memberInfoList.signUpType || '无']}</Text>
         </View>
         {memberInfoList.signUpType === 'SUPPLIER' && <View style={styles.itemArea}>
           <Text style={styles.titleText}>供应商：</Text>
@@ -56,19 +56,19 @@ const MemberInfo = ({
         </View>}
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>归属门店：</Text>
-          <Text style={styles.valueText}>{memberInfoList.storeName}</Text>
+          <Text style={styles.valueText}>{memberInfoList.storeName || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>状态：</Text>
-          <Text style={styles.valueText}>{MEMBERS_STATUS[memberInfoList.status]}</Text>
+          <Text style={styles.valueText}>{MEMBERS_STATUS[memberInfoList.status] || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>到厂方式：</Text>
-          <Text style={styles.valueText}>{WAY_TO_GO_NAME[memberInfoList.arrivalMode]}</Text>
+          <Text style={styles.valueText}>{WAY_TO_GO_NAME[memberInfoList.arrivalMode] || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>录入时间：</Text>
-          <Text style={styles.valueText}>{moment(memberInfoList.signUpTime).format('YYYY-MM-DD HH:mm:ss')}</Text>
+          <Text style={styles.valueText}>{moment(memberInfoList.signUpTime).format('YYYY-MM-DD HH:mm:ss') || '无'}</Text>
         </View>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>入职日期：</Text>

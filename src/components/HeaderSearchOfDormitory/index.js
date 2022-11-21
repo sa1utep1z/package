@@ -19,22 +19,25 @@ let restForm;
 const initialValues = {
   enterprise: [],
   buildingNum: [],
-  liveType: [{label: '全部', value: 'ALL'}],
   floorNum: [],
   roomNum: [],
+  bedNum: [],
+  liveType: [{label: '全部', value: ''}],
   dormitoryType: [{label: '全部', value: 'ALL'}],
+  search: '',
 };
 
 const MaleOrFemaleRightIcon = ({value}) => value.length ? 
 <View style={styles.maleOrFemaleRightIconArea}>
   {value[0].value !== 'ALL' && <Ionicons 
     size={36} 
-    name={value[0].value === 'MALE_DORMITORY' ? 'man' : 'woman'} 
-    color={value[0].value === 'MALE_DORMITORY' ? '#409EFF' : '#eb00d8'}
+    name={value[0].value === 'DORM_MALE' ? 'man' : 'woman'} 
+    color={value[0].value === 'DORM_MALE' ? '#409EFF' : '#eb00d8'}
   />}
 </View> : <></>;
 
 const HeaderSearchOfDormitory = ({
+  filterFun, //筛选的函数
   selectIndex = 0,
   enterpriseStyle,
   otherHeaderStyle,
@@ -49,13 +52,15 @@ const HeaderSearchOfDormitory = ({
   filterFloorAndRoom = false, //是否筛选楼层及房间号（在同一行中）；
   filterBuildingAndFloor = false, //是否筛选楼栋跟楼层（在同一行中）；
 }) => {
-  const navigation = useNavigation();
-
   const dispatch = useDispatch();
-
+  const navigation = useNavigation();
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
 
   const [isFilterMore, setIsFilterMore] = useState(false);
+
+  useEffect(() => {
+    restForm.submitForm();
+  }, [])
 
   const onSubmit = values => {
     if(values?.floorNum && values?.roomNum && values?.bedNum){
@@ -66,6 +71,7 @@ const HeaderSearchOfDormitory = ({
         setIsFilterMore(false);
       }
     }
+    filterFun(values);
   };
 
   const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY, {

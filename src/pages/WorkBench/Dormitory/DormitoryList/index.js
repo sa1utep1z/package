@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TabView } from 'react-native-tab-view';
@@ -10,19 +10,17 @@ import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormit
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import NAVIGATION_KEYS from '../../../../navigator/key';
-import BottomList from './BottomList';
+import { setStartDate, setEndDate } from '../../../../redux/features/RangeDateOfList';
+
+import All from './All';
+import Pending from './Pending';
+import Leave from './Leave';
+import Living from './Living';
 
 const DormitoryList = () => {
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
-    })
-    dispatch(openListSearch());
-  }, [])
 
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([
@@ -31,10 +29,45 @@ const DormitoryList = () => {
     { key: 'leaving', title: '离宿', number: 0 },
     { key: 'staying', title: '在宿', number: 0 },
   ]);
+  const [filterParams, setFilterParams] = useState({});
 
-  const renderScene = () => <BottomList type={index} />
+  useEffect(() => {
+    dispatch(openListSearch());
+    dispatch(setStartDate(''));
+    dispatch(setEndDate(''));
+    navigation.setOptions({
+      headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
+    })
+  }, [])
+
+  const filter = (values)=>{
+    const filteredParams = {
+      companyId: values.enterprise.length ? values.enterprise[0].value : '', //企业
+      liveInType: values.liveType[0].value, //入住类别
+      name: values.search || '',
+
+      roomBuildingId: values.buildingNum.length ? values.buildingNum[0].value : '', //宿舍楼栋id
+      roomFloorId: values.floorNum.length ? values.floorNum[0].value : '', //宿舍楼层id
+      roomId: values.roomNum.length ? values.roomNum[0].value : '', //宿舍房间id
+      roomBedId: values.bedNum.length ? values.bedNum[0].value : '', //房间床位id
+    };
+    setFilterParams(filteredParams);
+  };
 
   const createDormitory = () => navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY);
+
+  const renderScene = ({ route }) => {
+    switch(route.key){
+      case 'all':
+        return <All filterParams={filterParams} />
+      case 'pending':
+        return <Pending filterParams={filterParams} />
+      case 'leaving':
+        return <Leave filterParams={filterParams} />
+      case 'staying':
+        return <Living filterParams={filterParams} />
+    }
+  };
 
   const renderTabBar = ({navigationState}) => {
     return (
@@ -65,6 +98,7 @@ const DormitoryList = () => {
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory 
+        filterFun={filter}
         selectIndex={index}
         filterMore
         filterMemberInfo

@@ -24,8 +24,8 @@ const MaleOrFemaleRightIcon = ({value}) => value.length ?
 <View style={styles.maleOrFemaleRightIconArea}>
   <Ionicons 
     size={40} 
-    name={value[0].value === 'MALE_DORMITORY' ? 'man' : 'woman'} 
-    color={value[0].value === 'MALE_DORMITORY' ? '#409EFF' : '#eb00d8'}
+    name={value[0].value === 'DORM_MALE' ? 'man' : 'woman'} 
+    color={value[0].value === 'DORM_MALE' ? '#409EFF' : '#eb00d8'}
   />
 </View> : <></>;
 

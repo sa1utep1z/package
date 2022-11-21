@@ -9,6 +9,8 @@ const DormitoryListApi = {
   getTemporaryDormitoryList: async(IdCard) => await httpRequest.get(`/common/dorm/${IdCard}/temporary/hierarchy`),
   //新增住宿信息；
   addDormitoryInfo: async(params) => await httpRequest.post('/admin/app/dormLive', params),
+  //在离宿列表；
+  getDormitoryList: async(params) => await httpRequest.post('/admin/app/dormLive/list', params),
 };
 
 export default DormitoryListApi;

@@ -124,7 +124,7 @@ const WaitToEntry = ({
             </View>
             <View style={styles.rightArea}>
               <TouchableOpacity style={styles.buttonArea} onPress={passOnPress}>
-                <Text style={styles.confirmText}>通过</Text>
+                <Text style={styles.confirmText}>确定</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -260,8 +260,8 @@ const styles = StyleSheet.create({
     color: '#999999'
   },
   confirmText: {
-    fontSize: 28, 
-    color: 'green'
+    fontSize: 28,
+    color: '#409EFF'
   },
 })
 

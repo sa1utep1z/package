@@ -18,7 +18,7 @@ const LittleSingleDate = ({
   const [dateTime, setDateTime] = useState(new Date());
 
   useEffect(()=>{
-    setDateTime(new Date(field.value));
+    setDateTime(field.value.length ? new Date(field.value) : new Date());
   },[field.value])
 
   const pickerOnPress = () => {

@@ -889,7 +889,7 @@ export const DORMITORY_LEAVE_REASON = [
 
 //在离宿名单-入住类别-枚举；
 export const DORMITORY_STAY_TYPE = [
-  {label: '全部', value: 'ALL'},
+  {label: '全部', value: ''},
   {label: '常规住宿', value: 'DORM_ROUTINE'},
   {label: '临时住宿', value: 'DORM_TEMPORARY'},
 ];
@@ -900,17 +900,23 @@ export const DORMITORY_LIVE_TYPE = [
   {label: '临时住宿', value: 'DORM_TEMPORARY'},
 ];
 
+//男女宿舍；
+export const DORMITORY_TYPE_NAME = {
+  DORM_MALE: '男',
+  DORM_FEMALE: '女'
+};
+
 //宿舍分类；
 export const DORMITORY_TYPE = [
-  {label: '男生宿舍', value: 'MALE_DORMITORY'},
-  {label: '女生宿舍', value: 'FEMALE_DORMITORY'},
+  {label: '男生宿舍', value: 'DORM_MALE'},
+  {label: '女生宿舍', value: 'DORM_FEMALE'},
 ];
 
 //宿舍分类（包括ALL）；
 export const DORMITORY_ALL_TYPE = [
   {label: '全部', value: 'ALL'},
-  {label: '男生宿舍', value: 'MALE_DORMITORY'},
-  {label: '女生宿舍', value: 'FEMALE_DORMITORY'},
+  {label: '男生宿舍', value: 'DORM_MALE'},
+  {label: '女生宿舍', value: 'DORM_FEMALE'},
 ];
 
 //宿舍卫生状况；

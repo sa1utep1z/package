@@ -25,7 +25,6 @@ const validationSchema = Yup.object().shape({
   memberIdCard: Yup.string().required('请输入身份证号'),
   memberFrom: Yup.string().required('请输入籍贯'),
   dormitoryType: Yup.array().min(1, '请选择入住类别'),
-  maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
   buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
   floorNum: Yup.array().min(1, '请选择楼层'),
   roomNum: Yup.array().min(1, '请选择房间号'),
@@ -104,8 +103,11 @@ const CreateDormitory = ({
 
   const IdCardOnInput = (value) => {
     if(value.length === 18){
+      const sexNum = value[16];
+      restForm.setFieldValue('maleOrFemale', [{label: `${sexNum % 2 === 0 ? '女生' : '男生'}宿舍`, value: `${sexNum % 2 === 0 ? 'DORM_FEMALE' : 'DORM_MALE'}`}]);
       queryMemberFlowId(value);
     }else{
+      restForm.setFieldValue('maleOrFemale', []);
       setSignUpInfo({});
       setSignUpNotice('请输入身份证号或通过【OCR】拍照读取会员报名信息');
     }
@@ -119,17 +121,10 @@ const CreateDormitory = ({
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         setSignUpNotice('无该会员报名信息，请确认身份证号是否正确！');
-        restForm.setFieldValue('maleOrFemale', []);
         return;
       }
       restForm.setFieldValue('memberName', res.data.userName);
       restForm.setFieldValue('memberPhone', res.data.mobile);
-      const sexNum = memberId[16];
-      if(sexNum % 2 === 0){
-        restForm.setFieldValue('maleOrFemale', [{label: '女生宿舍', value: 'FEMALE_DORMITORY'}]);
-      }else {
-        restForm.setFieldValue('maleOrFemale', [{label: '男生宿舍', value: 'MALE_DORMITORY'}]);
-      }
       setSignUpInfo({...res.data});
     } catch (error) {
       console.log('error', error)
@@ -325,7 +320,6 @@ const CreateDormitory = ({
                       <Field
                         name="maleOrFemale"
                         label="宿舍分类"
-                        isRequire
                         canSelect={false}
                         labelStyle={{width: 160}}
                         radioList={DORMITORY_TYPE}

@@ -46,15 +46,14 @@ const FilterMore = ({
   const confirmOnPress = () => restForm.submitForm();
 
   const onSubmit = values => {
-    console.log('confirm->values', values);
     originForm.setValues({
       ...originForm.values,
       ...values
     });
     originForm.submitForm();
     dispatch(closeDialog());
-    dispatch(setStartDate(moment.utc(values.startDate)));
-    dispatch(setEndDate(moment.utc(values.endDate)));
+    dispatch(setStartDate(values.startDate ? moment.utc(values.startDate) : ''));
+    dispatch(setEndDate(values.endDate ? moment.utc(values.endDate) : ''));
   };
 
   const close = () => dispatch(closeDialog());

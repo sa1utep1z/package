@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useRef} from "react";
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment";
 
-import LeavingManageApi from "../../../../../request/LeavingManageApi";
+import DormitoryListApi from "../../../../../request/Dormitory/DormitoryListApi";
 import { pageEmpty } from "../../../../Home/listComponent";
 import { SUCCESS_CODE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
@@ -20,47 +20,53 @@ import MemberInfo from '../../../../../components/PageDialog/MemberInfo';
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
-const Total = ({
-  type
+const Pending = ({
+  filterParams, //顶部筛选的参数
 }) => {
   const flatListRef = useRef(null);
-
   const toast = useToast();
-
   const dispatch = useDispatch();
 
-  const [searchContent, setSearchContent] = useState({status: '', ...firstPage});
+  const startDate = useSelector(state => state.RangeDateOfList.startDate);
+  const endDate = useSelector(state => state.RangeDateOfList.endDate);
+
+  const [searchContent, setSearchContent] = useState({status: 'DORM_LIVE_PENDING', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=>{
+    const liveInDateStart = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
+    const liveInDateEnd = startDate ? moment(endDate).format('YYYY-MM-DD') : '';
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
-      getList({...searchContent});
+      getList({...searchContent, ...filterParams, liveInDateStart, liveInDateEnd});
     }, 0)
     return () => timer && clearTimeout(timer);
-  }, [searchContent])
+  }, [searchContent, filterParams, startDate, endDate])
   
   const getList = async(params) => {
     setIsLoading(true);
+    console.log('getList -> params', params)
     try{
-      let arr = [];
-      for(let i = 0; i < 30; i++){
-        arr.push({
-          id: i,
-          name: `名单${i+1}`,
-          building: `${String(i+1)[0]*100}栋`,
-          room: `男-101-${i+1}`,
-          date: `2022/3/${i+1}`,
-          enterprise: `龙华AC${i+1}`,
-          status: i%2 === 0 ? 0 : i %3 === 0 ? 1 : 2,
-        })
+      const res = await DormitoryListApi.getDormitoryList(params);
+      console.log('getList --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
       }
-      setShowList(arr);
+      //初始数据
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if(nextPage){
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList([...res.data.content]);
     }catch(err){
-      console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
@@ -68,10 +74,9 @@ const Total = ({
   };
 
   const nameOnPress = async(item) => {
-    console.log('item', item);
     try {
       dispatch(setTitle('温馨提示'));
-      dispatch(openDialog(<CallPhone message={{mobile: '18888888888'}}/>));
+      dispatch(openDialog(<CallPhone message={{mobile: item.mobile}}/>));
     } catch (error) {
       console.log('enterpriseOnPress->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -79,9 +84,29 @@ const Total = ({
   };
 
   const enterpriseOnPress = async(item) => {
+    // try{
+    //   const res = await ListApi.FactoryMessage(item.flowId);
+    //   if(res?.code !== SUCCESS_CODE){
+    //     if(res?.code === 2){
+    //       toast.show(`${res?.msg}`, {type: 'warning'});
+    //       return;
+    //     }
+    //     toast.show(`${res?.msg}`, {type: 'danger'});
+    //     return;
+    //   }
+    //   dialogRef.current.setShowDialog(true);
+    //   setDialogContent({
+    //     dialogTitle: '岗位信息',
+    //     dialogComponent: <FormCompanyDetail message={res.data}/>,
+    //     rightTitle: '转厂/转单',
+    //     rightTitleOnPress: () => transferFactory(item)
+    //   });
+    // }catch(err){
+    //   toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    // }
     try {
-      const orderDetailRes = await HomeApi.orderDetail("635bb709491cf26efb8bee21");
-      const orderTextRes = await HomeApi.orderTextDetail("635bb709491cf26efb8bee21");
+      const orderDetailRes = await HomeApi.orderDetail(item.recruitFlowId);
+      const orderTextRes = await HomeApi.orderTextDetail(item.recruitFlowId);
       if(orderDetailRes?.code !== SUCCESS_CODE){
         toast.show(`${orderDetailRes?.msg}`, {type: 'danger'});
         return;
@@ -107,25 +132,25 @@ const Total = ({
   const statusOnPress = async(item) => {
     dispatch(setTitle('状态处理'));
     switch(item.status){
-      case 0:
+      case 'DORM_LIVE_IN':
         dispatch(openDialog(<StayInDormitory />));
         break;
-      case 1:
+      case 'DORM_LIVE_PENDING':
         dispatch(openDialog(<WaitToEntry />));
         break;
     }
   };
 
-  const originOnPress = async() => {
+  const originOnPress = async(item) => {
     try {
-      const res = await ListApi.MemberMessage('63631fec82124947376716e6');
-      console.log('res', res);
-      dispatch(setTitle('招聘来源'));
-      dispatch(openDialog(<MemberInfo memberInfoList={res.data} showDate={true}/>));
+      const res = await ListApi.MemberMessage(item.recruitFlowId);
+      console.log('originOnPress -> res（招聘来源）', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
+      dispatch(setTitle('招聘来源'));
+      dispatch(openDialog(<MemberInfo memberInfoList={res.data} showDate={true}/>));
     } catch (error) {
       console.log('error', error);
     }
@@ -139,7 +164,7 @@ const Total = ({
       setSearchContent(nextPage);
       setNextPage(true);
     }
-  };571704
+  };
 
   const renderItem = ({item}) => {
     return (
@@ -148,31 +173,31 @@ const Total = ({
           style={[styles.itemText, styles.pressItem, {flex: 0, width: 100}]}
           numberOfLines={2}
           onPress={() => nameOnPress(item)}
-          ellipsizeMode="tail">{item.name || '无'}</Text>
+          ellipsizeMode="tail">{item.userName || '无'}</Text>
         <View style={styles.dormitoryInfo}>
           <Text 
             style={[styles.itemText, {fontSize: 24}]}
             numberOfLines={2}
-            ellipsizeMode="tail">{item.building}</Text>
+            ellipsizeMode="tail">{item.roomBuildingName}</Text>
             <Text 
             style={[styles.itemText, {fontSize: 24}]}
             numberOfLines={2}
-            ellipsizeMode="tail">{item.room}</Text>
+            ellipsizeMode="tail">{item.liveInType === 'DORM-MALE' ? '男' : '女'}-{item.bedNo}</Text>
         </View>
         <Text 
           style={[styles.itemText, {fontSize: 24}]}
           numberOfLines={2}
-          ellipsizeMode="tail">{item.date}</Text>
+          ellipsizeMode="tail">{item.liveInDate ? moment(item.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
         <Text 
           style={[styles.itemText, styles.pressItem]}
           numberOfLines={2}
           onPress={() => enterpriseOnPress(item)}
-          ellipsizeMode="tail">{item.enterprise}</Text>
+          ellipsizeMode="tail">{item.shortCompanyName}</Text>
         <Text 
-          style={[styles.itemText, styles.pressItem, {color: item.status === 1 ? 'red' : '#31df07'}, {flex: 0, width: 100}]}
+          style={[styles.itemText, styles.pressItem, {color: item.status === 'DORM_LIVE_OUT' ? 'red' : '#31df07'}, {flex: 0, width: 100}]}
           numberOfLines={2}
           onPress={() => statusOnPress(item)}
-          ellipsizeMode="tail">{item.status === 0 ? '在宿' : item.status === 1 ? '待入住' : '离宿'}</Text>
+          ellipsizeMode="tail">{item.status === 'DORM_LIVE_IN' ? '在宿' : item.status === 'DORM_LIVE_PENDING' ? '待入住' : '离宿'}</Text>
         <Text 
           style={[styles.itemText, styles.pressItem, {flex: 0, width: 120}]}
           numberOfLines={2}
@@ -224,4 +249,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Total;
+export default Pending;

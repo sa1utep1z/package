@@ -28,7 +28,10 @@ const HeaderSelectItem = ({
 
   const [loading, setLoading] = useState(false);
 
-  const confirm = (list) => form.setFieldValue(field.name, list);
+  const confirm = (list) => {
+    form.setFieldValue(field.name, list);
+    form.submitForm();
+  };
 
   const buildingConfirm = (list) => {
     form.setFieldValue(field.name, list);
@@ -36,12 +39,14 @@ const HeaderSelectItem = ({
     form.setFieldValue('roomNum', []);
     form.setFieldValue('bedNum', []);
     setIsFilterMore && setIsFilterMore(false);
+    form.submitForm();
   };
 
   const floorConfirm = (list) => {
     form.setFieldValue(field.name, list);
     form.setFieldValue('roomNum', []);
     form.setFieldValue('bedNum', []);
+    form.submitForm();
   };
 
   const selectOnPress = () => {
@@ -152,7 +157,10 @@ const HeaderSelectItem = ({
     }
   };
 
-  const clearFieldValue = () => form.setFieldValue(field.name, []);
+  const clearFieldValue = () => {
+    form.setFieldValue(field.name, []);
+    form.submitForm();
+  };
 
   return (
     <View style={styles.selectItemArea}>
