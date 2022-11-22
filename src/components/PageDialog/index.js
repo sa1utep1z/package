@@ -62,7 +62,7 @@ const PageDialog = () => {
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
           <TouchableOpacity style={styles.backPress} activeOpacity={1} onPress={close}/>
-          <View style={[styles.showArea, dialogHidden && {display: 'none'}]}>
+          <View style={[styles.showArea, dialogHidden && {opacity: 0}]}>
             <DefaultTitle title={dialogTitle}/>
             {dialogContent || <DefaultEmptyArea />}
           </View>

@@ -3,27 +3,59 @@ import { ScrollView, Text, View, TouchableOpacity, StyleSheet } from "react-nati
 import { Formik, Field } from 'formik';
 import moment from 'moment';
 import { Shadow } from 'react-native-shadow-2';
+import { useToast } from "react-native-toast-notifications";
+import { useDispatch } from "react-redux";
 
 import { DORMITORY_LEAVE_REASON } from "../../../../../../utils/const";
 import SelectTimeOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
+import DormitoryListApi from '../../../../../../request/Dormitory/DormitoryListApi';
+import { closeDialog } from "../../../../../../redux/features/PageDialog";
+import { SUCCESS_CODE } from '../../../../../../utils/const';
 
 let restForm;
 const initialValues = {
   leaveDate: moment().format('YYYY-MM-DD')
 };
 
-const Leave = ({}, ref) => {
+const Leave = ({
+  dormitoryInfo,
+  refresh
+}, ref) => {
   const scrollViewRef = useRef(null);
+  const toast = useToast();
+  const dispatch = useDispatch();
 
   const [selectReason, setSelectReason] = useState('');
   const [reasonWrong, setReasonWrong] = useState(false);
 
   useImperativeHandle(ref, () => {
-    return { scrollViewRef, selectReason, setReasonWrong };
+    return { scrollViewRef, selectReason, setReasonWrong, restForm };
   }, [selectReason]);
 
   const onSubmit = (values) => {
     console.log('提交', values);
+    const formatValue = {
+      liveOutDate: values.leaveDate,
+      liveOnReasonType: selectReason
+    };
+    leaveConfirm(formatValue);
+  };
+
+  const leaveConfirm = async(params) => {
+    try {
+      const res = await DormitoryListApi.leaveConfirm(params, dormitoryInfo.id);
+      console.log('leaveConfirm --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      dispatch(closeDialog());
+      toast.show('退宿成功！', {type: 'success'});
+      refresh && refresh();
+    } catch (error) {
+      console.log('leaveConfirm -> error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }
   };
 
   const reasonOnPress = (reason) => {
@@ -40,11 +72,11 @@ const Leave = ({}, ref) => {
         return (
           <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
             <View style={{padding: 20, paddingBottom: 0}}>
-              <Text style={styles.itemText}>会员姓名：张三</Text>
-              <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>15390913806</Text></Text>
-              <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>452123123412341234</Text></Text>
-              <Text selectable style={styles.itemText}>入住日期：2022-5-23</Text>
-              <Text selectable style={[styles.itemText, {marginBottom: 20}]}>入住类别：常规住宿</Text>
+              <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName}</Text>
+              <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>{dormitoryInfo.mobile}</Text></Text>
+              <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo}</Text></Text>
+              <Text selectable style={styles.itemText}>入住日期：{dormitoryInfo.liveInDate ? moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
+              <Text selectable style={[styles.itemText, {marginBottom: 20}]}>入住类别：{dormitoryInfo.liveInType === "DORM_ROUTINE" ? '常规住宿' : '临时住宿'}</Text>
             </View>
             <View style={{paddingHorizontal: 20}}>
               <Shadow style={styles.dormitoryArea}>
@@ -56,31 +88,31 @@ const Leave = ({}, ref) => {
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>宿舍楼栋</Text>
                     </View>
-                    <Text style={styles.rightText}>241栋</Text>
+                    <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
                   </View>
                   <View style={styles.listItem}>
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>宿舍分类</Text>
                     </View>
-                    <Text style={styles.rightText}>男生宿舍</Text>
+                    <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
                   </View>
                   <View style={styles.listItem}>
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>宿舍楼层</Text>
                     </View>
-                    <Text style={styles.rightText}>1F</Text>
+                    <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
                   </View>
                   <View style={styles.listItem}>
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>房间号</Text>
                     </View>
-                    <Text style={styles.rightText}>101</Text>
+                    <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
                   </View>
                   <View style={styles.lastItem}>
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>床位号</Text>
                     </View>
-                    <Text style={styles.rightText}>101-1</Text>
+                    <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
                   </View>
                 </View>
               </Shadow>

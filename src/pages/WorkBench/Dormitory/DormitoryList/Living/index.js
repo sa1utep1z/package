@@ -22,6 +22,7 @@ const firstPage = {pageSize: 20, pageNumber: 0};
 
 const Living = ({
   filterParams, //顶部筛选的参数
+  changeRoute, //修改路由函数
 }) => {
   const flatListRef = useRef(null);
   const toast = useToast();
@@ -133,10 +134,10 @@ const Living = ({
     dispatch(setTitle('状态处理'));
     switch(item.status){
       case 'DORM_LIVE_IN':
-        dispatch(openDialog(<StayInDormitory />));
+        dispatch(openDialog(<StayInDormitory dormitoryInfo={item} refresh={refresh} />));
         break;
       case 'DORM_LIVE_PENDING':
-        dispatch(openDialog(<WaitToEntry />));
+        dispatch(openDialog(<WaitToEntry dormitoryInfo={item} refresh={refresh} />));
         break;
     }
   };
@@ -168,7 +169,7 @@ const Living = ({
 
   const renderItem = ({item}) => {
     return (
-      <View style={styles.listStyle}>
+      <View style={[styles.listStyle, !item.scanConfirm && {backgroundColor: '#ffe270'}, item.liveOutApply && {backgroundColor: '#ffcfcf'}]}>
         <Text 
           style={[styles.itemText, styles.pressItem, {flex: 0, width: 100}]}
           numberOfLines={2}

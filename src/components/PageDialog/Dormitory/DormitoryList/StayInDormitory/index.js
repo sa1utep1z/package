@@ -13,6 +13,8 @@ const routes = [
 ];
 
 const StayInDormitory = ({
+  dormitoryInfo,
+  refresh
 }) => {
   const dispatch = useDispatch();
 
@@ -27,6 +29,8 @@ const StayInDormitory = ({
     if(index === 0 && !leaveRef?.current?.selectReason.length){
       leaveRef?.current?.scrollViewRef?.current?.scrollToEnd();
       leaveRef?.current?.setReasonWrong(true);
+    }else if(index === 0) {
+      leaveRef?.current?.restForm.submitForm();
     }else if(index === 1){
       adjustRef?.current?.restForm.submitForm();
     }
@@ -37,9 +41,9 @@ const StayInDormitory = ({
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'leave':
-        return <Leave ref={leaveRef}/>
+        return <Leave ref={leaveRef} dormitoryInfo={dormitoryInfo} refresh={refresh} />
       case 'adjustment':
-        return <Adjust ref={adjustRef}/> 
+        return <Adjust ref={adjustRef} dormitoryInfo={dormitoryInfo} refresh={refresh} /> 
     }
   };
 

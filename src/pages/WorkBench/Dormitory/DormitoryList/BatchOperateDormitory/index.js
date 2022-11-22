@@ -40,7 +40,7 @@ const BatchOperateDormitory = ({
   useEffect(()=>{
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
-      getList({...searchContent});
+      getList(searchContent);
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent])
@@ -64,23 +64,22 @@ const BatchOperateDormitory = ({
       setSelectedList([]);
     }
   },[selectedAll])
+
+  const filter = (values)=> {
+    console.log('values', values)
+    const filteredParams = {
+      name: values.search || '',
+      roomBuildingId: values.buildingNum.length ? values.buildingNum[0].value : '', //宿舍楼栋id
+      roomFloorId: values.floorNum.length ? values.floorNum[0].value : '', //宿舍楼层id
+      roomId: values.roomNum.length ? values.roomNum[0].value : '', //宿舍房间id
+    };
+    setSearchContent(filteredParams);
+  };
   
   const getList = async(params) => {
     setIsLoading(true);
     try{
-      let arr = [];
-      for(let i = 0; i < 30; i++){
-        arr.push({
-          id: i,
-          name: `名单${i+1}`,
-          building: `${String(i+1)[0]*100}栋`,
-          room: `男-101-${i+1}`,
-          date: `2022/3/${i+1}`,
-          enterprise: `龙华AC${i+1}`,
-          status: i%2 === 0 ? 0 : i %3 === 0 ? 1 : 2,
-        })
-      }
-      setShowList(arr);
+      console.log('params', params)
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -134,28 +133,30 @@ const BatchOperateDormitory = ({
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory 
+        filterFun={filter}
         filterBuilding
         filterFloorAndRoom
         filterMemberInfo
       />
-      <View style={{flexDirection: 'row', paddingLeft: 25, justifyContent: 'space-between', marginBottom: 5}}>
-        <Text style={{fontSize: 26, color: '#999999'}}>共<Text style={{color: '#409EFF'}}> {showList.length} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>1</Text>/3 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
+      <View style={styles.topArea}>
+        <Text style={styles.topText}>共<Text style={{color: '#409EFF'}}> {showList.length} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>1</Text>/3 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
         </Text>
-        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25}} onPress={selectedAllOnPress}>
-          <Text style={[{fontSize: 26, marginRight: 5, color: '#999999'}, selectedAll && {color: '#333333', fontWeight: 'bold'}]}>全选</Text>
+        <TouchableOpacity style={styles.selectAllBtn} onPress={selectedAllOnPress}>
+          <Text style={[styles.selectAllText, selectedAll && {color: '#333333', fontWeight: 'bold'}]}>全选</Text>
           <MaterialIcons name={selectedAll ? 'radio-button-checked' : 'radio-button-off'} size={32} color={selectedAll ? '#409EFF' : '#999999'} />
         </TouchableOpacity>
       </View>
-      <View style={{flexDirection: 'row', alignItems: 'center', height: 50, marginHorizontal: 20, backgroundColor: '#ffffff', borderTopLeftRadius: 8, borderTopRightRadius: 8, borderBottomWidth: 1, borderColor: '#EFEFEF'}}>
-        <Text style={{width: 140, fontSize: 26, fontWeight: 'bold', textAlign: 'center', color: '#333333'}}>姓名</Text>
-        <Text style={{flex: 1, fontSize: 26, fontWeight: 'bold', textAlign: 'center', color: '#333333'}}>宿舍信息</Text>
-        <Text style={{width: 180, fontSize: 26, fontWeight: 'bold', textAlign: 'center', color: '#333333'}}>入住日期</Text>
-        <Text style={{width: 120, fontSize: 26, fontWeight: 'bold', textAlign: 'center', color: '#333333'}}>选择</Text>
+      <View style={styles.topLine}>
+        <Text style={[styles.titleText, {width: 140}]}>姓名</Text>
+        <Text style={[styles.titleText, {flex: 1}]}>宿舍信息</Text>
+        <Text style={[styles.titleText, {width: 180}]}>入住日期</Text>
+        <Text style={[styles.titleText, {width: 120}]}>选择</Text>
       </View>
       <FlatList 
-        style={{backgroundColor: '#fff', borderBottomLeftRadius: 8, borderBottomRightRadius: 8, marginHorizontal: 20}}
+        style={styles.flatListStyle}
         data={showList}
         renderItem={renderItem}
+        refreshing={isLoading}
         keyExtractor={item => item.id}
         getItemLayout={(data, index)=>({length: 90, offset: 90 * index, index})}
         initialNumToRender={15}
@@ -186,6 +187,49 @@ const BatchOperateDormitory = ({
 const styles = StyleSheet.create({
   screen: {
     flex: 1
+  },
+  topArea: {
+    flexDirection: 'row', 
+    paddingLeft: 25, 
+    justifyContent: 'space-between', 
+    marginBottom: 5
+  },
+  topText: {
+    fontSize: 26, 
+    color: '#999999'
+  },
+  selectAllBtn: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 25
+  },
+  selectAllText: {
+    fontSize: 26, 
+    marginRight: 5, 
+    color: '#999999'
+  },
+  topLine: {
+    height: 50, 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    marginHorizontal: 20, 
+    backgroundColor: '#ffffff', 
+    borderTopLeftRadius: 8, 
+    borderTopRightRadius: 8, 
+    borderBottomWidth: 1, 
+    borderColor: '#EFEFEF'
+  },
+  titleText: {
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: '#333333'
+  },
+  flatListStyle: {
+    backgroundColor: '#fff', 
+    borderBottomLeftRadius: 8, 
+    borderBottomRightRadius: 8, 
+    marginHorizontal: 20
   },
   buttonArea: {
     flexDirection: 'row', 

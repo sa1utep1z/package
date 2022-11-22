@@ -16,6 +16,7 @@ import All from './All';
 import Pending from './Pending';
 import Leave from './Leave';
 import Living from './Living';
+import { deepCopy } from '../../../../utils';
 
 const DormitoryList = () => {
   const dispatch = useDispatch();
@@ -24,10 +25,10 @@ const DormitoryList = () => {
 
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([
-    { key: 'all', title: '全部', number: 0 },
-    { key: 'pending', title: '待入住', number: 0 },
-    { key: 'leaving', title: '离宿', number: 0 },
-    { key: 'staying', title: '在宿', number: 0 },
+    { key: 'allNums', title: '全部', number: 0 },
+    { key: 'pendingNums', title: '待入住', number: 0 },
+    { key: 'outNums', title: '离宿', number: 0 },
+    { key: 'inNums', title: '在宿', number: 0 },
   ]);
   const [filterParams, setFilterParams] = useState({});
 
@@ -40,7 +41,7 @@ const DormitoryList = () => {
     })
   }, [])
 
-  const filter = (values)=>{
+  const filter = (values)=> {
     const filteredParams = {
       companyId: values.enterprise.length ? values.enterprise[0].value : '', //企业
       liveInType: values.liveType[0].value, //入住类别
@@ -54,18 +55,24 @@ const DormitoryList = () => {
     setFilterParams(filteredParams);
   };
 
+  const changeRoute = values => {
+    const copyList = deepCopy(routes);
+    copyList.forEach(route => route.number = values[route.key]);
+    setRoutes(copyList);
+  };
+
   const createDormitory = () => navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY);
 
   const renderScene = ({ route }) => {
     switch(route.key){
-      case 'all':
-        return <All filterParams={filterParams} />
-      case 'pending':
-        return <Pending filterParams={filterParams} />
-      case 'leaving':
-        return <Leave filterParams={filterParams} />
-      case 'staying':
-        return <Living filterParams={filterParams} />
+      case 'allNums':
+        return <All filterParams={filterParams} changeRoute={changeRoute} />
+      case 'pendingNums':
+        return <Pending filterParams={filterParams} changeRoute={changeRoute} />
+      case 'outNums':
+        return <Leave filterParams={filterParams} changeRoute={changeRoute} />
+      case 'inNums':
+        return <Living filterParams={filterParams} changeRoute={changeRoute} />
     }
   };
 

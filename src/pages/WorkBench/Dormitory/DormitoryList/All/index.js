@@ -22,6 +22,7 @@ const firstPage = {pageSize: 20, pageNumber: 0};
 
 const All = ({
   filterParams, //顶部筛选的参数
+  changeRoute, //修改路由函数
 }) => {
   const flatListRef = useRef(null);
   const toast = useToast();
@@ -42,6 +43,7 @@ const All = ({
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams, liveInDateStart, liveInDateEnd});
+      getTypeList({...filterParams, liveInDateStart, liveInDateEnd});
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent, filterParams, startDate, endDate])
@@ -72,6 +74,24 @@ const All = ({
       setIsLoading(false);
     }
   };
+  
+  const getTypeList = async(params) => {
+    setIsLoading(true);
+    try{
+      console.log('getTypeList -> params', params)
+      const res = await DormitoryListApi.getDormitoryType(params);
+      console.log('getTypeList --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      changeRoute && changeRoute(res.data);
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }finally{
+      setIsLoading(false);
+    }
+  };
 
   const nameOnPress = async(item) => {
     try {
@@ -84,59 +104,71 @@ const All = ({
   };
 
   const enterpriseOnPress = async(item) => {
-    // try{
-    //   const res = await ListApi.FactoryMessage(item.flowId);
-    //   if(res?.code !== SUCCESS_CODE){
-    //     if(res?.code === 2){
-    //       toast.show(`${res?.msg}`, {type: 'warning'});
-    //       return;
-    //     }
-    //     toast.show(`${res?.msg}`, {type: 'danger'});
-    //     return;
-    //   }
-    //   dialogRef.current.setShowDialog(true);
-    //   setDialogContent({
-    //     dialogTitle: '岗位信息',
-    //     dialogComponent: <FormCompanyDetail message={res.data}/>,
-    //     rightTitle: '转厂/转单',
-    //     rightTitleOnPress: () => transferFactory(item)
-    //   });
-    // }catch(err){
-    //   toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    // }
-    try {
-      const orderDetailRes = await HomeApi.orderDetail(item.recruitFlowId);
-      const orderTextRes = await HomeApi.orderTextDetail(item.recruitFlowId);
-      if(orderDetailRes?.code !== SUCCESS_CODE){
-        toast.show(`${orderDetailRes?.msg}`, {type: 'danger'});
-        return;
-      }
-      if(orderTextRes?.code !== SUCCESS_CODE){
-        toast.show(`${orderTextRes?.msg}`, {type: 'danger'});
+    try{
+      const res = await ListApi.FactoryMessage(item.recruitFlowId);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        if(res?.code === 2){
+          toast.show(`${res?.msg}`, {type: 'warning'});
+          return;
+        }
+        toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       const orderData = {
-        orderName: orderDetailRes.data.orderName, 
-        recruitRange: orderDetailRes.data.recruitRange, 
-        orderPolicyDetail: orderDetailRes.data.orderPolicyDetail, 
-        orderTextDetail: orderTextRes.data
+        orderName: res.data.orderName, 
+        recruitRange: res.data.orderDate, 
+        orderPolicyDetail: res.data.orderPolicyDetail, 
+        orderTextDetail: res.data.orderPolicyDetail
       };
       dispatch(setTitle('岗位信息'));
       dispatch(openDialog(<OrderDetail orderData={orderData}/>));
-    } catch (error) {
-      console.log('enterpriseOnPress->error', error);
-      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+      // dialogRef.current.setShowDialog(true);
+      // setDialogContent({
+      //   dialogTitle: '岗位信息',
+      //   dialogComponent: <FormCompanyDetail message={res.data}/>,
+      //   rightTitle: '转厂/转单',
+      //   rightTitleOnPress: () => transferFactory(item)
+      // });
+    }catch(err){
+      console.log('err', err)
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
+    // try {
+    //   const orderDetailRes = await HomeApi.orderDetail(item.recruitFlowId);
+    //   console.log('orderDetailRes', orderDetailRes);
+    //   const orderTextRes = await HomeApi.orderTextDetail(item.recruitFlowId);
+    //   console.log('orderTextRes', orderTextRes);
+    //   if(orderDetailRes?.code !== SUCCESS_CODE){
+    //     toast.show(`${orderDetailRes?.msg}`, {type: 'danger'});
+    //     return;
+    //   }
+    //   if(orderTextRes?.code !== SUCCESS_CODE){
+    //     toast.show(`${orderTextRes?.msg}`, {type: 'danger'});
+    //     return;
+    //   }
+    //   const orderData = {
+    //     orderName: orderDetailRes.data.orderName, 
+    //     recruitRange: orderDetailRes.data.recruitRange, 
+    //     orderPolicyDetail: orderDetailRes.data.orderPolicyDetail, 
+    //     orderTextDetail: orderTextRes.data
+    //   };
+    //   dispatch(setTitle('岗位信息'));
+    //   dispatch(openDialog(<OrderDetail orderData={orderData}/>));
+    // } catch (error) {
+    //   console.log('enterpriseOnPress->error', error);
+    //   toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    // }
   };
 
   const statusOnPress = async(item) => {
     dispatch(setTitle('状态处理'));
     switch(item.status){
       case 'DORM_LIVE_IN':
-        dispatch(openDialog(<StayInDormitory />));
+        dispatch(openDialog(<StayInDormitory dormitoryInfo={item} refresh={refresh} />));
         break;
       case 'DORM_LIVE_PENDING':
-        dispatch(openDialog(<WaitToEntry />));
+        dispatch(openDialog(<WaitToEntry dormitoryInfo={item} refresh={refresh} />));
         break;
     }
   };
@@ -168,7 +200,7 @@ const All = ({
 
   const renderItem = ({item}) => {
     return (
-      <View style={styles.listStyle}>
+      <View style={[styles.listStyle, !item.scanConfirm && {backgroundColor: '#ffe270'}, item.liveOutApply && {backgroundColor: '#ffcfcf'}]}>
         <Text 
           style={[styles.itemText, styles.pressItem, {flex: 0, width: 100}]}
           numberOfLines={2}

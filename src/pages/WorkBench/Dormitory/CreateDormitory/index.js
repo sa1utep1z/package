@@ -66,7 +66,6 @@ const CreateDormitory = ({
   const [signUpNotice, setSignUpNotice] = useState('请输入身份证号或通过【OCR】拍照读取会员报名信息');
 
   const onSubmit = (values) => {
-    console.log('提交了表单', values);
     const formatFieldValue = {
       userName: values.memberName,
       mobile: values.memberPhone,
@@ -81,6 +80,7 @@ const CreateDormitory = ({
   };
 
   const addDormitoryInfo = async(value) => {
+    console.log('value', value);
     setBottomButtonLoading(true);
     try {
       const res = await DormitoryListApi.addDormitoryInfo(value);
@@ -135,6 +135,7 @@ const CreateDormitory = ({
   };
 
   const getDormitoryList = async(dormitoryType) => {
+    console.log('dormitoryType', dormitoryType);
     if(!signUpInfo?.signUpType) return;
     setDormitoryInfoLoading(true);
     try {
@@ -142,6 +143,7 @@ const CreateDormitory = ({
       switch(dormitoryType){
         case 'DORM_ROUTINE':
           res = await DormitoryListApi.getNormalDormitoryList(memberId, signUpInfo.companyId);
+          console.log('DORM_ROUTINE -> res', res);
           break;
         case 'DORM_TEMPORARY':
           res = await DormitoryListApi.getTemporaryDormitoryList(memberId);

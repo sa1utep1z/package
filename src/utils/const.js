@@ -881,10 +881,10 @@ export const WORK_TYPE_NAME = {
 
 //退宿原因；
 export const DORMITORY_LEAVE_REASON = [
-  {label: '离职退宿', value: 'leaveOfLeavingJob'},
-  {label: '临时住宿退宿', value: 'leaveOfBrief'},
-  {label: '违纪取消床位', value: 'leaveOfViolation'},
-  {label: '个人外租退宿', value: 'leaveOfOutside'}
+  {label: '离职退宿', value: 'DORM_LIVE_OUT_RESIGN'},
+  {label: '临时住宿退宿', value: 'DORM_LIVE_OUT_TEMPORARY'},
+  {label: '违纪取消床位', value: 'DORM_LIVE_OUT_VIOLATE'},
+  {label: '个人外租退宿', value: 'DORM_LIVE_OUT_PERSONAL'}
 ];
 
 //在离宿名单-入住类别-枚举；

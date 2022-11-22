@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { ErrorMessage } from 'formik';
 
 import moment from 'moment';
 
@@ -15,8 +16,10 @@ const SelectItemOfFilterMore = ({
   canDelete = true,
   showArrow = true,
   startLimit,
+  endLimit,
   borderColor,
   selectOtherFunc,
+  itemAreaStyle,
   touchAreaStyle
 }) => {
   const [loading, setLoading] = useState(false);
@@ -42,8 +45,8 @@ const SelectItemOfFilterMore = ({
   const clearFieldValue = () => form.setFieldValue(field.name, '');
 
   return (
-    <>
-      <View style={styles.selectItemArea}>
+    <View style={{marginBottom: 30}}>
+      <View style={[styles.selectItemArea, itemAreaStyle]}>
         {showLabel && <Text style={[styles.showLittleTitleText, fontSize && {fontSize}]}>{label}：</Text>}
         <TouchableOpacity
           style={[styles.selectArea, borderColor && {borderColor}, touchAreaStyle]}
@@ -68,20 +71,26 @@ const SelectItemOfFilterMore = ({
           </TouchableOpacity>}
         </TouchableOpacity>
       </View>
+      <ErrorMessage
+        name={field.name}
+        component={Text}
+        style={{ color: 'red', fontSize: 22, textAlign: 'center' }}
+      />
       {showDatePicker &&
         <DateTimePicker 
           value={dateTime} 
           minimumDate={startLimit && new Date(startLimit)}
+          maximumDate={endLimit && new Date(endLimit)}
           onChange={dateChange} 
         />
       }
-    </>
+    </View>
   )
 };
 
 const styles = StyleSheet.create({
   selectItemArea: {
-    flex: 1,
+    height: 60,
     flexDirection: 'row',
     alignItems: 'center'
   },

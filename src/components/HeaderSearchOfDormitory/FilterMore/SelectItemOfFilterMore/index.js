@@ -23,7 +23,8 @@ const SelectItemOfFilterMore = ({
   borderColor,
   selectStyle,
   type,
-  originForm
+  originForm,
+  selectList = [], //type没传的话就是传自定义数组
 }) => {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -44,7 +45,7 @@ const SelectItemOfFilterMore = ({
         getBedList();
         break;
       default: //没传入type则自动使用外部传进的selectList。
-        setNormalList();
+        setOtherList();
         break;
     }
   };
@@ -110,6 +111,11 @@ const SelectItemOfFilterMore = ({
     }finally{
       setLoading(false);
     }
+  };
+
+  const setOtherList = async() => {
+    dispatch(PageDialog2.openDialog(<SingleSelectList isDialog2 canSearch={false} selectList={selectList} fieldValue={field.value} confirm={pressItem}/>));
+    setLoading(false);
   };
 
   const pressItem = (list) => {
