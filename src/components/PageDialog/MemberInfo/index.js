@@ -21,7 +21,7 @@ const MemberInfo = ({
   const confirmOnPress = () => dispatch(closeDialog());
 
   return (
-    <View style={{height: 850}}>
+    <View>
       <View style={styles.msgArea}>
         <View style={styles.itemArea}>
           <Text style={styles.titleText}>姓名：</Text>
@@ -98,7 +98,6 @@ const MemberInfo = ({
 
 const styles = StyleSheet.create({
   msgArea: {
-    flex: 1,
     paddingHorizontal: 40
   },
   itemArea: {
@@ -118,26 +117,23 @@ const styles = StyleSheet.create({
     marginRight: 5
   },
   jobNameArea: {
-    minHeight: 50, 
-    maxHeight: 80, 
     flexDirection: 'row', 
-    marginBottom: 10
+    marginBottom: 15
   },
   jobTitle: {
-    minWidth: 150, 
+    width: 150,
     fontSize: 26, 
     textAlign: 'right', 
     textAlignVertical: 'top', 
     marginRight: 10
   },
   titleText: {
-    minWidth: 150, 
+    width: 150, 
     fontSize: 26, 
     textAlign: 'right', 
     textAlignVertical: 'center', 
     marginRight: 10
   },
-
   valueText: {
     fontSize: 26, 
     textAlignVertical: 'center'

@@ -68,8 +68,9 @@ const WaitToEntry = ({
             <Field
               name="stayDate"
               label="入住日期"
+              startLimit={moment().format('YYYY-MM-DD')}
+              endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
               component={SelectTimeOfFilterMore}
-              endLimit={moment().format('YYYY-MM-DD')}
             />
             <Shadow style={styles.dormitoryArea}>
               <View style={{borderRadius: 10}}>

@@ -1,7 +1,5 @@
-import React, {useState, useEffect, useMemo, useCallback} from "react";
-import { FlatList, TextInput, Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import { CheckBox } from '@rneui/themed';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import React, {useState} from "react";
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch } from 'react-redux';
 import { Formik, Field } from 'formik';
 
@@ -11,35 +9,32 @@ import SelectTimeOfFilterMore from '../../../../../../components/HeaderSearchOfD
 
 let restForm;
 const initialValues = {
-  buildingNum: [],
   stayDate: '',
   leaveDate: ''
 };
 
 const OperateDialog = ({
-  selectIndex
+  selectIndex,
+  confirm
 }) => {
-
   const dispatch = useDispatch();
 
-  const [stayType, setStayType] = useState('normal');
   const [selectReason, setSelectReason] = useState('');
 
   const onSubmit = values => {
-    console.log('confirm->values', values);
+    if(selectIndex === 1){
+      confirm(values.stayDate);
+    }else{
+      confirm(values.leaveDate, selectReason);
+    }
   };
 
   const rejectOnPress = () => dispatch(closeDialog());
 
-  const passOnPress = () => {
-    dispatch(closeDialog());
-  };
+  const passOnPress = () => restForm.submitForm();
 
-  const reasonOnPress = (reason) => {
-    setSelectReason(reason);
-  };
+  const reasonOnPress = (reason) => setSelectReason(reason);
 
-  console.log('selectIndex', selectIndex);
   return (
     <Formik
     initialValues={initialValues}
@@ -49,35 +44,6 @@ const OperateDialog = ({
       return (
         <>
           {selectIndex === 1 ?<View style={styles.topArea}>
-            <View style={styles.typeArea}>
-              <Text style={styles.typeArea_title}>入住类别：</Text>
-              <View style={styles.typeArea_radio}>
-                <TouchableOpacity style={styles.leftRadio} onPress={()=>setStayType('normal')}>
-                  <CheckBox
-                    center
-                    size={30}
-                    pointerEvents={'none'}
-                    checked={stayType === 'normal'}
-                    containerStyle={{padding: 0, marginRight: 0}}
-                    checkedIcon="dot-circle-o"
-                    uncheckedIcon="circle-o"
-                  />
-                  <Text style={styles.radioText}>常规住宿</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.rightRadio} onPress={()=>setStayType('casual')}>
-                  <CheckBox
-                    center
-                    size={30}
-                    pointerEvents={'none'}
-                    checked={stayType === 'casual'}
-                    containerStyle={{padding: 0, marginRight: 0}}
-                    checkedIcon="dot-circle-o"
-                    uncheckedIcon="circle-o"
-                  />
-                  <Text style={styles.radioText}>临时住宿</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
             <View style={{height: 60, marginBottom: 30}}>
               <Field
                 name="stayDate"

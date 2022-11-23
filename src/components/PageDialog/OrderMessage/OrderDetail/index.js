@@ -22,10 +22,13 @@ const OrderDetail = ({
     <>
       <View style={styles.totalArea}>
         <Text style={styles.contentText}>订单日期：<Text style={styles.dateText}>{orderData.recruitRange}</Text></Text>
-        <Text style={styles.contentText}>订单名称：<Text style={styles.dateText}>{orderData.orderName}</Text></Text>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.contentText}>订单名称：</Text>
+          <Text style={styles.orderName}>{orderData.orderName}</Text>
+        </View>
       </View>
-      <ScrollView style={styles.scrollArea} showsHorizontalScrollIndicator={false}>
-        <Text style={styles.contentText}>{orderData.orderTextDetail}</Text>
+      <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
+        <Text style={styles.contentText}>{orderData.orderTextDetail ? orderData.orderTextDetail.replace(/<br\/>/g, "\n") : '无'}</Text>
       </ScrollView>
       <WaterMark waterMarkStyle={styles.waterMarkStyle}/>
       <View style={styles.bottomArea}>
@@ -39,17 +42,24 @@ const OrderDetail = ({
 
 const styles = StyleSheet.create({
   totalArea: {
-    height: 120, 
     justifyContent: 'space-around', 
-    marginBottom: 30, 
-    paddingHorizontal: 40
+    paddingHorizontal: 40,
+    marginBottom: 20
   },
   scrollArea: {
     paddingHorizontal: 40
   },
   contentText: {
     fontSize: 28, 
-    color: '#333333'
+    color: '#333333',
+    marginBottom: 10
+  },
+  orderName: {
+    flex: 1, 
+    fontSize: 28, 
+    color: '#333333', 
+    textDecorationLine: 'underline', 
+    textDecorationColor: '#FEFEFE'
   },
   dateText: {
     textDecorationLine: 'underline', 

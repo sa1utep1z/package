@@ -8,7 +8,6 @@ import DormitoryListApi from "../../../../../request/Dormitory/DormitoryListApi"
 import { pageEmpty } from "../../../../Home/listComponent";
 import { SUCCESS_CODE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
-import HomeApi from '../../../../../request/HomeApi';
 import ListApi from '../../../../../request/ListApi';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import OrderDetail from "../../../../../components/PageDialog/OrderMessage/OrderDetail";
@@ -21,8 +20,10 @@ let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
 const All = ({
+  index,
   filterParams, //顶部筛选的参数
   changeRoute, //修改路由函数
+  routeParams, 
 }) => {
   const flatListRef = useRef(null);
   const toast = useToast();
@@ -37,6 +38,12 @@ const All = ({
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    if(routeParams?.refresh){
+      refresh();
+    }
+  }, [routeParams])
+
   useEffect(()=>{
     const liveInDateStart = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
     const liveInDateEnd = startDate ? moment(endDate).format('YYYY-MM-DD') : '';
@@ -46,7 +53,7 @@ const All = ({
       getTypeList({...filterParams, liveInDateStart, liveInDateEnd});
     }, 0)
     return () => timer && clearTimeout(timer);
-  }, [searchContent, filterParams, startDate, endDate])
+  }, [searchContent, filterParams, startDate, endDate, index])
   
   const getList = async(params) => {
     setIsLoading(true);
@@ -106,7 +113,7 @@ const All = ({
   const enterpriseOnPress = async(item) => {
     try{
       const res = await ListApi.FactoryMessage(item.recruitFlowId);
-      console.log('res', res);
+      console.log('enterpriseOnPress -> res', res);
       if(res?.code !== SUCCESS_CODE){
         if(res?.code === 2){
           toast.show(`${res?.msg}`, {type: 'warning'});
@@ -123,42 +130,10 @@ const All = ({
       };
       dispatch(setTitle('岗位信息'));
       dispatch(openDialog(<OrderDetail orderData={orderData}/>));
-      // dialogRef.current.setShowDialog(true);
-      // setDialogContent({
-      //   dialogTitle: '岗位信息',
-      //   dialogComponent: <FormCompanyDetail message={res.data}/>,
-      //   rightTitle: '转厂/转单',
-      //   rightTitleOnPress: () => transferFactory(item)
-      // });
     }catch(err){
       console.log('err', err)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
-    // try {
-    //   const orderDetailRes = await HomeApi.orderDetail(item.recruitFlowId);
-    //   console.log('orderDetailRes', orderDetailRes);
-    //   const orderTextRes = await HomeApi.orderTextDetail(item.recruitFlowId);
-    //   console.log('orderTextRes', orderTextRes);
-    //   if(orderDetailRes?.code !== SUCCESS_CODE){
-    //     toast.show(`${orderDetailRes?.msg}`, {type: 'danger'});
-    //     return;
-    //   }
-    //   if(orderTextRes?.code !== SUCCESS_CODE){
-    //     toast.show(`${orderTextRes?.msg}`, {type: 'danger'});
-    //     return;
-    //   }
-    //   const orderData = {
-    //     orderName: orderDetailRes.data.orderName, 
-    //     recruitRange: orderDetailRes.data.recruitRange, 
-    //     orderPolicyDetail: orderDetailRes.data.orderPolicyDetail, 
-    //     orderTextDetail: orderTextRes.data
-    //   };
-    //   dispatch(setTitle('岗位信息'));
-    //   dispatch(openDialog(<OrderDetail orderData={orderData}/>));
-    // } catch (error) {
-    //   console.log('enterpriseOnPress->error', error);
-    //   toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
-    // }
   };
 
   const statusOnPress = async(item) => {
@@ -245,7 +220,7 @@ const All = ({
       data={showList}
       style={{backgroundColor: '#fff'}}
       renderItem={renderItem}
-      keyExtractor={(item,index) => item.id}
+      keyExtractor={item => item.id}
       getItemLayout={(data, index)=>({length: 90, offset: 90 * index, index})}
       refreshing={isLoading}
       onRefresh={refresh}

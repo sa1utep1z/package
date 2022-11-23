@@ -124,6 +124,8 @@ const Leave = ({
                 fontSize={26}
                 canDelete={false}
                 borderColor='#EFEFEF'
+                startLimit={moment().format('YYYY-MM-DD')}
+                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
                 component={SelectTimeOfFilterMore}
               />
             </View>

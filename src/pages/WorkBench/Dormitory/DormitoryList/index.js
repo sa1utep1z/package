@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TabView } from 'react-native-tab-view';
@@ -18,7 +18,11 @@ import Leave from './Leave';
 import Living from './Living';
 import { deepCopy } from '../../../../utils';
 
-const DormitoryList = () => {
+const DormitoryList = ({
+  route: {
+    params
+  }
+}) => {
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();
@@ -66,13 +70,13 @@ const DormitoryList = () => {
   const renderScene = ({ route }) => {
     switch(route.key){
       case 'allNums':
-        return <All filterParams={filterParams} changeRoute={changeRoute} />
+        return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
       case 'pendingNums':
-        return <Pending filterParams={filterParams} changeRoute={changeRoute} />
+        return <Pending index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
       case 'outNums':
-        return <Leave filterParams={filterParams} changeRoute={changeRoute} />
+        return <Leave index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
       case 'inNums':
-        return <Living filterParams={filterParams} changeRoute={changeRoute} />
+        return <Living index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
     }
   };
 
@@ -116,7 +120,6 @@ const DormitoryList = () => {
       />
       <CenterSelectDate />
       <TabView
-        lazy
         bounces
         navigationState={{ index, routes }}
         renderScene={renderScene}

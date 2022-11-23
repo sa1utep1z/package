@@ -20,34 +20,34 @@ const LittleSingleInput = ({
       const inputValue = inputLength[0].value;
       switch(inputValue){
         case 'WAGE':
-          setInputMaxLength(2);
+          setInputMaxLength(4);
           break;
         case 'BASIC_SALARY':
           setInputMaxLength(5);
           break;
         case 'DAY_SALARY':
-          setInputMaxLength(3);
+          setInputMaxLength(5);
           break;
         case 'DAY_SETTLEMENT':
-          setInputMaxLength(3);
+          setInputMaxLength(5);
           break;
         case 'REBATE':
           setInputMaxLength(5);
           break;
         case 'SPREAD':
-          setInputMaxLength(2);
+          setInputMaxLength(4);
           break;
         case 'FILL':
-          setInputMaxLength(2);
+          setInputMaxLength(4);
           break;
         case 'SUBSIDY':
-          setInputMaxLength(2);
+          setInputMaxLength(4);
           break;
         case 'STABLE':
-          setInputMaxLength(2);
+          setInputMaxLength(4);
           break;
         default:
-          setInputMaxLength(2);
+          setInputMaxLength(4);
           break;
       }
     }

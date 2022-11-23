@@ -16,6 +16,7 @@ import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
 import OCR_Scan from '../../../../components/OCR_Scan';
 import DormitoryListApi from '../../../../request/Dormitory/DormitoryListApi';
 import { SUCCESS_CODE, CHANEL_SOURCE_NAME, DORMITORY_LIVE_TYPE, DORMITORY_TYPE } from '../../../../utils/const';
+import NAVIGATION_KEYS from '../../../../navigator/key';
 
 let restForm;
 
@@ -30,7 +31,6 @@ const validationSchema = Yup.object().shape({
   roomNum: Yup.array().min(1, '请选择房间号'),
   bedNum: Yup.array().min(1, '请选择床位号'),
   liveInDate: Yup.string().required('请选择入住日期'),
-  temporaryLiving: Yup.string().required('请选择临时住宿期限'),
 });
 const initialValues = {
   memberName: '',
@@ -80,7 +80,6 @@ const CreateDormitory = ({
   };
 
   const addDormitoryInfo = async(value) => {
-    console.log('value', value);
     setBottomButtonLoading(true);
     try {
       const res = await DormitoryListApi.addDormitoryInfo(value);
@@ -89,8 +88,10 @@ const CreateDormitory = ({
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      toast.show(`保存住宿信息成功！`, { type: 'success' });
-      navigation.goBack();
+      toast.show(`新增住宿成功！`, { type: 'success' });
+      navigation.navigate(NAVIGATION_KEYS.DORMITORY_LIST, {
+        refresh: true
+      });
     } catch (error) {
       console.log('error', error)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -123,9 +124,10 @@ const CreateDormitory = ({
         setSignUpNotice('无该会员报名信息，请确认身份证号是否正确！');
         return;
       }
-      restForm.setFieldValue('memberName', res.data.userName);
-      restForm.setFieldValue('memberPhone', res.data.mobile);
+      toast.show(`成功查询报名信息`, { type: 'success' });
       setSignUpInfo({...res.data});
+      res.data.userName && restForm.setFieldValue('memberName', res.data.userName);
+      res.data.mobile && restForm.setFieldValue('memberPhone', res.data.mobile);
     } catch (error) {
       console.log('error', error)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -176,8 +178,12 @@ const CreateDormitory = ({
             }
           })
         }
-      })
+      })  
       setDormitoryMsg(res.data);
+      restForm.setFieldValue('buildingNum', []);
+      restForm.setFieldValue('floorNum', []);
+      restForm.setFieldValue('roomNum', []);
+      restForm.setFieldValue('bedNum', []);
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     } finally{
@@ -335,7 +341,7 @@ const CreateDormitory = ({
                         radioList={DORMITORY_LIVE_TYPE}
                         component={RadioSelect}
                       />
-                      {dormitoryInfoLoading ? <ActivityIndicator size={32} color="#409EFF" /> : <>
+                      {dormitoryInfoLoading ? <ActivityIndicator style={{marginBottom: 20}} size={32} color="#409EFF" /> : <>
                         {signUpInfo?.signUpType ? rest.values.dormitoryType.length ? 
                           <>
                             <Field

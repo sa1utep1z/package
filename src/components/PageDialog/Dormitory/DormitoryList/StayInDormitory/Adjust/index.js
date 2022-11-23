@@ -79,6 +79,7 @@ const Adjust = ({
         }
       })
       setDormitoryList(res.data);
+      console.log('res.data', res.data);
     } catch (error) {
       console.log('getNormalDormitoryList->error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
@@ -124,7 +125,7 @@ const Adjust = ({
 
   const checkValues = (values) => {
     let returnValue = false;
-    let fieldNameList = ['bedNum', 'buildingNum', 'floorNum', 'roomNum', 'liveExpireDate'];
+    let fieldNameList = ['bedNum', 'buildingNum', 'floorNum', 'roomNum'];
     const isNoneFieldValue = fieldNameList.some(fieldName => !values[fieldName].length);
     if(!values.leaveDate.length){
       setTopError(true);
@@ -134,6 +135,14 @@ const Adjust = ({
       returnValue = false;
     }
     if(isNoneFieldValue){
+      scrollViewRef?.current?.scrollToEnd();
+      setBottomError(true);
+      returnValue = true;
+    }else{
+      setBottomError(false);
+      returnValue = false;
+    }
+    if(dormitoryInfo.liveInType === 'DORM_TEMPORARY' && !values.liveExpireDate.length){
       scrollViewRef?.current?.scrollToEnd();
       setBottomError(true);
       returnValue = true;
@@ -302,7 +311,6 @@ const Adjust = ({
                     <View style={styles.lineArea}>
                       <Field
                         name="floorNum"
-                        type="floor"
                         label="楼层"
                         fontSize={24}
                         iconSize={28}
@@ -310,7 +318,7 @@ const Adjust = ({
                         showLabel={false}
                         showArrow={false}
                         borderColor="#EFEFEF"
-                        originForm={restForm}
+                        selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
                         selectStyle={{height: 40, borderRadius: 4}}
                         component={SelectItemOfFilterMore}
                       />
@@ -323,7 +331,6 @@ const Adjust = ({
                     <View style={styles.lineArea}>
                       <Field
                         name="roomNum"
-                        type="room"
                         label="房间号"
                         fontSize={24}
                         iconSize={28}
@@ -331,20 +338,19 @@ const Adjust = ({
                         showLabel={false}
                         showArrow={false}
                         borderColor="#EFEFEF"
-                        originForm={restForm}
+                        selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
                         selectStyle={{height: 40, borderRadius: 4}}
                         component={SelectItemOfFilterMore}
                       />
                     </View>
                   </View>
-                  <View style={styles.listItem}>
+                  <View style={dormitoryInfo.liveInType === 'DORM_TEMPORARY' ? styles.listItem : styles.lastItem}>
                     <View style={styles.leftTitle}>
                       <Text style={styles.titleText}>床位号</Text>
                     </View>
                     <View style={styles.lineArea}>
                       <Field
                         name="bedNum"
-                        type="bed"
                         label="床位号"
                         fontSize={24}
                         iconSize={28}
@@ -352,7 +358,7 @@ const Adjust = ({
                         showLabel={false}
                         showArrow={false}
                         borderColor="#EFEFEF"
-                        originForm={restForm}
+                        selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
                         selectStyle={{height: 40, borderRadius: 4}}
                         component={SelectItemOfFilterMore}
                       />

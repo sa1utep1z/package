@@ -160,6 +160,11 @@ const HeaderSelectItem = ({
   const clearFieldValue = () => {
     form.setFieldValue(field.name, []);
     form.submitForm();
+    if(type === 'building'){
+      form.setFieldValue('floorNum', []);
+      form.setFieldValue('roomNum', []);
+      form.setFieldValue('bedNum', []);
+    }
   };
 
   return (

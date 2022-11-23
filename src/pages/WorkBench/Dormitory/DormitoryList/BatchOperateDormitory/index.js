@@ -4,11 +4,18 @@ import { Button, CheckBox } from '@rneui/themed';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useToast } from "react-native-toast-notifications";
+import moment from "moment";
 
 import HeaderSearchOfDormitory from '../../../../../components/HeaderSearchOfDormitory';
-import { openDialog, setTitle } from '../../../../../redux/features/PageDialog'; 
+import { closeDialog, openDialog, setTitle } from '../../../../../redux/features/PageDialog'; 
 import { deepCopy } from "../../../../../utils";
+import DormitoryListApi from "../../../../../request/Dormitory/DormitoryListApi";
 import OperateDialog from './OperateDialog';
+import Footer from '../../../../../components/FlatList/Footer';
+import { SUCCESS_CODE } from '../../../../../utils/const';
+import { pageEmpty } from "../../../../Home/listComponent";
+import NAVIGATION_KEYS from "../../../../../navigator/key";
 
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
@@ -21,13 +28,15 @@ const BatchOperateDormitory = ({
   }
 }) => {
   const navigation = useNavigation();
+  const toast = useToast();
   const dispatch = useDispatch();
 
   const [selectedAll, setSelectedAll] = useState(false);
-  const [searchContent, setSearchContent] = useState({status: '', ...firstPage});
+  const [searchContent, setSearchContent] = useState({status: selectIndex === 1 ? 'DORM_LIVE_PENDING' : 'DORM_LIVE_IN', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [selectedList, setSelectedList] = useState([]);
   const [originData, setOriginData] = useState({});
+  const [hasNext, setHasNext] = useState(false);
   const [nextPage, setNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -66,25 +75,93 @@ const BatchOperateDormitory = ({
   },[selectedAll])
 
   const filter = (values)=> {
-    console.log('values', values)
     const filteredParams = {
       name: values.search || '',
       roomBuildingId: values.buildingNum.length ? values.buildingNum[0].value : '', //宿舍楼栋id
       roomFloorId: values.floorNum.length ? values.floorNum[0].value : '', //宿舍楼层id
       roomId: values.roomNum.length ? values.roomNum[0].value : '', //宿舍房间id
     };
-    setSearchContent(filteredParams);
+    setSearchContent({...searchContent, ...filteredParams});
   };
   
   const getList = async(params) => {
     setIsLoading(true);
     try{
-      console.log('params', params)
+      const res = await DormitoryListApi.getDormitoryList(params);
+      console.log('getList --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setHasNext(res.data.hasNext);
+      setOriginData(res.data);
+      //渲染的列表（有下一页时）
+      if(nextPage){
+        setShowList([...showList, ...res.data.content]);
+        setNextPage(false);
+        return;
+      }
+      //无下一页（第一页）
+      setShowList([...res.data.content]);
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
+    }
+  };
+
+  const confirm = async(value, reason) => {
+    if(selectIndex === 1){
+      const params = {
+        ids: selectedList.map(item => item.id),
+        liveInDate: value
+      };
+      batchLiveIn(params);
+    }else{
+      const params = {
+        ids: selectedList.map(item => item.id),
+        liveOnReasonType: reason,
+        liveOutDate: value
+      };
+      batchLiveOut(params);
+    }
+  };
+
+  const batchLiveIn = async(params) => {
+    try {
+      const res = await DormitoryListApi.batchLiveIn(params);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('批量入住成功！', {type: 'success'});
+      dispatch(closeDialog());
+      navigation.navigate(NAVIGATION_KEYS.DORMITORY_LIST, {
+        refresh: true
+      });
+    } catch (error) {
+      console.log('error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const batchLiveOut = async(params) => {
+    try {
+      const res = await DormitoryListApi.batchLiveOut(params);
+      console.log('batchLiveOut -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('批量退宿成功！', {type: 'success'});
+      dispatch(closeDialog());
+      navigation.navigate(NAVIGATION_KEYS.DORMITORY_LIST, {
+        refresh: true
+      });
+    } catch (error) {
+      console.log('error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
 
@@ -99,7 +176,7 @@ const BatchOperateDormitory = ({
 
   const confirmButton = () => {
     dispatch(setTitle(`批量${selectIndex === 1 ? '入住' : '退宿'}`));
-    dispatch(openDialog(<OperateDialog selectIndex={selectIndex} />));
+    dispatch(openDialog(<OperateDialog selectIndex={selectIndex} confirm={confirm} />));
   };
 
   const pressItem = (item) => {
@@ -123,12 +200,23 @@ const BatchOperateDormitory = ({
     const isChecked = item.isChecked;
     return (
       <TouchableOpacity key={item.value} style={styles.listItem} onPress={()=>pressItem(item)}>
-        <Text style={{fontSize: 28, width: 140, color: '#333333', textAlign: 'center'}}>{item.name}</Text>
-        <Text style={{fontSize: 28, flex: 1, color: '#333333', textAlign: 'center'}}>{item.building}-{item.room}</Text>
-        <Text style={{fontSize: 28, color: '#333333', width: 180, textAlign: 'center'}}>{item.date}</Text>
+        <Text style={{fontSize: 28, width: 140, color: '#333333', textAlign: 'center'}}>{item.userName}</Text>
+        <Text style={{fontSize: 28, flex: 1, color: '#333333', textAlign: 'center'}}>{item.roomBuildingName
+}-{item.roomFloorIndex}F-{item.bedNo}</Text>
+        <Text style={{fontSize: 28, color: '#333333', width: 180, textAlign: 'center'}}>{item.liveInDate ? moment(item.liveInDate).format('YYYY/MM/DD') : '无'}</Text>
         <MaterialIcons style={{width: 120, textAlign: 'center'}} name={isChecked ? 'radio-button-checked' : 'radio-button-off'} size={32} color={isChecked ? '#409EFF' : '#999999'} />
       </TouchableOpacity>
   )};
+
+  const refresh = () => setSearchContent({...searchContent, ...firstPage});
+
+  const onEndReached = () => {
+    if(hasNext){
+      const nextPage = {...searchContent, pageNumber: searchContent.pageNumber += 1};
+      setSearchContent(nextPage);
+      setNextPage(true);
+    }
+  };
 
   return (
     <View style={styles.screen}>
@@ -139,7 +227,7 @@ const BatchOperateDormitory = ({
         filterMemberInfo
       />
       <View style={styles.topArea}>
-        <Text style={styles.topText}>共<Text style={{color: '#409EFF'}}> {showList.length} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>1</Text>/3 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
+        <Text style={styles.topText}>共<Text style={{color: '#409EFF'}}> {showList.length} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>{originData.pageNumber + 1}</Text>/{originData.totalPages} 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
         </Text>
         <TouchableOpacity style={styles.selectAllBtn} onPress={selectedAllOnPress}>
           <Text style={[styles.selectAllText, selectedAll && {color: '#333333', fontWeight: 'bold'}]}>全选</Text>
@@ -156,10 +244,15 @@ const BatchOperateDormitory = ({
         style={styles.flatListStyle}
         data={showList}
         renderItem={renderItem}
+        onRefresh={refresh}
         refreshing={isLoading}
         keyExtractor={item => item.id}
         getItemLayout={(data, index)=>({length: 90, offset: 90 * index, index})}
         initialNumToRender={15}
+        ListFooterComponent={<Footer showFooter={showList.length} hasNext={hasNext}/>}
+        ListEmptyComponent={pageEmpty()}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.01}
       />
       <View style={styles.buttonArea}>
         <Button
@@ -172,7 +265,7 @@ const BatchOperateDormitory = ({
         />
         <View style={{width: 20}}></View>
         <Button
-          title="确认"
+          title={selectIndex === 1 ? '入住' : '退宿'}
           onPress={confirmButton}
           disabled={!selectedList.length}
           buttonStyle={styles.confirmButton}

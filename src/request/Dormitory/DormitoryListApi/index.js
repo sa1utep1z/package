@@ -19,6 +19,10 @@ const DormitoryListApi = {
   leaveConfirm: async(params, dormLiveId) => await httpRequest.post(`/admin/app/dormLive/${dormLiveId}/liveOut`, params), 
   //调迁宿舍；
   adjustDormitory: async(params, dormLiveId) => await httpRequest.post(`/admin/app/dormLive/${dormLiveId}/transfer`, params), 
+  //批量入住；
+  batchLiveIn: async(params) => await httpRequest.post(`/admin/app/dormLive/batch/liveIn`, params), 
+  //批量退宿
+  batchLiveOut: async(params) => await httpRequest.post(`/admin/app/dormLive/batch/liveOut`, params), 
 };
 
 export default DormitoryListApi;

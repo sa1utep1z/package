@@ -147,7 +147,15 @@ const SelectItemOfFilterMore = ({
     form.setFieldValue(field.name, [list]);
   };
 
-  const clearFieldValue = () => form.setFieldValue(field.name, []);
+  const clearFieldValue = () => {
+    form.setFieldValue(field.name, []);
+    if(type === 'floor'){
+      form.setFieldValue('roomNum', []);
+      form.setFieldValue('bedNum', []);
+    }else if(type === 'room'){
+      form.setFieldValue('bedNum', []);
+    }
+  }
 
   return (
     <View style={styles.selectItemArea}>
