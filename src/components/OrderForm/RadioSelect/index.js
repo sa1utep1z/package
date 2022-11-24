@@ -17,16 +17,19 @@ const RadioSelect = ({
   isRequire = false,
   showLabel = true,
   rightComponent,
+  AreaStyle,
+  otherRadioPress, //点击时候触发其他判断函数；
   ...rest
 }) => {
 
   const radioOnPress = (radio) => {
     if(!canSelect) return;
     form.setFieldValue(field.name, [radio]);
+    otherRadioPress && otherRadioPress(field.name);
   };
 
   return (
-    <View style={[styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}]}>
+    <View style={[styles.selectArea, form.errors[field.name] && form.touched[field.name] && {marginBottom: 10}, AreaStyle]}>
       <View style={styles.container}>
         {showLabel ? <Text style={[styles.labelText, labelStyle]}>
           {isRequire && <Text style={{color: 'red'}}>*</Text>}

@@ -135,6 +135,7 @@ const SingleSelectList = ({
         <FlatList
           data={showList}
           renderItem={renderItem}
+          keyboardShouldPersistTaps="handled"
           getItemLayout={(data, index) => ({ length: 50, offset: 50 * index, index })}
           ListEmptyComponent={<View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}>
             <Foundation name="page-remove" size={72} color="#999999" />

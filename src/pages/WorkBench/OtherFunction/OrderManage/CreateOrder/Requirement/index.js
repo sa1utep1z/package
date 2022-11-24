@@ -162,7 +162,7 @@ const Requirement = ({
                     maxLength={4}
                     isRequire
                     component={SingleInput}
-                    inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333'}}>人</Text>}
+                    inputRightComponent={<Text style={{height: 60, textAlignVertical: 'center', fontSize: 26, color: '#333333', marginRight: 20}}>人</Text>}
                     selectTextOnFocus
                   />
                   {!requirementButtonLoading ? <TouchableOpacity style={{backgroundColor: '#409EFF', height: 60, paddingHorizontal: 18, justifyContent: 'center', marginLeft: 20, borderRadius: 6}} onPress={handleSubmit}>

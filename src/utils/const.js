@@ -777,6 +777,78 @@ export const REWARD_MODE = [
   { label: '长线按天提成', value: 'LONG_LINE' }
 ];
 
+//新建订单-接单政策说明-长短线：
+export const SETTLEMENT_MODE = [
+  { label: '短线', value: 'short' },
+  { label: '长线', value: 'long' },
+];
+
+//新建订单-接单政策说明-范围周期：
+export const SETTLEMENT_RANGE_MODE = [
+  { label: '每月', value: 'month' },
+  { label: '每周', value: 'week' },
+];
+
+//新建订单-接单政策说明-范围周期-月：
+export const SETTLEMENT_RANGE_MONTH = [
+  { label: '1号', value: 'month_1' },
+  { label: '2号', value: 'month_2' },
+  { label: '3号', value: 'month_3' },
+  { label: '4号', value: 'month_4' },
+  { label: '5号', value: 'month_5' },
+  { label: '6号', value: 'month_6' },
+  { label: '7号', value: 'month_7' },
+  { label: '8号', value: 'month_8' },
+  { label: '9号', value: 'month_9' },
+  { label: '10号', value: 'month_10' },
+  { label: '11号', value: 'month_11' },
+  { label: '12号', value: 'month_12' },
+  { label: '13号', value: 'month_13' },
+  { label: '14号', value: 'month_14' },
+  { label: '15号', value: 'month_15' },
+  { label: '16号', value: 'month_16' },
+  { label: '17号', value: 'month_17' },
+  { label: '18号', value: 'month_18' },
+  { label: '19号', value: 'month_19' },
+  { label: '20号', value: 'month_20' },
+  { label: '21号', value: 'month_21' },
+  { label: '22号', value: 'month_22' },
+  { label: '23号', value: 'month_23' },
+  { label: '24号', value: 'month_24' },
+  { label: '25号', value: 'month_25' },
+  { label: '26号', value: 'month_26' },
+  { label: '27号', value: 'month_27' },
+  { label: '28号', value: 'month_28' },
+  { label: '29号', value: 'month_29' },
+  { label: '30号', value: 'month_30' },
+  { label: '31号', value: 'month_31' },
+];
+
+//新建订单-接单政策说明-范围周期-周：
+export const SETTLEMENT_RANGE_WEEK = [
+  { label: '周一', value: 'week_1' },
+  { label: '周二', value: 'week_2' },
+  { label: '周三', value: 'week_3' },
+  { label: '周四', value: 'week_4' },
+  { label: '周五', value: 'week_5' },
+  { label: '周六', value: 'week_6' },
+  { label: '周日', value: 'week_7' },
+];
+
+//新建订单-接单政策说明-回款方式：
+export const RETURN_WAY_LIST = [
+  { label: '对公', value: 'common' },
+  { label: '对私', value: 'person' },
+];
+
+//新建订单-接单政策说明-接单费用标准-模式：
+export const SHORT_LINE_STANDARDS_MODE = [
+  { label: '打卡满（小时）', value: 'card_hour' },
+  { label: '在职满（小时）', value: 'work_hour' },
+  { label: '打卡满（天）', value: 'card_day' },
+  { label: '在职满（天）', value: 'work_day' },
+];
+
 //新建订单-招聘员提成说明-条件设置枚举值：
 export const CONDITIONS_LIST = [
   { value: 'var-punch-day', label: '打卡满', type: 'punch_day' },

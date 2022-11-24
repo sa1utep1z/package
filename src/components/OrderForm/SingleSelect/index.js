@@ -20,12 +20,15 @@ const SingleSelect = ({
   type = '', //单选表单组件：提供几个基础模式：企业，门店，不需要模式也可以在外部传入selectList。
   filterStore = false, //type为store的时候需要对列表进行筛选。
   showLabel = true,
+  placeholder = '',
   isRequire = false,
   touchStyle,
+  touchAreaStyle,
   labelStyle,
   canSearch = true, //默认可以搜索
   canSelect = true, //是否可以选择；
   emptyText, //列表为空的时候需要显示的其他提示字段（例如级联关系中上一层未选中，则可以提示上一层未选中/操作的提醒）
+  otherSelectPress, //点击时候触发其他判断函数；
   ...rest
 }) => {
   const toast = useToast();
@@ -47,6 +50,7 @@ const SingleSelect = ({
   const selectOnPress = () => {
     if(!canSelect) return;
     setLoading(true);
+    otherSelectPress && otherSelectPress(field.name);
     dispatch(setTitle(`请选择${label}`));
     switch(type){
       case 'store':
@@ -54,6 +58,9 @@ const SingleSelect = ({
         break;
       case 'factory':
         getFactoryList();
+        break;
+      case 'recruiter':
+        getRecruiterList();
         break;
       default: //没传入type则自动使用外部传进的selectList。
         setLoading(false);
@@ -107,6 +114,22 @@ const SingleSelect = ({
     }
   };
 
+  const getRecruiterList = async() => {
+    try {
+      const res = await MyMembersApi.RecruiterList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取人员列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
+    } catch (error) {
+      console.log('getRecruiterList -> error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    } finally{
+      setLoading(false);
+    }
+  };
+
   const filterStoreList = (storeList) => {
     const fieldNameIndex = field.name.substr(4, 1); //获取当前设置的表单名称索引；
     const thisRangeTime = form.values[`rule${fieldNameIndex}`].orderRangeDate; //当前设置的规则的时间范围；
@@ -149,10 +172,10 @@ const SingleSelect = ({
           {isRequire && <Text style={{color: 'red'}}>*</Text>}
           {label}：</Text> : <></>}
         <View style={{flex: 1}}>
-          <TouchableOpacity activeOpacity={canSelect ? 0.2 : 1} style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder]} onPress={selectOnPress}>
+          <TouchableOpacity activeOpacity={canSelect ? 0.2 : 1} style={[styles.inputContainer, form.errors[field.name] && form.touched[field.name] && styles.errorBorder, touchAreaStyle]} onPress={selectOnPress}>
             {field.value && <>
               <Text numberOfLines={1} style={[styles.itemText, !field.value.length && styles.itemText_none]}>
-                {!!field.value.length ? field.value[0].label || '' : `请选择${label}`}
+                {!!field.value.length ? field.value[0].label || '' : placeholder ? placeholder : `请选择${label}`}
               </Text>
             </>}
             {loading ? <ActivityIndicator color="#409EFF" size={28} /> : <AntDesign
@@ -165,7 +188,7 @@ const SingleSelect = ({
             name={field.name}
             style={styles.errorMessage}
             component={Text}
-        />
+          />
         </View>
       </View>
     </View>
