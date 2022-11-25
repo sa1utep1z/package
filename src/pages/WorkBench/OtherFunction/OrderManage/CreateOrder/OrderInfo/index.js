@@ -13,6 +13,7 @@ import OrderRangeDate from "../../../../../../components/OrderForm/OrderRangeDat
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../../../components/OrderForm/OrderSingleDate";
 import CreateOrderApi from '../../../../../../request/CreateOrderApi';
+import MyMembersApi from '../../../../../../request/MyMembersApi';
 import { CREATE_ORDER_JOB_ORDER, CREATE_ORDER_JOB_TYPE, SUCCESS_CODE } from "../../../../../../utils/const";
 
 let restForm;
@@ -128,7 +129,6 @@ const OrderInfo = ({
       }
       const formValues = {
         orderName: res.data.orderName,
-        organizeId: res.data.organizeId,
         postSequence: String(res.data.postSequence),
         post: [CREATE_ORDER_JOB_ORDER.find(item => item.value === res.data.post)],
         profession: [CREATE_ORDER_JOB_TYPE.find(item => item.value === res.data.profession)],
@@ -146,9 +146,33 @@ const OrderInfo = ({
         salaryTitle: res.data.salaryTitle
       };
       restForm.setValues(formValues);
+      if(res.data.organizeId){
+        getFactoryList(res.data.organizeId);
+      }
     }catch(error){
       console.log('getBasicOrder->error', error);
     }finally{
+      setLoading(false);
+    }
+  };
+
+  const getFactoryList = async(factoryId) => {
+    try {
+      const res = await MyMembersApi.CompaniesList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if(factoryId){
+        const findOutFieldItem = res.data.find(item => item.value === factoryId);
+        if(findOutFieldItem){
+          restForm.setFieldValue('organizeId', [findOutFieldItem]);
+        }
+      }
+    } catch (error) {
+      console.log('getFactoryList -> error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    } finally{
       setLoading(false);
     }
   };

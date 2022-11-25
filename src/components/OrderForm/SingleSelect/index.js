@@ -33,13 +33,6 @@ const SingleSelect = ({
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
-
-  useEffect(()=>{
-    const fieldValueType = checkedType(field.value);
-    if(fieldValueType === 'String' && type === 'factory'){ //判断传进来的值为一个企业id并且是属于企业选择框；
-      getFactoryList(field.value);
-    }
-  },[field.value])
   
   const [loading, setLoading] = useState(false);
 
@@ -93,16 +86,11 @@ const SingleSelect = ({
     }
   };
 
-  const getFactoryList = async(factoryId = '') => {
+  const getFactoryList = async() => {
     try {
       const res = await MyMembersApi.CompaniesList();
       if(res.code !== SUCCESS_CODE){
         toast.show(`获取企业列表失败，${res.msg}`, { type: 'danger' });
-        return;
-      }
-      if(factoryId){
-        const findOutFieldItem = res.data.find(item => item.value === factoryId);
-        form.setFieldValue(field.name, [findOutFieldItem]);
         return;
       }
       dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={confirm}/>));

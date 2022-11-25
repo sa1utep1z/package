@@ -9,13 +9,14 @@ import { useToast } from "react-native-toast-notifications";
 import SingleInput from "../../../../../../components/OrderForm/SingleInput";
 import SelectPhotos from "../../../../../../components/OrderForm/SelectPhotos";
 import CreateOrderApi from '../../../../../../request/CreateOrderApi';
+import MyMembersApi from '../../../../../../request/MyMembersApi';
 import SingleSelect from "../../../../../../components/OrderForm/SingleSelect";
 import RadioSelect from "../../../../../../components/OrderForm/RadioSelect";
 import { SUCCESS_CODE, SETTLEMENT_MODE, SETTLEMENT_RANGE_MODE, SETTLEMENT_RANGE_MONTH, SETTLEMENT_RANGE_WEEK, RETURN_WAY_LIST, SHORT_LINE_STANDARDS_MODE } from "../../../../../../utils/const";
 
 let restForm;
 const validationSchema = Yup.object().shape({
-  applyPolicyRemark: Yup.string().required('请输入接单政策文本')
+  applyPolicyRemark: Yup.string().required('请输入接单政策文本').min(6, '不少于6个字符')
 });
 
 const initialValues = {
@@ -23,14 +24,18 @@ const initialValues = {
   applyPolicyRemark: '',
   settlement_mode: [], //接单费用结算周期；
   settlement_range_mode: [], //接单费用结算周期；
-  settlement_range_date: [], //接单费用结算周期；
+  settlement_range_month_date: [{ label: '1号', value: 1, type: 'month' }], //接单费用结算周期-月；
+  settlement_range_week_date: [{ label: '周日', value: 1, type: 'week' }], //接单费用结算周期-星期；
   order_expense_standards: [], //接单费用标准；
   longLine_standards: '', //长线标准；
   shortLine_standards_mode: [], //短线标准的模式；
+  shortLine_standards_union: '', //短线标准的单位；
+  shortLine_standards_money: '', //短线标准的金额；
   return_way: [], //回款方式；
   settlement_people: [], //结算收款财务人；
   settlement_returnMsg_mode: [], //在离职名单回传频率；
-  settlement_returnMsg_date: [], //在离职名单回传频率；
+  settlement_returnMsg_month_date: [{ label: '1号', value: 1, type: 'month' }], //接单费用结算周期-月；
+  settlement_returnMsg_week_date: [{ label: '周日', value: 1, type: 'week' }], //接单费用结算周期-星期；
 };
 
 const Policy = ({
@@ -64,9 +69,35 @@ const Policy = ({
       }
       const formValues = {
         applyPolicyImage: res.data.applyPolicyImage,
-        applyPolicyRemark: res.data.applyPolicyRemark || '无'
+        applyPolicyRemark: res.data.applyPolicyRemark || '无',
+        settlement_mode: res.data.applySettleType ? [SETTLEMENT_MODE.find(item => item.value === (res.data.applySettleType === 'STUB' ? 'short' : 'long'))] : [],
+        settlement_range_mode: res.data.applySettleFrequency ? [SETTLEMENT_RANGE_MODE.find(item => item.value === (res.data.applySettleFrequency === 'MONTHLY' ? 'month' : 'week'))] : [],
+        return_way: res.data.collectionType ? [RETURN_WAY_LIST.find(item => item.value === res.data.collectionType)] : [],
+        settlement_returnMsg_mode: res.data.jobListFrequency ? [SETTLEMENT_RANGE_MODE.find(item => item.value === (res.data.jobListFrequency === 'MONTHLY' ? 'month' : 'week'))] : [],
+        order_expense_standards: res.data.applyMoneyType ? [SETTLEMENT_MODE.find(item => item.value === (res.data.applyMoneyType === 'STUB' ? 'short' : 'long'))] : [],
       };
-      restForm.setValues(formValues);
+      if(res.data.collectionUserId){
+        queryRecruiterList(res.data.collectionUserId);
+      }
+      if(res.data.applyMoneyType === 'STUB'){
+        formValues.shortLine_standards_mode = res.data.applyMoneyCondition ? [SHORT_LINE_STANDARDS_MODE.find(item => item.value === res.data.applyMoneyCondition)] : [];
+        formValues.shortLine_standards_union = res.data.applyMoneyConditionParam;
+        formValues.shortLine_standards_money = res.data.applyMoneyResult ? String(res.data.applyMoneyResult) : '';
+      }else{
+        formValues.longLine_standards = res.data.applyMoneyResult ? String(res.data.applyMoneyResult) : '';
+      }
+      if(res.data.applySettleFrequency === 'MONTHLY'){
+        formValues.settlement_range_month_date = res.data.applySettleFrequencyValue ? [SETTLEMENT_RANGE_MONTH.find(item => item.value === res.data.applySettleFrequencyValue)] : [{ label: '1号', value: 1, type: 'month' }];
+      }else{
+        formValues.settlement_range_week_date = res.data.applySettleFrequencyValue ? [SETTLEMENT_RANGE_WEEK.find(item => item.value === res.data.applySettleFrequencyValue)] : [{ label: '周日', value: 1, type: 'week' }];
+      }
+      if(res.data.jobListFrequency === 'MONTHLY'){
+        formValues.settlement_returnMsg_month_date = res.data.jobListFrequencyValue ? [SETTLEMENT_RANGE_MONTH.find(item => item.value === res.data.jobListFrequencyValue)] : [{ label: '1号', value: 1, type: 'month' }];
+      }else{
+        formValues.settlement_returnMsg_week_date = res.data.jobListFrequencyValue ? [SETTLEMENT_RANGE_WEEK.find(item => item.value === res.data.jobListFrequencyValue)] : [{ label: '周日', value: 1, type: 'week' }];
+      }
+      console.log('formValues', formValues);
+      restForm.setValues({...restForm.values, ...formValues});
     }catch(error){
       console.log('getPolicyOrder->error', error);
     }finally{
@@ -97,12 +128,43 @@ const Policy = ({
     }
   };
 
+  const queryRecruiterList = async(recruiterId) => {
+    try {
+      const res = await MyMembersApi.RecruiterList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取会员列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      const findItem = res.data.find(item => item.value === recruiterId);
+      if(findItem){
+        restForm.setFieldValue('settlement_people', [findItem]);
+      }
+    } catch (error) {
+      console.log('getRecruiterList -> error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }
+  };
+
   const onSubmit = async (values) => {
+    console.log('values', values);
     const newObject = {
       applyPolicyImage: values.applyPolicyImage,
       applyPolicyRemark: values.applyPolicyRemark,
-      orderId
+      orderId,
+      applySettleType: values.settlement_mode.length ? values.settlement_mode[0].value === 'short' ? 'STUB' : 'LONG_LINE' : null,
+      applySettleFrequency: values.settlement_range_mode.length ? values.settlement_range_mode[0].value === 'month' ? 'MONTHLY' : 'WEEKLY' : null,
+      applySettleFrequencyValue: values.settlement_range_mode.length ? values.settlement_range_mode[0].value === 'month' ? values.settlement_range_month_date[0].value : values.settlement_range_week_date[0].value : null,
+      collectionType: values.return_way.length ? values.return_way[0].value : null,
+      collectionUserId: values.settlement_people.length ? values.settlement_people[0].value : null,
+      jobListFrequency: values.settlement_returnMsg_mode.length ? values.settlement_returnMsg_mode[0].value === 'month' ? 'MONTHLY' : 'WEEKLY' : null,
+      jobListFrequencyValue: values.settlement_returnMsg_mode.length ? values.settlement_returnMsg_mode[0].value === 'month' ? values.settlement_returnMsg_month_date[0].value : values.settlement_returnMsg_week_date[0].value : null,
+      applyMoneyType: values.order_expense_standards.length ? values.order_expense_standards[0].value === 'short' ? 'STUB' : 'LONG_LINE' : null,
+      applyMoneyResult: values.order_expense_standards.length ? values.order_expense_standards[0].value === 'short' ? values.shortLine_standards_money ? Number(values.shortLine_standards_money) : null : values.longLine_standards ? Number(values.longLine_standards) : null : null,
     };
+    if(newObject.applyMoneyType === 'STUB'){
+      newObject.applyMoneyCondition = values.shortLine_standards_mode.length ? values.shortLine_standards_mode[0].value : null;
+      newObject.applyMoneyConditionParam = Number(values.shortLine_standards_union);
+    }
     CreatePolicyInfo(newObject);
   };
 
@@ -158,7 +220,7 @@ const Policy = ({
           color={showDetail ? '#000000' : '#999999'}
         /> : <ActivityIndicator size={36} color="#409EFF"/>}
       </TouchableOpacity>
-      {showDetail && <View style={{backgroundColor: '#ffffff', borderTopWidth: 1, borderTopColor: '#999999', paddingTop: 20}}>
+      {showDetail && <View style={styles.detailContent}>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -192,7 +254,7 @@ const Policy = ({
                   inputContainerStyle={{minHeight: 120, alignItems: 'flex-start'}}
                   component={SingleInput}
                 />
-                <View style={{borderWidth: 1, borderColor: '#EFEFEF', paddingTop: 20, marginBottom: 20, borderRadius: 6}}>
+                <View style={styles.orderRange}>
                   <Text style={{fontSize: 26, color: '#333333', marginBottom: 20, paddingLeft: 20}}>接单费用结算周期：</Text>
                   <View style={{flexDirection: 'row', borderBottomWidth: 1, borderColor: '#EFEFEF', paddingHorizontal: 20}}>
                     <Field
@@ -212,18 +274,33 @@ const Policy = ({
                       otherRadioPress={otherRadioPress}
                       component={RadioSelect}
                     />
-                    <Field
-                      name="settlement_range_date"
+                    {!rest.values.settlement_range_mode.length ? <TouchableOpacity style={{flex: 1, height: 65, borderWidth: 2, borderColor: '#EFEFEF', borderRadius: 6, justifyContent: 'center', alignItems: 'center'}} onPress={() => toast.show('请选择周期', {type: 'warning'})}>
+                      <Text style={{fontSize: 26, color: '#999999'}}>选择日期</Text>
+                    </TouchableOpacity> : <></>}
+                    {rest.values.settlement_range_mode.length ? rest.values.settlement_range_mode[0].value === 'month' && <Field
+                      name="settlement_range_month_date"
                       label="日期"
-                      placeholder={rest.values.settlement_range_mode.length ? rest.values.settlement_range_mode[0].value === 'month' ? '日期' : '每周' : '选择'}
+                      placeholder='日期'
                       showLabel={false}
                       canSearch={false}
                       touchAreaStyle={{borderWidth: 0}}
                       touchStyle={{borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}}
-                      selectList={rest.values.settlement_range_mode.length ? rest.values.settlement_range_mode[0].value === 'month' ? SETTLEMENT_RANGE_MONTH : SETTLEMENT_RANGE_WEEK : []}
+                      selectList={SETTLEMENT_RANGE_MONTH}
                       otherSelectPress={otherSelectPress}
                       component={SingleSelect}
-                    />
+                    /> : <></>}
+                    {rest.values.settlement_range_mode.length ? rest.values.settlement_range_mode[0].value === 'week' && <Field
+                      name="settlement_range_week_date"
+                      label="周期"
+                      placeholder='每周'
+                      showLabel={false}
+                      canSearch={false}
+                      touchAreaStyle={{borderWidth: 0}}
+                      touchStyle={{borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}}
+                      selectList={SETTLEMENT_RANGE_WEEK}
+                      otherSelectPress={otherSelectPress}
+                      component={SingleSelect}
+                    /> : <></>}
                   </View>
                   <View style={{padding: 20, paddingBottom: 0, borderBottomWidth: 1, borderColor: '#EFEFEF'}}>
                     <View style={{flexDirection: 'row'}}>
@@ -262,7 +339,7 @@ const Policy = ({
                       </View>
                       <View style={{width: 170, marginLeft: 10}}>
                         <Field
-                          name="longLine_standards"
+                          name="shortLine_standards_union"
                           isRequire
                           placeholder="输入"
                           showLabel={false}
@@ -275,7 +352,7 @@ const Policy = ({
                       </View>
                       <View style={{width: 150, marginLeft: 10}}>
                         <Field
-                          name="longLine_standards"
+                          name="shortLine_standards_money"
                           isRequire
                           placeholder="输入"
                           showLabel={false}
@@ -304,43 +381,43 @@ const Policy = ({
                       </TouchableOpacity>
                     </View>
                     {rest.values.return_way.length ? <View style={{marginBottom: 20}}>
-                      {rest.values.return_way[0].value === 'common' ? <>
+                      {rest.values.return_way[0].value === 'PUBLIC' ? <>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>名称</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>深圳市众鼎劳务派遣有限公司</Text>
+                          <Text style={styles.titleText}>名称</Text>
+                          <Text selectable style={styles.contentText}>深圳市众鼎劳务派遣有限公司</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>纳税人识别号</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>91440300051530634L</Text>
+                          <Text style={styles.titleText}>纳税人识别号</Text>
+                          <Text selectable style={styles.contentText}>91440300051530634L</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>电话</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>0755-36633079</Text>
+                          <Text style={styles.titleText}>电话</Text>
+                          <Text selectable style={styles.contentText}>0755-36633079</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>开户行</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>中国建设银行股份有限公司深圳龙华支行</Text>
+                          <Text style={styles.titleText}>开户行</Text>
+                          <Text selectable style={styles.contentText}>中国建设银行股份有限公司深圳龙华支行</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>银行账号</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>44201555400052526338</Text>
+                          <Text style={styles.titleText}>银行账号</Text>
+                          <Text selectable style={styles.contentText}>44201555400052526338</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1, borderBottomWidth: 1}}>名称</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10, borderBottomWidth: 1}}>深圳市众鼎劳务派遣有限公司</Text>
+                          <Text style={[styles.titleText, {borderBottomWidth: 1}]}>名称</Text>
+                          <Text selectable style={[styles.contentText, {borderBottomWidth: 1}]}>深圳市众鼎劳务派遣有限公司</Text>
                         </View>
                       </> : <>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>开户行</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>中国招商银行深圳龙华支行</Text>
+                          <Text style={styles.titleText}>开户行</Text>
+                          <Text selectable style={styles.contentText}>中国招商银行深圳龙华支行</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1}}>银行卡号</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, paddingVertical: 10}}>6214857803889361</Text>
+                          <Text style={styles.titleText}>银行卡号</Text>
+                          <Text selectable style={styles.contentText}>6214857803889361</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                          <Text style={{width: 180, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderLeftWidth: 1 ,borderBottomWidth: 1}}>姓名</Text>
-                          <Text style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, paddingVertical: 10}}>唐平</Text>
+                          <Text style={[styles.titleText, {borderBottomWidth: 1}]}>姓名</Text>
+                          <Text selectable style={{ flex: 1, fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center', borderTopWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, paddingVertical: 10}}>唐平</Text>
                         </View>
                       </>}
                     </View> : <></>}
@@ -359,18 +436,33 @@ const Policy = ({
                         otherRadioPress={otherRadioPress}
                         component={RadioSelect}
                       />
-                      <Field
-                        name="settlement_returnMsg_date"
+                      {!rest.values.settlement_returnMsg_mode.length ? <TouchableOpacity style={{flex: 1, height: 65, borderWidth: 2, borderColor: '#EFEFEF', borderRadius: 6, justifyContent: 'center', alignItems: 'center'}} onPress={() => toast.show('请选择周期', {type: 'warning'})}>
+                        <Text style={{fontSize: 26, color: '#999999'}}>选择日期</Text>
+                      </TouchableOpacity> : <></>}
+                      {rest.values.settlement_returnMsg_mode.length ? rest.values.settlement_returnMsg_mode[0].value === 'month' && <Field
+                        name="settlement_returnMsg_month_date"
                         label="日期"
-                        placeholder={rest.values.settlement_returnMsg_mode.length ? rest.values.settlement_returnMsg_mode[0].value === 'month' ? '日期' : '每周' : '选择'}
+                        placeholder='日期'
                         showLabel={false}
                         canSearch={false}
                         touchAreaStyle={{borderWidth: 0}}
                         touchStyle={{borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}}
-                        selectList={rest.values.settlement_returnMsg_mode.length ? rest.values.settlement_returnMsg_mode[0].value === 'month' ? SETTLEMENT_RANGE_MONTH : SETTLEMENT_RANGE_WEEK : []}
+                        selectList={SETTLEMENT_RANGE_MONTH}
                         otherSelectPress={otherSelectPress}
                         component={SingleSelect}
-                      />
+                      /> : <></>}
+                      {rest.values.settlement_returnMsg_mode.length ? rest.values.settlement_returnMsg_mode[0].value === 'week' && <Field
+                        name="settlement_returnMsg_week_date"
+                        label="周期"
+                        placeholder='每周'
+                        showLabel={false}
+                        canSearch={false}
+                        touchAreaStyle={{borderWidth: 0}}
+                        touchStyle={{borderWidth: 2, borderColor: '#E5E5E5', borderRadius: 6}}
+                        selectList={SETTLEMENT_RANGE_WEEK}
+                        otherSelectPress={otherSelectPress}
+                        component={SingleSelect}
+                      /> : <></>}
                     </View>
                   </View>
                 </View>
@@ -384,6 +476,12 @@ const Policy = ({
 };
 
 const styles = StyleSheet.create({
+  detailContent: {
+    backgroundColor: '#ffffff', 
+    borderTopWidth: 1, 
+    borderTopColor: '#999999', 
+    paddingTop: 20
+  },
   touchArea: {
     height: 94, 
     flexDirection: 'row', 
@@ -391,6 +489,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff', 
     paddingHorizontal: 30, 
     alignItems: 'center'
+  },
+  orderRange: {
+    borderWidth: 1, 
+    borderColor: '#EFEFEF', 
+    paddingTop: 20, 
+    marginBottom: 20, 
+    borderRadius: 6
+  },
+  titleText: {
+    width: 180, 
+    fontSize: 24, 
+    color: '#333333', 
+    textAlign: 'center', 
+    textAlignVertical: 'center', 
+    borderTopWidth: 1, 
+    borderRightWidth: 1, 
+    borderLeftWidth: 1
+  },
+  contentText: {
+    flex: 1, 
+    fontSize: 24, 
+    color: '#333333', 
+    textAlign: 'center', 
+    textAlignVertical: 'center', 
+    borderTopWidth: 1, 
+    borderRightWidth: 1, 
+    paddingVertical: 10
   },
   title: {
     fontSize: 32, 
