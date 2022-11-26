@@ -12,6 +12,8 @@ import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import NAVIGATION_KEYS from '../../../../navigator/key';
 import BottomList from './BottomList';
 
+import All from './All';
+
 const DormitoryViolation = () => {
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
@@ -34,7 +36,9 @@ const DormitoryViolation = () => {
 
   const addViolation = () => navigation.navigate(NAVIGATION_KEYS.ADD_VIOLATION);
 
-  const renderScene = () => <BottomList type={index} />
+  const filterFun = (values) => {
+    console.log('values', values);
+  };
 
   const renderTabBar = ({navigationState}) => {
     return (
@@ -63,16 +67,30 @@ const DormitoryViolation = () => {
     )
   };
 
+  const renderScene = ({ route }) => {
+    switch(route.key){
+      case 'all':
+        return <All index={index} />
+      case 'warn1':
+        return <View style={{flex: 1, borderWidth: 1, borderColor: 'red'}}></View>
+      case 'warn2':
+        return <View style={{flex: 1, borderWidth: 1, borderColor: 'yellow'}}></View>
+      case 'getOut':
+        return <View style={{flex: 1, borderWidth: 1, borderColor: 'green'}}></View>
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory 
+        filterFun={filterFun}
         filterBuilding
         filterEnterprise
         filterFloorAndRoom
         filterDateRange
         enterpriseStyle={{width: 140}}
         otherHeaderStyle={{paddingBottom: 10}}
-     />
+      />
       <CenterSelectDate />
       <TabView
         lazy

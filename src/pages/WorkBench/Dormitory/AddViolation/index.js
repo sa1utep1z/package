@@ -17,6 +17,7 @@ import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
 import OCR_Scan from '../../../../components/OCR_Scan';
+import DormitoryViolation from "../../../../request/Dormitory/DormitoryViolation";
 import ListApi from '../../../../request/ListApi';
 import { SUCCESS_CODE, CHANEL_SOURCE_NAME, VIOLATION_TYPE_LIST, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PUNISH_RESULT } from '../../../../utils/const';
 
@@ -37,20 +38,20 @@ const PunishResultRightIcon = ({value}) => value.length ?
 let restForm;
 
 const validationSchema = Yup.object().shape({
-  memberName: Yup.string().required('请输入姓名'),
-  memberPhone: Yup.string().required('请输入手机号'),
-  memberIdCard: Yup.string().required('请输入身份证号'),
-  memberFrom: Yup.string().required('请输入籍贯'),
-  maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
-  buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
-  floorNum: Yup.array().min(1, '请选择楼层'),
-  roomNum: Yup.array().min(1, '请选择房间号'),
-  bedNum: Yup.array().min(1, '请选择床位号'),
-  violationType: Yup.array().min(1, '请选择违纪类别'),
-  violationOtherReason: Yup.string().required('请输入违纪描述文本'),
-  violationPhotos: Yup.array().min(1, '请拍照上传违纪照片（最多两张）'),
-  punishResult: Yup.array().min(1, '请选择处罚结果'),
-  punishDate: Yup.string().required('请选择处罚日期'),
+  // memberName: Yup.string().required('请输入姓名'),
+  // memberPhone: Yup.string().required('请输入手机号'),
+  // memberIdCard: Yup.string().required('请输入身份证号'),
+  // memberFrom: Yup.string().required('请输入籍贯'),
+  // maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
+  // buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
+  // floorNum: Yup.array().min(1, '请选择楼层'),
+  // roomNum: Yup.array().min(1, '请选择房间号'),
+  // bedNum: Yup.array().min(1, '请选择床位号'),
+  // violationType: Yup.array().min(1, '请选择违纪类别'),
+  // violationOtherReason: Yup.string().required('请输入违纪描述文本'),
+  // violationPhotos: Yup.array().min(1, '请拍照上传违纪照片（最多两张）'),
+  // punishResult: Yup.array().min(1, '请选择处罚结果'),
+  // punishDate: Yup.string().required('请选择处罚日期'),
 });
 const initialValues = {
   memberName: '',
@@ -80,6 +81,19 @@ const AddViolation = () => {
 
   const onSubmit = (values) => {
     console.log('提交了表单', values);
+    const formatValue = {
+      idNo: '420281198709014279',
+      // type: values.violationType.length ? values.violationType[0].value : '', //TODO
+      type: 'DORM_DISCIPLINE_HIGH_ELECTRICAL',
+      result: 'DORM_DISCIPLINE_RESULT_WARN',
+      date: values.punishDate,
+      pic: values.violationPhotos.length ? values.violationPhotos : [],
+    };
+    // if(values.violationType[0].value === 'DORM_DISCIPLINE_OTHER'){
+    //   formatValue.desc = values.violationOtherReason
+    // }
+    console.log('formatValue', formatValue);
+    addViolation(formatValue);
   };
 
   const openOCR = () => !buttonLoading && OCR_Ref?.current.setModalVisible(true);
@@ -90,6 +104,15 @@ const AddViolation = () => {
     }else{
       setSignUpInfo({});
       setSignUpNotice('请输入身份证号或通过【OCR】拍照读取会员报名信息');
+    }
+  };
+
+  const addViolation = async(params) => {
+    try {
+      const res = await DormitoryViolation.addViolation(params);
+      console.log('res', res);
+    } catch (error) {
+      console.log('error', error);
     }
   };
 

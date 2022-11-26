@@ -11,8 +11,9 @@ import HeaderSearchInput from './HeaderSearchInput';
 import HeaderRadioItem from './HeaderRadioItem';
 import HeaderDateRange from './HeaderDateRange';
 import FilterMore from './FilterMore';
+import TopSearchApi from '../../request/Dormitory/TopSearchApi';
 import { openDialog, setTitle } from '../../redux/features/PageDialog'; 
-import {DORMITORY_STAY_TYPE, DORMITORY_ALL_TYPE} from '../../utils/const';
+import {DORMITORY_STAY_TYPE, DORMITORY_ALL_TYPE, SUCCESS_CODE} from '../../utils/const';
 import NAVIGATION_KEYS from '../../navigator/key';
 
 let restForm;
@@ -41,6 +42,7 @@ const HeaderSearchOfDormitory = ({
   selectIndex = 0,
   enterpriseStyle,
   otherHeaderStyle,
+  autoQueryBuilding = false, //自动查询宿舍楼栋；
   filterMore = false, //是否筛选更多；
   filterEnterprise = false, //是否筛选企业；
   filterBuilding = false, //是否筛选楼栋；
@@ -51,6 +53,7 @@ const HeaderSearchOfDormitory = ({
   filterDateRange = false, //是否筛选日期范围；
   filterFloorAndRoom = false, //是否筛选楼层及房间号（在同一行中）；
   filterBuildingAndFloor = false, //是否筛选楼栋跟楼层（在同一行中）；
+  buildingCanDelete = true, //宿舍楼栋是否支持删除；
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -59,8 +62,29 @@ const HeaderSearchOfDormitory = ({
   const [isFilterMore, setIsFilterMore] = useState(false);
 
   useEffect(() => {
+    if(autoQueryBuilding){
+      queryBuilding();
+      return;
+    }
     restForm.submitForm();
   }, [])
+
+  const queryBuilding = async() => {
+    try {
+      const res = await TopSearchApi.getBuildingList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取宿舍楼栋列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      if(res.data.length){
+        restForm.setFieldValue('buildingNum', [res.data[0]]);
+      }
+    }catch(error){
+      console.log('getBuildingList->error', error);
+    }finally{
+      restForm.submitForm();
+    }
+  };
 
   const onSubmit = values => {
     if(values?.floorNum && values?.roomNum && values?.bedNum){
@@ -137,6 +161,7 @@ const HeaderSearchOfDormitory = ({
                   name="buildingNum"
                   label="宿舍楼栋"
                   type="building"
+                  canDelete={buildingCanDelete}
                   component={HeaderSelectItem}
                 />
                 <View style={{width: 20}}></View>

@@ -22,6 +22,7 @@ const HeaderSelectItem = ({
   canSearch = true,
   otherLabelStyle,
   setIsFilterMore, //顶部筛选框中的筛选更多按钮是否选中状态：如果切换宿舍楼栋，则需要将按钮点亮状态进行取消。
+  canDelete = true, //是否可以删除表单内容；
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
@@ -184,7 +185,7 @@ const HeaderSelectItem = ({
             {!field.value.length && <AntDesign name='down' size={36} color='#999999'/>}
           </>}
         </TouchableOpacity>
-        {!!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
+        {canDelete && !!field.value.length && <TouchableOpacity style={styles.clearIconArea} onPress={clearFieldValue}>
             <AntDesign name='closecircle' size={32} style={styles.clearIcon} color='#999999'/>
           </TouchableOpacity>}
       </View>

@@ -1040,10 +1040,6 @@ export const ROOM_TYPE_LIST = [
 ];
 
 //房间类型对应颜色；
-export const ROOM_TYPE_COLOR = {
-  'emptyRoom': '#2BE211',
-  'notFull': '#FAF005',
-  'full': '#ED0F0F',
-  'fixing': '#999999',
-  'occupying': '#999999',
-};
+export const ROOM_TYPE_COLOR = [
+  '#2BE211', '#FAF005', '#ED0F0F', '#999999', '#999999',
+];
