@@ -14,7 +14,7 @@ import DormitoryViolationDetail from '../../../../../components/PageDialog/Dormi
 let timer;
 const firstPage = {pageSize: 20, pageNumber: 0};
 
-const All = ({
+const SecondWarn = ({
   index,
   filterParams, //顶部筛选的参数
   changeRoute, //修改路由函数
@@ -24,7 +24,7 @@ const All = ({
   const toast = useToast();
   const dispatch = useDispatch();
 
-  const [searchContent, setSearchContent] = useState({type: '', ...firstPage});
+  const [searchContent, setSearchContent] = useState({type: 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
@@ -40,7 +40,7 @@ const All = ({
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});
-      getTypeList({...filterParams, type: ''});
+      getTypeList({...filterParams, type: 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN'});
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent, filterParams, index])
@@ -85,7 +85,6 @@ const All = ({
       }
       changeRoute && changeRoute(res.data);
     }catch(err){
-      console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setIsLoading(false);
@@ -162,4 +161,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default All;
+export default SecondWarn;

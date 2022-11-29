@@ -9,12 +9,19 @@ import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import { deepCopy } from '../../../../utils';
 import NAVIGATION_KEYS from '../../../../navigator/key';
-import BottomList from './BottomList';
 
 import All from './All';
+import Warn from './Warn';
+import SecondWarn from './SecondWarn';
+import Out from './Out';
 
-const DormitoryViolation = () => {
+const DormitoryViolation = ({
+  route: {
+    params
+  }
+}) => {
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();
@@ -28,16 +35,31 @@ const DormitoryViolation = () => {
 
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([
-    { key: 'all', title: '全部', number: 0 },
-    { key: 'warn1', title: '警告', number: 0 },
-    { key: 'warn2', title: '二次警告', number: 0 },
-    { key: 'getOut!', title: '取消住宿', number: 0 },
+    { key: 'total', title: '全部', number: 0 },
+    { key: 'warn', title: '警告', number: 0 },
+    { key: 'secondWarn', title: '二次警告', number: 0 },
+    { key: 'out', title: '取消住宿', number: 0 },
   ]);
+  const [filterParams, setFilterParams] = useState({});
 
   const addViolation = () => navigation.navigate(NAVIGATION_KEYS.ADD_VIOLATION);
 
-  const filterFun = (values) => {
-    console.log('values', values);
+  const filter = (values)=> {
+    const filteredParams = {
+      buildingId: values.buildingNum.length ? values.buildingNum[0].value : '', //宿舍楼栋id
+      floorId: values.floorNum.length ? values.floorNum[0].value : '', //宿舍楼层id
+      roomId: values.roomNum.length ? values.roomNum[0].value : '', //宿舍房间id
+      startDate: values.dateRange.startDate,
+      endDate: values.dateRange.endDate,
+    };
+    console.log('filteredParams', filteredParams);
+    setFilterParams(filteredParams);
+  };
+
+  const changeRoute = values => {
+    const copyList = deepCopy(routes);
+    copyList.forEach(route => route.number = values[route.key]);
+    setRoutes(copyList);
   };
 
   const renderTabBar = ({navigationState}) => {
@@ -69,23 +91,22 @@ const DormitoryViolation = () => {
 
   const renderScene = ({ route }) => {
     switch(route.key){
-      case 'all':
-        return <All index={index} />
-      case 'warn1':
-        return <View style={{flex: 1, borderWidth: 1, borderColor: 'red'}}></View>
-      case 'warn2':
-        return <View style={{flex: 1, borderWidth: 1, borderColor: 'yellow'}}></View>
-      case 'getOut':
-        return <View style={{flex: 1, borderWidth: 1, borderColor: 'green'}}></View>
+      case 'total':
+        return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+      case 'warn':
+        return <Warn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+      case 'secondWarn':
+        return <SecondWarn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+      case 'out':
+        return <Out index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
     }
   };
 
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory 
-        filterFun={filterFun}
+        filterFun={filter}
         filterBuilding
-        filterEnterprise
         filterFloorAndRoom
         filterDateRange
         enterpriseStyle={{width: 140}}

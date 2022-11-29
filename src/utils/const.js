@@ -1014,21 +1014,33 @@ export const PROPERTY_STATUS_LIST = [
 
 //违纪类别；
 export const VIOLATION_TYPE_LIST = [
-  {label: '违规使用大功率电器', value: 'useHighPowerElectricalAppliance'},
-  {label: '私拉乱接电线', value: 'connectWiresWithoutPermission'},
-  {label: '恶意损坏宿舍物品', value: 'brokeDormitoryThing'},
-  {label: '宿舍打架斗殴', value: 'fightInDormitory'},
-  {label: '私藏管制刀具', value: 'carryKnife'},
-  {label: '私自闯入异性宿舍', value: 'breakingIntoFemaleDormitory'}, //女性不大可能闯入男性宿舍吧-v-
-  {label: '违规带外人留宿', value: 'carryOtherPeopleIntoDormitory'},
-  {label: '其他', value: 'otherReason'},
+  {label: '违规使用大功率电器', value: 'DORM_DISCIPLINE_HIGH_ELECTRICAL'},
+  {label: '私拉乱接电线', value: 'DORM_DISCIPLINE_PRIVATE_ELECTRICAL'},
+  {label: '恶意损坏宿舍物品', value: 'DORM_DISCIPLINE_MALICIOUS_DAMAGE'},
+  {label: '宿舍打架斗殴', value: 'DORM_DISCIPLINE_FIGHT'},
+  {label: '私藏管制刀具', value: 'DORM_DISCIPLINE_PRIVATE_KNIVES'},
+  {label: '私自闯入异性宿舍', value: 'DORM_DISCIPLINE_OPPOSITE_SEX'},
+  {label: '违规带外人留宿', value: 'DORM_DISCIPLINE_TAKE_OUTSIDERS_TO_STAY'},
+  {label: '其他', value: 'DORM_DISCIPLINE_OTHER'},
 ];
+
+//违纪类别-名称；
+export const VIOLATION_TYPE_LIST_NAME = {
+  'DORM_DISCIPLINE_HIGH_ELECTRICAL': '违规使用大功率电器',
+  'DORM_DISCIPLINE_PRIVATE_ELECTRICAL': '私拉乱接电线',
+  'DORM_DISCIPLINE_MALICIOUS_DAMAGE': '恶意损坏宿舍物品',
+  'DORM_DISCIPLINE_FIGHT': '宿舍打架斗殴',
+  'DORM_DISCIPLINE_PRIVATE_KNIVES': '私藏管制刀具',
+  'DORM_DISCIPLINE_OPPOSITE_SEX': '私自闯入异性宿舍',
+  'DORM_DISCIPLINE_TAKE_OUTSIDERS_TO_STAY': '违规带外人留宿',
+  'DORM_DISCIPLINE_OTHER': '其他'
+};
 
 //违纪类别；
 export const PUNISH_RESULT = [
-  {label: '警告', value: 'warning'},
-  {label: '二次警告', value: 'warningTwoSecond'},
-  {label: '取消住宿', value: 'cancelLiving'},
+  {label: '警告', value: 'DORM_DISCIPLINE_RESULT_WARN'},
+  {label: '二次警告', value: 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN'},
+  {label: '取消住宿', value: 'DORM_DISCIPLINE_RESULT_OUT'},
 ];
 
 //房间类型；
@@ -1043,3 +1055,17 @@ export const ROOM_TYPE_LIST = [
 export const ROOM_TYPE_COLOR = [
   '#2BE211', '#FAF005', '#ED0F0F', '#999999', '#999999',
 ];
+
+//宿舍查房违纪字段；
+export const DORMITORY_VIOLATION_LIST = {
+  'DORM_DISCIPLINE_RESULT_WARN': '警告',
+  'DORM_DISCIPLINE_RESULT_SECONDARY_WARN': '二次警告',
+  'DORM_DISCIPLINE_RESULT_OUT': '退宿',
+};
+
+//宿舍查房违纪字段颜色；
+export const DORMITORY_VIOLATION_LIST_COLOR = {
+  'DORM_DISCIPLINE_RESULT_WARN': '#409EFF',
+  'DORM_DISCIPLINE_RESULT_SECONDARY_WARN': '#284469',
+  'DORM_DISCIPLINE_RESULT_OUT': 'red',
+};

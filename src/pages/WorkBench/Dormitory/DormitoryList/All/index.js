@@ -46,7 +46,7 @@ const All = ({
 
   useEffect(()=>{
     const liveInDateStart = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
-    const liveInDateEnd = startDate ? moment(endDate).format('YYYY-MM-DD') : '';
+    const liveInDateEnd = endDate ? moment(endDate).format('YYYY-MM-DD') : '';
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams, liveInDateStart, liveInDateEnd});

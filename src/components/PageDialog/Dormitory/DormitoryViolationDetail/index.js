@@ -1,20 +1,69 @@
 import React, {useState, useEffect} from "react";
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator } from "react-native";
 import { Shadow } from 'react-native-shadow-2';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
+import moment from "moment";
 
 import { closeDialog } from "../../../../redux/features/PageDialog";
 import ImageZoom from '../../../ImageZoom';
+import DormitoryViolationApi from "../../../../request/Dormitory/DormitoryViolation";
+import { SUCCESS_CODE, VIOLATION_TYPE_LIST_NAME, DORMITORY_VIOLATION_LIST } from "../../../../utils/const";
 
 const DormitoryViolationDetail = ({
-  violationDetail
+  item
 }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const [isVisible, setIsVisible] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
   const [imgIndex, setImgIndex] = useState(0);
+  const [memberDetail, setMemberDetail] = useState({}); //会员信息
+  const [memberLoading, setMemberLoading] = useState(false);
+  const [violationDetail, setViolationDetail] = useState({}); //违纪详情
+  const [violationLoading, setViolationLoading] = useState(false);
+
+  useEffect(()=>{
+    queryMemberDormitoryInfo(item.idNo);
+  },[])
+
+  const queryMemberDormitoryInfo = async(idNo) => {
+    try {
+      setMemberLoading(true);
+      const res = await DormitoryViolationApi.queryMemberDormitoryInfo(idNo);
+      console.log('queryMemberDormitoryInfo -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setMemberDetail(res.data);
+      queryMemberViolationInfo(item.id);
+    } catch (error) {
+      console.log('queryMemberDormitoryInfo -> error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setMemberLoading(false);
+    }
+  };
+
+  const queryMemberViolationInfo = async(violationId) => {
+    try {
+      setViolationLoading(true);
+      const res = await DormitoryViolationApi.queryMemberViolationInfo(violationId);
+      console.log('queryMemberViolationInfo -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setViolationDetail(res.data);
+    } catch (error) {
+      console.log('queryMemberViolationInfo -> error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setViolationLoading(false);
+    }
+  };
 
   const rejectOnPress = () => dispatch(closeDialog());
 
@@ -32,6 +81,7 @@ const DormitoryViolationDetail = ({
     <>
       <View style={styles.totalArea}>
         <ScrollView style={styles.scrollViewArea} showsVerticalScrollIndicator={false}>
+          {memberLoading && <ActivityIndicator size={48} color="#409EFF" style={{marginBottom: 20}}/>}
           <View style={styles.scrollView_total}>
             <Shadow style={styles.dormitoryArea}>
               <View style={{borderRadius: 10}}>
@@ -41,35 +91,35 @@ const DormitoryViolationDetail = ({
                 <View style={styles.dormitoryArea_bottomArea}>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>姓名</Text>
-                    <Text style={styles.rightText}>{violationDetail.name}</Text>
+                    <Text style={styles.rightText}>{memberDetail.name || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>会员工号</Text>
-                    <Text style={styles.rightText}>{violationDetail.no}</Text>
+                    <Text style={styles.rightText}>{memberDetail.jobNo || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>手机号</Text>
-                    <Text style={styles.rightText}>{violationDetail.mobile}</Text>
+                    <Text style={styles.rightText}>{memberDetail.mobile || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>身份证号</Text>
-                    <Text style={styles.rightText}>{violationDetail.idNo}</Text>
+                    <Text style={styles.rightText}>{memberDetail.idNo || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>渠道来源</Text>
-                    <Text style={styles.rightText}>{violationDetail.from}</Text>
+                    <Text style={styles.rightText}>{memberDetail.signUpType === 'SUPPLIER' ? '供应商' : '门店录入' || '无'}</Text>
                   </View>
-                  {violationDetail.from === 'SUPPLIER' && <View style={styles.textLine}>
+                  {memberDetail.signUpType === 'SUPPLIER' && <View style={styles.textLine}>
                     <Text style={styles.titleText}>供应商：</Text>
-                    <Text style={styles.rightText}>{violationDetail.supplier || '无'}</Text>
+                    <Text style={styles.rightText}>{memberDetail.supplierName || '无'}</Text>
                   </View>}
-                  {violationDetail.from === 'RECRUITER' && <View style={styles.textLine}>
+                  {memberDetail.signUpType === 'RECRUITER' && <View style={styles.textLine}>
                     <Text style={styles.titleText}>经纪人：</Text>
-                    <Text style={styles.rightText}>{memberInfoList.recruitName || '无'}</Text>
+                    <Text style={styles.rightText}>{memberDetail.recruiterName || '无'}</Text>
                   </View>}
                   <View style={styles.lastItem}>
                     <Text style={styles.titleText}>归属门店</Text>
-                    <Text style={styles.rightText}>{violationDetail.bumen}</Text>
+                    <Text style={styles.rightText}>{memberDetail.storeName || '无'}</Text>
                   </View>
                 </View>
               </View>
@@ -82,23 +132,23 @@ const DormitoryViolationDetail = ({
                 <View style={styles.dormitoryArea_bottomArea}>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>宿舍楼栋</Text>
-                    <Text style={styles.rightText}>{violationDetail.building}</Text>
+                    <Text style={styles.rightText}>{memberDetail.buildingName || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>宿舍分类</Text>
-                    <Text style={styles.rightText}>{violationDetail.dormitoryType}</Text>
+                    <Text style={styles.rightText}>{memberDetail.idNo ? `${memberDetail.idNo[17] % 2 === 0 ? '女生宿舍' : '男生宿舍'}` : '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>宿舍楼层</Text>
-                    <Text style={styles.rightText}>{violationDetail.floor}</Text>
+                    <Text style={styles.rightText}>{memberDetail.floorName ? `${memberDetail.floorName}F` : '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>房间号</Text>
-                    <Text style={styles.rightText}>{violationDetail.room}</Text>
+                    <Text style={styles.rightText}>{memberDetail.roomName ? `${memberDetail.roomName}房` : '无'}</Text>
                   </View>
                   <View style={styles.lastItem}>
                     <Text style={styles.titleText}>床位号</Text>
-                    <Text style={styles.rightText}>{violationDetail.bed}</Text>
+                    <Text style={styles.rightText}>{memberDetail.bedName ? `${memberDetail.bedName}床` : '无'}</Text>
                   </View>
                 </View>
               </View>
@@ -108,21 +158,21 @@ const DormitoryViolationDetail = ({
                 <View style={styles.dormitoryArea_topArea}>
                   <Text style={styles.dormitoryArea_topAreaText}>违纪详情</Text>
                 </View>
-                <View style={styles.dormitoryArea_bottomArea}>
+                {!violationLoading ? <View style={styles.dormitoryArea_bottomArea}>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>违纪类别</Text>
-                    <Text style={styles.rightText}>{violationDetail.violationType}</Text>
+                    <Text style={styles.rightText}>{violationDetail.type ? VIOLATION_TYPE_LIST_NAME[violationDetail.type] : '无'}</Text>
                   </View>
                   <View style={styles.photos}>
                     <Text style={styles.titleText}>违纪文字描述</Text>
-                    <Text style={styles.rightText}>{violationDetail.violationRemark}</Text>
+                    <Text style={styles.rightText}>{violationDetail.desc || '无'}</Text>
                   </View>
                   <View style={styles.photoArea}>
                     <Text style={styles.titleText}>违纪照片</Text>
                     <View style={styles.rightPhotosArea}>
-                      {violationDetail.violationList.length ? <>
-                        {violationDetail.violationList.map((image, imageIndex) => (
-                          <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(violationDetail.violationList, imageIndex)}>
+                      {violationDetail.pic && violationDetail.pic.length ? <>
+                        {violationDetail.pic.map((image, imageIndex) => (
+                          <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(memberDetail.violationList, imageIndex)}>
                             <Image style={styles.image} source={{ uri: `${image.url}` }} />
                           </TouchableOpacity>))}
                       </> : <Text style={styles.image_null_text}>无</Text>}
@@ -130,13 +180,13 @@ const DormitoryViolationDetail = ({
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>处罚结果</Text>
-                    <Text style={styles.rightText}>{violationDetail.punishResult}</Text>
+                    <Text style={styles.rightText}>{violationDetail.result ? DORMITORY_VIOLATION_LIST[violationDetail.result] : '无'}</Text>
                   </View>
                   <View style={styles.lastItem}>
                     <Text style={styles.titleText}>处罚日期</Text>
-                    <Text style={styles.rightText}>{violationDetail.punishDate}</Text>
+                    <Text style={styles.rightText}>{violationDetail.date ? moment(violationDetail.date).format('YYYY-MM-DD') : '无'}</Text>
                   </View>
-                </View>
+                </View> : <ActivityIndicator size={48} color="#409EFF" style={{marginVertical: 20}}/>}
               </View>
             </Shadow>
           </View>

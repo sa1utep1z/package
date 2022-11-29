@@ -7,7 +7,8 @@ import { useToast } from "react-native-toast-notifications";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Button } from '@rneui/themed';
+  import { useNavigation } from '@react-navigation/native';
+  import { Button } from '@rneui/themed';
 import moment from 'moment';
 import * as Yup from 'yup';
 
@@ -17,9 +18,9 @@ import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
 import OCR_Scan from '../../../../components/OCR_Scan';
-import DormitoryViolation from "../../../../request/Dormitory/DormitoryViolation";
-import ListApi from '../../../../request/ListApi';
+import DormitoryViolationApi from '../../../../request/Dormitory/DormitoryViolation';
 import { SUCCESS_CODE, CHANEL_SOURCE_NAME, VIOLATION_TYPE_LIST, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PUNISH_RESULT } from '../../../../utils/const';
+import NAVIGATION_KEYS from '../../../../navigator/key';
 
 const MaleOrFemaleRightIcon = ({value}) => value.length ? 
 <View style={styles.maleOrFemaleRightIconArea}>
@@ -38,31 +39,18 @@ const PunishResultRightIcon = ({value}) => value.length ?
 let restForm;
 
 const validationSchema = Yup.object().shape({
-  // memberName: Yup.string().required('请输入姓名'),
-  // memberPhone: Yup.string().required('请输入手机号'),
-  // memberIdCard: Yup.string().required('请输入身份证号'),
-  // memberFrom: Yup.string().required('请输入籍贯'),
-  // maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
-  // buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
-  // floorNum: Yup.array().min(1, '请选择楼层'),
-  // roomNum: Yup.array().min(1, '请选择房间号'),
-  // bedNum: Yup.array().min(1, '请选择床位号'),
-  // violationType: Yup.array().min(1, '请选择违纪类别'),
-  // violationOtherReason: Yup.string().required('请输入违纪描述文本'),
-  // violationPhotos: Yup.array().min(1, '请拍照上传违纪照片（最多两张）'),
-  // punishResult: Yup.array().min(1, '请选择处罚结果'),
-  // punishDate: Yup.string().required('请选择处罚日期'),
+  memberName: Yup.string().required('请输入姓名'),
+  memberPhone: Yup.string().required('请输入手机号'),
+  memberIdCard: Yup.string().required('请输入身份证号'),
+  violationType: Yup.array().min(1, '请选择违纪类别'),
+  violationPhotos: Yup.array().min(1, '请拍照上传违纪照片（最多两张）'),
+  punishResult: Yup.array().min(1, '请选择处罚结果'),
+  punishDate: Yup.string().required('请选择处罚日期'),
 });
 const initialValues = {
   memberName: '',
   memberPhone: '',
   memberIdCard: '',
-  memberFrom: '',
-  maleOrFemale: [],
-  buildingNum: [],
-  floorNum: [],
-  roomNum: [],
-  bedNum: [],
   violationType: [],
   violationOtherReason: '',
   violationPhotos: [],
@@ -73,85 +61,80 @@ const initialValues = {
 const AddViolation = () => {
   const OCR_Ref = useRef(null);
   const toast = useToast();
+  const navigation = useNavigation();
 
-  const [signUpInfoLoading, setSignUpInfoLoading] = useState(false);
+  const [memberInfoLoading, setMemberInfoLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState({});
   const [signUpNotice, setSignUpNotice] = useState('请输入身份证号或通过【OCR】拍照读取会员报名信息');
 
   const onSubmit = (values) => {
-    console.log('提交了表单', values);
     const formatValue = {
-      idNo: '420281198709014279',
-      // type: values.violationType.length ? values.violationType[0].value : '', //TODO
-      type: 'DORM_DISCIPLINE_HIGH_ELECTRICAL',
-      result: 'DORM_DISCIPLINE_RESULT_WARN',
+      idNo: values.memberIdCard || '',
+      type: values.violationType.length ? values.violationType[0].value : '', 
+      result: values.punishResult.length ? values.punishResult[0].value : '',
       date: values.punishDate,
       pic: values.violationPhotos.length ? values.violationPhotos : [],
     };
-    // if(values.violationType[0].value === 'DORM_DISCIPLINE_OTHER'){
-    //   formatValue.desc = values.violationOtherReason
-    // }
-    console.log('formatValue', formatValue);
+    if(values.violationType[0].value === 'DORM_DISCIPLINE_OTHER'){
+      if(!values.violationOtherReason){
+        toast.show('请填写违纪文字描述', {type: 'danger'});
+        return;
+      }
+      formatValue.desc = values.violationOtherReason
+    }
     addViolation(formatValue);
+  };
+
+  const addViolation = async(params) => {
+    try {
+      const res = await DormitoryViolationApi.addViolation(params);
+      console.log('res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`开罚单失败，${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      navigation.navigate(NAVIGATION_KEYS.DORMITORY_VIOLATION, {
+        refresh: true
+      })
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const openOCR = () => !buttonLoading && OCR_Ref?.current.setModalVisible(true);
 
   const IdCardOnInput = (value) => {
     if(value.length === 18){
+      const sexNum = value[16];
+      restForm.setFieldValue('maleOrFemale', [{label: `${sexNum % 2 === 0 ? '女生' : '男生'}宿舍`, value: `${sexNum % 2 === 0 ? 'DORM_FEMALE' : 'DORM_MALE'}`}]);
       queryMemberFlowId(value);
     }else{
+      restForm.setFieldValue('maleOrFemale', []);
       setSignUpInfo({});
       setSignUpNotice('请输入身份证号或通过【OCR】拍照读取会员报名信息');
     }
   };
 
-  const addViolation = async(params) => {
-    try {
-      const res = await DormitoryViolation.addViolation(params);
-      console.log('res', res);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   const queryMemberFlowId = async(memberId) => {
-    setSignUpInfoLoading(true);
     try {
-      const res = await ListApi.SignUpList({str: memberId, role: "RECRUIT"});
+      setMemberInfoLoading(true);
+      const res = await DormitoryViolationApi.queryMemberDormitoryInfo(memberId);
+      console.log('queryMemberFlowId -> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
+        setSignUpNotice('无该会员报名信息，请确认身份证号是否正确！');
         return;
       }
-      console.log('queryMemberFlowId -> res', res);
-      if(res.data.content.length){
-        const flowId = res.data.content[0].flowId;
-        queryMemberInfo(flowId, res.data.content[0].companyShortName);
-      }else{
-        setSignUpInfoLoading(false);
-        setSignUpNotice('暂无该会员报名信息，请确认身份证号是否正确！');
-      }
+      toast.show(`成功查询报名信息`, { type: 'success' });
+      setSignUpInfo({...res.data});
+      res.data.name && restForm.setFieldValue('memberName', res.data.name);
+      res.data.mobile && restForm.setFieldValue('memberPhone', res.data.mobile);
     } catch (error) {
       console.log('error', error)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }
-  };
-
-  const queryMemberInfo = async(flowId, companyShortName) => {
-    try {
-      const res = await ListApi.MemberMessage(flowId);
-      if(res?.code !== SUCCESS_CODE){
-        toast.show(`${res?.msg}`, {type: 'danger'});
-        return;
-      }
-      console.log('res', res);
-      res.data.companyShortName = companyShortName;
-      setSignUpInfo(res.data);
-    } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    } finally{
-      setSignUpInfoLoading(false);
+    } finally {
+      setMemberInfoLoading(false);
     }
   };
 
@@ -205,18 +188,6 @@ const AddViolation = () => {
                           onChangeOtherFunc={IdCardOnInput}
                           component={SingleInput}
                         />
-                        <Field
-                          name="memberFrom"
-                          label="籍贯"
-                          selectTextOnFocus
-                          isRequire
-                          multiline
-                          clearIcon
-                          labelStyle={{width: 160}}
-                          inputStyle={{flex: 0, minHeight: 60, marginBottom: 0}}
-                          inputContainerStyle={{minHeight: 120}}
-                          component={SingleInput}
-                        />
                       </View>
                       <TouchableOpacity activeOpacity={buttonLoading ? 1 : 0.2} style={[styles.OCR_button, buttonLoading && {borderColor: '#999999', backgroundColor: '#ededed'}]} onPress={openOCR}>
                         <Entypo name="camera" size={32} color={buttonLoading ? "#999999" : "#409EFF"} />
@@ -232,7 +203,7 @@ const AddViolation = () => {
                       <Text style={styles.titleText}>报名信息</Text>
                     </View>
                     <View style={styles.shadowContent_signUpInfo}>
-                      {signUpInfoLoading && <ActivityIndicator style={{marginBottom: 10}} size={36} color="#409EFF"/>}
+                      {memberInfoLoading && <ActivityIndicator style={{marginBottom: 10}} size={36} color="#409EFF"/>}
                       {signUpInfo?.signUpType ? <>
                         <View style={[styles.lineArea, {borderTopLeftRadius: 8, borderTopRightRadius: 8}]}>
                           <View style={[styles.lineTitleArea, {borderTopLeftRadius: 8}]}>
@@ -247,7 +218,7 @@ const AddViolation = () => {
                             <Text style={styles.lineTitle}>经纪人</Text>
                           </View>
                           <View style={styles.lineContentArea}>
-                            <Text style={styles.lineContentText}>{signUpInfo.recruitName || '无'}</Text>
+                            <Text style={styles.lineContentText}>{signUpInfo.recruiterName || '无'}</Text>
                           </View>
                         </View>}
                         {signUpInfo.signUpType === 'SUPPLIER' &&<View style={styles.lineArea}>
@@ -255,7 +226,7 @@ const AddViolation = () => {
                             <Text style={styles.lineTitle}>供应商</Text>
                           </View>
                           <View style={styles.lineContentArea}>
-                            <Text style={styles.lineContentText}>{signUpInfo.supplier || '无'}</Text>
+                            <Text style={styles.lineContentText}>{signUpInfo.supplierName || '无'}</Text>
                           </View>
                         </View>}
                         <View style={styles.lineArea}>
@@ -271,7 +242,7 @@ const AddViolation = () => {
                             <Text style={styles.lineTitle}>入职企业</Text>
                           </View>
                           <View style={styles.lineContentArea}>
-                            <Text style={styles.lineContentText}>{signUpInfo.companyShortName}</Text>
+                            <Text style={styles.lineContentText}>{signUpInfo.shortCompanyName || '无'}</Text>
                           </View>
                         </View>
                       </> : <Text style={[styles.noticeText, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice}</Text>}
@@ -283,52 +254,50 @@ const AddViolation = () => {
                     <View style={styles.titleArea}>
                       <Text style={styles.titleText}>住宿信息</Text>
                     </View>
-                    <View style={styles.shadowContent_liveInfo}>
-                      <Field
-                        name="maleOrFemale"
-                        label="宿舍分类"
-                        isRequire
-                        labelStyle={{width: 160}}
-                        radioList={DORMITORY_TYPE}
-                        rightComponent={<MaleOrFemaleRightIcon value={rest.values.maleOrFemale} />}
-                        component={RadioSelect}
-                      />
-                      <Field
-                        name="buildingNum"
-                        label="宿舍楼栋"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="floorNum"
-                        label="楼层"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="roomNum"
-                        label="房间号"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
-                      <Field
-                        name="bedNum"
-                        label="床位号"
-                        isRequire
-                        canSearch={false}
-                        labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
-                        component={SingleSelect}
-                      />
+                    <View style={styles.shadowContent_signUpInfo}>
+                      {memberInfoLoading && <ActivityIndicator style={{marginBottom: 10}} size={36} color="#409EFF"/>}
+                      {signUpInfo?.signUpType ? <>
+                        <View style={[styles.lineArea, {borderTopLeftRadius: 8, borderTopRightRadius: 8}]}>
+                          <View style={[styles.lineTitleArea, {borderTopLeftRadius: 8}]}>
+                            <Text style={styles.lineTitle}>宿舍分类</Text>
+                          </View>
+                          <View style={styles.lineContentArea}>
+                            <Text style={styles.lineContentText}>{signUpInfo.idNo ? `${signUpInfo.idNo[17] % 2 === 0 ? '女生宿舍' : '男生宿舍'}` : '无'}</Text>
+                          </View>
+                        </View>
+                        <View style={styles.lineArea}>
+                          <View style={styles.lineTitleArea}>
+                            <Text style={styles.lineTitle}>宿舍楼栋</Text>
+                          </View>
+                          <View style={styles.lineContentArea}>
+                            <Text style={styles.lineContentText}>{signUpInfo.buildingName}</Text>
+                          </View>
+                        </View>
+                        <View style={styles.lineArea}>
+                          <View style={styles.lineTitleArea}>
+                            <Text style={styles.lineTitle}>楼层</Text>
+                          </View>
+                          <View style={styles.lineContentArea}>
+                            <Text style={styles.lineContentText}>{signUpInfo.floorName}F</Text>
+                          </View>
+                        </View>
+                        <View style={styles.lineArea}>
+                          <View style={styles.lineTitleArea}>
+                            <Text style={styles.lineTitle}>房间号</Text>
+                          </View>
+                          <View style={styles.lineContentArea}>
+                            <Text style={styles.lineContentText}>{signUpInfo.roomName}房</Text>
+                          </View>
+                        </View>
+                        <View style={[styles.lineArea, {borderBottomWidth: 1, borderBottomLeftRadius: 8, borderBottomRightRadius: 8}]}>
+                          <View style={[styles.lineTitleArea, {borderBottomLeftRadius: 8}]}>
+                            <Text style={styles.lineTitle}>床位号</Text>
+                          </View>
+                          <View style={styles.lineContentArea}>
+                            <Text style={styles.lineContentText}>{signUpInfo.bedName}床</Text>
+                          </View>
+                        </View>
+                      </> : <Text style={[styles.noticeText, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice}</Text>}
                     </View>
                   </View>
                 </Shadow>
@@ -347,7 +316,7 @@ const AddViolation = () => {
                         selectList={VIOLATION_TYPE_LIST}
                         component={SingleSelect}
                       />
-                      {rest.values.violationType.length ? rest.values.violationType[0].value === 'otherReason' && <Field
+                      {rest.values.violationType.length ? rest.values.violationType[0].value === 'DORM_DISCIPLINE_OTHER' && <Field
                         name="violationOtherReason"
                         label="违纪文字描述"
                         selectTextOnFocus
@@ -427,6 +396,7 @@ const styles = StyleSheet.create({
   },
   OCR_button: {
     marginLeft: 20, 
+    marginBottom: 20,
     justifyContent: 'center', 
     alignItems: 'center', 
     paddingHorizontal: 10, 
@@ -445,7 +415,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10, 
     borderBottomRightRadius: 10,
     flexDirection: 'row',
-    padding: 20
+    padding: 20,
+    paddingBottom: 0
   },
   shadowContent_signUpInfo: {
     backgroundColor: '#FFFFFF', 
