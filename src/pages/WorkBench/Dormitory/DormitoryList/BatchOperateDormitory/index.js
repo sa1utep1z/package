@@ -115,7 +115,7 @@ const BatchOperateDormitory = ({
     if(selectIndex === 1){
       const params = {
         ids: selectedList.map(item => item.id),
-        liveInDate: value
+        ...value
       };
       batchLiveIn(params);
     }else{
@@ -130,6 +130,7 @@ const BatchOperateDormitory = ({
 
   const batchLiveIn = async(params) => {
     try {
+      console.log('batchLiveIn -> params', params);
       const res = await DormitoryListApi.batchLiveIn(params);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});

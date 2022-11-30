@@ -191,16 +191,16 @@ const Policy = ({
       toast.show('请选择回款方式！', {type: 'warning'});
       return;
     }
-    const commonText = `名称：深圳市众鼎劳务派遣有限公司
+    const publicText = `名称：深圳市众鼎劳务派遣有限公司
 纳税人识别号：91440300051530634L
 电话：0755-36633079
 开户行：中国建设银行股份有限公司深圳龙华支行
 银行账号：44201555400052526338
 名称：深圳市众鼎劳务派遣有限公司`;
-    const personalText = `开户行：中国招商银行深圳龙华支行
+    const privateText = `开户行：中国招商银行深圳龙华支行
 银行卡号：6214857803889361
 姓名：唐平`;
-    Clipboard.setString(restForm.values.return_way[0].value === 'common' ? commonText : personalText);
+    Clipboard.setString(restForm.values.return_way[0].value === 'PUBLIC' ? publicText : privateText);
     try {
       Clipboard.getString();
       toast.show('复制成功', {type: 'success'});

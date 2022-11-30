@@ -79,11 +79,12 @@ const CreateDormitory = ({
     addDormitoryInfo(formatFieldValue);
   };
 
-  const addDormitoryInfo = async(value) => {
+  const addDormitoryInfo = async(params) => {
     setBottomButtonLoading(true);
     try {
-      const res = await DormitoryListApi.addDormitoryInfo(value);
-      console.log('res', res);
+      console.log('addDormitoryInfo -> params', params);
+      const res = await DormitoryListApi.addDormitoryInfo(params);
+      console.log('addDormitoryInfo -> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
@@ -137,7 +138,6 @@ const CreateDormitory = ({
   };
 
   const getDormitoryList = async(dormitoryType) => {
-    console.log('dormitoryType', dormitoryType);
     if(!signUpInfo?.signUpType) return;
     setDormitoryInfoLoading(true);
     try {

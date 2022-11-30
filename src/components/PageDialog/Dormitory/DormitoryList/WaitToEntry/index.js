@@ -18,7 +18,8 @@ const validationSchema = Yup.object().shape({
   stayDate: Yup.string().required('请选择入住日期！'),
 });
 const initialValues = {
-  stayDate: ''
+  stayDate: '',
+  liveExpireDate: ''
 };
 
 const WaitToEntry = ({
@@ -31,7 +32,12 @@ const WaitToEntry = ({
   const rejectOnPress = () => dispatch(closeDialog());
 
   const onSubmit = values => {
-    confirmLiving({liveInDate: values.stayDate});
+    const params = {
+      liveInType: dormitoryInfo.liveInType,
+      liveInDate: values.stayDate,
+      liveExpireDate: values.liveExpireDate,
+    };
+    confirmLiving(params);
   };
 
   const confirmLiving = async(params) => {
@@ -53,80 +59,89 @@ const WaitToEntry = ({
 
   return (
     <Formik
-    initialValues={initialValues}
-    validationSchema={validationSchema}
-    onSubmit={onSubmit}>
-    {({...rest}) => {
-      restForm = rest;
-      return (
-        <>
-          <View style={styles.topArea}>
-            <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName}</Text>
-            <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>{dormitoryInfo.mobile}</Text></Text>
-            <Text selectable style={[styles.itemText, {marginBottom: 20}]}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo}</Text></Text>
-            <Text style={styles.itemText}>入住类别：{dormitoryInfo.liveInType === "DORM_TEMPORARY" ? '临时住宿' : '常规住宿'}</Text>
-            <Field
-              name="stayDate"
-              label="入住日期"
-              startLimit={moment().format('YYYY-MM-DD')}
-              endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
-              component={SelectTimeOfFilterMore}
-            />
-            <Shadow style={styles.dormitoryArea}>
-              <View style={{borderRadius: 10}}>
-                <View style={styles.dormitoryArea_topArea}>
-                  <Text style={styles.dormitoryArea_topAreaText}>分配宿舍信息</Text>
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}>
+      {({...rest}) => {
+        restForm = rest;
+        return (
+          <>
+            <View style={styles.topArea}>
+              <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName}</Text>
+              <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>{dormitoryInfo.mobile}</Text></Text>
+              <Text selectable style={[styles.itemText, {marginBottom: 20}]}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo}</Text></Text>
+              <Text style={styles.itemText}>入住类别：{dormitoryInfo.liveInType === "DORM_TEMPORARY" ? '临时住宿' : '常规住宿'}</Text>
+              <Field
+                name="stayDate"
+                label="入住日期"
+                totalAreaStyle={dormitoryInfo.liveInType === 'DORM_TEMPORARY' && {marginBottom: 15}}
+                startLimit={moment().format('YYYY-MM-DD')}
+                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                component={SelectTimeOfFilterMore}
+              />
+              {dormitoryInfo.liveInType === 'DORM_TEMPORARY' && <Field
+                name="liveExpireDate"
+                label="临时住宿期限"
+                labelStyle={{width: 200}}
+                startLimit={moment().format('YYYY-MM-DD')}
+                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                component={SelectTimeOfFilterMore}
+              />}
+              <Shadow style={styles.dormitoryArea}>
+                <View style={{borderRadius: 10}}>
+                  <View style={styles.dormitoryArea_topArea}>
+                    <Text style={styles.dormitoryArea_topAreaText}>分配宿舍信息</Text>
+                  </View>
+                  <View style={styles.dormitoryArea_bottomArea}>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍分类</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼层</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>房间号</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
+                    </View>
+                    <View style={styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>床位号</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.dormitoryArea_bottomArea}>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼栋</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍分类</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼层</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>房间号</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
-                  </View>
-                  <View style={styles.lastItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>床位号</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
-                  </View>
-                </View>
+              </Shadow>
+            </View>
+            <View style={styles.bottomArea}>
+              <View style={styles.leftArea}>
+                <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
+                  <Text style={styles.closeText}>取消</Text>
+                </TouchableOpacity>
               </View>
-            </Shadow>
-          </View>
-          <View style={styles.bottomArea}>
-            <View style={styles.leftArea}>
-              <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
-                <Text style={styles.closeText}>取消</Text>
-              </TouchableOpacity>
+              <View style={styles.rightArea}>
+                <TouchableOpacity style={styles.buttonArea} onPress={rest.handleSubmit}>
+                  <Text style={styles.confirmText}>确定</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.rightArea}>
-              <TouchableOpacity style={styles.buttonArea} onPress={rest.handleSubmit}>
-                <Text style={styles.confirmText}>确定</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </>
-      )
-    }}
+          </>
+        )
+      }}
     </Formik>
   )
 };

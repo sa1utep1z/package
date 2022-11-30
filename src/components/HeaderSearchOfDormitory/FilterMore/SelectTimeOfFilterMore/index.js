@@ -19,8 +19,10 @@ const SelectItemOfFilterMore = ({
   endLimit,
   borderColor,
   selectOtherFunc,
+  totalAreaStyle,
   itemAreaStyle,
-  touchAreaStyle
+  touchAreaStyle,
+  labelStyle
 }) => {
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -45,18 +47,11 @@ const SelectItemOfFilterMore = ({
   const clearFieldValue = () => form.setFieldValue(field.name, '');
 
   return (
-    <View style={{marginBottom: 30}}>
+    <View style={[{marginBottom: 30}, totalAreaStyle]}>
       <View style={[styles.selectItemArea, itemAreaStyle]}>
-        {showLabel && <Text style={[styles.showLittleTitleText, fontSize && {fontSize}]}>{label}：</Text>}
-        <TouchableOpacity
-          style={[styles.selectArea, borderColor && {borderColor}, touchAreaStyle]}
-          onPress={selectOnPress}>
-          <AntDesign
-            name='calendar'
-            size={iconSize}
-            color={!!field?.value ? '#000000' : '#999999'}
-            style={{marginRight: 10}}
-          />
+        {showLabel && <Text style={[styles.showLittleTitleText, fontSize && {fontSize}, labelStyle]}>{label}：</Text>}
+        <TouchableOpacity style={[styles.selectArea, borderColor && {borderColor}, touchAreaStyle]} onPress={selectOnPress}>
+          <AntDesign name='calendar' size={iconSize} color={!!field?.value ? '#000000' : '#999999'} style={{marginRight: 10}} />
           <Text
             style={[styles.selectText, !field.value && styles.noItem, fontSize && {fontSize}]}
             ellipsizeMode="tail"

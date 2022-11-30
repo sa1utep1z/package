@@ -7,7 +7,7 @@ import moment from 'moment';
 import { pageEmpty } from "../../../../Home/listComponent";
 import Footer from '../../../../../components/FlatList/Footer';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
-import DormitoryViolationApi from "../../../../../request/Dormitory/DormitoryViolation";
+import DormitoryViolationApi from "../../../../../request/Dormitory/DormitoryViolationApi";
 import { SUCCESS_CODE, DORMITORY_VIOLATION_LIST, DORMITORY_VIOLATION_LIST_COLOR } from '../../../../../utils/const';
 import DormitoryViolationDetail from '../../../../../components/PageDialog/Dormitory/DormitoryViolationDetail';
 
@@ -24,7 +24,7 @@ const Out = ({
   const toast = useToast();
   const dispatch = useDispatch();
 
-  const [searchContent, setSearchContent] = useState({type: 'DORM_DISCIPLINE_RESULT_OUT', ...firstPage});
+  const [searchContent, setSearchContent] = useState({result: 'DORM_DISCIPLINE_RESULT_OUT', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
@@ -112,8 +112,8 @@ const Out = ({
       <View style={styles.listStyle}>
         <Text style={[styles.itemText, {width: 90}]} ellipsizeMode="tail">{item.name || '无'}</Text>
         <Text style={[styles.itemText, {width: 90}]} ellipsizeMode="tail">{item.buildingName || '无'}</Text>
-        <Text style={[styles.itemText, {width: 110}]} ellipsizeMode="tail">{item.roomName || '无'}</Text>
-        <Text style={[styles.itemText, {width: 110}]} ellipsizeMode="tail">{item.bedName || '无'}</Text>
+        <Text style={[styles.itemText, {width: 100}]} ellipsizeMode="tail">{item.roomName || '无'}</Text>
+        <Text style={[styles.itemText, {width: 100}]} ellipsizeMode="tail">{item.bedName || '无'}</Text>
         <Text style={[styles.itemText, {flex: 1, color: '#409EFF'}]} ellipsizeMode="tail">{item.date ? moment(item.date).format('YYYY-MM-DD') : '无'}</Text>
         <Text style={[styles.itemText, {flex: 1, color: '#000', color: DORMITORY_VIOLATION_LIST_COLOR[item.result]}]} 
           ellipsizeMode="tail">{DORMITORY_VIOLATION_LIST[item.result]}</Text>

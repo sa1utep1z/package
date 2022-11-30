@@ -34,13 +34,13 @@ const DormitoryViolation = ({
   }, [])
 
   const [index, setIndex] = useState(0);
+  const [filterParams, setFilterParams] = useState({});
   const [routes, setRoutes] = useState([
     { key: 'total', title: '全部', number: 0 },
-    { key: 'warn', title: '警告', number: 0 },
-    { key: 'secondWarn', title: '二次警告', number: 0 },
-    { key: 'out', title: '取消住宿', number: 0 },
+    { key: 'DORM_DISCIPLINE_RESULT_WARN', title: '警告', number: 0 },
+    { key: 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN', title: '二次警告', number: 0 },
+    { key: 'DORM_DISCIPLINE_RESULT_OUT', title: '取消住宿', number: 0 },
   ]);
-  const [filterParams, setFilterParams] = useState({});
 
   const addViolation = () => navigation.navigate(NAVIGATION_KEYS.ADD_VIOLATION);
 
@@ -52,13 +52,12 @@ const DormitoryViolation = ({
       startDate: values.dateRange.startDate,
       endDate: values.dateRange.endDate,
     };
-    console.log('filteredParams', filteredParams);
     setFilterParams(filteredParams);
   };
 
   const changeRoute = values => {
     const copyList = deepCopy(routes);
-    copyList.forEach(route => route.number = values[route.key]);
+    copyList.forEach(route => route.number = (values.data.hasOwnProperty(route.key) ? values.data[route.key] : 0));
     setRoutes(copyList);
   };
 
@@ -79,8 +78,8 @@ const DormitoryViolation = ({
         <View style={styles.listHeadArea}>
           <Text style={[styles.titleText, {width: 90}]}>姓名</Text>
           <Text style={[styles.titleText, {width: 90}]}>楼栋</Text>
-          <Text style={[styles.titleText, {width: 110}]}>房间号</Text>
-          <Text style={[styles.titleText, {width: 110}]}>床位号</Text>
+          <Text style={[styles.titleText, {width: 100}]}>房间号</Text>
+          <Text style={[styles.titleText, {width: 100}]}>床位号</Text>
           <Text style={[styles.titleText, {flex: 1}]}>处罚日期</Text>
           <Text style={[styles.titleText, {flex: 1}]}>结果</Text>
           <Text style={[styles.titleText, {width: 100}]}>详情</Text>
@@ -93,11 +92,11 @@ const DormitoryViolation = ({
     switch(route.key){
       case 'total':
         return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
-      case 'warn':
+      case 'DORM_DISCIPLINE_RESULT_WARN':
         return <Warn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
-      case 'secondWarn':
+      case 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN':
         return <SecondWarn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
-      case 'out':
+      case 'DORM_DISCIPLINE_RESULT_OUT':
         return <Out index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
     }
   };

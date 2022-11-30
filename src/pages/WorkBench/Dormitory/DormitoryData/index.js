@@ -6,7 +6,7 @@ import { useToast } from 'react-native-toast-notifications';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Foundation from 'react-native-vector-icons/Foundation';
 
-import DormitoryDataList from "../../../../request/Dormitory/DormitoryDataList";
+import DormitoryDataListApi from "../../../../request/Dormitory/DormitoryDataListApi";
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import { openDialog, setTitle } from "../../../../redux/features/PageDialog";
@@ -56,7 +56,7 @@ const DormitoryData = () => {
     try {
       setLoading(true);
       console.log('getRoomList -> params', params);
-      const res = await DormitoryDataList.getRoomList(params);
+      const res = await DormitoryDataListApi.getRoomList(params);
       console.log('getRoomList -> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});

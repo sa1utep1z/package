@@ -1,6 +1,6 @@
 import httpRequest from '../../httpRequest';
 
-const DormitoryViolation = {
+const DormitoryViolationApi = {
   //获取查房列表；
   getViolationList: async (params) => await httpRequest.post(`/admin/app/dorm/discipline/page`, params),
   //获取查房列表统计；
@@ -13,4 +13,4 @@ const DormitoryViolation = {
   queryMemberViolationInfo: async(violationId) => await httpRequest.get(`/admin/app/dorm/discipline/${violationId}`),
 };
 
-export default DormitoryViolation;
+export default DormitoryViolationApi;

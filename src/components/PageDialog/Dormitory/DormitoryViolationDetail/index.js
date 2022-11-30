@@ -7,7 +7,7 @@ import moment from "moment";
 
 import { closeDialog } from "../../../../redux/features/PageDialog";
 import ImageZoom from '../../../ImageZoom';
-import DormitoryViolationApi from "../../../../request/Dormitory/DormitoryViolation";
+import DormitoryViolationApi from "../../../../request/Dormitory/DormitoryViolationApi";
 import { SUCCESS_CODE, VIOLATION_TYPE_LIST_NAME, DORMITORY_VIOLATION_LIST } from "../../../../utils/const";
 
 const DormitoryViolationDetail = ({
@@ -91,19 +91,19 @@ const DormitoryViolationDetail = ({
                 <View style={styles.dormitoryArea_bottomArea}>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>姓名</Text>
-                    <Text style={styles.rightText}>{memberDetail.name || '无'}</Text>
+                    <Text selectable style={styles.rightText}>{memberDetail.name || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>会员工号</Text>
-                    <Text style={styles.rightText}>{memberDetail.jobNo || '无'}</Text>
+                    <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberDetail.jobNo || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>手机号</Text>
-                    <Text style={styles.rightText}>{memberDetail.mobile || '无'}</Text>
+                    <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberDetail.mobile || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>身份证号</Text>
-                    <Text style={styles.rightText}>{memberDetail.idNo || '无'}</Text>
+                    <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberDetail.idNo || '无'}</Text>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>渠道来源</Text>
@@ -172,7 +172,7 @@ const DormitoryViolationDetail = ({
                     <View style={styles.rightPhotosArea}>
                       {violationDetail.pic && violationDetail.pic.length ? <>
                         {violationDetail.pic.map((image, imageIndex) => (
-                          <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(memberDetail.violationList, imageIndex)}>
+                          <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(violationDetail.pic, imageIndex)}>
                             <Image style={styles.image} source={{ uri: `${image.url}` }} />
                           </TouchableOpacity>))}
                       </> : <Text style={styles.image_null_text}>无</Text>}
@@ -184,7 +184,7 @@ const DormitoryViolationDetail = ({
                   </View>
                   <View style={styles.lastItem}>
                     <Text style={styles.titleText}>处罚日期</Text>
-                    <Text style={styles.rightText}>{violationDetail.date ? moment(violationDetail.date).format('YYYY-MM-DD') : '无'}</Text>
+                    <Text style={styles.rightText}>{violationDetail.date ? moment(violationDetail.date).format('YYYY年MM月DD日') : '无'}</Text>
                   </View>
                 </View> : <ActivityIndicator size={48} color="#409EFF" style={{marginVertical: 20}}/>}
               </View>

@@ -18,8 +18,8 @@ import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
 import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
 import OCR_Scan from '../../../../components/OCR_Scan';
-import DormitoryViolationApi from '../../../../request/Dormitory/DormitoryViolation';
-import { SUCCESS_CODE, CHANEL_SOURCE_NAME, VIOLATION_TYPE_LIST, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PUNISH_RESULT } from '../../../../utils/const';
+import DormitoryViolationApi from '../../../../request/Dormitory/DormitoryViolationApi';
+import { SUCCESS_CODE, CHANEL_SOURCE_NAME, VIOLATION_TYPE_LIST, PUNISH_RESULT } from '../../../../utils/const';
 import NAVIGATION_KEYS from '../../../../navigator/key';
 
 const MaleOrFemaleRightIcon = ({value}) => value.length ? 

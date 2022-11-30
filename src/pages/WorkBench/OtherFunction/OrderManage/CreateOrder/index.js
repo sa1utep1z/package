@@ -79,8 +79,7 @@ const CreateOrder = ({
     <KeyboardAvoidingView
       behavior="height"
       style={styles.container}
-      keyboardVerticalOffset={-300}
-    >
+      keyboardVerticalOffset={-300}>
       <View style={styles.screen}>
         <ScrollView 
           ref={scrollRef}
