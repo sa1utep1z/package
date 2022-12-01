@@ -5,6 +5,8 @@ const DormitoryListApi = {
   getSignUpInfo: async (IdCard) => await httpRequest.get(`/admin/app/dormLive/${IdCard}/recruitFlow/info`),
   //常规宿舍列表（须企业id）；
   getNormalDormitoryList: async(IdCard, companyId) => await httpRequest.get(`/common/dorm/${IdCard}/${companyId}/routine/hierarchy`),
+  //常规宿舍列表（无须企业id）；
+  getNormalDormitoryListWithoutIdNo: async(IdNo) => await httpRequest.get(`/common/dorm/${IdNo}/routine/hierarchy`), 
   //临时宿舍列表（无须企业id）；
   getTemporaryDormitoryList: async(IdCard) => await httpRequest.get(`/common/dorm/${IdCard}/temporary/hierarchy`),
   //新增住宿信息；

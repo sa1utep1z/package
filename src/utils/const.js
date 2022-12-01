@@ -986,7 +986,7 @@ export const DORMITORY_TYPE = [
 
 //宿舍分类（包括ALL）；
 export const DORMITORY_ALL_TYPE = [
-  {label: '全部', value: 'ALL'},
+  {label: '全部', value: ''},
   {label: '男生宿舍', value: 'DORM_MALE'},
   {label: '女生宿舍', value: 'DORM_FEMALE'},
 ];
@@ -1068,4 +1068,10 @@ export const DORMITORY_VIOLATION_LIST_COLOR = {
   'DORM_DISCIPLINE_RESULT_WARN': '#409EFF',
   'DORM_DISCIPLINE_RESULT_SECONDARY_WARN': '#284469',
   'DORM_DISCIPLINE_RESULT_OUT': 'red',
+};
+
+//点检状态；
+export const CHECK_STATUS_LIST = {
+  DORM_CHECK_PENDING: '待点检',
+  DORM_CHECK_OK: '已点检',
 };

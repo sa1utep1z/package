@@ -24,13 +24,13 @@ const initialValues = {
   roomNum: [],
   bedNum: [],
   liveType: [{label: '全部', value: ''}],
-  dormitoryType: [{label: '全部', value: 'ALL'}],
+  dormitoryType: [{label: '全部', value: ''}],
   search: '',
 };
 
 const MaleOrFemaleRightIcon = ({value}) => value.length ? 
 <View style={styles.maleOrFemaleRightIconArea}>
-  {value[0].value !== 'ALL' && <Ionicons 
+  {value[0].value !== '' && <Ionicons 
     size={36} 
     name={value[0].value === 'DORM_MALE' ? 'man' : 'woman'} 
     color={value[0].value === 'DORM_MALE' ? '#409EFF' : '#eb00d8'}

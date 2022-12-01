@@ -16,6 +16,7 @@ let restForm;
 
 const initialValues = {
   leaveDate: '',
+  stayDate: '',
   buildingNum: [],
   floorNum: [],
   roomNum: [],
@@ -50,7 +51,7 @@ const Adjust = ({
 
   const getNormalDormitoryList = async() => {
     try {
-      const res = await DormitoryListApi.getNormalDormitoryList(dormitoryInfo.idNo, dormitoryInfo.companyId);
+      const res = await DormitoryListApi.getNormalDormitoryListWithoutIdNo(dormitoryInfo.idNo);
       console.log('getNormalDormitoryList --> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
@@ -138,6 +139,7 @@ const Adjust = ({
       scrollViewRef?.current?.scrollToEnd();
       setBottomError(true);
       returnValue = true;
+      return returnValue;
     }else{
       setBottomError(false);
       returnValue = false;
@@ -146,6 +148,7 @@ const Adjust = ({
       scrollViewRef?.current?.scrollToEnd();
       setBottomError(true);
       returnValue = true;
+      return returnValue;
     }else{
       setBottomError(false);
       returnValue = false;
@@ -159,7 +162,7 @@ const Adjust = ({
     const formatValue = {
       liveOutDate: values.leaveDate,
       nextLiveInDate: moment(values.leaveDate).add(1, 'd').format('YYYY-MM-DD'),
-      roomBedId: values.bedNum[0].value,
+      roomBedId: values.bedNum.length ? values.bedNum[0].value : '',
       liveExpireDate: dormitoryInfo.liveInType === 'DORM_TEMPORARY' ? values.liveExpireDate : '',
     };
     adjustDormitory(formatValue);
@@ -183,10 +186,13 @@ const Adjust = ({
   };
 
   const selectOtherFunc = (type, date) => {
+    restForm.setFieldValue('stayDate', moment(date).add(1, 'd').format('YYYY-MM-DD'));
     if(type === 'leaveDate'){
       scrollViewRef?.current?.scrollToEnd();
     }
   };
+
+  const selectOtherFuncOnStay = (type, date) => restForm.setFieldValue('leaveDate', moment(date).subtract(1, 'd').format('YYYY-MM-DD'));
 
   return (
     <Formik
@@ -281,7 +287,22 @@ const Adjust = ({
                       <Text style={styles.titleText}>入住日期</Text>
                     </View>
                     <View style={styles.lineArea}>
-                      <Text style={[styles.joinInDate, rest.values.leaveDate && {color: '#333333'}]}>{rest.values.leaveDate ? moment(rest.values.leaveDate).add(1, 'd').format('YYYY-MM-DD') : '请选择退宿日期'}</Text>
+                      <Field
+                        name="stayDate"
+                        label="入住日期"
+                        fontSize={24}
+                        iconSize={28}
+                        canDelete={false}
+                        showLabel={false}
+                        showArrow={false}
+                        borderColor="#EFEFEF"
+                        itemAreaStyle={{height: 50}}
+                        touchAreaStyle={{height: 40, borderRadius: 4}}
+                        startLimit={moment(dormitoryInfo.liveInDate).add(1, 'd').format('YYYY-MM-DD')}
+                        endLimit={moment(dormitoryInfo.liveInDate).add(4, 'd').format('YYYY-MM-DD')}
+                        selectOtherFunc={selectOtherFuncOnStay}
+                        component={SelectTimeOfFilterMore}
+                      />
                     </View>
                   </View>
                   <View style={styles.listItem}>

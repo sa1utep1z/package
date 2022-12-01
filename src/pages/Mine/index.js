@@ -4,6 +4,7 @@ import { Avatar, Text } from "@rneui/themed";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
+import Config from "react-native-config";
 
 import _rem from '../../utils/rem';
 import NAVIGATION_KEYS from '../../navigator/key';
@@ -151,7 +152,8 @@ const Mine = () => {
           })}
         </View>
       </View>
-      <Text style={styles.bottomText}>版本号：0.2.5(review)</Text>
+      <Text selectable style={styles.bottomText}>版本号：{Config.VERSION_NAME}{`[${Config.BUILD_TYPE}]`}</Text>
+      {!Config.API_URL.includes('gateway') && <Text selectable style={{textDecorationLine: 'underline', color: '#999999', fontSize: 22, textAlign: 'center', marginBottom: 5}}>{`${Config.API_URL}`}</Text>}
       <NormalDialog 
         ref={dialogRef} 
         dialogContent={dialogContent}

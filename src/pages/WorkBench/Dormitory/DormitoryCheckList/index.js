@@ -10,9 +10,16 @@ import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormit
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import NAVIGATION_KEYS from '../../../../navigator/key';
-import BottomList from './BottomList';
 
-const DormitoryCheckList = () => {
+import All from './All';
+import Warn from './Warn';
+import SecondWarn from './SecondWarn';
+
+const DormitoryCheckList = ({
+  route: {
+    params
+  }
+}) => {
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();
@@ -25,15 +32,41 @@ const DormitoryCheckList = () => {
   }, [])
 
   const [index, setIndex] = useState(0);
+  const [filterParams, setFilterParams] = useState({});
   const [routes, setRoutes] = useState([
-    { key: 'all', title: '全部', number: 0 },
-    { key: 'willCheck', title: '待点检', number: 0 },
-    { key: 'checked', title: '已点检', number: 0 },
+    { key: 'total', title: '全部', number: 0 },
+    { key: 'DORM_DISCIPLINE_RESULT_WARN', title: '待点检', number: 0 },
+    { key: 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN', title: '已点检', number: 0 },
   ]);
+
+  const changeRoute = values => {
+    console.log('changeRoute -> values', values);
+  };
 
   const addProperty = () => navigation.navigate(NAVIGATION_KEYS.ADD_PROPERTY);
 
-  const renderScene = () => <BottomList type={index} />
+  const renderScene = ({ route }) => {
+    switch(route.key){
+      case 'total':
+        return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+      case 'DORM_DISCIPLINE_RESULT_WARN':
+        return <Warn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+      case 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN':
+        return <SecondWarn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+    }
+  };
+
+  const filter = (values)=> {
+    const filteredParams = {
+      buildingId: values.buildingNum.length ? values.buildingNum[0].value : '', //宿舍楼栋id
+      floorId: values.floorNum.length ? values.floorNum[0].value : '', //宿舍楼层id
+      roomId: values.roomNum.length ? values.roomNum[0].value : '', //宿舍房间id
+      dormType: values.dormitoryType[0].value, 
+      startDate: values.dateRange.startDate,
+      endDate: values.dateRange.endDate,
+    };
+    setFilterParams(filteredParams);
+  };
 
   const renderTabBar = ({navigationState}) => {
     return (
@@ -50,11 +83,11 @@ const DormitoryCheckList = () => {
           })}
         </View>
         <View style={styles.listHeadArea}>
-          <Text style={styles.headTitle}>楼栋</Text>
-          <Text style={styles.headTitle}>房间号</Text>
-          <Text style={styles.headTitle}>点检日期</Text>
-          <Text style={styles.headTitle}>状态</Text>
-          <Text style={styles.headTitle}>点检记录</Text>
+          <Text style={[styles.headTitle, {width: 130}]}>楼栋</Text>
+          <Text style={[styles.headTitle, {width: 150}]}>房间号</Text>
+          <Text style={[styles.headTitle, {flex: 1}]}>点检日期</Text>
+          <Text style={[styles.headTitle, {width: 130}]}>状态</Text>
+          <Text style={[styles.headTitle, {width: 150}]}>点检记录</Text>
         </View>
       </>
     )
@@ -63,6 +96,7 @@ const DormitoryCheckList = () => {
   return (
     <View style={styles.screen}>
       <HeaderSearchOfDormitory 
+        filterFun={filter}
         filterBuilding
         filterDormitoryType
         filterFloorAndRoom
@@ -129,7 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff'
   },
   headTitle: {
-    flex: 1, 
     textAlign: 'center', 
     fontSize: 26, 
     color: '#333333'
