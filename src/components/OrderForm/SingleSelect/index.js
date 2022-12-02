@@ -8,8 +8,8 @@ import { useToast } from 'react-native-toast-notifications';
 import { openDialog, setTitle } from '../../../redux/features/PageDialog'; 
 import SingleSelectList from '../../PageDialog/SingleSelectList';
 import MyMembersApi from "../../../request/MyMembersApi";
+import TopSearchApi from '../../../request/Dormitory/TopSearchApi';
 import { SUCCESS_CODE } from '../../../utils/const';
-import { checkedType } from '../../../utils';
 
 /**单选*/
 const SingleSelect = ({
@@ -55,10 +55,90 @@ const SingleSelect = ({
       case 'recruiter':
         getRecruiterList();
         break;
+      case 'building': 
+        getBuildingList();
+        break;
+      case 'floor':
+        getFloorList();
+        break;
+      case 'room':
+        getRoomList();
+        break;
       default: //没传入type则自动使用外部传进的selectList。
         setLoading(false);
         dispatch(openDialog(<SingleSelectList emptyText={emptyText} canSearch={canSearch} selectList={selectList} fieldValue={field.value} confirm={confirm}/>));
         break;
+    }
+  };
+
+  const getBuildingList = async() => {
+    try {
+      const res = await TopSearchApi.getBuildingList();
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取宿舍楼栋列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={buildingConfirm}/>));
+    }catch(error){
+      console.log('getBuildingList->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const buildingConfirm = (list) => {
+    form.setFieldValue(field.name, list);
+    form.setFieldValue('floorNum', []);
+    form.setFieldValue('roomNum', []);
+  };
+
+  const getFloorList = async() => {
+    const {values: {buildingNum}} = form;
+    if(!buildingNum.length){
+      toast.show(`请先选择宿舍楼栋！`, { type: 'danger' });
+      return;
+    }
+    try {
+      const res = await TopSearchApi.getFloorList(buildingNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取楼层列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}F`);
+      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={floorConfirm}/>));
+    }catch(error){
+      console.log('getFloorList->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const floorConfirm = (list) => {
+    form.setFieldValue(field.name, list);
+    form.setFieldValue('roomNum', []);
+  };
+  
+  const getRoomList = async() => {
+    const {values: {floorNum}} = form;
+    if(!floorNum.length){
+      toast.show(`请先选择宿舍楼层！`, { type: 'danger' });
+      return;
+    }
+    try {
+      const res = await TopSearchApi.getRoomList(floorNum[0].value);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`获取房间号列表失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      res.data.length && res.data.forEach(item => item.label = `${item.label}房`);
+      dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
+    }catch(error){
+      console.log('getRoomList->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }finally{
+      setLoading(false);
     }
   };
 

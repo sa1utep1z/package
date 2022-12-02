@@ -1,17 +1,21 @@
-import React, {useState, useRef} from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, {useState, useEffect, useRef} from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import { Button } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useToast } from 'react-native-toast-notifications';
+import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
 
 import SingleInput from "../../../../components/OrderForm/SingleInput";
 import RadioSelect from "../../../../components/OrderForm/RadioSelect";
 import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
-import { SUCCESS_CODE, DORMITORY_TYPE, CREATE_ORDER_JOB_TYPE, PROPERTY_STATUS_LIST } from '../../../../utils/const';
+import DormitoryCheckListApi from "../../../../request/Dormitory/DormitoryCheckListApi";
+import { SUCCESS_CODE, DORMITORY_FACILITY_LIST } from '../../../../utils/const';
 
 const RightUnionOfNumber = ({field, form}) => (
   <View style={styles.unionArea}>
@@ -39,13 +43,11 @@ const RightUnionOfNumber = ({field, form}) => (
 let restForm;
 
 const validationSchema = Yup.object().shape({
-  maleOrFemale: Yup.array().min(1, '请选择宿舍分类'),
   buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
   floorNum: Yup.array().min(1, '请选择楼层'),
   roomNum: Yup.array().min(1, '请选择房间号'),
 });
 const initialValues = {
-  maleOrFemale: [],
   buildingNum: [],
   floorNum: [],
   roomNum: [],
@@ -60,9 +62,12 @@ const initialValues = {
 
 const AddProperty = () => {
   const scrollRef = useRef(null);
+  const toast = useToast();
+  const navigation = useNavigation();
 
   const [propertyList, setPropertyList] = useState([{name: 'property1', wrong: false}]);
   const [selectUnion, setSelectUnion] = useState('ge');
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const checkPropertyList = (values) => {
     //提交的时候对资产列表进行核验；
@@ -84,13 +89,45 @@ const AddProperty = () => {
   };
 
   const onSubmit = (values) => {
-    console.log('点击了提交', values);
+    console.log('values', values);
+    const formatValues = {
+      roomBuildingId: values.buildingNum.length ? values.buildingNum[0].value : '',
+      roomFloorId: values.floorNum.length ? values.floorNum[0].value : '',
+      roomId: values.roomNum.length ? values.roomNum[0].value : '',
+      name: values.property1.propertyName,
+      num: values.property1.number,
+      unit: values.property1.union,
+      pic: values.property1.propertyPhotos,
+      status: values.property1.propertyStatus[0].value,
+      date: moment().format('YYYY-MM-DD'),
+    };
+    console.log('formatValues', formatValues);
+    addPropertyOnSave(formatValues);
+  };
+
+  const addPropertyOnSave = async(params) => {
+    try {
+      setButtonLoading(true);
+      const res = await DormitoryCheckListApi.addPropertyOfRecord(params);
+      console.log('addPropertyOnSave -> res', res);
+      if(res.code !== SUCCESS_CODE){
+        toast.show(`添加资产失败，${res.msg}`, { type: 'danger' });
+        return;
+      }
+      toast.show(`添加资产成功`, { type: 'success' });
+      navigation.goBack();
+    } catch (error) {
+      console.log('addPropertyOnSave -> error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    } finally {
+      setButtonLoading(false);
+    }
   };
 
   const save = () => {
-    restForm.handleSubmit();
     const hasWrong = checkPropertyList(restForm.values);
     if(hasWrong) return;
+    restForm.handleSubmit();
   };
 
   const deleteProperty = () => {
@@ -140,38 +177,30 @@ const AddProperty = () => {
                     </View>
                     <View style={styles.shadowContent_liveInfo}>
                       <Field
-                        name="maleOrFemale"
-                        label="宿舍分类"
-                        isRequire
-                        labelStyle={{width: 160}}
-                        radioList={DORMITORY_TYPE}
-                        component={RadioSelect}
-                      />
-                      <Field
                         name="buildingNum"
                         label="宿舍楼栋"
+                        type="building"
                         isRequire
                         canSearch={false}
                         labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
                         component={SingleSelect}
                       />
                       <Field
                         name="floorNum"
                         label="楼层"
+                        type="floor"
                         isRequire
                         canSearch={false}
                         labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
                         component={SingleSelect}
                       />
                       <Field
                         name="roomNum"
                         label="房间号"
+                        type="room"
                         isRequire
                         canSearch={false}
                         labelStyle={{width: 160}}
-                        selectList={CREATE_ORDER_JOB_TYPE}
                         component={SingleSelect}
                       />
                     </View>
@@ -188,7 +217,7 @@ const AddProperty = () => {
                             <AntDesign name='delete' size={36} color='#ff6666' />
                           </TouchableOpacity>}
                           <Text style={styles.titleText}>资产{`${propertyNameIndex}`}</Text>
-                          {propertyNameIndex === propertyList.length && propertyList.length !== 10 && <TouchableOpacity style={styles.addIcon} onPress={addProperty}>
+                          {propertyNameIndex === propertyList.length && propertyList.length !== 1 && <TouchableOpacity style={styles.addIcon} onPress={addProperty}>
                             <AntDesign name='pluscircleo' size={36} color='#409EFF' />
                           </TouchableOpacity>}
                         </View>
@@ -222,9 +251,10 @@ const AddProperty = () => {
                             name={`property${propertyNameIndex}.propertyStatus`}
                             label="资产状态"
                             isRequire
+                            canSearch={false}
                             labelStyle={{width: 160}}
-                            radioList={PROPERTY_STATUS_LIST}
-                            component={RadioSelect}
+                            selectList={DORMITORY_FACILITY_LIST}
+                            component={SingleSelect}
                           />
                           <Field
                             name={`property${propertyNameIndex}.propertyPhotos`}
@@ -245,6 +275,7 @@ const AddProperty = () => {
             <Button
               title="保存"
               onPress={save}
+              loading={buttonLoading}
               containerStyle={styles.buttonContainerStyle}
               buttonStyle={styles.buttonStyle}
               titleStyle={styles.titleStyle}

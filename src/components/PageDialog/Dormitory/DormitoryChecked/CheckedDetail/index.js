@@ -1,25 +1,52 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
 import { Shadow } from 'react-native-shadow-2';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import moment from "moment";
 
 import { closeDialog } from "../../../../../redux/features/PageDialog";
+import DormitoryCheckListApi from "../../../../../request/Dormitory/DormitoryCheckListApi";
 import ImageZoom from '../../../../../components/ImageZoom';
+import { SUCCESS_CODE, DORMITORY_FACILITY_NAME, DORMITORY_FACILITY_ICON, DORMITORY_FACILITY_COLOR } from '../../../../../utils/const';
 
 const CheckedDetail = ({
-  detailData,
+  item,
   isDialog2, //是否是二级弹窗，是的话则不显示底部按钮；
 }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const [isVisible, setIsVisible] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
   const [imgIndex, setImgIndex] = useState(0);
+  const [checkedDetail, setCheckedDetail] = useState({});
+
+  useEffect(()=>{
+    queryRoomDetail(item.id);
+  }, [item])
+
+  const queryRoomDetail = async(id) => {
+    try {
+      const res = await DormitoryCheckListApi.queryCheckedDetail(id);
+      console.log('queryRoomDetail -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setCheckedDetail(res.data);
+    } catch (error) {
+      console.log('queryRoomDetail -> error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    }
+  };
 
   const rejectOnPress = () => dispatch(closeDialog());
 
-  const passOnPress = () => console.log('确认', detailData);
+  const passOnPress = () => dispatch(closeDialog());
 
   const modalOnPress = () => setIsVisible(!isVisible);
 
@@ -32,10 +59,10 @@ const CheckedDetail = ({
   return (
     <View style={styles.totalArea}>
       <View style={styles.topArea}>
-        <Text style={styles.dateText}>点检日期：2022-05-03</Text>
+        <Text style={styles.dateText}>点检日期：{moment(checkedDetail.date).format('YYYY-MM-DD')}</Text>
         <View style={styles.bottomTextArea}>
-          <Text style={styles.bottomTextArea_left}>楼栋：241栋</Text>
-          <Text style={styles.bottomTextArea_right}>房间：504</Text>
+          <Text style={styles.bottomTextArea_left}>楼栋：{checkedDetail.buildingName || '无'}</Text>
+          <Text style={styles.bottomTextArea_right}>房间：{checkedDetail.roomName || '无'}</Text>
         </View>
       </View>
       <ScrollView style={styles.scrollViewArea} showsVerticalScrollIndicator={false}>
@@ -49,34 +76,52 @@ const CheckedDetail = ({
                 <View style={styles.textLine}>
                   <Text style={styles.titleText}>宿舍卫生状况</Text>
                   <View style={styles.textLine_right}>
-                    <Text style={styles.rightText}>{detailData.hygieneStatus === 1 ? '合格' : '不合格'}</Text>
-                    <AntDesign style={{marginLeft: 6}} name={detailData.hygieneStatus === 1 ? "checkcircle" : "closecircle"} size={28} color={detailData.hygieneStatus === 1 ? "#3dab6b" : "red"} />
+                    <Text style={styles.rightText}>{checkedDetail.hygieneStatus === 'QUALIFIED' ? '合格' : '不合格'}</Text>
+                    <AntDesign style={{marginLeft: 6}} name={checkedDetail.hygieneStatus === 'QUALIFIED' ? "checkcircle" : "closecircle"} size={28} color={checkedDetail.hygieneStatus === 'QUALIFIED' ? "#3dab6b" : "red"} />
                   </View>
                 </View>
                 <View style={styles.photoArea}>
                   <Text style={styles.titleText}>宿舍卫生照片</Text>
                   <View style={styles.rightPhotosArea}>
-                    {detailData.hygieneImages.length ? <>
-                      {detailData.hygieneImages.map((image, imageIndex) => (
-                      <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.hygieneImages, imageIndex)}>
+                    {checkedDetail?.hygieneImg?.length ? <>
+                      {checkedDetail.hygieneImg.map((image, imageIndex) => (
+                      <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(checkedDetail.hygieneImg, imageIndex)}>
                         <Image style={styles.image} source={{ uri: `${image.url}` }} />
                       </TouchableOpacity>))}
                     </> : <Text style={styles.image_null_text}>无</Text>}
                   </View>
                 </View>
                 <View style={styles.textLine}>
-                  <Text style={styles.titleText}>宿舍设施状况</Text>
+                  <Text style={styles.titleText}>宿舍资产状况</Text>
                   <View style={styles.textLine_right}>
-                    <Text style={styles.rightText}>{detailData.facilityStatus === 1 ? '正常' : detailData.facilityStatus === 2 ? '维修中' : detailData.facilityStatus === 3 ? '损坏' : '丢失'}</Text>
-                    <AntDesign style={{marginLeft: 6}} name={detailData.facilityStatus === 1 ? 'checkcircle' : detailData.facilityStatus === 2 ? 'pausecircle' : detailData.facilityStatus === 3 ? 'exclamationcircle' : 'questioncircle'} size={28} color={detailData.facilityStatus === 1 ? '#3dab6b' : detailData.facilityStatus === 2 ? '#d2d655' : detailData.facilityStatus === 3 ? '#a93d3d' : '#999999'} />
+                    <Text style={styles.rightText}>{DORMITORY_FACILITY_NAME[checkedDetail.assetStatus]}</Text>
+                    <AntDesign style={{marginLeft: 6}} name={DORMITORY_FACILITY_ICON[checkedDetail.assetStatus]} size={28} color={DORMITORY_FACILITY_COLOR[checkedDetail.assetStatus]} />
                   </View>
                 </View>
                 <View style={styles.photoArea}>
-                  <Text style={styles.titleText}>宿舍设施照片</Text>
+                  <Text style={styles.titleText}>宿舍资产照片</Text>
                   <View style={styles.rightPhotosArea}>
-                    {detailData.facilityImages.length ? <>
-                      {detailData.facilityImages.map((image, imageIndex) => (
-                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.facilityImages, imageIndex)}>
+                    {checkedDetail?.assetImg?.length ? <>
+                      {checkedDetail.assetImg.map((image, imageIndex) => (
+                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(checkedDetail.assetImg, imageIndex)}>
+                          <Image style={styles.image} source={{ uri: `${image.url}` }} />
+                        </TouchableOpacity>))}
+                    </> : <Text style={styles.image_null_text}>无</Text>}
+                  </View>
+                </View>
+                <View style={styles.textLine}>
+                  <Text style={styles.titleText}>消防设施状况</Text>
+                  <View style={styles.textLine_right}>
+                    <Text style={styles.rightText}>{DORMITORY_FACILITY_NAME[checkedDetail.fireDeviceStatus]}</Text>
+                    <AntDesign style={{marginLeft: 6}} name={DORMITORY_FACILITY_ICON[checkedDetail.fireDeviceStatus]} size={28} color={DORMITORY_FACILITY_COLOR[checkedDetail.fireDeviceStatus]} />
+                  </View>
+                </View>
+                <View style={styles.photoArea}>
+                  <Text style={styles.titleText}>消防设施照片</Text>
+                  <View style={styles.rightPhotosArea}>
+                    {checkedDetail?.fireDeviceImg?.length ? <>
+                      {checkedDetail.fireDeviceImg.map((image, imageIndex) => (
+                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(checkedDetail.fireDeviceImg, imageIndex)}>
                           <Image style={styles.image} source={{ uri: `${image.url}` }} />
                         </TouchableOpacity>))}
                     </> : <Text style={styles.image_null_text}>无</Text>}
@@ -84,18 +129,39 @@ const CheckedDetail = ({
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.titleText}>本期水表数</Text>
-                  <Text style={styles.rightText}>{`${detailData.waterNum} 立方`}</Text>
+                  <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.rightText}>{`${checkedDetail.waterNum}  立方`}</Text>
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', paddingHorizontal: 8}}>
+                      <Ionicons style={styles.rightAreaIcon} name='water' size={36} color='#409EFF' />
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.photoArea}>
+                  <Text style={styles.titleText}>水表现场照</Text>
+                  <View style={styles.rightPhotosArea}>
+                    {checkedDetail.waterImg ? <>
+                      {[checkedDetail.waterImg].map((image, imageIndex) => (
+                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress([checkedDetail.waterImg], imageIndex)}>
+                          <Image style={styles.image} source={{ uri: `${image.url}` }} />
+                        </TouchableOpacity>))}
+                    </> : <Text style={styles.image_null_text}>无</Text>}
+                  </View>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.titleText}>本期电表数</Text>
-                  <Text style={styles.rightText}>{`${detailData.electricNum} 度`}</Text>
+                  <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.rightText}>{`${checkedDetail.electricNum}  度`}</Text>
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', paddingHorizontal: 8}}>
+                      <MaterialCommunityIcons style={[styles.rightAreaIcon, {transform: [{ rotateZ: '5deg' }]}]} name='lightning-bolt' size={36} color='#ffd700' />
+                    </View>
+                  </View>
                 </View>
                 <View style={styles.photoArea}>
-                  <Text style={styles.titleText}>水/电表现场照片</Text>
+                  <Text style={styles.titleText}>电表现场照</Text>
                   <View style={styles.rightPhotosArea}>
-                    {detailData.waterAndElectricImages.length ? <>
-                      {detailData.waterAndElectricImages.map((image, imageIndex) => (
-                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress(detailData.waterAndElectricImages, imageIndex)}>
+                    {checkedDetail.electricImg ? <>
+                      {[checkedDetail.electricImg].map((image, imageIndex) => (
+                        <TouchableOpacity key={imageIndex} onPress={() => imageOnPress([checkedDetail.electricImg], imageIndex)}>
                           <Image style={styles.image} source={{ uri: `${image.url}` }} />
                         </TouchableOpacity>))}
                     </> : <Text style={styles.image_null_text}>无</Text>}
@@ -103,11 +169,11 @@ const CheckedDetail = ({
                 </View>
                 <View style={styles.longTextArea}>
                   <Text style={styles.longTextTitle}>本次点检情况描述</Text>
-                  <Text style={styles.longText}>哇哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</Text>
+                  <Text style={styles.longText}>{checkedDetail.desc}</Text>
                 </View>
                 <View style={styles.lastItem}>
                   <Text style={styles.titleText}>下次点检日期</Text>
-                  <Text style={styles.rightText}>2022-05-17</Text>
+                  <Text style={styles.rightText}>{moment(checkedDetail.nextDate).format('YYYY-MM-DD')}</Text>
                 </View>
               </View>
             </View>
@@ -276,7 +342,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   longTextArea: {
-    minHeight: 100,
+    minHeight: 50,
     flexDirection: 'row', 
     borderTopWidth: 1, 
     borderLeftWidth: 1, 

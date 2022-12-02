@@ -176,7 +176,7 @@ const Leave = ({
 
   const renderItem = ({item}) => {
     return (
-      <View style={[styles.listStyle, !item.scanConfirm && {backgroundColor: '#ffe270'}, item.liveOutApply && {backgroundColor: '#ffcfcf'}]}>
+      <View style={[styles.listStyle, item.liveOutApply && {backgroundColor: '#ffcfcf'}]}>
         <Text 
           style={[styles.itemText, styles.pressItem, {flex: 0, width: 100}]}
           numberOfLines={2}

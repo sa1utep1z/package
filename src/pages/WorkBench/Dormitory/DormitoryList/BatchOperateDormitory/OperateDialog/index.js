@@ -4,6 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
 import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
+import moment from "moment";
 
 import { closeDialog } from "../../../../../../redux/features/PageDialog";
 import { DORMITORY_LEAVE_REASON } from "../../../../../../utils/const";
@@ -72,8 +73,21 @@ const OperateDialog = ({
                   </TouchableOpacity>
                 </View>
               </View>
-              <Field name="stayDate" label="入住日期" component={SelectTimeOfFilterMore} />
-              {selectItem === 'DORM_TEMPORARY' && <Field name="liveExpireDate" label="临时住宿期限" component={SelectTimeOfFilterMore} />}
+              <Field 
+                name="stayDate" 
+                label="入住日期" 
+                startLimit={moment().format('YYYY-MM-DD')}
+                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                component={SelectTimeOfFilterMore} 
+              />
+              {selectItem === 'DORM_TEMPORARY' && 
+              <Field 
+                name="liveExpireDate" 
+                label="临时住宿期限" 
+                startLimit={moment().format('YYYY-MM-DD')}
+                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                component={SelectTimeOfFilterMore} 
+              />}
             </View> : <>
               <View style={{height: 55, paddingHorizontal: 20, marginTop: 10}}>
                 <Field
@@ -82,6 +96,8 @@ const OperateDialog = ({
                   fontSize={26}
                   canDelete={false}
                   borderColor='#999999'
+                  startLimit={moment().format('YYYY-MM-DD')}
+                  endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
                   component={SelectTimeOfFilterMore}
                 />
               </View>

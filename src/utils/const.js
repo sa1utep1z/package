@@ -993,24 +993,45 @@ export const DORMITORY_ALL_TYPE = [
 
 //宿舍卫生状况；
 export const DORMITORY_HYGIENE_LIST = [
-  {label: '合格', value: 'pass'},
-  {label: '不合格', value: 'fail'},
+  {label: '合格', value: 'QUALIFIED'},
+  {label: '不合格', value: 'UNQUALIFIED'},
 ];
 
 //宿舍设施状况；
 export const DORMITORY_FACILITY_LIST = [
-  {label: '正常', value: 'normal'},
-  {label: '维修中', value: 'fixing'},
-  {label: '损坏', value: 'broken'},
-  {label: '丢失', value: 'missing'},
+  {label: '正常', value: 'DORM_ASSET_NORMAL'},
+  {label: '损坏', value: 'DORM_ASSET_DAMAGE'},
+  {label: '报修', value: 'DORM_ASSET_FIX'},
+  {label: '报废', value: 'DORM_ASSET_SCRAP'},
+  {label: '丢失', value: 'DORM_ASSET_LOSE'},
 ];
 
-//入住类别；
-export const PROPERTY_STATUS_LIST = [
-  {label: '正常', value: 'normal'},
-  {label: '损坏', value: 'broken'},
-  {label: '维修中', value: 'fixing'},
-];
+//宿舍设施状况-名称；
+export const DORMITORY_FACILITY_NAME = {
+  'DORM_ASSET_NORMAL': '正常',
+  'DORM_ASSET_DAMAGE': '损坏',
+  'DORM_ASSET_FIX': '报修',
+  'DORM_ASSET_SCRAP': '报废',
+  'DORM_ASSET_LOSE': '丢失',
+};
+
+//宿舍设施状况-图标；
+export const DORMITORY_FACILITY_ICON = {
+  'DORM_ASSET_NORMAL': 'checkcircle',
+  'DORM_ASSET_DAMAGE': 'exclamationcircle',
+  'DORM_ASSET_FIX': 'pausecircle',
+  'DORM_ASSET_SCRAP': 'exclamationcircle',
+  'DORM_ASSET_LOSE': 'questioncircle',
+};
+
+//宿舍设施状况-图标-颜色；
+export const DORMITORY_FACILITY_COLOR = {
+  'DORM_ASSET_NORMAL': '#3dab6b',
+  'DORM_ASSET_DAMAGE': '#a93d3d',
+  'DORM_ASSET_FIX': '#d2d655',
+  'DORM_ASSET_SCRAP': '#a93d3d',
+  'DORM_ASSET_LOSE': '#999999',
+};
 
 //违纪类别；
 export const VIOLATION_TYPE_LIST = [

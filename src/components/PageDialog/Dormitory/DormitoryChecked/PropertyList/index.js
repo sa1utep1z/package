@@ -14,30 +14,29 @@ import * as PageDialog2 from "../../../../../redux/features/PageDialog2";
 import DormitoryCheckListApi from "../../../../../request/Dormitory/DormitoryCheckListApi";
 import moment from "moment";
 
-const CheckedRecord = ({
+const PropertyList = ({
   item
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
 
-  const [recordLists, setRecordLists] = useState([]);
+  const [propertyList, setPropertyList] = useState([]);
 
   useEffect(()=>{
-    queryCheckedRecord(item.roomId);
+    queryPropertyOfRecord(item.roomId);
   },[])
 
-  const queryCheckedRecord = async(id) => {
+  const queryPropertyOfRecord = async(id) => {
     try {
-      const res = await DormitoryCheckListApi.queryCheckedRecord(id);
-      console.log('queryCheckedRecord -> res', res);
+      const res = await DormitoryCheckListApi.queryPropertyOfRecord(item.roomId);
+      console.log('queryPropertyOfRecord -> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      res.data.map(item => item.showDetail = false);
-      setRecordLists(res.data);
+      setPropertyList(res.data);
     } catch (error) {
-      console.log('queryCheckedRecord -> error', error);
+      console.log('queryPropertyOfRecord -> error', error);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
   };
@@ -45,18 +44,6 @@ const CheckedRecord = ({
   const rejectOnPress = () => dispatch(closeDialog());
 
   const passOnPress = () => dispatch(closeDialog());
-
-  const recordOnPress = (record) => {
-    const newArr = deepCopy(recordLists);
-    const findItemIndex = newArr.findIndex(newItem => newItem.id ===record.id);
-    newArr[findItemIndex].showDetail = !record.showDetail;
-    setRecordLists(newArr);
-  };
-
-  const showDetail = (record) => {
-    dispatch(PageDialog2.setTitle(`${moment(record.date).format('YYYY-MM-DD')}点检详情`));
-    dispatch(PageDialog2.openDialog(<CheckedDetail isDialog2 item={{id: record.id}} />));
-  };
 
   return (
     <>
@@ -69,33 +56,19 @@ const CheckedRecord = ({
             <Text style={styles.bottomArea_text}>房间：{item.roomName}</Text>
           </View>
         </View>
+        <View style={{height: 60, borderWidth: 1, borderColor: '#409EFF', marginHorizontal: 30, flexDirection: 'row', marginTop: 10}}>
+          <Text style={{width: 150, borderRightWidth: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 26, color: '#333333', backgroundColor: '#ecf5ff', borderColor: '#409EFF'}}>资产名称</Text>
+          <Text style={{width: 120, borderRightWidth: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 26, color: '#333333', backgroundColor: '#ecf5ff', borderColor: '#409EFF'}}>数量</Text>
+          <Text style={{flex: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 26, color: '#333333', backgroundColor: '#ecf5ff', borderColor: '#409EFF'}}>资产编号</Text>
+        </View>
         <ScrollView style={styles.scrollArea}>
-          {recordLists.length ? <>
-            {recordLists.map((record, recordIndex) => (
-            <View style={styles.scrollView} key={recordIndex}>
-              {!record.showDetail && <TouchableOpacity style={styles.recordItem} onPress={() => recordOnPress(record)}>
-                <Text style={styles.recordItemText}>{moment(record.date).format('YYYY-MM-DD')}点检记录</Text>
-              </TouchableOpacity>}
-              {record.showDetail && <Shadow style={styles.shadowArea}>
-                <View style={styles.shadowItem}>
-                  <TouchableOpacity key={recordIndex} style={[styles.shadowPressItem, record.showDetail && styles.shadowPressItem_shown]} onPress={() => recordOnPress(record)}>
-                    <Text style={styles.shadowPressItem_shownText}>{record.time}点检记录</Text>
-                  </TouchableOpacity>
-                  <View style={styles.shadowContent}>
-                    <View style={styles.shadowContent_left}>
-                      <Text style={styles.shadowContent_leftTitle}>本次点检情况描述</Text>
-                      <Text style={styles.shadowContent_leftText}>{record.desc}</Text>
-                    </View>
-                    <TouchableOpacity style={styles.shadowContent_right} onPress={() => showDetail(record)}>
-                      <Text style={styles.shadowContent_rightText}>查看详情</Text>
-                      <AntDesign style={styles.shadowContent_icon} name='right' size={22} color='#ffffff' />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </Shadow>}
-            </View>
-          ))}
-          </> : <Text style={{fontSize: 28, color: '#999999', textAlign: 'center', textAlignVertical: 'center', height: 200}}>暂无记录</Text>}
+          {propertyList.length ? <>
+            {propertyList.map((property, propertyIndex) => <View style={{height: 60, borderWidth: 1, borderTopWidth: 0, borderColor: '#409EFF', flexDirection: 'row'}} key={propertyIndex}>
+            <Text style={{width: 150, borderRightWidth: 1, borderColor: '#409eff', fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center'}}>{property.name}</Text>
+            <Text style={{width: 120, borderRightWidth: 1, borderColor: '#409eff', fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center'}}>{property.num}{property.unit === 'ge' ? '个' : '台'}</Text>
+            <Text style={{flex: 1, borderRightWidth: 1, borderColor: '#409eff', fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center'}}>{property.no || '无'}</Text>
+          </View>)}
+          </> : <Text style={{fontSize: 28, color: '#999999', textAlign: 'center', textAlignVertical: 'center', flex: 1, borderWidth: 1, borderTopWidth: 0, borderColor: '#409eff', height: 200}}>暂无数据</Text>}
         </ScrollView>
       </View>
       <View style={styles.bottomArea}>
@@ -149,8 +122,9 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF'
   },
   scrollArea: {
+    minHeight: 200,
     marginBottom: 20,
-    minHeight: 200
+    marginHorizontal: 30
   },
   scrollView: {
     marginHorizontal: 30, 
@@ -268,4 +242,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default CheckedRecord;
+export default PropertyList;

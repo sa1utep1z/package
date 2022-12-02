@@ -264,8 +264,8 @@ const Adjust = ({
                         borderColor="#EFEFEF"
                         itemAreaStyle={{height: 50}}
                         touchAreaStyle={{height: 40, borderRadius: 4}}
-                        startLimit={moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD')}
-                        endLimit={moment(dormitoryInfo.liveInDate).add(3, 'd').format('YYYY-MM-DD')}
+                        startLimit={moment().format('YYYY-MM-DD')}
+                        endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
                         selectOtherFunc={selectOtherFunc}
                         component={SelectTimeOfFilterMore}
                       />
@@ -298,8 +298,8 @@ const Adjust = ({
                         borderColor="#EFEFEF"
                         itemAreaStyle={{height: 50}}
                         touchAreaStyle={{height: 40, borderRadius: 4}}
-                        startLimit={moment(dormitoryInfo.liveInDate).add(1, 'd').format('YYYY-MM-DD')}
-                        endLimit={moment(dormitoryInfo.liveInDate).add(4, 'd').format('YYYY-MM-DD')}
+                        startLimit={moment().add(1, 'd').format('YYYY-MM-DD')}
+                        endLimit={moment().add(4, 'd').format('YYYY-MM-DD')}
                         selectOtherFunc={selectOtherFuncOnStay}
                         component={SelectTimeOfFilterMore}
                       />

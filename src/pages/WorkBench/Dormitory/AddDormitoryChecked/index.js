@@ -5,22 +5,28 @@ import { Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useToast } from "react-native-toast-notifications";
+import { useNavigation } from "@react-navigation/native";
 import { Button } from '@rneui/themed';
+import moment from "moment";
 
 import RadioSelect from "../../../../components/OrderForm/RadioSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
 import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SingleInput from "../../../../components/OrderForm/SingleInput";
 import OrderSingleDate from "../../../../components/OrderForm/OrderSingleDate";
-import { DORMITORY_HYGIENE_LIST, DORMITORY_FACILITY_LIST } from '../../../../utils/const';
+import { SUCCESS_CODE, DORMITORY_HYGIENE_LIST, DORMITORY_FACILITY_LIST } from '../../../../utils/const';
+import NAVIGATION_KEYS from "../../../../navigator/key";
+import DormitoryCheckListApi from "../../../../request/Dormitory/DormitoryCheckListApi";
 
 let restForm;
 const validationSchema = Yup.object().shape({
   dormitoryHygiene: Yup.array().min(1, '请选择宿舍卫生状况'),
-  dormitoryFacility: Yup.array().min(1, '请选择宿舍设施状况'),
+  dormitoryFacility: Yup.array().min(1, '请选择宿舍资产状况'),
   waterNum: Yup.string().required('请输入本期水表数'),
+  waterImg: Yup.array().min(1, '请上传水表现场照一张'),
   electricNum: Yup.string().required('请输入本期电表数'),
-  waterAndElectricPicture: Yup.array().min(2, '请完整上传水/电表现场照片（需两张）'),
+  electricImg: Yup.array().min(1, '请上传电表现场照一张'),
   remark: Yup.string().required('请输入点检情况描述'),
   nextCheckDate: Yup.string().required('请选择下次点检日期'),
 });
@@ -29,18 +35,57 @@ const initialValues = {
   dormitoryHygienePictureList: [],
   dormitoryFacility: [],
   dormitoryFacilityPictureList: [],
+  fireDeviceStatus: [],
+  fireDeviceImg: [],
   waterNum: '',
+  waterImg: [],
   electricNum: '',
-  waterAndElectricPicture: [],
+  electricImg: [],
   remark: '',
   nextCheckDate: ''
 };
 
 const AddDormitoryChecked = ({route: {params: {item}}}) => {
-  console.log('item', item);
+  const toast = useToast();
+  const navigation = useNavigation();
 
   const onSubmit = values => {
-    console.log('values', values);
+    const formatParams = {
+      roomId: item.roomId, 
+      date: moment(item.date).format('YYYY-MM-DD'),
+      nextDate: values.nextCheckDate, //下次点检日期
+      hygieneStatus: values.dormitoryHygiene.length ? values.dormitoryHygiene[0].value : '', //卫生状况
+      hygieneImg: values.dormitoryHygienePictureList, //卫生照片
+      assetStatus: values.dormitoryFacility.length ? values.dormitoryFacility[0].value : '', //资产状况
+      assetImg: values.dormitoryFacilityPictureList, //资产照片
+      fireDeviceStatus: values.fireDeviceStatus.length ? values.fireDeviceStatus[0].value : '', //消防设施状况
+      fireDeviceImg: values.fireDeviceImg, //消防照片
+      waterNum: Number(values.waterNum), //水表数
+      waterImg: values.waterImg[0], //水表照
+      electricNum: Number(values.electricNum), //电表数
+      electricImg: values.electricImg[0], //电表照
+      desc: values.remark, //点检情况描述
+    };
+    console.log('formatParams', formatParams)
+    addCheckedRecord(formatParams);
+  };
+
+  const addCheckedRecord = async(params) => {
+    try {
+      const res = await DormitoryCheckListApi.addPropertyRecord(params);
+      console.log('addCheckedRecord -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('新增点检记录成功', {type: 'success'});
+      navigation.navigate(NAVIGATION_KEYS.DORMITORY_CHECK_LIST, {
+        refresh: true
+      })
+    } catch (error) {
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      console.log('error', error);
+    }
   };
 
   const waterInputRightComponent = (
@@ -67,13 +112,13 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
         return (
           <View style={styles.screen}>
             <View style={styles.topArea}>
-              <Text style={styles.topArea_topText}>点检日期：{item.checkDate}</Text>
+              <Text style={styles.topArea_topText}>点检日期：{moment(item.date).format('YYYY-MM-DD')}</Text>
               <View style={styles.topArea_bottomArea}>
-                <Text style={styles.bottomArea_leftText}>楼栋：{item.building}</Text>
-                <Text style={styles.bottomArea_rightText}>房间号：{item.room}</Text>
+                <Text style={styles.bottomArea_leftText}>楼栋：{item.buildingName}</Text>
+                <Text style={styles.bottomArea_rightText}>房间号：{item.roomName}</Text>
               </View>
             </View>
-            <KeyboardAvoidingView behavior='height' style={{flex: 1, flexDirection: 'column'}}>
+            <KeyboardAvoidingView style={{flex: 1, flexDirection: 'column'}}>
               <ScrollView style={styles.scrollView}>
                 <View style={styles.shadowView}>
                   <Shadow style={styles.shadowArea}>
@@ -94,13 +139,13 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
                           name="dormitoryHygienePictureList"
                           label="宿舍卫生照片"
                           type="takePicture"
-                          maxPictureNum={3}
+                          maxPictureNum={2}
                           labelStyle={{width: 220}}
                           component={SelectPhotos}
                         />
                         <Field
                           name="dormitoryFacility"
-                          label="宿舍设施状况"
+                          label="宿舍资产状况"
                           isRequire
                           canSearch={false}
                           selectList={DORMITORY_FACILITY_LIST}
@@ -109,9 +154,26 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
                         />
                         <Field
                           name="dormitoryFacilityPictureList"
-                          label="宿舍设施照片"
+                          label="宿舍资产照片"
                           type="takePicture"
-                          maxPictureNum={3}
+                          maxPictureNum={2}
+                          labelStyle={{width: 220}}
+                          component={SelectPhotos}
+                        />
+                        <Field
+                          name="fireDeviceStatus"
+                          label="消防设施状况"
+                          isRequire
+                          canSearch={false}
+                          selectList={DORMITORY_FACILITY_LIST}
+                          labelStyle={{width: 220}}
+                          component={SingleSelect}
+                        />
+                        <Field
+                          name="fireDeviceImg"
+                          label="消防设施照片"
+                          type="takePicture"
+                          maxPictureNum={2}
                           labelStyle={{width: 220}}
                           component={SelectPhotos}
                         />
@@ -127,6 +189,15 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
                           inputRightComponent={waterInputRightComponent}
                         />
                         <Field
+                          name="waterImg"
+                          label="水表现场照片"
+                          type="takePicture"
+                          isRequire
+                          maxPictureNum={1}
+                          labelStyle={{width: 220}}
+                          component={SelectPhotos}
+                        />
+                        <Field
                           name="electricNum"
                           label="本期电表数"
                           isRequire
@@ -138,12 +209,12 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
                           inputRightComponent={electricInputRightComponent}
                         />
                         <Field
-                          name="waterAndElectricPicture"
-                          label="水/电表现场照片"
+                          name="electricImg"
+                          label="电表现场照片"
                           type="takePicture"
                           isRequire
-                          maxPictureNum={2}
-                          labelStyle={{width: 280}}
+                          maxPictureNum={1}
+                          labelStyle={{width: 220}}
                           component={SelectPhotos}
                         />
                         <Field
