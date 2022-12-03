@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
@@ -49,6 +49,8 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
   const toast = useToast();
   const navigation = useNavigation();
 
+  const [buttonLoading, setButtonLoading] = useState(false);
+
   const onSubmit = values => {
     const formatParams = {
       roomId: item.roomId, 
@@ -66,12 +68,12 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
       electricImg: values.electricImg[0], //电表照
       desc: values.remark, //点检情况描述
     };
-    console.log('formatParams', formatParams)
     addCheckedRecord(formatParams);
   };
 
   const addCheckedRecord = async(params) => {
     try {
+      setButtonLoading(true);
       const res = await DormitoryCheckListApi.addPropertyRecord(params);
       console.log('addCheckedRecord -> res', res);
       if(res?.code !== SUCCESS_CODE){
@@ -83,8 +85,10 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
         refresh: true
       })
     } catch (error) {
-      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
       console.log('error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -231,6 +235,8 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
                           label="下次点检日期"
                           isRequire
                           labelStyle={{width: 220}}
+                          startLimit={moment().format('YYYY-MM-DD')}
+                          endLimit={moment().add(15, 'd').format('YYYY-MM-DD')}
                           component={OrderSingleDate}
                         />
                       </View>
@@ -241,6 +247,7 @@ const AddDormitoryChecked = ({route: {params: {item}}}) => {
             </KeyboardAvoidingView>
             <Button
               title="保存"
+              loading={buttonLoading}
               onPress={restForm.handleSubmit}
               containerStyle={styles.buttonContainerStyle}
               buttonStyle={styles.buttonStyle}

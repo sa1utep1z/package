@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator, Linking } from "react-native";
 import { Shadow } from 'react-native-shadow-2';
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
+import Entypo from 'react-native-vector-icons/Entypo';
 import moment from "moment";
 
 import { closeDialog } from "../../../../redux/features/PageDialog";
@@ -65,6 +66,11 @@ const DormitoryViolationDetail = ({
     }
   };
 
+  const CallPhone = () => {
+    if(!memberDetail.mobile) return;
+    Linking.openURL(`tel:${memberDetail.mobile}`);
+  };
+
   const rejectOnPress = () => dispatch(closeDialog());
 
   const passOnPress = () => dispatch(closeDialog());
@@ -99,7 +105,11 @@ const DormitoryViolationDetail = ({
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>手机号</Text>
-                    <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberDetail.mobile || '无'}</Text>
+                    <TouchableOpacity onPress={CallPhone}>
+                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberDetail.mobile || '无'}
+                        {memberDetail.mobile && <Entypo name='phone' size={32} color='#409EFF' />}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                   <View style={styles.textLine}>
                     <Text style={styles.titleText}>身份证号</Text>

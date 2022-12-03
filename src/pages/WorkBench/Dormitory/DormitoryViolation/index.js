@@ -76,13 +76,12 @@ const DormitoryViolation = ({
           })}
         </View>
         <View style={styles.listHeadArea}>
-          <Text style={[styles.titleText, {width: 90}]}>姓名</Text>
-          <Text style={[styles.titleText, {width: 90}]}>楼栋</Text>
+          <Text style={[styles.titleText, {width: 130}]}>姓名</Text>
+          <Text style={[styles.titleText, {width: 130}]}>楼栋</Text>
           <Text style={[styles.titleText, {width: 100}]}>房间号</Text>
           <Text style={[styles.titleText, {width: 100}]}>床位号</Text>
           <Text style={[styles.titleText, {flex: 1}]}>处罚日期</Text>
-          <Text style={[styles.titleText, {flex: 1}]}>结果</Text>
-          <Text style={[styles.titleText, {width: 100}]}>详情</Text>
+          <Text style={[styles.titleText, {width: 120}]}>结果</Text>
         </View>
       </>
     )

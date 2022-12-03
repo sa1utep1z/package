@@ -1,12 +1,18 @@
-import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
-import { ScrollView, Text, View, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import React, {useState, useRef, useEffect} from "react";
+import { ScrollView, Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking } from "react-native";
 import { Shadow } from 'react-native-shadow-2';
-import { CheckBox } from '@rneui/themed';
 import { Formik, Field } from 'formik';
 import moment from "moment";
+import Entypo from 'react-native-vector-icons/Entypo';
+import { useToast } from "react-native-toast-notifications";
+import { useDispatch } from "react-redux";
 
 import SelectTimeOfFilterMore from '../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
-import SelectItemOfFilterMore from '../../../../HeaderSearchOfDormitory/FilterMore/SelectItemOfFilterMore';
+import SelectItemOfFilterMore3 from '../../../../PageDialog3/SelectItemOfFilterMore3';
+import DormitoryListApi from '../../../../../request/Dormitory/DormitoryListApi';
+import { SUCCESS_CODE } from '../../../../../utils/const';
+import * as PageDialog1 from "../../../../../redux/features/PageDialog";
+import * as PageDialog2 from "../../../../../redux/features/PageDialog2"
 
 let restForm;
 
@@ -16,17 +22,104 @@ const initialValues = {
   buildingNum: [],
   floorNum: [],
   roomNum: [],
-  bedNum: []
+  bedNum: [],
+  liveExpireDate: ''
 };
 
 const AdjustDormitory = ({
+  memberMsg,
+  refresh
 }) => {
   const scrollViewRef = useRef(null);
+  const toast = useToast();
+  const dispatch = useDispatch();
 
-  const [dormitoryType, setDormitoryType] = useState('male');
   const [bottomError, setBottomError] = useState(false);
   const [topError, setTopError] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [dormitoryList, setDormitoryList] = useState([]);
+
+  useEffect(()=>{
+    if(memberMsg.ability === 'DORM_TEMPORARY'){
+      getTemporaryDormitoryList(memberMsg.idNo); //获取临时宿舍列表
+    }else{
+      getNormalDormitoryList(memberMsg.idNo); //获取常规宿舍列表
+    }
+  },[memberMsg])
+
+  const getNormalDormitoryList = async(idNo) => {
+    try {
+      const res = await DormitoryListApi.getNormalDormitoryListWithoutIdNo(idNo);
+      console.log('getNormalDormitoryList --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      res.data.forEach(item => {
+        item.value = item.id;
+        item.label = item.name;
+        if(item.floors.length){
+          item.floors.forEach(item => {
+            item.value = item.id;
+            item.label = `${item.index}F`;
+            if(item.rooms.length){
+              item.rooms.forEach(item => {
+                item.value = item.id;
+                item.label = `${item.name}房`;
+                if(item.beds.length){
+                  item.beds.forEach(item => {
+                    item.value = item.id;
+                    item.label = `${item.bedNo}床`;
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+      setDormitoryList(res.data);
+    } catch (error) {
+      console.log('getNormalDormitoryList->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }
+  };
+
+  const getTemporaryDormitoryList = async(idNo) => {
+    try {
+      const res = await DormitoryListApi.getTemporaryDormitoryList(idNo);
+      console.log('getTemporaryDormitoryList --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      res.data.forEach(item => {
+        item.value = item.id;
+        item.label = item.name;
+        if(item.floors.length){
+          item.floors.forEach(item => {
+            item.value = item.id;
+            item.label = `${item.index}F`;
+            if(item.rooms.length){
+              item.rooms.forEach(item => {
+                item.value = item.id;
+                item.label = `${item.name}房`;
+                if(item.beds.length){
+                  item.beds.forEach(item => {
+                    item.value = item.id;
+                    item.label = `${item.bedNo}床`;
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+      setDormitoryList(res.data);
+    } catch (error) {
+      console.log('getTemporaryDormitoryList->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    }
+  };
 
   const checkValues = (values) => {
     let returnValue = false;
@@ -39,10 +132,20 @@ const AdjustDormitory = ({
       setTopError(false);
       returnValue = false;
     }
-    if(isNoneFieldValue || !values.joinInDate.length){
+    if(isNoneFieldValue){
       scrollViewRef?.current?.scrollToEnd();
       setBottomError(true);
       returnValue = true;
+      return returnValue;
+    }else{
+      setBottomError(false);
+      returnValue = false;
+    }
+    if(memberMsg.ability === 'DORM_TEMPORARY' && !values.liveExpireDate.length){
+      scrollViewRef?.current?.scrollToEnd();
+      setBottomError(true);
+      returnValue = true;
+      return returnValue;
     }else{
       setBottomError(false);
       returnValue = false;
@@ -52,14 +155,48 @@ const AdjustDormitory = ({
 
   const onSubmit = (values) => {
     const hasError = checkValues(values);
+    if(hasError) return;
+    if(btnLoading) return;
+    const formatValue = {
+      liveOutDate: values.leaveDate,
+      nextLiveInDate: moment(values.leaveDate).add(1, 'd').format('YYYY-MM-DD'),
+      roomBedId: values.bedNum.length ? values.bedNum[0].value : '',
+      liveExpireDate: memberMsg.ability === 'DORM_TEMPORARY' ? values.liveExpireDate : '',
+    };
+    adjustDormitory(formatValue);
   };
 
-  const selectOtherFunc = (type, date) => {
-    restForm.setFieldValue(type === 'leaveDate' ? 'joinInDate' : 'leaveDate', date);
+  const adjustDormitory = async(params) => {
+    try {
+      setBtnLoading(true);
+      const res = await DormitoryListApi.adjustDormitory(params, memberMsg.id);
+      console.log('adjustDormitory -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('调迁成功！', {type: 'success'});
+      dispatch(PageDialog1.closeDialog());
+      dispatch(PageDialog2.closeDialog());
+      refresh && refresh();
+    } catch (error) {
+      console.log('adjustDormitory->error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    } finally {
+      setBtnLoading(false);
+    }
+  };
+
+  const selectOtherFuncOfLeaveDate = (type, date) => {
+    restForm.setFieldValue('joinInDate', moment(date).add(1, 'd').format('YYYY-MM-DD'));
     if(type === 'leaveDate'){
       scrollViewRef?.current?.scrollToEnd();
     }
   };
+
+  const selectOtherFuncOfJoinInDate = (type, date) => restForm.setFieldValue('leaveDate', moment(date).subtract(1, 'd').format('YYYY-MM-DD'));
+
+  const callPhone = () => Linking.openURL(`tel:${memberMsg.mobile}`);
 
   return (
     <Formik
@@ -71,10 +208,13 @@ const AdjustDormitory = ({
           <View style={styles.totalArea}>
             <View style={styles.topInfoArea}>
               <View style={styles.topInfoArea_top}>
-                <Text selectable style={styles.top_leftText}>姓名：张三</Text>
-                <Text selectable style={styles.top_rightText}>手机号：15390913806</Text>
+                <Text selectable style={styles.top_leftText}>姓名：{memberMsg.name || '无'}</Text>
+                <TouchableOpacity style={styles.callPhoneArea} onPress={callPhone}>
+                  <Text selectable style={styles.top_rightText}>手机号：{memberMsg.mobile || '无'}</Text>
+                  <Entypo name='phone' size={32} color='#ffffff'/>
+                </TouchableOpacity>
               </View>
-              <Text selectable style={styles.topInfoArea_bottom}>身份证号：452123123412341234</Text>
+              <Text selectable style={styles.topInfoArea_bottom}>身份证号：{memberMsg.idNo || '无'}</Text>
             </View>
             <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
               <View style={styles.topShadowArea}>
@@ -87,37 +227,37 @@ const AdjustDormitory = ({
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍楼栋</Text>
                       </View>
-                      <Text style={styles.rightText}>241栋</Text>
+                      <Text style={styles.rightText}>{memberMsg.building || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍分类</Text>
                       </View>
-                      <Text style={styles.rightText}>男生宿舍</Text>
+                      <Text style={styles.rightText}>{memberMsg.male ? '男生宿舍' : '女生宿舍'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍楼层</Text>
                       </View>
-                      <Text style={styles.rightText}>1F</Text>
+                      <Text style={styles.rightText}>{memberMsg.floor ? `${memberMsg.floor}F` : '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>房间号</Text>
                       </View>
-                      <Text style={styles.rightText}>101</Text>
+                      <Text style={styles.rightText}>{memberMsg.roomName || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>床位号</Text>
                       </View>
-                      <Text style={styles.rightText}>101-1</Text>
+                      <Text style={styles.rightText}>{memberMsg.bedNo ? `${memberMsg.bedNo}号床` : '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>入住日期</Text>
                       </View>
-                      <Text style={styles.rightText}>2022-05-23</Text>
+                      <Text style={styles.rightText}>{memberMsg.date ? moment(memberMsg.date).format('YYYY-MM-DD') : '无'}</Text>
                     </View>
                     <View style={styles.lastItem}>
                       <View style={styles.leftTitle}>
@@ -133,9 +273,11 @@ const AdjustDormitory = ({
                           showLabel={false}
                           showArrow={false}
                           borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
                           touchAreaStyle={{height: 40, borderRadius: 4}}
-                          startLimit={moment().add(1).format('YYYY-MM-DD')}
-                          selectOtherFunc={selectOtherFunc}
+                          startLimit={moment(memberMsg.date).add(1, 'd').format('YYYY-MM-DD')}
+                          endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                          selectOtherFunc={selectOtherFuncOfLeaveDate}
                           component={SelectTimeOfFilterMore}
                         />
                       </View>
@@ -164,9 +306,11 @@ const AdjustDormitory = ({
                           showLabel={false}
                           showArrow={false}
                           borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
                           touchAreaStyle={{height: 40, borderRadius: 4}}
-                          startLimit={moment().add(1).format('YYYY-MM-DD')}
-                          selectOtherFunc={selectOtherFunc}
+                          startLimit={moment(memberMsg.date).add(2, 'd').format('YYYY-MM-DD')}
+                          endLimit={moment().add(4, 'd').format('YYYY-MM-DD')}
+                          selectOtherFunc={selectOtherFuncOfJoinInDate}
                           component={SelectTimeOfFilterMore}
                         />
                       </View>
@@ -185,42 +329,10 @@ const AdjustDormitory = ({
                           showLabel={false}
                           showArrow={false}
                           borderColor="#EFEFEF"
+                          selectList={dormitoryList}
                           selectStyle={{height: 40, borderRadius: 4}}
-                          component={SelectItemOfFilterMore}
+                          component={SelectItemOfFilterMore3}
                         />
-                      </View>
-                    </View>
-                    <View style={styles.listItem}>
-                      <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>宿舍分类</Text>
-                      </View>
-                      <View style={styles.lineArea}>
-                        <View style={styles.typeArea}>
-                          <TouchableOpacity style={styles.maleArea} onPress={()=>setDormitoryType('male')}>
-                            <CheckBox
-                              center
-                              size={26}
-                              pointerEvents={'none'}
-                              checked={dormitoryType === 'male'}
-                              containerStyle={styles.checkBoxContainerStyle}
-                              checkedIcon="dot-circle-o"
-                              uncheckedIcon="circle-o"
-                            />
-                            <Text style={styles.typeAreaText}>男宿舍</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity style={styles.femaleArea} onPress={()=>setDormitoryType('female')}>
-                            <CheckBox
-                              center
-                              size={26}
-                              pointerEvents={'none'}
-                              checked={dormitoryType === 'female'}
-                              containerStyle={styles.checkBoxContainerStyle}
-                              checkedIcon="dot-circle-o"
-                              uncheckedIcon="circle-o"
-                            />
-                            <Text style={styles.typeAreaText}>女宿舍</Text>
-                          </TouchableOpacity>
-                        </View>
                       </View>
                     </View>
                     <View style={styles.listItem}>
@@ -237,8 +349,9 @@ const AdjustDormitory = ({
                           showLabel={false}
                           showArrow={false}
                           borderColor="#EFEFEF"
+                          selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
                           selectStyle={{height: 40, borderRadius: 4}}
-                          component={SelectItemOfFilterMore}
+                          component={SelectItemOfFilterMore3}
                         />
                       </View>
                     </View>
@@ -256,12 +369,13 @@ const AdjustDormitory = ({
                           showLabel={false}
                           showArrow={false}
                           borderColor="#EFEFEF"
+                          selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
                           selectStyle={{height: 40, borderRadius: 4}}
-                          component={SelectItemOfFilterMore}
+                          component={SelectItemOfFilterMore3}
                         />
                       </View>
                     </View>
-                    <View style={styles.lastItem}>
+                    <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>床位号</Text>
                       </View>
@@ -275,11 +389,34 @@ const AdjustDormitory = ({
                           showLabel={false}
                           showArrow={false}
                           borderColor="#EFEFEF"
+                          selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
                           selectStyle={{height: 40, borderRadius: 4}}
-                          component={SelectItemOfFilterMore}
+                          component={SelectItemOfFilterMore3}
                         />
                       </View>
                     </View>
+                    {memberMsg.ability === 'DORM_TEMPORARY' && <View style={styles.lastItem}>
+                    <View style={styles.leftTitle}>
+                      <Text style={styles.titleText}>临时期限</Text>
+                    </View>
+                    <View style={styles.lineArea}>
+                      <Field
+                        name="liveExpireDate"
+                        label="临时住宿期限"
+                        fontSize={24}
+                        iconSize={28}
+                        canDelete={false}
+                        showLabel={false}
+                        showArrow={false}
+                        borderColor="#EFEFEF"
+                        itemAreaStyle={{height: 50}}
+                        touchAreaStyle={{height: 40, borderRadius: 4}}
+                        startLimit={moment(memberMsg.date).format('YYYY-MM-DD')}
+                        endLimit={moment(memberMsg.date).add(3, 'd').format('YYYY-MM-DD')}
+                        component={SelectTimeOfFilterMore}
+                      />
+                    </View>
+                  </View>}
                     {bottomError && <Text style={styles.noticeText}>表单未填写完整！</Text>}
                   </View>
                 </Shadow>
@@ -299,7 +436,7 @@ const AdjustDormitory = ({
 
 const styles = StyleSheet.create({
   totalArea: {
-    height: 900
+    height: 900,
   },
   topInfoArea: {
     height: 100, 
@@ -323,8 +460,13 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center', 
     paddingHorizontal: 40
   },
-  top_rightText: {
+  callPhoneArea: {
     flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  top_rightText: {
     fontSize: 24, 
     color: '#FFFFFF', 
     textAlignVertical: 'center', 

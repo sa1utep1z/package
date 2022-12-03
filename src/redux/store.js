@@ -9,6 +9,7 @@ import RoleInfoReducer from './features/RoleInfo';
 import HireReportDialogReducer from './features/HireReport/HireReportDialog';
 import PageDialogReducer from './features/PageDialog';
 import PageDialog2Reducer from './features/PageDialog2';
+import PageDialog3Reducer from './features/PageDialog3';
 import MemberInfoReducer from './features/MemberInfo';
 import UserPermissionReducer from './features/UserPermission';
 
@@ -23,6 +24,7 @@ export default configureStore({
     HireReportDialog: HireReportDialogReducer, //招聘看板中的悬浮窗
     PageDialog: PageDialogReducer, //所有页面的悬浮窗
     PageDialog2: PageDialog2Reducer, //所有页面的二级悬浮窗
+    PageDialog3: PageDialog3Reducer, //所有页面的三级悬浮窗
     MemberInfo: MemberInfoReducer, //登陆人信息
     UserPermission: UserPermissionReducer, //用户权限
   },

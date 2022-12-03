@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useRef} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
@@ -11,7 +11,6 @@ import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 
 import SingleInput from "../../../../components/OrderForm/SingleInput";
-import RadioSelect from "../../../../components/OrderForm/RadioSelect";
 import SingleSelect from "../../../../components/OrderForm/SingleSelect";
 import SelectPhotos from "../../../../components/OrderForm/SelectPhotos";
 import DormitoryCheckListApi from "../../../../request/Dormitory/DormitoryCheckListApi";
@@ -66,7 +65,6 @@ const AddProperty = () => {
   const navigation = useNavigation();
 
   const [propertyList, setPropertyList] = useState([{name: 'property1', wrong: false}]);
-  const [selectUnion, setSelectUnion] = useState('ge');
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const checkPropertyList = (values) => {
@@ -89,7 +87,6 @@ const AddProperty = () => {
   };
 
   const onSubmit = (values) => {
-    console.log('values', values);
     const formatValues = {
       roomBuildingId: values.buildingNum.length ? values.buildingNum[0].value : '',
       roomFloorId: values.floorNum.length ? values.floorNum[0].value : '',
@@ -101,7 +98,6 @@ const AddProperty = () => {
       status: values.property1.propertyStatus[0].value,
       date: moment().format('YYYY-MM-DD'),
     };
-    console.log('formatValues', formatValues);
     addPropertyOnSave(formatValues);
   };
 
@@ -156,8 +152,6 @@ const AddProperty = () => {
     };
     restForm.setValues(newProperty);
   };
-
-  const changeUnion = (union) => setSelectUnion(union);
 
   return (
     <Formik

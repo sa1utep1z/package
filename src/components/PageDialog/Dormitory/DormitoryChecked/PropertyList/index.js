@@ -1,18 +1,11 @@
 import React, {useState, useEffect} from "react";
 import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import { Shadow } from 'react-native-shadow-2';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 
-import { deepCopy } from '../../../../../utils';
-import CheckedDetail from "../CheckedDetail";
 import { SUCCESS_CODE } from '../../../../../utils/const';
 import { closeDialog } from "../../../../../redux/features/PageDialog";
-import * as PageDialog2 from "../../../../../redux/features/PageDialog2";
 import DormitoryCheckListApi from "../../../../../request/Dormitory/DormitoryCheckListApi";
-import moment from "moment";
 
 const PropertyList = ({
   item
@@ -56,19 +49,19 @@ const PropertyList = ({
             <Text style={styles.bottomArea_text}>房间：{item.roomName}</Text>
           </View>
         </View>
-        <View style={{height: 60, borderWidth: 1, borderColor: '#409EFF', marginHorizontal: 30, flexDirection: 'row', marginTop: 10}}>
-          <Text style={{width: 150, borderRightWidth: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 26, color: '#333333', backgroundColor: '#ecf5ff', borderColor: '#409EFF'}}>资产名称</Text>
-          <Text style={{width: 120, borderRightWidth: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 26, color: '#333333', backgroundColor: '#ecf5ff', borderColor: '#409EFF'}}>数量</Text>
-          <Text style={{flex: 1, textAlign: 'center', textAlignVertical: 'center', fontSize: 26, color: '#333333', backgroundColor: '#ecf5ff', borderColor: '#409EFF'}}>资产编号</Text>
+        <View style={styles.titleArea}>
+          <Text style={[styles.titleText, {width: 150}]}>资产名称</Text>
+          <Text style={[styles.titleText, {width: 120}]}>数量</Text>
+          <Text style={[styles.titleText, {flex: 1, borderRightWidth: 0}]}>资产编号</Text>
         </View>
         <ScrollView style={styles.scrollArea}>
           {propertyList.length ? <>
-            {propertyList.map((property, propertyIndex) => <View style={{height: 60, borderWidth: 1, borderTopWidth: 0, borderColor: '#409EFF', flexDirection: 'row'}} key={propertyIndex}>
-            <Text style={{width: 150, borderRightWidth: 1, borderColor: '#409eff', fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center'}}>{property.name}</Text>
-            <Text style={{width: 120, borderRightWidth: 1, borderColor: '#409eff', fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center'}}>{property.num}{property.unit === 'ge' ? '个' : '台'}</Text>
-            <Text style={{flex: 1, borderRightWidth: 1, borderColor: '#409eff', fontSize: 24, color: '#333333', textAlign: 'center', textAlignVertical: 'center'}}>{property.no || '无'}</Text>
+            {propertyList.map((property, propertyIndex) => <View style={styles.propertyArea} key={propertyIndex}>
+            <Text style={[styles.propertyText, {width: 150}]}>{property.name}</Text>
+            <Text style={[styles.propertyText, {width: 120}]}>{property.num}{property.unit === 'ge' ? '个' : '台'}</Text>
+            <Text selectable style={[styles.propertyText, {flex: 1, borderRightWidth: 0}]}>{property.no || '无'}</Text>
           </View>)}
-          </> : <Text style={{fontSize: 28, color: '#999999', textAlign: 'center', textAlignVertical: 'center', flex: 1, borderWidth: 1, borderTopWidth: 0, borderColor: '#409eff', height: 200}}>暂无数据</Text>}
+          </> : <Text style={styles.noneText}>暂无数据</Text>}
         </ScrollView>
       </View>
       <View style={styles.bottomArea}>
@@ -122,96 +115,52 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF'
   },
   scrollArea: {
-    minHeight: 200,
+    maxHeight: 600,
     marginBottom: 20,
     marginHorizontal: 30
   },
-  scrollView: {
+  titleArea: {
+    height: 60, 
+    borderWidth: 1, 
+    borderColor: '#409EFF', 
     marginHorizontal: 30, 
+    flexDirection: 'row', 
     marginTop: 10
   },
-  recordItem: {
-    height: 70,
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginBottom: 20, 
-    borderColor: '#999999', 
-    paddingHorizontal: 10, 
-    borderRadius: 10, 
-    backgroundColor: '#EFEFEF'
-  },
-  recordItemText: {
-    fontSize: 26, 
-    fontWeight: 'bold'
-  },
-  shadowArea: {
-    width: '100%', 
-    marginBottom: 20
-  },
-  shadowItem: {
-    borderRadius: 10
-  },
-  shadowPressItem: {
-    height: 70, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginBottom: 20, 
-    borderColor: '#999999', 
-    paddingHorizontal: 10, 
-    borderRadius: 10, 
-    backgroundColor: '#EFEFEF'
-  },
-  shadowPressItem_shown: {
-    marginBottom: 0, 
-    borderBottomLeftRadius: 0, 
-    borderBottomRightRadius: 0
-  },
-  shadowPressItem_shownText: {
-    fontSize: 26, 
-    fontWeight: 'bold', 
-    color: '#000000'
-  },
-  shadowContent: {
-    flexDirection: 'row',
-    padding: 10
-  },
-  shadowContent_left: {
-    flex: 1, 
-    padding: 20, 
-    borderColor: '#EFEFEF', 
-    borderRadius: 10, 
-    borderWidth: 1, 
-    marginRight: 10
-  },
-  shadowContent_leftTitle: {
+  titleText: {
+    borderRightWidth: 1, 
+    textAlign: 'center', 
+    textAlignVertical: 'center', 
     fontSize: 26, 
     color: '#333333', 
-    fontWeight: 'bold', 
-    marginBottom: 10
+    backgroundColor: '#ecf5ff', 
+    borderColor: '#409EFF'
   },
-  shadowContent_leftText: {
+  propertyArea: {
+    height: 60, 
+    borderWidth: 1, 
+    borderTopWidth: 0, 
+    borderColor: '#409EFF', 
+    flexDirection: 'row'
+  },
+  propertyText: {
+    borderRightWidth: 1, 
+    borderColor: '#409eff', 
     fontSize: 24, 
-    color: '#333333'
+    color: '#333333', 
+    textAlign: 'center', 
+    textAlignVertical: 'center'
   },
-  shadowContent_right: {
-    width: 140, 
-    height: 55, 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    backgroundColor: '#409EFF', 
-    borderRadius: 8, 
-    alignSelf: 'center', 
-    paddingLeft: 8
-  },
-  shadowContent_rightText: {
-    fontSize: 24, 
-    color: '#ffffff'
-  },
-  shadowContent_icon: {
-    marginLeft: 2
+  noneText: {
+    flex: 1, 
+    height: 200,
+    fontSize: 28, 
+    color: '#999999', 
+    textAlign: 'center', 
+    textAlignVertical: 'center', 
+    borderWidth: 1, 
+    borderTopWidth: 0, 
+    borderColor: '#409eff', 
   },
   bottomArea: {
     height: 100, 

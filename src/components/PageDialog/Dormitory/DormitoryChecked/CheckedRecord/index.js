@@ -79,7 +79,7 @@ const CheckedRecord = ({
               {record.showDetail && <Shadow style={styles.shadowArea}>
                 <View style={styles.shadowItem}>
                   <TouchableOpacity key={recordIndex} style={[styles.shadowPressItem, record.showDetail && styles.shadowPressItem_shown]} onPress={() => recordOnPress(record)}>
-                    <Text style={styles.shadowPressItem_shownText}>{record.time}点检记录</Text>
+                    <Text style={styles.shadowPressItem_shownText}>{moment(record.date).format('YYYY-MM-DD')}点检记录</Text>
                   </TouchableOpacity>
                   <View style={styles.shadowContent}>
                     <View style={styles.shadowContent_left}>
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF'
   },
   scrollArea: {
+    maxHeight: 650,
     marginBottom: 20,
     minHeight: 200
   },

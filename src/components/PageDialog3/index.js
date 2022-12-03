@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScaleView from 'react-native-scale-view';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import { setDialogHidden } from '../../redux/features/PageDialog';
-import { closeDialog, setRightArea } from '../../redux/features/PageDialog2';
+import { setDialog2Hidden } from '../../redux/features/PageDialog2';
+import { closeDialog, setRightArea } from '../../redux/features/PageDialog3';
 
 export const DefaultTitle = ({title}) => {
   const dispatch = useDispatch();
 
-  const rightArea = useSelector((state) => state.PageDialog2.rightArea);
+  const rightArea = useSelector((state) => state.PageDialog3.rightArea);
 
   const close = () => {
     dispatch(closeDialog());
@@ -44,16 +44,15 @@ export const DefaultEmptyArea = () => (
   </View>
 );
 
-const PageDialog2 = () => {
+const PageDialog3 = () => {
   const dispatch = useDispatch();
 
-  const dialogSwitch = useSelector((state) => state.PageDialog2.showDialog);
-  const dialogContent = useSelector((state) => state.PageDialog2.dialogComponent);
-  const dialogTitle = useSelector((state) => state.PageDialog2.dialogTitle);
-  const dialog2Hidden = useSelector((state) => state.PageDialog2.dialog2Hidden);
+  const dialogSwitch = useSelector((state) => state.PageDialog3.showDialog);
+  const dialogContent = useSelector((state) => state.PageDialog3.dialogComponent);
+  const dialogTitle = useSelector((state) => state.PageDialog3.dialogTitle);
 
   useEffect(() => {
-    dispatch(setDialogHidden(dialogSwitch));
+    dispatch(setDialog2Hidden(dialogSwitch));
   }, [dialogSwitch])
 
   const close = () => {
@@ -72,7 +71,7 @@ const PageDialog2 = () => {
       onRequestClose={close}>
       <ScaleView designWidth={750}>
         <View style={styles.screen}>
-          <View style={[styles.showArea, dialog2Hidden && {opacity: 0}]}>
+          <View style={styles.showArea}>
             <DefaultTitle title={dialogTitle}/>
             {dialogContent || <DefaultEmptyArea />}
           </View>
@@ -130,4 +129,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default PageDialog2;
+export default PageDialog3;

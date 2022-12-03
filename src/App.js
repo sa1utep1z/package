@@ -13,6 +13,7 @@ import Navigator from './navigator';
 import _updateConfig from '../update.json';
 import PageDialog from './components/PageDialog';
 import PageDialog2 from './components/PageDialog2';
+import PageDialog3 from './components/PageDialog3';
 
 moment.locale('zh-cn');
 
@@ -58,6 +59,7 @@ const App = () => {
             <StatusBar />
             <PageDialog />
             <PageDialog2 />
+            <PageDialog3 />
           </Provider>
         </ToastProvider>
       </QueryClientProvider>

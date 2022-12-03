@@ -3,9 +3,15 @@ import { ScrollView, Text, View, TouchableOpacity, StyleSheet, ActivityIndicator
 import { Formik, Field } from 'formik';
 import moment from 'moment';
 import { Shadow } from 'react-native-shadow-2';
+import { useToast } from "react-native-toast-notifications";
+import { useDispatch } from "react-redux";
 
 import { DORMITORY_LEAVE_REASON } from "../../../../../utils/const";
 import SelectTimeOfFilterMore from '../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
+import DormitoryListApi from '../../../../../request/Dormitory/DormitoryListApi';
+import { SUCCESS_CODE } from '../../../../../utils/const';
+import * as PageDialog1 from "../../../../../redux/features/PageDialog";
+import * as PageDialog2 from "../../../../../redux/features/PageDialog2"
 
 let restForm;
 const initialValues = {
@@ -13,8 +19,12 @@ const initialValues = {
 };
 
 const LeaveDormitory = ({
+  memberMsg,
+  refresh
 }) => {
+  const toast = useToast();
   const scrollViewRef = useRef(null);
+  const dispatch = useDispatch();
 
   const [reasonWrong, setReasonWrong] = useState(false);
   const [selectReason, setSelectReason] = useState('');
@@ -26,7 +36,33 @@ const LeaveDormitory = ({
       setReasonWrong(true);
       return;
     }
-    console.log('提交', values);
+    if(btnLoading) return;
+    const formatValue = {
+      liveOutDate: values.leaveDate,
+      liveOnReasonType: selectReason
+    };
+    leaveConfirm(formatValue);
+  };
+
+  const leaveConfirm = async(params) => {
+    try {
+      setBtnLoading(true);
+      const res = await DormitoryListApi.leaveConfirm(params, memberMsg.id);
+      console.log('leaveConfirm --> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      toast.show('退宿成功！', {type: 'success'});
+      dispatch(PageDialog1.closeDialog());
+      dispatch(PageDialog2.closeDialog());
+      refresh && refresh();
+    } catch (error) {
+      console.log('leaveConfirm -> error', error);
+      toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    } finally{
+      setBtnLoading(false);
+    }
   };
 
   const reasonOnPress = (reason) => {
@@ -53,31 +89,31 @@ const LeaveDormitory = ({
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>姓名</Text>
                       </View>
-                      <Text style={styles.rightText}>张三</Text>
+                      <Text style={styles.rightText}>{memberMsg?.name || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>手机号</Text>
                       </View>
-                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>15390913806</Text>
+                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberMsg?.mobile || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>身份证号</Text>
                       </View>
-                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>452123123412341234</Text>
+                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberMsg?.idNo || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>入住日期</Text>
                       </View>
-                      <Text style={styles.rightText}>2022-5-23</Text>
+                      <Text style={styles.rightText}>{memberMsg.date ? moment(memberMsg.date).format('YYYY-MM-DD') : '无'}</Text>
                     </View>
                     <View style={styles.lastItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>入住类别</Text>
                       </View>
-                      <Text style={styles.rightText}>常规住宿</Text>
+                      <Text style={styles.rightText}>{memberMsg.ability === 'DORM_TEMPORARY' ? '临时住宿' : '常规住宿'}</Text>
                     </View>
                   </View>
                 </Shadow>
@@ -92,31 +128,31 @@ const LeaveDormitory = ({
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍楼栋</Text>
                       </View>
-                      <Text style={styles.rightText}>241栋</Text>
+                      <Text style={styles.rightText}>{memberMsg.building || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍分类</Text>
                       </View>
-                      <Text style={styles.rightText}>男生宿舍</Text>
+                      <Text style={styles.rightText}>{memberMsg.male ? '男生宿舍' : '女生宿舍'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍楼层</Text>
                       </View>
-                      <Text style={styles.rightText}>1F</Text>
+                      <Text style={styles.rightText}>{memberMsg.floor}F</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>房间号</Text>
                       </View>
-                      <Text style={styles.rightText}>101</Text>
+                      <Text style={styles.rightText}>{memberMsg.roomName ? `${memberMsg.roomName}号` : '无'}</Text>
                     </View>
                     <View style={styles.lastItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>床位号</Text>
                       </View>
-                      <Text style={styles.rightText}>101-1</Text>
+                      <Text style={styles.rightText}>{memberMsg.bedNo ? `${memberMsg.bedNo}号床` : '无'}</Text>
                     </View>
                   </View>
                 </Shadow>

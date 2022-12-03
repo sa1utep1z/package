@@ -93,7 +93,6 @@ const All = ({
   };
 
   const violationOnPress = async(item) => {
-    console.log('item', item);
     dispatch(setTitle('宿舍违纪详情'));
     dispatch(openDialog(<DormitoryViolationDetail item={item} />));
   };
@@ -111,18 +110,12 @@ const All = ({
   const renderItem = ({item}) => {
     return (
       <View style={styles.listStyle}>
-        <Text style={[styles.itemText, {width: 90}]} ellipsizeMode="tail">{item.name || '无'}</Text>
-        <Text style={[styles.itemText, {width: 90}]} ellipsizeMode="tail">{item.buildingName || '无'}</Text>
+        <Text style={[styles.itemText, {width: 130}]} ellipsizeMode="tail">{item.name || '无'}</Text>
+        <Text style={[styles.itemText, {width: 130}]} ellipsizeMode="tail">{item.buildingName || '无'}</Text>
         <Text style={[styles.itemText, {width: 100}]} ellipsizeMode="tail">{item.roomName || '无'}</Text>
         <Text style={[styles.itemText, {width: 100}]} ellipsizeMode="tail">{item.bedName || '无'}</Text>
         <Text style={[styles.itemText, {flex: 1, color: '#409EFF'}]} ellipsizeMode="tail">{item.date ? moment(item.date).format('YYYY-MM-DD') : '无'}</Text>
-        <Text style={[styles.itemText, {flex: 1, color: '#000', color: DORMITORY_VIOLATION_LIST_COLOR[item.result]}]} 
-          ellipsizeMode="tail">{DORMITORY_VIOLATION_LIST[item.result]}</Text>
-        <Text 
-          style={[styles.itemText, {width: 100, fontSize: 26, color: '#409EFF'}]}
-          numberOfLines={2}
-          onPress={() => violationOnPress(item)}
-          ellipsizeMode="tail">查看</Text>
+        <Text style={[styles.itemText, {width: 120, color: '#000', color: DORMITORY_VIOLATION_LIST_COLOR[item.result]}]} onPress={() => violationOnPress(item)} ellipsizeMode="tail">{DORMITORY_VIOLATION_LIST[item.result]}</Text>
       </View>
     )
   };

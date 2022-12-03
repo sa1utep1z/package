@@ -77,13 +77,14 @@ const DormitoryData = () => {
     }
   };
   
-  const roomOnPress = (room) => {
+  const roomOnPress = (room, floor) => {
     if(room.flag === 3 || room.flag === 4) {
       toast.show(`房间${room.flag === 3 ? '维修': '占用'}中！`, {type: 'warning'});
       return;
     }
+    const roomMsg = {...room, floor: floor.floorName, building: originData.buildingName};
     dispatch(setTitle('房间住宿信息'));
-    dispatch(openDialog(<RoomData navigation={navigation} room={room} />));
+    dispatch(openDialog(<RoomData navigation={navigation} room={roomMsg} refresh={refresh} />));
   };
 
   const filterFun = (values) => {
@@ -95,6 +96,8 @@ const DormitoryData = () => {
     };
     setSearchContent(search);
   };
+
+  const refresh = () => setSearchContent({...searchContent});
 
   return (
     <View style={styles.screen}>
@@ -147,7 +150,7 @@ const DormitoryData = () => {
                   </View>
                   <View style={styles.floorArea_right}>
                     {floorList.roomList.map(room => <View key={room.roomId} style={styles.roomArea}>
-                      <TouchableOpacity activeOpacity={(room.flag === 3 || room.flag === 4) ? 1 : 0.2} style={[styles.roomTouchArea, {backgroundColor: ROOM_TYPE_COLOR[room.flag], borderColor: ROOM_TYPE_COLOR[room.flag]}]} onPress={()=>roomOnPress(room)}>
+                      <TouchableOpacity activeOpacity={(room.flag === 3 || room.flag === 4) ? 1 : 0.2} style={[styles.roomTouchArea, {backgroundColor: ROOM_TYPE_COLOR[room.flag], borderColor: ROOM_TYPE_COLOR[room.flag]}]} onPress={()=>roomOnPress(room, floorList)}>
                         {room.flag === 3 && <MaterialCommunityIcons name="tools" size={24} color="#333333" style={styles.icon} />}
                         <Text style={styles.roomNum}>{room.name}</Text>
                         <View style={{flex: 1}}>

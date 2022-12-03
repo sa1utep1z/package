@@ -29,7 +29,7 @@ const All = ({
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const [searchContent, setSearchContent] = useState({result: '', ...firstPage});
+  const [searchContent, setSearchContent] = useState({status: '', ...firstPage});
   const [showList, setShowList] = useState([]);
   const [originData, setOriginData] = useState({});
   const [nextPage, setNextPage] = useState(false);
@@ -45,7 +45,7 @@ const All = ({
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});
-      getTypeList({...filterParams, result: ''});
+      getTypeList({...filterParams});
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent, filterParams, index])
@@ -88,7 +88,7 @@ const All = ({
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
-      //TODO
+      changeRoute && changeRoute(res.data);
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });

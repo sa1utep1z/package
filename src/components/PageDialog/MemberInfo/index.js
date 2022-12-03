@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, TouchableOpacity, Linking } from 'react-native';
 import { Text } from '@rneui/themed';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import { useDispatch } from "react-redux";
 
-import EmptyArea from '../../EmptyArea';
-import { CHANEL_SOURCE_LIST, MEMBERS_STATUS, WAY_TO_GO, WAY_TO_GO_NAME, CHANEL_SOURCE_NAME, FAKE_MEMBER_INFO } from '../../../utils/const';
+import { MEMBERS_STATUS, WAY_TO_GO_NAME, CHANEL_SOURCE_NAME } from '../../../utils/const';
 import { closeDialog } from "../../../redux/features/PageDialog";
-import { deepCopy } from '../../../utils';
 import WaterMark from '../../WaterMark';
 
 const MemberInfo = ({
@@ -16,7 +14,10 @@ const MemberInfo = ({
 }) => {
   const dispatch = useDispatch();
 
-  const callPhone = () => Linking.openURL(`tel:${memberInfoList.mobile}`);
+  const callPhone = () => {
+    if(!memberInfoList.mobile) return;
+    Linking.openURL(`tel:${memberInfoList.mobile}`);
+  };
 
   const confirmOnPress = () => dispatch(closeDialog());
 
@@ -35,7 +36,7 @@ const MemberInfo = ({
           <Text style={styles.titleText}>手机号：</Text>
           <TouchableOpacity style={styles.phoneArea} onPress={callPhone}>
             <Text selectable style={styles.phoneText}>{memberInfoList.mobile || '无'}</Text>
-            <Entypo name='phone' size={32} color='#409EFF' />
+            {memberInfoList.mobile && <Entypo name='phone' size={32} color='#409EFF' />}
           </TouchableOpacity>
         </View>
         <View style={styles.jobNameArea}>

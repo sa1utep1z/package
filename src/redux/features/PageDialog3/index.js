@@ -1,10 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const PageDialog2 = createSlice({
-  name: 'PageDialog2',
+export const PageDialog3 = createSlice({
+  name: 'PageDialog3',
   initialState: {
     showDialog: false,
-    dialog2Hidden: false,
     dialogTitle: '',
     dialogComponent: '',
     rightArea: {
@@ -25,13 +24,10 @@ export const PageDialog2 = createSlice({
     },
     setRightArea: (state, {payload}) => {
       state.rightArea = payload;
-    },
-    setDialog2Hidden: (state, {payload}) => {
-      state.dialog2Hidden = payload;
     }
   }
 });
 
-export const { openDialog, closeDialog, setTitle, setRightArea, setDialog2Hidden } = PageDialog2.actions;
+export const { openDialog, closeDialog, setTitle, setRightArea } = PageDialog3.actions;
 
-export default PageDialog2.reducer;
+export default PageDialog3.reducer;

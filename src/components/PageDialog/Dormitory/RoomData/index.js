@@ -1,38 +1,35 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Linking, Text } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Text } from 'react-native';
 import { useDispatch } from "react-redux";
+import { useToast } from 'react-native-toast-notifications';
+import Foundation from 'react-native-vector-icons/Foundation';
 
+import DormitoryDataListApi from "../../../../request/Dormitory/DormitoryDataListApi";
 import { closeDialog } from "../../../../redux/features/PageDialog";
 import * as PageDialog2 from "../../../../redux/features/PageDialog2";
 import AdjustDormitory from './AdjustDormitory';
 import LeaveDormitory from './LeaveDormitory';
+import { SUCCESS_CODE } from '../../../../utils/const';
 import NAVIGATION_KEYS from '../../../../navigator/key';
+import moment from 'moment';
 
 const RoomData = ({
   navigation,
-  room
+  room,
+  refresh,
 }) => {
   const titleScrollViewRef = useRef(null);
+  const toast = useToast();
 
   const dispatch = useDispatch();
 
   const [roomData, setRoomData] = useState([]);
   const [contentScrollViewX, setContentScrollViewX] = useState(0);
   const [showTitle, setShowTitle] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
-    let originData = [];
-    for(let i = 0; i < 20; i++){
-      originData.push({
-        name: `张${i+1}`,
-        date: `2022-07-${i+1}`,
-        bedNum: i + 1,
-        company: i % 2 ? '龙华AC' : '观澜AB',
-        belong: '哈哈',
-        store: 'XXXX店'
-      })
-    }
-    setRoomData(originData);
+    getRoomMemberList(room.roomId);
   },[])
 
   useEffect(()=>{
@@ -40,12 +37,36 @@ const RoomData = ({
       titleScrollViewRef && titleScrollViewRef?.current?.scrollTo({x: contentScrollViewX, y: 0, animated: false, duration: 0});
     }
   },[showTitle]);
+  
+  const getRoomMemberList = async(roomId) => {
+    try {
+      setLoading(true);
+      const res = await DormitoryDataListApi.getRoomMemberList(roomId);
+      console.log('getRoomMemberList -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setRoomData(res.data);
+    } catch (error) {
+      console.log('getRoomMemberList -> error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const cancelOnPress = () => dispatch(closeDialog());
 
   const createLiving = () => {
+    if(room.flag === 2 || room.flag === 3 || room.flag === 4){
+      toast.show('该房间没有空余床位，无法新增！', {type: 'warning'});
+      return;      
+    }
     navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY, {
-      type: 'fromRoom'
+      type: 'fromRoom',
+      roomMessage: room,
+      refresh: refresh
     });
     dispatch(closeDialog());
   };
@@ -56,64 +77,80 @@ const RoomData = ({
 
   const onMomentumScrollEnd = ({nativeEvent: {contentOffset}}) => setContentScrollViewX(contentOffset.x);
 
-  const adjustDormitoryOnPress = () => {
+  const adjustDormitoryOnPress = (roomMsg) => {
+    const memberMsg = {
+      ...room,
+      ...roomMsg,
+      roomName: room.name,
+    };
     dispatch(PageDialog2.setTitle('调迁宿舍'));
-    dispatch(PageDialog2.openDialog(<AdjustDormitory />));
+    dispatch(PageDialog2.openDialog(<AdjustDormitory memberMsg={memberMsg} refresh={refresh} />));
   };
 
-  const leaveDormitoryOnPress = () => {
+  const leaveDormitoryOnPress = (roomMsg) => {
+    const memberMsg = {
+      ...room,
+      ...roomMsg,
+      roomName: room.name,
+    };
     dispatch(PageDialog2.setTitle('退宿'));
-    dispatch(PageDialog2.openDialog(<LeaveDormitory />));
+    dispatch(PageDialog2.openDialog(<LeaveDormitory memberMsg={memberMsg} refresh={refresh} />));
   };
 
   return (
     <View style={styles.totalArea}>
       <View style={styles.roomInfo}>
-        <Text style={styles.roomInfo_left}>楼栋：241栋</Text> 
+        <Text style={styles.roomInfo_left}>楼栋：{room.building}</Text> 
         <Text style={styles.roomInfo_left}>楼层：{room.floor}F</Text>   
-        <Text style={styles.roomInfo_right}>房间：{room.roomName}</Text> 
+        <Text style={styles.roomInfo_right}>房间：{room.name}</Text> 
       </View>
-      <View style={styles.titleArea}>
-        <Text Text style={styles.nameText}>姓名</Text>
-        <ScrollView ref={titleScrollViewRef} scrollEnabled={false} horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.titleText, {width: 180}]}>入住日期</Text>
-            <Text style={[styles.titleText, {width: 80}]}>床位</Text>
-            <Text style={[styles.titleText, {width: 150}]}>企业</Text>
-            <Text style={[styles.titleText, {width: 120}]}>归属</Text>
-            <Text style={[styles.titleText, {width: 120}]}>门店</Text>
-            <Text style={[styles.titleText, {width: 220, borderRightWidth: 0}]}>操作</Text>
-          </View>
-        </ScrollView>
-      </View>
-      <ScrollView style={styles.contentScrollView} onScroll={onVerticalScroll}>
-        <View style={{flexDirection: 'row'}}>
-          <View style={styles.contentScrollView_topArea}>
-            {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.topArea_titleArea, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
-              <Text style={styles.topArea_titleText}>{room.name}</Text>
-            </View>)}
-          </View>
-          <ScrollView horizontal onScroll={onHorizontalScroll} onMomentumScrollEnd={onMomentumScrollEnd}>
-            <View>
-              {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.contentScrollView_item, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
-                <Text style={[styles.contentScrollView_itemText, {width: 180}]}>{room.date}</Text>
-                <Text style={[styles.contentScrollView_itemText, {width: 80}]}>{room.bedNum}</Text>
-                <Text style={[styles.contentScrollView_itemText, {width: 150}]}>{room.company}</Text>
-                <Text style={[styles.contentScrollView_itemText, {width: 120}]}>{room.belong}</Text>
-                <Text style={[styles.contentScrollView_itemText, {width: 120}]}>{room.store}</Text>
-                <View style={styles.operation}>
-                  <TouchableOpacity style={styles.operation_leftArea} onPress={adjustDormitoryOnPress}>
-                    <Text style={[styles.operation_text, {color: '#409EFF'}]}>调迁宿舍</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{flex: 1}} onPress={leaveDormitoryOnPress}>
-                    <Text style={[styles.operation_text, {color: 'red'}]}>退宿</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>)}
+      {loading && <ActivityIndicator style={{marginBottom: 10}} size={32} color="#409EFF" />}
+      {roomData.length ? <>
+        <View style={styles.titleArea}>
+          <Text Text style={styles.nameText}>姓名</Text>
+          <ScrollView ref={titleScrollViewRef} scrollEnabled={false} horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[styles.titleText, {width: 180}]}>入住日期</Text>
+              <Text style={[styles.titleText, {width: 80}]}>床位</Text>
+              <Text style={[styles.titleText, {width: 180}]}>企业</Text>
+              <Text style={[styles.titleText, {width: 140}]}>归属</Text>
+              <Text style={[styles.titleText, {width: 140}]}>门店</Text>
+              <Text style={[styles.titleText, {width: 220, borderRightWidth: 0}]}>操作</Text>
             </View>
           </ScrollView>
         </View>
-      </ScrollView>
+        <ScrollView style={styles.contentScrollView} onScroll={onVerticalScroll}>
+          <View style={{flexDirection: 'row'}}>
+            <View style={styles.contentScrollView_topArea}>
+              {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.topArea_titleArea, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
+                <Text style={styles.topArea_titleText}>{room.name || '无'}</Text>
+              </View>)}
+            </View>
+            <ScrollView horizontal onScroll={onHorizontalScroll} onMomentumScrollEnd={onMomentumScrollEnd}>
+              <View>
+                {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.contentScrollView_item, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
+                  <Text style={[styles.contentScrollView_itemText, {width: 180}]}>{room.date ? moment(room.date).format('YYYY-MM-DD') : '无'}</Text>
+                  <Text style={[styles.contentScrollView_itemText, {width: 80}]}>{room.bedNo || '无'}</Text>
+                  <Text style={[styles.contentScrollView_itemText, {width: 180}]}>{room.shortCompanyName || '无'}</Text>
+                  <Text style={[styles.contentScrollView_itemText, {width: 140}]}>{room.recruiterName || room.supplierName || '无'}</Text>
+                  <Text style={[styles.contentScrollView_itemText, {width: 140}]}>{room.storeName || '无'}</Text>
+                  <View style={styles.operation}>
+                    <TouchableOpacity style={styles.operation_leftArea} onPress={() => adjustDormitoryOnPress(room)}>
+                      <Text style={[styles.operation_text, {color: '#409EFF'}]}>调迁宿舍</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{flex: 1}} onPress={() => leaveDormitoryOnPress(room)}>
+                      <Text style={[styles.operation_text, {color: 'red'}]}>退宿</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>)}
+              </View>
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </> : <View style={styles.emptyArea}>
+        <Foundation name="page-remove" size={72} color="#999999" />
+        <Text style={styles.emptyText}>暂无数据</Text>
+      </View>}
       <View style={styles.bottomArea}>
         <View style={styles.leftArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={cancelOnPress}>
@@ -122,7 +159,7 @@ const RoomData = ({
         </View>
         <View style={styles.rightArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={createLiving}>
-            <Text style={styles.confirmText}>新增住宿</Text>
+            <Text style={[styles.confirmText, room.flag === 2 && {color: '#999999'}, room.flag === 3 && {color: '#999999'}, room.flag === 4 && {color: '#999999'}]}>新增住宿</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -138,7 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ECF5FF'
   },
   totalArea: {
-    minHeight: 500,
+    minHeight: 200,
     maxHeight: 900
   },
   roomInfo: {
@@ -259,6 +296,22 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     textAlignVertical: 'center'
   },
+  emptyArea: {
+    height: 250, 
+    borderWidth: 1, 
+    borderColor: '#EFEFEF', 
+    marginHorizontal: 20, 
+    marginBottom: 20, 
+    borderRadius: 10, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  emptyText: {
+    fontSize: 26, 
+    textAlign: 'center', 
+    color: '#999999', 
+    marginTop: 5
+  },
   bottomArea: {
     height: 100, 
     flexDirection: 'row'
@@ -281,6 +334,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     fontSize: 28, 
+    color: '#999999'
   },
   confirmText: {
     fontSize: 28, 

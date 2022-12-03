@@ -23,8 +23,10 @@ const DormitoryListApi = {
   adjustDormitory: async(params, dormLiveId) => await httpRequest.post(`/admin/app/dormLive/${dormLiveId}/transfer`, params), 
   //批量入住；
   batchLiveIn: async(params) => await httpRequest.post(`/admin/app/dormLive/batch/liveIn`, params), 
-  //批量退宿
+  //批量退宿；
   batchLiveOut: async(params) => await httpRequest.post(`/admin/app/dormLive/batch/liveOut`, params), 
+  //根据房间id查询剩余床位；
+  queryRestBedList: async(roomId) => await httpRequest.get(`/common/dorm/${roomId}/roomBed/forSelect`),
 };
 
 export default DormitoryListApi;

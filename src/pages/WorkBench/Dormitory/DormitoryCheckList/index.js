@@ -10,6 +10,7 @@ import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormit
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
 import NAVIGATION_KEYS from '../../../../navigator/key';
+import { deepCopy } from '../../../../utils';
 
 import All from './All';
 import Warn from './Warn';
@@ -35,12 +36,14 @@ const DormitoryCheckList = ({
   const [filterParams, setFilterParams] = useState({});
   const [routes, setRoutes] = useState([
     { key: 'total', title: '全部', number: 0 },
-    { key: 'DORM_DISCIPLINE_RESULT_WARN', title: '待点检', number: 0 },
-    { key: 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN', title: '已点检', number: 0 },
+    { key: 'DORM_CHECK_PENDING', title: '待点检', number: 0 },
+    { key: 'DORM_CHECK_OK', title: '已点检', number: 0 },
   ]);
 
   const changeRoute = values => {
-    console.log('changeRoute -> values', values);
+    const copyList = deepCopy(routes);
+    copyList.forEach(route => route.number = (values.data.hasOwnProperty(route.key) ? values.data[route.key] : 0));
+    setRoutes(copyList);
   };
 
   const addProperty = () => navigation.navigate(NAVIGATION_KEYS.ADD_PROPERTY);
@@ -49,9 +52,9 @@ const DormitoryCheckList = ({
     switch(route.key){
       case 'total':
         return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
-      case 'DORM_DISCIPLINE_RESULT_WARN':
+      case 'DORM_CHECK_PENDING':
         return <Warn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
-      case 'DORM_DISCIPLINE_RESULT_SECONDARY_WARN':
+      case 'DORM_CHECK_OK':
         return <SecondWarn index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
     }
   };

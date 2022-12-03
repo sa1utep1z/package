@@ -26,9 +26,6 @@ const validationSchema = Yup.object().shape({
   memberIdCard: Yup.string().required('请输入身份证号'),
   memberFrom: Yup.string().required('请输入籍贯'),
   dormitoryType: Yup.array().min(1, '请选择入住类别'),
-  buildingNum: Yup.array().min(1, '请选择宿舍楼栋'),
-  floorNum: Yup.array().min(1, '请选择楼层'),
-  roomNum: Yup.array().min(1, '请选择房间号'),
   bedNum: Yup.array().min(1, '请选择床位号'),
   liveInDate: Yup.string().required('请选择入住日期'),
 });
@@ -64,6 +61,26 @@ const CreateDormitory = ({
   const [signUpInfo, setSignUpInfo] = useState({});
   const [dormitoryMsg, setDormitoryMsg] = useState([]);
   const [signUpNotice, setSignUpNotice] = useState('请输入身份证号或通过【OCR】拍照读取会员报名信息');
+  const [restBedMsg, setRestBedMsg] = useState([]); //在态势图中跳转新增住宿所查询到床位信息；
+  const [restBedList, setRestBedList] = useState([]); //在态势图中跳转新增住宿所查询到的剩余床位列表；
+  const [queryRestBedListLoading, setQueryRestBedListLoading] = useState(false);
+
+  useEffect(()=>{
+    if(params?.type === 'fromRoom'){
+      const roomMsg = params.roomMessage;
+      if(roomMsg.male){
+        restForm.setFieldValue('maleOrFemale', [{label: '男生宿舍', value: 'DORM_MALE'}]);
+      }else{
+        restForm.setFieldValue('maleOrFemale', [{label: '女生宿舍', value: 'DORM_FEMALE'}]);
+      }
+      if(roomMsg.ability === 'DORM_TEMPORARY'){
+        restForm.setFieldValue('dormitoryType', [{label: '临时住宿', value: 'DORM_TEMPORARY'}]);
+      }else{
+        restForm.setFieldValue('dormitoryType', [{label: '常规住宿', value: 'DORM_ROUTINE'}]);
+      }
+      queryRestBedList(roomMsg.roomId);
+    }
+  },[params])
 
   const onSubmit = (values) => {
     const formatFieldValue = {
@@ -79,20 +96,51 @@ const CreateDormitory = ({
     addDormitoryInfo(formatFieldValue);
   };
 
-  const addDormitoryInfo = async(params) => {
-    setBottomButtonLoading(true);
+  const queryRestBedList = async(roomId) => {
     try {
-      console.log('addDormitoryInfo -> params', params);
-      const res = await DormitoryListApi.addDormitoryInfo(params);
+      setQueryRestBedListLoading(true);
+      const res = await DormitoryListApi.queryRestBedList(roomId);
+      console.log('queryRestBedList -> res', res);
+      if(res?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      setRestBedMsg(res.data);
+      if(res.data.beds.length){
+        res.data.beds.map(item => {
+          item.value = item.roomBedId;
+          item.label = item.bedNo;
+        });
+        setRestBedList(res.data.beds);
+      }
+    } catch (error) {
+      console.log('queryRestBedList -> error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setQueryRestBedListLoading(false);
+    }
+  };
+
+  const addDormitoryInfo = async(formatParams) => {
+    try {
+      setBottomButtonLoading(true);
+      console.log('addDormitoryInfo -> formatParams', formatParams);
+      const res = await DormitoryListApi.addDormitoryInfo(formatParams);
       console.log('addDormitoryInfo -> res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`${res?.msg}`, {type: 'danger'});
         return;
       }
       toast.show(`新增住宿成功！`, { type: 'success' });
-      navigation.navigate(NAVIGATION_KEYS.DORMITORY_LIST, {
-        refresh: true
-      });
+      if(params?.type === 'fromRoom'){
+        navigation.goBack();
+        params.refresh && params.refresh();
+        return;
+      }else{
+        navigation.navigate(NAVIGATION_KEYS.DORMITORY_LIST, {
+          refresh: true
+        });
+      }
     } catch (error) {
       console.log('error', error)
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -130,7 +178,7 @@ const CreateDormitory = ({
       res.data.userName && restForm.setFieldValue('memberName', res.data.userName);
       res.data.mobile && restForm.setFieldValue('memberPhone', res.data.mobile);
     } catch (error) {
-      console.log('error', error)
+      console.log('queryMemberFlowId -> error', error);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     } finally {
       setSignUpInfoLoading(false);
@@ -337,57 +385,108 @@ const CreateDormitory = ({
                         name="dormitoryType"
                         label="入住类别"
                         isRequire
+                        canSelect={!params?.type}
                         labelStyle={{width: 160}}
                         radioList={DORMITORY_LIVE_TYPE}
                         component={RadioSelect}
                       />
-                      {dormitoryInfoLoading ? <ActivityIndicator style={{marginBottom: 20}} size={32} color="#409EFF" /> : <>
-                        {signUpInfo?.signUpType ? rest.values.dormitoryType.length ? 
-                          <>
-                            <Field
-                              name="buildingNum"
-                              label="宿舍楼栋"
-                              isRequire
-                              canSearch={false}
-                              canSelect={!params?.type}
-                              labelStyle={{width: 160}}
-                              selectList={dormitoryMsg}
-                              component={SingleSelect}
-                            />
-                            <Field
-                              name="floorNum"
-                              label="楼层"
-                              emptyText='请选择宿舍楼栋'
-                              isRequire
-                              canSearch={false}
-                              canSelect={!params?.type}
-                              labelStyle={{width: 160}}
-                              selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
-                              component={SingleSelect}
-                            />
-                            <Field
-                              name="roomNum"
-                              label="房间号"
-                              emptyText='请选择楼层'
-                              isRequire
-                              canSearch={false}
-                              labelStyle={{width: 160}}
-                              canSelect={!params?.type}
-                              selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
-                              component={SingleSelect}
-                            />
-                            <Field
-                              name="bedNum"
-                              label="床位号"
-                              emptyText='请选择房间号'
-                              isRequire
-                              canSearch={false}
-                              labelStyle={{width: 160}}
-                              canSelect={!params?.type}
-                              selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
-                              component={SingleSelect}
-                            />
-                          </> : <Text style={[styles.noticeText, {marginBottom: 20}]}>请选择入住类别</Text> : <Text style={[styles.noticeText, {marginBottom: 20}, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice.includes('！') ? '请输入正确的会员身份证号' : '请输入会员身份证号'}</Text>}
+                      {params?.type !== 'fromRoom' ? <>
+                        {dormitoryInfoLoading ? <ActivityIndicator style={{marginBottom: 20}} size={32} color="#409EFF" /> : <>
+                          {signUpInfo?.signUpType ? rest.values.dormitoryType.length ? 
+                            <>
+                              <Field
+                                name="buildingNum"
+                                label="宿舍楼栋"
+                                isRequire
+                                canSearch={false}
+                                canSelect={!params?.type}
+                                labelStyle={{width: 160}}
+                                selectList={dormitoryMsg}
+                                component={SingleSelect}
+                                validate={value => {
+                                  let errorMsg;
+                                  if(!value.length) errorMsg = '请选择宿舍楼栋';
+                                  return errorMsg;
+                                }}
+                              />
+                              <Field
+                                name="floorNum"
+                                label="楼层"
+                                emptyText='请选择宿舍楼栋'
+                                isRequire
+                                canSearch={false}
+                                canSelect={!params?.type}
+                                labelStyle={{width: 160}}
+                                selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
+                                component={SingleSelect}
+                                validate={value => {
+                                  let errorMsg;
+                                  if(!value.length) errorMsg = '请选择楼层';
+                                  return errorMsg;
+                                }}
+                              />
+                              <Field
+                                name="roomNum"
+                                label="房间号"
+                                emptyText='请选择楼层'
+                                isRequire
+                                canSearch={false}
+                                labelStyle={{width: 160}}
+                                canSelect={!params?.type}
+                                selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
+                                component={SingleSelect}
+                                validate={value => {
+                                  let errorMsg;
+                                  if(!value.length) errorMsg = '请选择房间号';
+                                  return errorMsg;
+                                }}
+                              />
+                              <Field
+                                name="bedNum"
+                                label="床位号"
+                                emptyText='请选择房间号'
+                                isRequire
+                                canSearch={false}
+                                labelStyle={{width: 160}}
+                                canSelect={!params?.type}
+                                selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
+                                component={SingleSelect}
+                              />
+                            </> : <Text style={[styles.noticeText, {marginBottom: 20}]}>请选择入住类别</Text> : <Text style={[styles.noticeText, {marginBottom: 20}, signUpNotice.includes('！') && {color: 'red'}]}>{signUpNotice.includes('！') ? '请输入正确的会员身份证号' : '请输入会员身份证号'}</Text>}
+                        </>}
+                      </> : <>
+                        {!queryRestBedListLoading ? <>
+                          <View style={styles.fakeItemArea}>
+                            <Text style={styles.fakeItemArea_star}>*</Text>
+                            <Text style={styles.fakeItemArea_title}>宿舍楼栋：</Text>
+                            <TouchableOpacity style={styles.fakeItemArea_rightArea} onPress={() => toast.show('无法修改原有楼栋！', {type: 'warning'})}>
+                              <Text style={{fontSize: 26, color: '#999999'}}>{restBedMsg.roomBuildingName}</Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.fakeItemArea}>
+                            <Text style={styles.fakeItemArea_star}>*</Text>
+                            <Text style={styles.fakeItemArea_title}>楼层：</Text>
+                            <TouchableOpacity style={styles.fakeItemArea_rightArea} onPress={() => toast.show('无法修改原有楼层！', {type: 'warning'})}>
+                              <Text style={{fontSize: 26, color: '#999999'}}>{restBedMsg.roomFloorIndex}F</Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.fakeItemArea}>
+                            <Text style={styles.fakeItemArea_star}>*</Text>
+                            <Text style={styles.fakeItemArea_title}>房间号：</Text>
+                            <TouchableOpacity style={styles.fakeItemArea_rightArea} onPress={() => toast.show('无法修改原有房间号！', {type: 'warning'})}>
+                              <Text style={{fontSize: 26, color: '#999999'}}>{restBedMsg.roomNo}</Text>
+                            </TouchableOpacity>
+                          </View>
+                          <Field
+                            name="bedNum"
+                            label="床位号"
+                            isRequire
+                            canSearch={false}
+                            labelStyle={{width: 160}}
+                            selectList={restBedList}
+                            component={SingleSelect}
+                          />
+                        </> : <ActivityIndicator style={{marginBottom: 20}} size={32} color="#409EFF" />}
                       </>}
                       <Field
                         name="liveInDate"
@@ -483,6 +582,29 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     padding: 20,
     paddingBottom: 0
+  },
+  fakeItemArea: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 20
+  },
+  fakeItemArea_star: {
+    fontSize: 28, 
+    color: 'red'
+  },
+  fakeItemArea_title: {
+    width: 149, 
+    fontSize: 28, 
+    color: '#333333'
+  },
+  fakeItemArea_rightArea: {
+    flex: 1, 
+    height: 60, 
+    borderWidth: 2, 
+    borderColor: '#E5E5E5', 
+    borderRadius: 6, 
+    paddingHorizontal: 19,
+    justifyContent: 'center'
   },
   lineArea: {
     height: 60, 

@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { deepCopy } from "../../../utils";
 import { closeDialog } from "../../../redux/features/PageDialog";
 import * as PageDialog2 from "../../../redux/features/PageDialog2";
-import * as PageDialog3 from "../../../redux/features/PageDialog3";
 
 const FlattListItem = ({item, pressItem, isLastIndex}) => {
   const onChange = useCallback(() => pressItem(item),[item]);
@@ -35,7 +34,6 @@ const SingleSelectList = ({
   confirm,
   canSearch = true, //是否可以搜索（default: true）；
   isDialog2 = false, //判定是不是二层弹窗，如果是，则没有底部按钮； 
-  isDialog3 = false, //判定是不是三层弹窗，如果是，则没有底部按钮； 
 }) => {
   const dispatch = useDispatch();
 
@@ -62,11 +60,6 @@ const SingleSelectList = ({
     if(isDialog2){
       confirm(item);
       dispatch(PageDialog2.closeDialog());
-      return;
-    }
-    if(isDialog3){
-      confirm(item);
-      dispatch(PageDialog3.closeDialog());
       return;
     }
     if(inputValue.length){
@@ -162,7 +155,7 @@ const SingleSelectList = ({
           </View>}
         />
       </View>
-      {!isDialog2 && !isDialog3 && <View style={styles.bottomArea}>
+      {!isDialog2 && <View style={styles.bottomArea}>
         <View style={styles.leftArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
             <Text style={styles.closeText}>取消</Text>

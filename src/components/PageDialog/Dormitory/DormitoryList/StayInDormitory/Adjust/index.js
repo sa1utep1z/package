@@ -46,7 +46,6 @@ const Adjust = ({
     }else{
       getTemporaryDormitoryList(); //获取临时宿舍列表
     }
-    console.log('dormitoryInfo', dormitoryInfo);
   },[dormitoryInfo])
 
   const getNormalDormitoryList = async() => {
