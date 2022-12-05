@@ -11,9 +11,6 @@ import { DORMITORY_LEAVE_REASON } from "../../../../../../utils/const";
 import SelectTimeOfFilterMore from '../../../../../../components/HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
 
 let restForm;
-const validationSchema = Yup.object().shape({
-  stayDate: Yup.string().required('请输入入住日期'),
-});
 const initialValues = {
   stayDate: '',
   liveExpireDate: '',
@@ -22,7 +19,7 @@ const initialValues = {
 
 const OperateDialog = ({
   selectIndex,
-  confirm
+  confirm,
 }) => {
   const dispatch = useDispatch();
 
@@ -53,7 +50,6 @@ const OperateDialog = ({
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
       onSubmit={onSubmit}>
       {({...rest}) => {
         restForm = rest;
@@ -73,13 +69,13 @@ const OperateDialog = ({
                   </TouchableOpacity>
                 </View>
               </View>
-              <Field 
+              {selectIndex === 1 && <Field 
                 name="stayDate" 
                 label="入住日期" 
                 startLimit={moment().format('YYYY-MM-DD')}
                 endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
                 component={SelectTimeOfFilterMore} 
-              />
+              />}
               {selectItem === 'DORM_TEMPORARY' && 
               <Field 
                 name="liveExpireDate" 

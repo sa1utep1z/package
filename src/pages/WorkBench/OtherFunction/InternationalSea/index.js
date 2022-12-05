@@ -61,14 +61,12 @@ const InternationalSea = () => {
       confirmOnPress: () => receiveOnPress(item)
     });
   };
-  console.log('isLoading', isLoading) ;
   const refreshControl = (
     <RefreshControl
       refreshing={isLoading}
-      progressBackgroundColor="rgba(0,0,0,0)"
-      colors={['#409EFF', 'red', 'green', 'black']}
       progressViewOffset={50}
-      onRefresh={() => refetch()} 
+      colors={['#409eff']}
+      onRefresh={refetch} 
     />
   );
 

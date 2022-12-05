@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from "react";
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Shadow } from 'react-native-shadow-2';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
+import Foundation from 'react-native-vector-icons/Foundation';
+import moment from "moment";
 
 import { deepCopy } from '../../../../../utils';
 import CheckedDetail from "../CheckedDetail";
@@ -12,7 +13,6 @@ import { SUCCESS_CODE } from '../../../../../utils/const';
 import { closeDialog } from "../../../../../redux/features/PageDialog";
 import * as PageDialog2 from "../../../../../redux/features/PageDialog2";
 import DormitoryCheckListApi from "../../../../../request/Dormitory/DormitoryCheckListApi";
-import moment from "moment";
 
 const CheckedRecord = ({
   item
@@ -21,6 +21,7 @@ const CheckedRecord = ({
   const dispatch = useDispatch();
 
   const [recordLists, setRecordLists] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
     queryCheckedRecord(item.roomId);
@@ -28,6 +29,7 @@ const CheckedRecord = ({
 
   const queryCheckedRecord = async(id) => {
     try {
+      setLoading(true);
       const res = await DormitoryCheckListApi.queryCheckedRecord(id);
       console.log('queryCheckedRecord -> res', res);
       if(res?.code !== SUCCESS_CODE){
@@ -39,6 +41,8 @@ const CheckedRecord = ({
     } catch (error) {
       console.log('queryCheckedRecord -> error', error);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,6 +74,7 @@ const CheckedRecord = ({
           </View>
         </View>
         <ScrollView style={styles.scrollArea}>
+          {loading && <ActivityIndicator style={{marginBottom: 10}} size={32} color='#409EFF' />}
           {recordLists.length ? <>
             {recordLists.map((record, recordIndex) => (
             <View style={styles.scrollView} key={recordIndex}>
@@ -95,7 +100,10 @@ const CheckedRecord = ({
               </Shadow>}
             </View>
           ))}
-          </> : <Text style={{fontSize: 28, color: '#999999', textAlign: 'center', textAlignVertical: 'center', height: 200}}>暂无记录</Text>}
+          </> : <View style={styles.emptyArea}>
+            <Foundation style={{marginBottom: 10}} name="page-remove" size={72} color="#999999" />
+            <Text style={styles.emptyText}>暂无记录</Text>  
+          </View>}
         </ScrollView>
       </View>
       <View style={styles.bottomArea}>
@@ -135,14 +143,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8
   },
   topTitle_bottomArea: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    minHeight: 60
   },
   bottomArea_text: {
     flex: 1, 
     fontSize: 24, 
     color: '#FFFFFF', 
     textAlign: 'center', 
-    paddingVertical: 6
+    textAlignVertical: 'center',
+    padding: 6,
   },
   rightBorder: {
     borderRightWidth: 1,
@@ -150,8 +160,23 @@ const styles = StyleSheet.create({
   },
   scrollArea: {
     maxHeight: 650,
-    marginBottom: 20,
-    minHeight: 200
+    marginBottom: 20
+  },
+  emptyArea: {
+    height: 200, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    borderWidth: 1, 
+    borderColor: '#EFEFEF', 
+    borderRadius: 12, 
+    marginHorizontal: 30, 
+    marginBottom: 10
+  },
+  emptyText: {
+    fontSize: 28, 
+    color: '#999999', 
+    textAlign: 'center', 
+    textAlignVertical: 'center'
   },
   scrollView: {
     marginHorizontal: 30, 

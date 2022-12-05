@@ -190,7 +190,7 @@ const Living = ({
             <Text 
             style={[styles.itemText, {fontSize: 24}]}
             numberOfLines={2}
-            ellipsizeMode="tail">{item.liveInType === 'DORM-MALE' ? '男' : '女'}-{item.bedNo}</Text>
+            ellipsizeMode="tail">{item.roomNo}-{item.bedNo}</Text>
         </View>
         <Text 
           style={[styles.itemText, {fontSize: 24}]}

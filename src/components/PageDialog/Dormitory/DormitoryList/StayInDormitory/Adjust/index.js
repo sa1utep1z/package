@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useRef, useImperativeHandle, forwardRef} from "react";
-import { ScrollView, Text, View, StyleSheet } from "react-native";
+import { ScrollView, Text, View, StyleSheet, Linking, TouchableOpacity } from "react-native";
 import { Shadow } from 'react-native-shadow-2';
 import { Formik, Field } from 'formik';
 import moment from "moment";
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import SelectTimeOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
 import SelectItemOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectItemOfFilterMore';
@@ -193,6 +194,11 @@ const Adjust = ({
 
   const selectOtherFuncOnStay = (type, date) => restForm.setFieldValue('leaveDate', moment(date).subtract(1, 'd').format('YYYY-MM-DD'));
 
+  const callPhone = () => {
+    if(!dormitoryInfo.mobile) return;
+    Linking.openURL(`tel:${dormitoryInfo.mobile}`);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -200,217 +206,229 @@ const Adjust = ({
       {({...rest}) => {
         restForm = rest;
         return (
-          <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-            <View style={{padding: 20, paddingBottom: 0}}>
+          <>
+            <View style={{padding: 20, paddingLeft: 30, paddingBottom: 0}}>
               <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName}</Text>
-              <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>{dormitoryInfo.mobile}</Text></Text>
+              <TouchableOpacity style={{flexDirection: 'row'}} onPress={callPhone}>
+                <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={dormitoryInfo.mobile && styles.blueText}>{dormitoryInfo.mobile || '无'}</Text></Text>
+                {dormitoryInfo.mobile && <Entypo name='phone' size={32} color='#409EFF'/>}
+              </TouchableOpacity>
               <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo}</Text></Text>
-              <Text style={[styles.itemText, {marginBottom: 20}]}>入住类别：{dormitoryInfo.liveInType === "DORM_ROUTINE" ? '常规住宿' : '临时住宿'}</Text>
-              <Shadow style={styles.dormitoryArea}>
-                <View style={styles.dormitoryArea_topArea}>
-                  <Text style={styles.dormitoryArea_topAreaText}>调迁前宿舍</Text>
-                </View>
-                <View style={styles.dormitoryArea_bottomArea}>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍性别</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼栋</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼层</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>房间号</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>床位号</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>入住日期</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.liveInDate ? moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
-                  </View>
-                  <View style={styles.lastItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>退宿日期</Text>
-                    </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="leaveDate"
-                        label="退宿日期"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        borderColor="#EFEFEF"
-                        itemAreaStyle={{height: 50}}
-                        touchAreaStyle={{height: 40, borderRadius: 4}}
-                        startLimit={moment().format('YYYY-MM-DD')}
-                        endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
-                        selectOtherFunc={selectOtherFunc}
-                        component={SelectTimeOfFilterMore}
-                      />
-                    </View>
-                  </View>
-                  {topError && <Text style={{fontSize: 20, color: 'red', textAlign: 'center', marginVertical: 2}}>表单未填写完整！</Text>}
-                </View>
-              </Shadow>
             </View>
-            <View style={{padding: 20, paddingBottom: 0, paddingTop: 0}}>
-              <Shadow style={styles.dormitoryArea}>
-                <View style={styles.dormitoryArea_topArea}>
-                  <Text style={styles.dormitoryArea_topAreaText}>调迁后宿舍</Text>
-                </View>
-                {bottomError && <Text style={{fontSize: 20, color: 'red', textAlign: 'center', marginVertical: 2}}>表单未填写完整！</Text>}
-                <View style={[styles.dormitoryArea_bottomArea, bottomError && {marginTop: 0}]}>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>入住日期</Text>
-                    </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="stayDate"
-                        label="入住日期"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        borderColor="#EFEFEF"
-                        itemAreaStyle={{height: 50}}
-                        touchAreaStyle={{height: 40, borderRadius: 4}}
-                        startLimit={moment().add(1, 'd').format('YYYY-MM-DD')}
-                        endLimit={moment().add(4, 'd').format('YYYY-MM-DD')}
-                        selectOtherFunc={selectOtherFuncOnStay}
-                        component={SelectTimeOfFilterMore}
-                      />
-                    </View>
+            <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
+              <View style={{padding: 20, paddingBottom: 0, paddingTop: 10}}>
+                <Shadow style={styles.dormitoryArea}>
+                  <View style={styles.dormitoryArea_topArea}>
+                    <Text style={styles.dormitoryArea_topAreaText}>调迁前宿舍</Text>
                   </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼栋</Text>
+                  <View style={styles.dormitoryArea_bottomArea}>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住类别</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveInType === "DORM_ROUTINE" ? '常规住宿' : '临时住宿'}</Text>
                     </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="buildingNum"
-                        label="宿舍楼栋"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        selectList={dormitoryList}
-                        borderColor="#EFEFEF"
-                        selectStyle={{height: 40, borderRadius: 4}}
-                        component={SelectItemOfFilterMore}
-                      />
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍分类</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
                     </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼层</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>房间号</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>床位号</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住日期</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveInDate ? moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
+                    </View>
+                    <View style={styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>退宿日期</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="leaveDate"
+                          label="退宿日期"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
+                          touchAreaStyle={{height: 40, borderRadius: 4}}
+                          startLimit={moment().format('YYYY-MM-DD')}
+                          endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                          selectOtherFunc={selectOtherFunc}
+                          component={SelectTimeOfFilterMore}
+                        />
+                      </View>
+                    </View>
+                    {topError && <Text style={{fontSize: 20, color: 'red', textAlign: 'center', marginVertical: 2}}>表单未填写完整！</Text>}
                   </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>楼层</Text>
-                    </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="floorNum"
-                        label="楼层"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        borderColor="#EFEFEF"
-                        selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
-                        selectStyle={{height: 40, borderRadius: 4}}
-                        component={SelectItemOfFilterMore}
-                      />
-                    </View>
+                </Shadow>
+              </View>
+              <View style={{padding: 20, paddingBottom: 0, paddingTop: 0}}>
+                <Shadow style={styles.dormitoryArea}>
+                  <View style={styles.dormitoryArea_topArea}>
+                    <Text style={styles.dormitoryArea_topAreaText}>调迁后宿舍</Text>
                   </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>房间号</Text>
+                  {bottomError && <Text style={{fontSize: 20, color: 'red', textAlign: 'center', marginVertical: 2}}>表单未填写完整！</Text>}
+                  <View style={[styles.dormitoryArea_bottomArea, bottomError && {marginTop: 0}]}>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住日期</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="stayDate"
+                          label="入住日期"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
+                          touchAreaStyle={{height: 40, borderRadius: 4}}
+                          startLimit={moment().add(1, 'd').format('YYYY-MM-DD')}
+                          endLimit={moment().add(4, 'd').format('YYYY-MM-DD')}
+                          selectOtherFunc={selectOtherFuncOnStay}
+                          component={SelectTimeOfFilterMore}
+                        />
+                      </View>
                     </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="roomNum"
-                        label="房间号"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        borderColor="#EFEFEF"
-                        selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
-                        selectStyle={{height: 40, borderRadius: 4}}
-                        component={SelectItemOfFilterMore}
-                      />
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="buildingNum"
+                          label="宿舍楼栋"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          selectList={dormitoryList}
+                          borderColor="#EFEFEF"
+                          selectStyle={{height: 40, borderRadius: 4}}
+                          component={SelectItemOfFilterMore}
+                        />
+                      </View>
                     </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>楼层</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="floorNum"
+                          label="楼层"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          selectList={rest.values.buildingNum.length ? rest.values.buildingNum[0].floors : []}
+                          selectStyle={{height: 40, borderRadius: 4}}
+                          component={SelectItemOfFilterMore}
+                        />
+                      </View>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>房间号</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="roomNum"
+                          label="房间号"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          selectList={rest.values.floorNum.length ? rest.values.floorNum[0].rooms : []}
+                          selectStyle={{height: 40, borderRadius: 4}}
+                          component={SelectItemOfFilterMore}
+                        />
+                      </View>
+                    </View>
+                    <View style={dormitoryInfo.liveInType === 'DORM_TEMPORARY' ? styles.listItem : styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>床位号</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="bedNum"
+                          label="床位号"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
+                          selectStyle={{height: 40, borderRadius: 4}}
+                          component={SelectItemOfFilterMore}
+                        />
+                      </View>
+                    </View>
+                    {dormitoryInfo.liveInType === 'DORM_TEMPORARY' && <View style={styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>临时期限</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="liveExpireDate"
+                          label="临时住宿期限"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
+                          touchAreaStyle={{height: 40, borderRadius: 4}}
+                          startLimit={moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD')}
+                          endLimit={moment(dormitoryInfo.liveInDate).add(3, 'd').format('YYYY-MM-DD')}
+                          selectOtherFunc={selectOtherFunc}
+                          component={SelectTimeOfFilterMore}
+                        />
+                      </View>
+                    </View>}
                   </View>
-                  <View style={dormitoryInfo.liveInType === 'DORM_TEMPORARY' ? styles.listItem : styles.lastItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>床位号</Text>
-                    </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="bedNum"
-                        label="床位号"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        borderColor="#EFEFEF"
-                        selectList={rest.values.roomNum.length ? rest.values.roomNum[0].beds : []}
-                        selectStyle={{height: 40, borderRadius: 4}}
-                        component={SelectItemOfFilterMore}
-                      />
-                    </View>
-                  </View>
-                  {dormitoryInfo.liveInType === 'DORM_TEMPORARY' && <View style={styles.lastItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>临时期限</Text>
-                    </View>
-                    <View style={styles.lineArea}>
-                      <Field
-                        name="liveExpireDate"
-                        label="临时住宿期限"
-                        fontSize={24}
-                        iconSize={28}
-                        canDelete={false}
-                        showLabel={false}
-                        showArrow={false}
-                        borderColor="#EFEFEF"
-                        itemAreaStyle={{height: 50}}
-                        touchAreaStyle={{height: 40, borderRadius: 4}}
-                        startLimit={moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD')}
-                        endLimit={moment(dormitoryInfo.liveInDate).add(3, 'd').format('YYYY-MM-DD')}
-                        selectOtherFunc={selectOtherFunc}
-                        component={SelectTimeOfFilterMore}
-                      />
-                    </View>
-                  </View>}
-                </View>
-              </Shadow>
-            </View>
-          </ScrollView>
+                </Shadow>
+              </View>
+            </ScrollView>
+          </>
         )}}
     </Formik>
   )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Image, Animated, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback, Alert, ActivityIndicator} from 'react-native';
 import { Text, Button } from '@rneui/themed';
 import Swiper from 'react-native-swiper';
@@ -10,6 +10,7 @@ import moment from "moment";
 import FitImage from 'react-native-fit-image';
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import RNFS from 'react-native-fs';
+import Foundation from 'react-native-vector-icons/Foundation';
 
 import DatePicker from "../DatePicker";
 import SearchInput from "../../../components/SearchInput";
@@ -235,12 +236,7 @@ export const empty = () => (
 
 export const pageEmpty = () => (
   <View style={styles.pageEmptyStyle}>
-    <AntDesign
-      name='frowno'
-      size={60}
-      color='#999999'
-      style={styles.antIcon}
-    />
+    <Foundation style={{marginBottom: 8}} name="page-remove" size={80} color="#bfbfbf" />
     <Text style={styles.emptyText}>暂无数据</Text>
   </View>
 )

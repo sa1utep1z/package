@@ -134,7 +134,7 @@ const CreateDormitory = ({
       toast.show(`新增住宿成功！`, { type: 'success' });
       if(params?.type === 'fromRoom'){
         navigation.goBack();
-        params.refresh && params.refresh();
+        params?.refresh && params.refresh();
         return;
       }else{
         navigation.navigate(NAVIGATION_KEYS.DORMITORY_LIST, {
@@ -142,7 +142,7 @@ const CreateDormitory = ({
         });
       }
     } catch (error) {
-      console.log('error', error)
+      console.log('addDormitoryInfo -> error', error);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     } finally{
       setBottomButtonLoading(false);
@@ -164,8 +164,8 @@ const CreateDormitory = ({
   };
 
   const queryMemberFlowId = async(memberId) => {
-    setSignUpInfoLoading(true);
     try {
+      setSignUpInfoLoading(true);
       const res = await DormitoryListApi.getSignUpInfo(memberId);
       console.log('queryMemberFlowId -> res', res);
       if(res?.code !== SUCCESS_CODE){
@@ -177,6 +177,7 @@ const CreateDormitory = ({
       setSignUpInfo({...res.data});
       res.data.userName && restForm.setFieldValue('memberName', res.data.userName);
       res.data.mobile && restForm.setFieldValue('memberPhone', res.data.mobile);
+      res.data.address && restForm.setFieldValue('memberFrom', res.data.address);
     } catch (error) {
       console.log('queryMemberFlowId -> error', error);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
@@ -187,8 +188,8 @@ const CreateDormitory = ({
 
   const getDormitoryList = async(dormitoryType) => {
     if(!signUpInfo?.signUpType) return;
-    setDormitoryInfoLoading(true);
     try {
+      setDormitoryInfoLoading(true);
       let res, memberId = restForm.values.memberIdCard;
       switch(dormitoryType){
         case 'DORM_ROUTINE':

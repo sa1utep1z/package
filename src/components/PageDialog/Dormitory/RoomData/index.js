@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Text } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useDispatch } from "react-redux";
 import { useToast } from 'react-native-toast-notifications';
 import Foundation from 'react-native-vector-icons/Foundation';
@@ -131,7 +131,7 @@ const RoomData = ({
                 {roomData.map((room, roomIndex) => <View key={roomIndex} style={[styles.contentScrollView_item, roomIndex === roomData.length - 1 && styles.borderBottom_0, roomIndex % 2 === 0 && styles.bkgColor]}>
                   <Text style={[styles.contentScrollView_itemText, {width: 180}]}>{room.date ? moment(room.date).format('YYYY-MM-DD') : '无'}</Text>
                   <Text style={[styles.contentScrollView_itemText, {width: 80}]}>{room.bedNo || '无'}</Text>
-                  <Text style={[styles.contentScrollView_itemText, {width: 180}]}>{room.shortCompanyName || '无'}</Text>
+                  <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.contentScrollView_itemText, {width: 180}]}>{room.shortCompanyName || '无'}</Text>
                   <Text style={[styles.contentScrollView_itemText, {width: 140}]}>{room.recruiterName || room.supplierName || '无'}</Text>
                   <Text style={[styles.contentScrollView_itemText, {width: 140}]}>{room.storeName || '无'}</Text>
                   <View style={styles.operation}>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     maxHeight: 900
   },
   roomInfo: {
-    height: 60, 
+    minHeight: 60, 
     marginHorizontal: 20, 
     borderRadius: 8, 
     flexDirection: 'row', 
@@ -193,17 +193,19 @@ const styles = StyleSheet.create({
     borderRightWidth: 1, 
     borderColor: '#FFFFFF', 
     textAlign: 'center', 
-    textAlignVertical: 'center'
+    textAlignVertical: 'center',
+    padding: 5
   },
   roomInfo_right: {
     flex: 1, 
     fontSize: 24, 
     color: '#FFFFFF', 
     textAlign: 'center', 
-    textAlignVertical: 'center'
+    textAlignVertical: 'center',
+    padding: 5
   },
   titleArea: {
-    height: 60, 
+    height: 70, 
     flexDirection: 'row', 
     marginHorizontal: 20, 
     borderWidth: 1, 
@@ -212,7 +214,7 @@ const styles = StyleSheet.create({
   },
   nameText: {
     width: 120, 
-    height: 60, 
+    height: 70, 
     fontSize: 26, 
     fontWeight: 'bold', 
     color: '#000000', 
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
     borderColor: '#409EFF'
   },
   titleText: {
-    height: 60, 
+    height: 70, 
     fontSize: 26, 
     fontWeight: 'bold', 
     color: '#000000', 
@@ -254,7 +256,7 @@ const styles = StyleSheet.create({
     borderColor: '#409EFF'
   },
   topArea_titleArea: {
-    height: 60, 
+    height: 70, 
     flexDirection: 'row', 
     borderBottomWidth: 1, 
     borderColor: '#409EFF'
@@ -267,7 +269,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center'
   },
   contentScrollView_item: {
-    height: 60, 
+    height: 70, 
     flexDirection: 'row', 
     borderBottomWidth: 1, 
     borderColor: '#409EFF'
@@ -278,7 +280,8 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     textAlignVertical: 'center', 
     borderRightWidth: 1, 
-    borderColor: '#409EFF'
+    borderColor: '#409EFF',
+    paddingHorizontal: 3
   },
   operation: {
     width: 220, 

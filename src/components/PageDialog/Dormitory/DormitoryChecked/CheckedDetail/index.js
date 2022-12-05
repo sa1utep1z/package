@@ -223,23 +223,26 @@ const styles = StyleSheet.create({
     paddingVertical: 8
   },
   bottomTextArea: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    minHeight: 50
   },
   bottomTextArea_left: {
     flex: 1, 
     fontSize: 24, 
     color: '#FFFFFF', 
     textAlign: 'center', 
+    textAlignVertical: 'center',
     borderRightWidth: 1, 
     borderColor: '#FFFFFF', 
-    paddingVertical: 6
+    padding: 6
   },
   bottomTextArea_right: {
     flex: 1, 
     fontSize: 24, 
     color: '#FFFFFF', 
     textAlign: 'center', 
-    paddingVertical: 6
+    textAlignVertical: 'center',
+    padding: 6
   },
   scrollViewArea: {
     flex: 1
@@ -303,6 +306,7 @@ const styles = StyleSheet.create({
     borderColor: '#409EFF'
   },
   textLine_right: {
+    flex: 1,
     flexDirection: 'row', 
     paddingRight: 20, 
     alignItems: 'center'
@@ -398,6 +402,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   rightText: {
+    flex: 1,
     fontSize: 24, 
     paddingLeft: 20, 
     color: '#333333'

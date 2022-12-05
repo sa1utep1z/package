@@ -1,11 +1,10 @@
 import React, {useState} from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Linking } from "react-native";
 import { useDispatch } from "react-redux";
 import { Formik, Field } from 'formik';
-import { CheckBox } from '@rneui/themed';
 import { Shadow } from 'react-native-shadow-2';
-import * as Yup from 'yup';
 import moment from "moment";
+import Entypo from 'react-native-vector-icons/Entypo';
 import { useToast } from "react-native-toast-notifications";
 
 import { closeDialog } from "../../../../../redux/features/PageDialog";
@@ -14,9 +13,6 @@ import DormitoryListApi from '../../../../../request/Dormitory/DormitoryListApi'
 import { SUCCESS_CODE } from '../../../../../utils/const';
 
 let restForm;
-const validationSchema = Yup.object().shape({
-  stayDate: Yup.string().required('请选择入住日期！'),
-});
 const initialValues = {
   stayDate: '',
   liveExpireDate: ''
@@ -31,7 +27,20 @@ const WaitToEntry = ({
 
   const rejectOnPress = () => dispatch(closeDialog());
 
+  const [warning, setWarning] = useState('');
+
   const onSubmit = values => {
+    if(!values.stayDate.length){
+      if(dormitoryInfo.liveInType === "DORM_TEMPORARY" && !values.liveExpireDate.length){
+        setWarning('请选择入住日期与临时住宿期限！');
+        return;
+      }
+      setWarning('请选择入住日期！');
+      return;
+    }else if (dormitoryInfo.liveInType === "DORM_TEMPORARY" && !values.liveExpireDate.length){
+      setWarning('请选择临时住宿期限！');
+      return;
+    }
     const params = {
       liveInType: dormitoryInfo.liveInType,
       liveInDate: values.stayDate,
@@ -57,42 +66,40 @@ const WaitToEntry = ({
     }
   };
 
+  const callPhone = () => {
+    if(!dormitoryInfo.mobile) return;
+    Linking.openURL(`tel:${dormitoryInfo.mobile}`);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
       onSubmit={onSubmit}>
       {({...rest}) => {
         restForm = rest;
         return (
           <>
             <View style={styles.topArea}>
-              <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName}</Text>
-              <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>{dormitoryInfo.mobile}</Text></Text>
-              <Text selectable style={[styles.itemText, {marginBottom: 20}]}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo}</Text></Text>
-              <Text style={styles.itemText}>入住类别：{dormitoryInfo.liveInType === "DORM_TEMPORARY" ? '临时住宿' : '常规住宿'}</Text>
-              <Field
-                name="stayDate"
-                label="入住日期"
-                totalAreaStyle={dormitoryInfo.liveInType === 'DORM_TEMPORARY' && {marginBottom: 15}}
-                startLimit={moment().format('YYYY-MM-DD')}
-                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
-                component={SelectTimeOfFilterMore}
-              />
-              {dormitoryInfo.liveInType === 'DORM_TEMPORARY' && <Field
-                name="liveExpireDate"
-                label="临时住宿期限"
-                labelStyle={{width: 200}}
-                startLimit={moment().format('YYYY-MM-DD')}
-                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
-                component={SelectTimeOfFilterMore}
-              />}
+              <View style={{paddingLeft: 10, marginBottom: 5}}>
+                <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName || '无'}</Text>
+                <TouchableOpacity style={{flexDirection: 'row'}} onPress={callPhone}>
+                  <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={dormitoryInfo.mobile && styles.blueText}>{dormitoryInfo.mobile || '无'}</Text></Text>
+                  {dormitoryInfo.mobile && <Entypo name='phone' size={32} color='#ffffff'/>}
+                </TouchableOpacity>
+                <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo || '无'}</Text></Text>
+              </View>
               <Shadow style={styles.dormitoryArea}>
                 <View style={{borderRadius: 10}}>
                   <View style={styles.dormitoryArea_topArea}>
                     <Text style={styles.dormitoryArea_topAreaText}>分配宿舍信息</Text>
                   </View>
                   <View style={styles.dormitoryArea_bottomArea}>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住类别</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveInType === "DORM_TEMPORARY" ? '临时住宿' : '常规住宿'}</Text>
+                    </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍楼栋</Text>
@@ -117,12 +124,57 @@ const WaitToEntry = ({
                       </View>
                       <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
                     </View>
-                    <View style={styles.lastItem}>
+                    <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>床位号</Text>
                       </View>
                       <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
                     </View>
+                    <View style={dormitoryInfo.liveInType === 'DORM_TEMPORARY' ? styles.listItem : styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住日期</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="stayDate"
+                          label="入住日期"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
+                          touchAreaStyle={{height: 40, borderRadius: 4}}
+                          startLimit={moment().format('YYYY-MM-DD')}
+                          endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                          component={SelectTimeOfFilterMore}
+                        />
+                      </View>
+                    </View>
+                    {dormitoryInfo.liveInType === 'DORM_TEMPORARY' && <View style={styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>临时住宿期限</Text>
+                      </View>
+                      <View style={styles.lineArea}>
+                        <Field
+                          name="liveExpireDate"
+                          label="临时住宿期限"
+                          fontSize={24}
+                          iconSize={28}
+                          canDelete={false}
+                          showLabel={false}
+                          showArrow={false}
+                          borderColor="#EFEFEF"
+                          itemAreaStyle={{height: 50}}
+                          touchAreaStyle={{height: 40, borderRadius: 4}}
+                          startLimit={moment().format('YYYY-MM-DD')}
+                          endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                          component={SelectTimeOfFilterMore}
+                        />
+                      </View>
+                    </View>}
+                    {warning ? <Text style={styles.warningText}>{warning}</Text> : <></>}
                   </View>
                 </View>
               </Shadow>
@@ -151,11 +203,62 @@ const styles = StyleSheet.create({
     flex: 1, 
     paddingHorizontal: 30
   },
+  topInfoArea: {
+    height: 100, 
+    backgroundColor: '#999999', 
+    borderRadius: 8, 
+    marginBottom: 20
+  },
+  topInfoArea_top: {
+    flex: 1, 
+    flexDirection: 'row', 
+    borderBottomWidth: 1, 
+    borderColor: '#FFFFFF'
+  },
+  top_leftText: {
+    fontSize: 24, 
+    color: '#FFFFFF', 
+    borderRightWidth: 1, 
+    borderColor: '#FFFFFF', 
+    textAlign: 'center', 
+    textAlignVertical: 'center', 
+    paddingHorizontal: 40
+  },
+  callPhoneArea: {
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  top_rightText: {
+    fontSize: 24, 
+    color: '#FFFFFF', 
+    textAlignVertical: 'center', 
+    textAlign: 'center'
+  },
+  topInfoArea_bottom: {
+    flex: 1, 
+    fontSize: 24, 
+    color: '#FFFFFF', 
+    textAlign: 'center', 
+    textAlignVertical: 'center'
+  },
+  lineArea: {
+    flex: 1, 
+    height: '100%', 
+    paddingHorizontal: 5
+  },
+  warningText: {
+    fontSize: 24, 
+    color: 'red', 
+    textAlign: 'center', 
+    marginTop: 5
+  },
   blueText: {
     color: '#409EFF'
   },
   itemText: {
-    fontSize: 28, 
+    fontSize: 26, 
     color: '#333333', 
     marginBottom: 15
   },
@@ -228,7 +331,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   leftTitle: {
-    width: 150, 
+    width: 180, 
     height: '100%', 
     justifyContent: 'center', 
     alignItems: 'center', 

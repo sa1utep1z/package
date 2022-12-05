@@ -101,14 +101,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8
   },
   topTitle_bottomArea: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    minHeight: 50
   },
   bottomArea_text: {
     flex: 1, 
     fontSize: 24, 
     color: '#FFFFFF', 
     textAlign: 'center', 
-    paddingVertical: 6
+    textAlignVertical: 'center',
+    padding: 6
   },
   rightBorder: {
     borderRightWidth: 1,

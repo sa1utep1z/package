@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from 'react-native-toast-notifications';
@@ -36,6 +36,7 @@ const DormitoryData = () => {
   const [originData, setOriginData] = useState({});
   const [topNumber, setTopNumber] = useState(originNumber);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     dispatch(openListSearch());
@@ -84,7 +85,7 @@ const DormitoryData = () => {
     }
     const roomMsg = {...room, floor: floor.floorName, building: originData.buildingName};
     dispatch(setTitle('房间住宿信息'));
-    dispatch(openDialog(<RoomData navigation={navigation} room={roomMsg} refresh={refresh} />));
+    dispatch(openDialog(<RoomData navigation={navigation} room={roomMsg} refresh={onRefresh} />));
   };
 
   const filterFun = (values) => {
@@ -97,7 +98,7 @@ const DormitoryData = () => {
     setSearchContent(search);
   };
 
-  const refresh = () => setSearchContent({...searchContent});
+  const onRefresh = () => setSearchContent({...searchContent});
 
   return (
     <View style={styles.screen}>
@@ -143,25 +144,25 @@ const DormitoryData = () => {
                 <Text style={styles.typeFont}>{type.label}</Text>
               </View>)}
             </View>
-            <ScrollView style={styles.bottomArea_bottom} showsVerticalScrollIndicator={false} >
+            <ScrollView style={styles.bottomArea_bottom} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
               {floorsList.map((floorList, floorListIndex) => <View key={floorList.floorId} style={[styles.floorArea, floorListIndex === 0 && {marginTop: 10}]}>
-                  <View style={styles.floorArea_left}>
-                    <Text style={styles.floorArea_leftText}>{floorList.floorName}F</Text>
-                  </View>
-                  <View style={styles.floorArea_right}>
-                    {floorList.roomList.map(room => <View key={room.roomId} style={styles.roomArea}>
-                      <TouchableOpacity activeOpacity={(room.flag === 3 || room.flag === 4) ? 1 : 0.2} style={[styles.roomTouchArea, {backgroundColor: ROOM_TYPE_COLOR[room.flag], borderColor: ROOM_TYPE_COLOR[room.flag]}]} onPress={()=>roomOnPress(room, floorList)}>
-                        {room.flag === 3 && <MaterialCommunityIcons name="tools" size={24} color="#333333" style={styles.icon} />}
-                        <Text style={styles.roomNum}>{room.name}</Text>
-                        <View style={{flex: 1}}>
-                          <Text style={styles.bottomNum}>定员：{room.total}</Text>
-                          <Text style={styles.bottomNum}>空余：{room.free}</Text>
-                          <Text style={[styles.bottomNum, {fontSize: 22}]}>类别：{room.male ? '男' : '女'}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>)}
-                  </View>
-                </View>)}
+                <View style={styles.floorArea_left}>
+                  <Text style={styles.floorArea_leftText}>{floorList.floorName}F</Text>
+                </View>
+                <View style={styles.floorArea_right}>
+                  {floorList.roomList.map(room => <View key={room.roomId} style={styles.roomArea}>
+                    <TouchableOpacity activeOpacity={(room.flag === 3 || room.flag === 4) ? 1 : 0.2} style={[styles.roomTouchArea, {backgroundColor: ROOM_TYPE_COLOR[room.flag], borderColor: ROOM_TYPE_COLOR[room.flag]}]} onPress={()=>roomOnPress(room, floorList)}>
+                      {room.flag === 3 && <MaterialCommunityIcons name="tools" size={24} color="#333333" style={styles.icon} />}
+                      <Text numberOfLines={2} ellipsizeMode="tail" style={styles.roomNum}>{room.name}</Text>
+                      <View style={{height: 110}}>
+                        <Text style={styles.bottomNum}>定员：{room.total}</Text>
+                        <Text style={styles.bottomNum}>空余：{room.free}</Text>
+                        <Text style={[styles.bottomNum, {fontSize: 22}]}>类别：{room.male ? '男' : '女'}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>)}
+                </View>
+              </View>)}
             </ScrollView>
           </> : <View style={styles.emptyArea}>
             <Foundation name="page-remove" size={72} color="#999999" style={styles.emptyIcon} />
@@ -330,11 +331,11 @@ const styles = StyleSheet.create({
     paddingTop: 10
   },
   roomArea: {
-    width: '25%', 
-    height: 200
+    width: '25%'
   },
   roomTouchArea: {
     flex: 1, 
+    justifyContent: 'space-between',
     marginRight: 10, 
     marginBottom: 10, 
     paddingBottom: 10, 
@@ -348,7 +349,8 @@ const styles = StyleSheet.create({
     top: 6
   },
   roomNum: {
-    height: 60, 
+    flex: 1,
+    padding: 5,
     fontSize: 28, 
     color: '#000000', 
     fontWeight: 'bold', 

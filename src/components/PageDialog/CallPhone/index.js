@@ -2,15 +2,21 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useDispatch } from "react-redux";
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useToast } from 'react-native-toast-notifications';
 
 import { closeDialog } from "../../../redux/features/PageDialog";
 
 const CallPhone = ({ message }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const rejectOnPress = () => dispatch(closeDialog());
 
   const confirmOnPress = (item) => {
+    if(!item.mobile){
+      toast.show('该会员无手机号！', {type: 'danger'});
+      return;
+    }
     Linking.openURL(`tel:${item.mobile}`);
     dispatch(closeDialog());
   };
@@ -31,8 +37,8 @@ const CallPhone = ({ message }) => {
         </View>
         <View style={styles.rightArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={() => confirmOnPress(message)}>
-            <Text style={styles.confirmText}>拨打</Text>
-            <Entypo name='phone' size={32} color='#409EFF' />
+            <Text style={[styles.confirmText, !message.mobile && {color: '#999999'}]}>拨打</Text>
+            <Entypo name='phone' size={32} color={message.mobile ? '#409EFF' : '#999999'} />
           </TouchableOpacity>
         </View>
       </View>

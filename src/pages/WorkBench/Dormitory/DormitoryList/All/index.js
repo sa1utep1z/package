@@ -196,8 +196,8 @@ const All = ({
           numberOfLines={2}
           ellipsizeMode="tail">{item.liveInDate ? moment(item.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
         <Text 
-          style={[styles.itemText, styles.pressItem]}
-          numberOfLines={2}
+          style={[styles.itemText, styles.pressItem, {fontSize: 24}]}
+          numberOfLines={1}
           onPress={() => enterpriseOnPress(item)}
           ellipsizeMode="tail">{item.shortCompanyName}</Text>
         <Text 

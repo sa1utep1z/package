@@ -1,10 +1,11 @@
 import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
-import { ScrollView, Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, StyleSheet, Linking } from "react-native";
 import { Formik, Field } from 'formik';
 import moment from 'moment';
 import { Shadow } from 'react-native-shadow-2';
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import { DORMITORY_LEAVE_REASON } from "../../../../../../utils/const";
 import SelectTimeOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
@@ -63,6 +64,11 @@ const Leave = ({
     reasonWrong && setReasonWrong(false);
   };
 
+  const callPhone = () => {
+    if(!dormitoryInfo.mobile) return;
+    Linking.openURL(`tel:${dormitoryInfo.mobile}`);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -70,80 +76,95 @@ const Leave = ({
       {({...rest}) => {
         restForm = rest;
         return (
-          <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-            <View style={{padding: 20, paddingBottom: 0}}>
+          <>
+            <View style={{padding: 20, paddingLeft: 30, paddingBottom: 0}}>
               <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName}</Text>
-              <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={styles.blueText}>{dormitoryInfo.mobile}</Text></Text>
+              <TouchableOpacity style={{flexDirection: 'row'}} onPress={callPhone}>
+                <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={dormitoryInfo.mobile && styles.blueText}>{dormitoryInfo.mobile || '无'}</Text></Text>
+                {dormitoryInfo.mobile && <Entypo name='phone' size={32} color='#409EFF'/>}
+              </TouchableOpacity>
               <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo}</Text></Text>
-              <Text selectable style={styles.itemText}>入住日期：{dormitoryInfo.liveInDate ? moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
-              <Text selectable style={[styles.itemText, {marginBottom: 20}]}>入住类别：{dormitoryInfo.liveInType === "DORM_ROUTINE" ? '常规住宿' : '临时住宿'}</Text>
             </View>
-            <View style={{paddingHorizontal: 20}}>
-              <Shadow style={styles.dormitoryArea}>
-                <View style={styles.dormitoryArea_topArea}>
-                  <Text style={styles.dormitoryArea_topAreaText}>住宿信息</Text>
-                </View>
-                <View style={styles.dormitoryArea_bottomArea}>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼栋</Text>
-                    </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
+            <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
+              <View style={{paddingHorizontal: 20, paddingTop: 10}}>
+                <Shadow style={styles.dormitoryArea}>
+                  <View style={styles.dormitoryArea_topArea}>
+                    <Text style={styles.dormitoryArea_topAreaText}>住宿信息</Text>
                   </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍分类</Text>
+                  <View style={styles.dormitoryArea_bottomArea}>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住类别</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveInType === "DORM_ROUTINE" ? '常规住宿' : '临时住宿'}</Text>
                     </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>宿舍楼层</Text>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍分类</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveType === "DORM_MALE" ? '男生宿舍' : '女生宿舍'}</Text>
                     </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
-                  </View>
-                  <View style={styles.listItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>房间号</Text>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomBuildingName}</Text>
                     </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
-                  </View>
-                  <View style={styles.lastItem}>
-                    <View style={styles.leftTitle}>
-                      <Text style={styles.titleText}>床位号</Text>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼层</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomFloorIndex}F</Text>
                     </View>
-                    <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>房间号</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.roomNo}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>床位号</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.bedNo}</Text>
+                    </View>
+                    <View style={styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住日期</Text>
+                      </View>
+                      <Text style={styles.rightText}>{dormitoryInfo.liveInDate ? moment(dormitoryInfo.liveInDate).format('YYYY-MM-DD') : '无'}</Text>
+                    </View>
                   </View>
-                </View>
-              </Shadow>
-            </View>
-            <View style={{height: 55, paddingHorizontal: 20}}>
-              <Field
-                name="leaveDate"
-                label="退宿日期"
-                fontSize={26}
-                canDelete={false}
-                borderColor='#EFEFEF'
-                startLimit={moment().format('YYYY-MM-DD')}
-                endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
-                component={SelectTimeOfFilterMore}
-              />
-            </View>
-            <View style={{height: 200, margin: 20}}>
-              <Text style={{fontSize: 26, color: '#333333', marginBottom: 10}}>退宿原因：</Text>
-              <View style={[{flex: 1, borderWidth: 1, borderColor: '#EFEFEF', borderRadius: 10, flexDirection: 'row', flexWrap: 'wrap', padding: 20}, reasonWrong && {borderColor: 'red'}]}>
-                {reasonWrong && <Text style={{fontSize: 22, color: 'red', textAlignVertical: 'bottom', position: 'absolute', top: -35, right: 10}}>请选择退宿原因</Text>}
-                {DORMITORY_LEAVE_REASON.map((reason, reasonIndex) => {
-                  const isSelected = selectReason === reason.value;
-                  return (
-                    <TouchableOpacity key={reasonIndex} style={[{borderRadius: 6, backgroundColor: '#EFEFEF', paddingHorizontal: 15, paddingVertical: 5, marginRight: 20, marginBottom: 20}, isSelected && {backgroundColor: '#409EFF'}]} onPress={() => reasonOnPress(reason.value)}>
-                      <Text style={[{fontSize: 26, color: '#999999'}, isSelected && {color: '#ffffff'}]}>{reason.label}</Text>
-                    </TouchableOpacity>
-                  )
-                })}
+                </Shadow>
               </View>
-            </View>
-          </ScrollView>
+              <View style={{height: 55, paddingHorizontal: 20}}>
+                <Field
+                  name="leaveDate"
+                  label="退宿日期"
+                  fontSize={26}
+                  canDelete={false}
+                  borderColor='#EFEFEF'
+                  startLimit={moment().format('YYYY-MM-DD')}
+                  endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
+                  component={SelectTimeOfFilterMore}
+                />
+              </View>
+              <View style={{height: 200, margin: 20}}>
+                <Text style={{fontSize: 26, color: '#333333', marginBottom: 10}}>退宿原因：</Text>
+                <View style={[{flex: 1, borderWidth: 1, borderColor: '#EFEFEF', borderRadius: 10, flexDirection: 'row', flexWrap: 'wrap', padding: 20}, reasonWrong && {borderColor: 'red'}]}>
+                  {reasonWrong && <Text style={{fontSize: 22, color: 'red', textAlignVertical: 'bottom', position: 'absolute', top: -35, right: 10}}>请选择退宿原因</Text>}
+                  {DORMITORY_LEAVE_REASON.map((reason, reasonIndex) => {
+                    const isSelected = selectReason === reason.value;
+                    return (
+                      <TouchableOpacity key={reasonIndex} style={[{borderRadius: 6, backgroundColor: '#EFEFEF', paddingHorizontal: 15, paddingVertical: 5, marginRight: 20, marginBottom: 20}, isSelected && {backgroundColor: '#409EFF'}]} onPress={() => reasonOnPress(reason.value)}>
+                        <Text style={[{fontSize: 26, color: '#999999'}, isSelected && {color: '#ffffff'}]}>{reason.label}</Text>
+                      </TouchableOpacity>
+                    )
+                  })}
+                </View>
+              </View>
+            </ScrollView>
+          </>
         )}}
     </Formik>
   )

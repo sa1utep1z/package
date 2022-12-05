@@ -119,6 +119,14 @@ const BatchOperateDormitory = ({
       };
       batchLiveIn(params);
     }else{
+      if(!reason.length){
+        toast.show('请选择退宿原因', {type: 'warning'});
+        return;
+      }
+      if(!value.length){
+        toast.show('请选择退宿日期', {type: 'warning'});
+        return;
+      }
       const params = {
         ids: selectedList.map(item => item.id),
         liveOnReasonType: reason,
@@ -149,6 +157,7 @@ const BatchOperateDormitory = ({
 
   const batchLiveOut = async(params) => {
     try {
+      console.log('batchLiveOut -> params', params);
       const res = await DormitoryListApi.batchLiveOut(params);
       console.log('batchLiveOut -> res', res);
       if(res?.code !== SUCCESS_CODE){

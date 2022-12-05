@@ -196,7 +196,10 @@ const AdjustDormitory = ({
 
   const selectOtherFuncOfJoinInDate = (type, date) => restForm.setFieldValue('leaveDate', moment(date).subtract(1, 'd').format('YYYY-MM-DD'));
 
-  const callPhone = () => Linking.openURL(`tel:${memberMsg.mobile}`);
+  const callPhone = () => {
+    if(!memberMsg.mobile) return;
+    Linking.openURL(`tel:${memberMsg.mobile}`);
+  };
 
   return (
     <Formik
@@ -206,15 +209,13 @@ const AdjustDormitory = ({
         restForm = rest;
         return (
           <View style={styles.totalArea}>
-            <View style={styles.topInfoArea}>
-              <View style={styles.topInfoArea_top}>
-                <Text selectable style={styles.top_leftText}>姓名：{memberMsg.name || '无'}</Text>
-                <TouchableOpacity style={styles.callPhoneArea} onPress={callPhone}>
-                  <Text selectable style={styles.top_rightText}>手机号：{memberMsg.mobile || '无'}</Text>
-                  <Entypo name='phone' size={32} color='#ffffff'/>
-                </TouchableOpacity>
-              </View>
-              <Text selectable style={styles.topInfoArea_bottom}>身份证号：{memberMsg.idNo || '无'}</Text>
+            <View style={{paddingRight: 20, paddingLeft: 30}}>
+              <Text style={styles.itemText}>会员姓名：{memberMsg.name || '无'}</Text>
+              <TouchableOpacity style={{flexDirection: 'row'}} onPress={callPhone}>
+                <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={memberMsg.mobile && styles.blueText}>{memberMsg.mobile || '无'}</Text></Text>
+                {memberMsg.mobile && <Entypo name='phone' size={32} color='#409EFF'/>}
+              </TouchableOpacity>
+              <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{memberMsg.idNo}</Text></Text>
             </View>
             <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
               <View style={styles.topShadowArea}>
@@ -225,15 +226,21 @@ const AdjustDormitory = ({
                   <View style={[styles.dormitoryArea_bottomArea, topError && {marginBottom: 0}]}>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                        <Text style={styles.titleText}>入住类别</Text>
                       </View>
-                      <Text style={styles.rightText}>{memberMsg.building || '无'}</Text>
+                      <Text style={styles.rightText}>{memberMsg.ability === 'DORM_TEMPORARY' ? '临时住宿' : '常规住宿'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍分类</Text>
                       </View>
                       <Text style={styles.rightText}>{memberMsg.male ? '男生宿舍' : '女生宿舍'}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                      </View>
+                      <Text style={styles.rightText}>{memberMsg.building || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
@@ -437,6 +444,14 @@ const AdjustDormitory = ({
 const styles = StyleSheet.create({
   totalArea: {
     height: 900,
+  },
+  blueText: {
+    color: '#409EFF'
+  },
+  itemText: {
+    fontSize: 26, 
+    color: '#333333', 
+    marginBottom: 10
   },
   topInfoArea: {
     height: 100, 

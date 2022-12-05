@@ -1,10 +1,11 @@
-import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
-import { ScrollView, Text, View, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import React, {useState, useRef} from "react";
+import { ScrollView, Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking } from "react-native";
 import { Formik, Field } from 'formik';
 import moment from 'moment';
 import { Shadow } from 'react-native-shadow-2';
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import { DORMITORY_LEAVE_REASON } from "../../../../../utils/const";
 import SelectTimeOfFilterMore from '../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
@@ -70,6 +71,11 @@ const LeaveDormitory = ({
     setReasonWrong(false);
   };
 
+  const callPhone = () => {
+    if(!memberMsg.mobile) return;
+    Linking.openURL(`tel:${memberMsg.mobile}`);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -78,47 +84,16 @@ const LeaveDormitory = ({
         restForm = rest;
         return (
           <View style={{height: 900}}>
+            <View style={{paddingRight: 20, paddingLeft: 30}}>
+              <Text style={styles.itemText}>会员姓名：{memberMsg.name || '无'}</Text>
+              <TouchableOpacity style={{flexDirection: 'row'}} onPress={callPhone}>
+                <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={memberMsg.mobile && styles.blueText}>{memberMsg.mobile || '无'}</Text></Text>
+                {memberMsg.mobile && <Entypo name='phone' size={32} color='#409EFF'/>}
+              </TouchableOpacity>
+              <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{memberMsg.idNo}</Text></Text>
+            </View>
             <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-              <View style={styles.memberInfo}>
-                <Shadow style={styles.dormitoryArea}>
-                  <View style={styles.dormitoryArea_topArea}>
-                    <Text style={styles.dormitoryArea_topAreaText}>会员信息</Text>
-                  </View>
-                  <View style={styles.dormitoryArea_bottomArea}>
-                    <View style={styles.listItem}>
-                      <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>姓名</Text>
-                      </View>
-                      <Text style={styles.rightText}>{memberMsg?.name || '无'}</Text>
-                    </View>
-                    <View style={styles.listItem}>
-                      <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>手机号</Text>
-                      </View>
-                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberMsg?.mobile || '无'}</Text>
-                    </View>
-                    <View style={styles.listItem}>
-                      <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>身份证号</Text>
-                      </View>
-                      <Text selectable style={[styles.rightText, {color: '#409EFF'}]}>{memberMsg?.idNo || '无'}</Text>
-                    </View>
-                    <View style={styles.listItem}>
-                      <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>入住日期</Text>
-                      </View>
-                      <Text style={styles.rightText}>{memberMsg.date ? moment(memberMsg.date).format('YYYY-MM-DD') : '无'}</Text>
-                    </View>
-                    <View style={styles.lastItem}>
-                      <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>入住类别</Text>
-                      </View>
-                      <Text style={styles.rightText}>{memberMsg.ability === 'DORM_TEMPORARY' ? '临时住宿' : '常规住宿'}</Text>
-                    </View>
-                  </View>
-                </Shadow>
-              </View>
-              <View style={{paddingHorizontal: 20}}>
+              <View style={{paddingHorizontal: 20, marginTop: 10}}>
                 <Shadow style={styles.dormitoryArea}>
                   <View style={styles.dormitoryArea_topArea}>
                     <Text style={styles.dormitoryArea_topAreaText}>住宿信息</Text>
@@ -126,15 +101,21 @@ const LeaveDormitory = ({
                   <View style={styles.dormitoryArea_bottomArea}>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
-                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                        <Text style={styles.titleText}>入住类别</Text>
                       </View>
-                      <Text style={styles.rightText}>{memberMsg.building || '无'}</Text>
+                      <Text style={styles.rightText}>{memberMsg.ability === 'DORM_TEMPORARY' ? '临时住宿' : '常规住宿'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>宿舍分类</Text>
                       </View>
                       <Text style={styles.rightText}>{memberMsg.male ? '男生宿舍' : '女生宿舍'}</Text>
+                    </View>
+                    <View style={styles.listItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>宿舍楼栋</Text>
+                      </View>
+                      <Text style={styles.rightText}>{memberMsg.building || '无'}</Text>
                     </View>
                     <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
@@ -148,11 +129,17 @@ const LeaveDormitory = ({
                       </View>
                       <Text style={styles.rightText}>{memberMsg.roomName ? `${memberMsg.roomName}号` : '无'}</Text>
                     </View>
-                    <View style={styles.lastItem}>
+                    <View style={styles.listItem}>
                       <View style={styles.leftTitle}>
                         <Text style={styles.titleText}>床位号</Text>
                       </View>
                       <Text style={styles.rightText}>{memberMsg.bedNo ? `${memberMsg.bedNo}号床` : '无'}</Text>
+                    </View>
+                    <View style={styles.lastItem}>
+                      <View style={styles.leftTitle}>
+                        <Text style={styles.titleText}>入住日期</Text>
+                      </View>
+                      <Text style={styles.rightText}>{memberMsg.date ? moment(memberMsg.date).format('YYYY-MM-DD') : '无'}</Text>
                     </View>
                   </View>
                 </Shadow>
@@ -165,6 +152,8 @@ const LeaveDormitory = ({
                     fontSize={26}
                     canDelete={false}
                     borderColor='#EFEFEF'
+                    startLimit={moment().format('YYYY-MM-DD')}
+                    endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
                     component={SelectTimeOfFilterMore}
                   />
                 </View>
@@ -200,6 +189,14 @@ const styles = StyleSheet.create({
   memberInfo: {
     paddingHorizontal: 20, 
     marginTop: 10
+  },
+  blueText: {
+    color: '#409EFF'
+  },
+  itemText: {
+    fontSize: 26, 
+    color: '#333333', 
+    marginBottom: 10
   },
   dormitoryArea: {
     width: '100%',

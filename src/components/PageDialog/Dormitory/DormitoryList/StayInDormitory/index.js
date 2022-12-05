@@ -91,6 +91,14 @@ const StayInDormitory = ({
 };
 
 const styles = StyleSheet.create({
+  blueText: {
+    color: '#409EFF'
+  },
+  itemText: {
+    fontSize: 26, 
+    color: '#333333', 
+    marginBottom: 10
+  },
   tabViewArea: {
     height: 760, 
     marginHorizontal: 20, 
