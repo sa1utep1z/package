@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useToast } from 'react-native-toast-notifications';
 
 import HeaderSelectItem from './HeaderSelectItem';
 import HeaderSearchInput from './HeaderSearchInput';
@@ -54,10 +55,12 @@ const HeaderSearchOfDormitory = ({
   filterFloorAndRoom = false, //是否筛选楼层及房间号（在同一行中）；
   filterBuildingAndFloor = false, //是否筛选楼栋跟楼层（在同一行中）；
   buildingCanDelete = true, //宿舍楼栋是否支持删除；
+  canOperate, //是否可以点击操作；
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const showSearch = useSelector(state => state.listHeaderSearch.canSearch);
+  const toast = useToast();
 
   const [isFilterMore, setIsFilterMore] = useState(false);
 
@@ -98,9 +101,15 @@ const HeaderSearchOfDormitory = ({
     filterFun(values);
   };
 
-  const batchOperate = () => navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY, {
-    selectIndex
-  });
+  const batchOperate = () => {
+    if(!canOperate){
+      toast.show('无权限', {type: 'warning'});
+      return;
+    };
+    navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY, {
+      selectIndex
+    });
+  };
 
   const filterOnPress = () => {
     dispatch(setTitle(`筛选更多`));
@@ -124,7 +133,7 @@ const HeaderSearchOfDormitory = ({
                   otherLabelStyle={enterpriseStyle}
                   component={HeaderSelectItem}
                 />
-                {(selectIndex === 1 || selectIndex === 3) &&<TouchableOpacity style={styles.buttonArea} onPress={batchOperate}>
+                {(selectIndex === 1 || selectIndex === 3) &&<TouchableOpacity style={[styles.buttonArea, !canOperate && {backgroundColor: '#b0b0b0'}]} onPress={batchOperate}>
                   <Text style={styles.buttonText}>批量操作</Text>
                 </TouchableOpacity>}
               </View>}

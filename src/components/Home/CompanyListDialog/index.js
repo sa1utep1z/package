@@ -1,20 +1,24 @@
-import React, {useState, useImperativeHandle, forwardRef, useEffect, useRef} from 'react';
+import React, {useState, useImperativeHandle, forwardRef, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import { Text, Dialog } from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
+import { useToast } from 'react-native-toast-notifications';
+import { useDispatch } from 'react-redux';
 
 import NAVIGATION_KEYS from '../../../navigator/key';
 import EmptyArea from '../../EmptyArea';
 import HomeApi from '../../../request/HomeApi';
-import CompanyDetailDialog from '../CompanyDetailDialog';
+import { SUCCESS_CODE } from '../../../utils/const';
+import { openDialog, setTitle } from "../../../redux/features/PageDialog";
+import OrderDetail from "../../../components/PageDialog/OrderMessage/OrderDetail";
 
 const CompanyListDialog = (props, ref) => {
-  const detailRef = useRef(null);
   const navigation = useNavigation();
+  const toast = useToast();
+  const dispatch = useDispatch();
 
   const [showList, setShowList] = useState(false);
-  const [orderMsg, setOrderMsg] = useState({}); // 订单详情
   const [list, setList] = useState({
     companyName: '',
     list: []
@@ -39,15 +43,26 @@ const CompanyListDialog = (props, ref) => {
     setShowList(false)
   };
 
-  // 获取订单详情
-  const orderDetail = async (item) => {
-    detailRef.current.setShowDetail(true);
-    const res = await HomeApi.orderDetail(item.orderId);
-    const res1 = await HomeApi.orderTextDetail(item.orderId);
-    const data = res.data;
-    const data1 = res1.data;
-    const orderData = Object.assign({}, {orderName: data.orderName, recruitRange: data.recruitRange, orderPolicyDetail: data.orderPolicyDetail, orderTextDetail: data1});
-    setOrderMsg(orderData);
+  const orderDetail = async(item) => {
+    try{
+      const orderDetailRes = await HomeApi.orderDetail(item.orderId); //获取订单名称及订单日期；
+      const orderTextRes = await HomeApi.orderTextDetail(item.orderId); //获取订单详情；
+      if(orderDetailRes?.code !== SUCCESS_CODE && orderTextRes?.code !== SUCCESS_CODE){
+        toast.show(`${res?.msg}`, {type: 'danger'});
+        return;
+      }
+      const recruitRange = String(orderDetailRes.data.recruitRange).substring(5, 11) + String(orderDetailRes.data.recruitRange).substring(16, 21);
+      const orderData = {
+        orderName: orderDetailRes.data.orderName, 
+        orderTextDetail: orderTextRes.data,
+        recruitRange,
+      };
+      dispatch(setTitle('岗位信息'));
+      dispatch(openDialog(<OrderDetail orderData={orderData}/>));
+    }catch(err){
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
+      console.log('orderDetail -> err', err);
+    }
   };
 
   return (
@@ -89,7 +104,6 @@ const CompanyListDialog = (props, ref) => {
           </ScrollView>
         </View>
       </Dialog>
-      <CompanyDetailDialog ref={detailRef} message={orderMsg}/>
     </>
   )
 };
@@ -166,7 +180,8 @@ const styles = StyleSheet.create({
   },
   gotoDetailPress: {
     fontSize: 13, 
-    color: '#409EFF'
+    color: '#409EFF',
+    paddingHorizontal: 2
   }
 })
 

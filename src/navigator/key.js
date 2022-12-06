@@ -61,6 +61,7 @@ const NAVIGATION_KEYS = {
   //工作台（数据看板）
   DATA_STATISTICS: 'DATA_statistics', //数据统计
   HIRE_REPORT_FORM: 'hire_report_form', //招聘看板
+  DORMITORY_BED_PANEL: 'dormitory_bed_panel', //床位看板
 
   //工作台（待开发）
   RECORD_OF_WORKING: 'record_of_working', //名单-员工考勤

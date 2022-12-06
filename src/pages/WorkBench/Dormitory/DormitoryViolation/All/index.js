@@ -40,7 +40,7 @@ const All = ({
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});
-      getTypeList({...filterParams, type: ''});
+      getTypeList({...filterParams, result: ''});
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent, filterParams, index])
@@ -75,7 +75,6 @@ const All = ({
     
   const getTypeList = async(params) => {
     try{
-      setIsLoading(true);
       console.log('getTypeList -> params', params)
       const res = await DormitoryViolationApi.getViolationType(params);
       console.log('getTypeList --> res', res);
@@ -87,8 +86,6 @@ const All = ({
     }catch(err){
       console.log('err', err);
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }finally{
-      setIsLoading(false);
     }
   };
 

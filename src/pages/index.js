@@ -60,6 +60,7 @@ const NAVIGATION_PAGES_LIST = {
   //工作台（数据看板）
   DATA_STATISTICS: require('./WorkBench/OtherFunction/DATA_Statistics'), //数据统计
   HIRE_REPORT_FORM: require('./WorkBench/OtherFunction/HireReportForm'), //招聘看板
+  DORMITORY_BED_PANEL: require('./WorkBench/Dormitory/DormitoryBedPanel'), //床位看板
 
   //工作台（待开发）
   RECORD_OF_WORKING: require('./WorkBench/List/RecordOfWorking'), //名单-员工考勤

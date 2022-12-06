@@ -2,6 +2,7 @@ import React, {useState, useRef} from "react";
 import { Text, View, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useDispatch } from "react-redux";
 import { TabView } from 'react-native-tab-view';
+import { useToast } from "react-native-toast-notifications";
 
 import { closeDialog } from "../../../../../redux/features/PageDialog";
 import Leave from './Leave';
@@ -14,9 +15,11 @@ const routes = [
 
 const StayInDormitory = ({
   dormitoryInfo,
-  refresh
+  refresh,
+  canOperate = true,
 }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const leaveRef = useRef(null);
   const adjustRef = useRef(null);
@@ -26,6 +29,10 @@ const StayInDormitory = ({
   const [index, setIndex] = useState(0);
 
   const passOnPress = () => {
+    if(!canOperate){
+      toast.show('无权限', {type: 'warning'});
+      return;
+    }
     if(index === 0 && !leaveRef?.current?.selectReason.length){
       leaveRef?.current?.scrollViewRef?.current?.scrollToEnd();
       leaveRef?.current?.setReasonWrong(true);
@@ -82,7 +89,7 @@ const StayInDormitory = ({
         </View>
         <View style={styles.rightArea}>
           <TouchableOpacity style={styles.buttonArea} onPress={passOnPress}>
-            <Text style={styles.confirmText}>提交</Text>
+            <Text style={[styles.confirmText, !canOperate && {color: '#999999'}]}>提交</Text>
           </TouchableOpacity>
         </View>
       </View>

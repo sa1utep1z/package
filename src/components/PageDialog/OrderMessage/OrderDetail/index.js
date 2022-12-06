@@ -21,10 +21,10 @@ const OrderDetail = ({
   return (
     <>
       <View style={styles.totalArea}>
-        <Text style={styles.contentText}>订单日期：<Text style={styles.dateText}>{orderData.recruitRange}</Text></Text>
+        <Text style={styles.contentText}>订单日期：<Text style={styles.dateText}>{orderData.recruitRange || '无'}</Text></Text>
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.contentText}>订单名称：</Text>
-          <Text style={styles.orderName}>{orderData.orderName}</Text>
+          <Text style={styles.orderName}>{orderData.orderName || '无'}</Text>
         </View>
       </View>
       <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>

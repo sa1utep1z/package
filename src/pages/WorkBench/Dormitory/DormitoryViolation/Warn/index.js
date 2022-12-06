@@ -40,7 +40,7 @@ const Warn = ({
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});
-      getTypeList({...filterParams});
+      getTypeList({...filterParams, result: 'DORM_DISCIPLINE_RESULT_WARN'});
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent, filterParams, index])
@@ -75,7 +75,6 @@ const Warn = ({
     
   const getTypeList = async(params) => {
     try{
-      setIsLoading(true);
       console.log('getTypeList -> params', params)
       const res = await DormitoryViolationApi.getViolationType(params);
       console.log('getTypeList --> res', res);
@@ -86,8 +85,6 @@ const Warn = ({
       changeRoute && changeRoute(res.data);
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
-    }finally{
-      setIsLoading(false);
     }
   };
 

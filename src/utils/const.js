@@ -1067,14 +1067,14 @@ export const PUNISH_RESULT = [
 //房间类型；
 export const ROOM_TYPE_LIST = [
    {label: '空房间', color: '#2fe38c', value: 'emptyRoom'},
-   {label: '未住满', color: '#fa8b15', value: 'notFull'},
+   {label: '未住满', color: '#faf005', value: 'notFull'},
    {label: '已住满', color: '#ff4d50', value: 'full'},
    {label: '维修中/占用中', color: '#bbbbbb', value: 'occupying'},
 ];
 
 //房间类型对应颜色；
 export const ROOM_TYPE_COLOR = [
-  '#2fe38c', '#fa8b15', '#ff4d50', '#bbbbbb', '#bbbbbb',
+  '#2fe38c', '#faf005', '#ff4d50', '#bbbbbb', '#bbbbbb',
 ];
 
 //宿舍查房违纪字段；

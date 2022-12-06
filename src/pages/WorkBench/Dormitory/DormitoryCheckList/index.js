@@ -9,6 +9,7 @@ import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
 import CenterSelectDate from '../../../../components/List/CenterSelectDate';
 import { openListSearch } from "../../../../redux/features/listHeaderSearch";
+import { setStartDate, setEndDate } from '../../../../redux/features/RangeDateOfList';
 import NAVIGATION_KEYS from '../../../../navigator/key';
 import { deepCopy } from '../../../../utils';
 
@@ -26,10 +27,12 @@ const DormitoryCheckList = ({
   const navigation = useNavigation();
 
   useEffect(() => {
+    dispatch(openListSearch());
+    dispatch(setStartDate(''));
+    dispatch(setEndDate(''));
     navigation.setOptions({
       headerCenterArea: ({...rest}) => <HeaderCenterSearch routeParams={rest}/>
     })
-    dispatch(openListSearch());
   }, [])
 
   const [index, setIndex] = useState(0);

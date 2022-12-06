@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment";
@@ -8,7 +8,6 @@ import DormitoryListApi from "../../../../../request/Dormitory/DormitoryListApi"
 import { pageEmpty } from "../../../../Home/listComponent";
 import { SUCCESS_CODE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
-import HomeApi from '../../../../../request/HomeApi';
 import ListApi from '../../../../../request/ListApi';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import OrderDetail from "../../../../../components/PageDialog/OrderMessage/OrderDetail";
@@ -25,6 +24,8 @@ const Leave = ({
   filterParams, //顶部筛选的参数
   changeRoute, //修改路由函数
   routeParams, 
+  canOperate, //是否可以操作
+  setCanOperate, 
 }) => {
   const flatListRef = useRef(null);
   const toast = useToast();
@@ -76,6 +77,7 @@ const Leave = ({
       }
       //无下一页（第一页）
       setShowList([...res.data.content]);
+      setCanOperate && setCanOperate(res.data.canOperation); //是否有操作权限；
     }catch(err){
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
@@ -125,7 +127,7 @@ const Leave = ({
       }
       const orderData = {
         orderName: res.data.orderName, 
-        recruitRange: res.data.orderDate, 
+        recruitRange: res.data.orderDate ? moment(res.data.orderDate).format('YYYY-MM-DD') : '无', 
         orderPolicyDetail: res.data.orderPolicyDetail, 
         orderTextDetail: res.data.orderPolicyDetail
       };
@@ -141,10 +143,10 @@ const Leave = ({
     dispatch(setTitle('状态处理'));
     switch(item.status){
       case 'DORM_LIVE_IN':
-        dispatch(openDialog(<StayInDormitory dormitoryInfo={item} refresh={refresh} />));
+        dispatch(openDialog(<StayInDormitory dormitoryInfo={item} refresh={refresh} canOperate={canOperate} />));
         break;
       case 'DORM_LIVE_PENDING':
-        dispatch(openDialog(<WaitToEntry dormitoryInfo={item} refresh={refresh} />));
+        dispatch(openDialog(<WaitToEntry dormitoryInfo={item} refresh={refresh} canOperate={canOperate} />));
         break;
     }
   };

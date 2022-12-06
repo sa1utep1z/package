@@ -20,7 +20,8 @@ const initialValues = {
 
 const WaitToEntry = ({
   dormitoryInfo,
-  refresh
+  refresh,
+  canOperate = true,
 }) => {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -30,6 +31,10 @@ const WaitToEntry = ({
   const [warning, setWarning] = useState('');
 
   const onSubmit = values => {
+    if(!canOperate){
+      toast.show('无权限', {type: 'warning'});
+      return;
+    }
     if(!values.stayDate.length){
       if(dormitoryInfo.liveInType === "DORM_TEMPORARY" && !values.liveExpireDate.length){
         setWarning('请选择入住日期与临时住宿期限！');
@@ -71,6 +76,7 @@ const WaitToEntry = ({
     Linking.openURL(`tel:${dormitoryInfo.mobile}`);
   };
 
+  console.log('canOperate', canOperate);
   return (
     <Formik
       initialValues={initialValues}
@@ -187,7 +193,7 @@ const WaitToEntry = ({
               </View>
               <View style={styles.rightArea}>
                 <TouchableOpacity style={styles.buttonArea} onPress={rest.handleSubmit}>
-                  <Text style={styles.confirmText}>确定</Text>
+                  <Text style={[styles.confirmText, !canOperate && {color: '#999999'}]}>确定</Text>
                 </TouchableOpacity>
               </View>
             </View>

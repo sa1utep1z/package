@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TabView } from 'react-native-tab-view';
 import { useDispatch } from 'react-redux';
 import { Button } from '@rneui/themed';
+import { useToast } from 'react-native-toast-notifications';
 
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
@@ -26,8 +27,10 @@ const DormitoryList = ({
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();
+  const toast = useToast();
 
   const [index, setIndex] = useState(0);
+  const [canOperate, setCanOperate] = useState(false);
   const [routes, setRoutes] = useState([
     { key: 'allNums', title: '全部', number: 0 },
     { key: 'pendingNums', title: '待入住', number: 0 },
@@ -65,18 +68,24 @@ const DormitoryList = ({
     setRoutes(copyList);
   };
 
-  const createDormitory = () => navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY);
+  const createDormitory = () => {
+    if(!canOperate){
+      toast.show('无权限', {type: 'warning'});
+      return;
+    }
+    navigation.navigate(NAVIGATION_KEYS.CREATE_DORMITORY);
+  };
 
   const renderScene = ({ route }) => {
     switch(route.key){
       case 'allNums':
-        return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+        return <All index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} canOperate={canOperate} setCanOperate={setCanOperate} />
       case 'pendingNums':
-        return <Pending index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+        return <Pending index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} canOperate={canOperate} />
       case 'outNums':
-        return <Leave index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+        return <Leave index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} canOperate={canOperate} />
       case 'inNums':
-        return <Living index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} />
+        return <Living index={index} filterParams={filterParams} changeRoute={changeRoute} routeParams={params} canOperate={canOperate} />
     }
   };
 
@@ -111,6 +120,7 @@ const DormitoryList = ({
       <HeaderSearchOfDormitory 
         filterFun={filter}
         selectIndex={index}
+        canOperate={canOperate}
         filterMore
         filterMemberInfo
         filterEnterprise

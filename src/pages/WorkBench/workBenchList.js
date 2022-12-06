@@ -140,13 +140,12 @@ export const WORKBENCH_LIST = [
         iconSource: require('../../assets/images/HireReportFormIcon.png'),
         routeName: NAVIGATION_KEYS.HIRE_REPORT_FORM
       }, 
-    // {
-    //   key: 'complaint',
-    //   title: '投诉看板',
-    //   imgBackground: require('../../assets/images/green.png'),
-    //   iconSource: require('../../assets/images/ComplaintPlateIcon.png'),
-    //   routeName: NAVIGATION_KEYS.COMPLAINT_PLATE
-    // },
+    {
+      key: 'dormitoryBedPanel',
+      title: '床位看板',
+      imgBackground: require('../../assets/images/roomData.png'),
+      routeName: NAVIGATION_KEYS.DORMITORY_BED_PANEL
+    },
     //  {
     //   title: '裂变看板',
     //   imgBackground: require('../../assets/images/deepPink.png'),

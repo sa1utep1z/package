@@ -330,6 +330,13 @@ export default Navigator = () => {
           headerTitle: '房间态势'
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.DORMITORY_BED_PANEL}
+        component={NAVIGATION_PAGES.DORMITORY_BED_PANEL}
+        options={{
+          headerTitle: '床位看板'
+        }}
+      />
     </>
   );
 
