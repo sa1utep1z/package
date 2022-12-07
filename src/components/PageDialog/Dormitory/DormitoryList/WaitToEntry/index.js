@@ -76,7 +76,6 @@ const WaitToEntry = ({
     Linking.openURL(`tel:${dormitoryInfo.mobile}`);
   };
 
-  console.log('canOperate', canOperate);
   return (
     <Formik
       initialValues={initialValues}

@@ -5,7 +5,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch } from 'react-redux';
 
 import { HIRE_OVERVIEW_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, TODAY } from "../../../../../utils/const";
-import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
+// import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
+import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 
 import Tag from "./Tag";
 import FilterMoreOfOverview from "./FilterMoreOfOverview";
@@ -54,6 +55,8 @@ const DataOverview = ({
   };
 
   const filterMore = () => {
+    // dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
+    dispatch(setTitle('温馨提示'));
     dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
   };
 
@@ -89,10 +92,10 @@ const DataOverview = ({
                         <Text style={styles.dataBox_top_text}>{data.title}</Text>
                       </View>
                       <View style={styles.dataBox_center}>
-                        <Text style={styles.dataBox_center_text}>{data.num}</Text>
+                        <Text style={styles.dataBox_center_text}>{data.num}{data.type.includes('Rate') && '%'}</Text>
                       </View>
                       <View style={styles.dataBox_bottom}>
-                        <Text style={styles.dataBox_bottom_text}>{`${compareText()}${data.trendNumber > 0 ? `+${data.trendNumber}` : `${data.trendNumber}`}`}</Text>
+                        <Text style={styles.dataBox_bottom_text}>{`${compareText()}${data.trendNumber > 0 ? `+${data.trendNumber}` : `${data.trendNumber}`}`}{data.type.includes('Rate') && '%'}</Text>
                         <Entypo 
                           size={30} 
                           name={data.trendNumber === 0 ? 'minus' : data.trendNumber > 0 ? 'arrow-up' : 'arrow-down'}
@@ -115,7 +118,7 @@ const DataOverview = ({
 
 const styles = StyleSheet.create({
   totalArea: {
-    height: 581, 
+    alignSelf: 'center',
     width: 686,
     marginBottom: 30, 
     backgroundColor: '#409EFF', 
@@ -152,7 +155,7 @@ const styles = StyleSheet.create({
   },
   data: {
     width: '33.33%', 
-    height: '50%', 
+    height: 200,
     justifyContent: 'center', 
     alignItems: 'center'
   },

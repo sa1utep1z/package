@@ -58,7 +58,7 @@ const PropertyList = ({
           {propertyList.length ? <>
             {propertyList.map((property, propertyIndex) => <View style={styles.propertyArea} key={propertyIndex}>
             <Text style={[styles.propertyText, {width: 150}]}>{property.name}</Text>
-            <Text style={[styles.propertyText, {width: 120}]}>{property.num}{property.unit === 'ge' ? '个' : '台'}</Text>
+            <Text style={[styles.propertyText, {width: 120}]}>{property.num}{property.unit}</Text>
             <Text selectable style={[styles.propertyText, {flex: 1, borderRightWidth: 0}]}>{property.no || '无'}</Text>
           </View>)}
           </> : <Text style={styles.noneText}>暂无数据</Text>}

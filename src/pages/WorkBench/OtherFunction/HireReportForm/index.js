@@ -22,7 +22,6 @@ const HireReportForm = () => {
 
   const [overViewData, setOverViewData] = useState(ORIGIN_HIRE_REPORT_OVERVIEW_LIST);
   const [overViewLoading, setOverViewLoading] = useState(false);
-
   
   const [compareData, setCompareData] = useState([]);
   const [compareLoading, setCompareLoading] = useState(false);

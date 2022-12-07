@@ -31,10 +31,28 @@ const RightUnionOfNumber = ({field, form}) => (
       <MaterialIcons
         style={styles.iconArea}
         size={32}
-        color={field.value == 'tai' ? '#409EFF' : '#333333'}
+        color={field.value == 'tai' ? '#409EFF' : '#999999'}
         name={field.value == 'tai' ? 'radio-button-checked' : 'radio-button-off'}
       />
       <Text style={styles.iconText}>台</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.touchArea} onPress={() => form.setFieldValue(field.name, 'tao')}>
+      <MaterialIcons
+        style={styles.iconArea}
+        size={32}
+        color={field.value == 'tao' ? '#409EFF' : '#999999'}
+        name={field.value == 'tao' ? 'radio-button-checked' : 'radio-button-off'}
+      />
+      <Text style={styles.iconText}>套</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.touchArea} onPress={() => form.setFieldValue(field.name, 'zu')}>
+      <MaterialIcons
+        style={styles.iconArea}
+        size={32}
+        color={field.value == 'zu' ? '#409EFF' : '#999999'}
+        name={field.value == 'zu' ? 'radio-button-checked' : 'radio-button-off'}
+      />
+      <Text style={styles.iconText}>组</Text>
     </TouchableOpacity>
   </View>
 );
@@ -93,7 +111,7 @@ const AddProperty = () => {
       roomId: values.roomNum.length ? values.roomNum[0].value : '',
       name: values.property1.propertyName,
       num: values.property1.number,
-      unit: values.property1.union,
+      unit: values.property1.union === 'ge' ? '个' : values.property1.union === 'tai' ? '台' : values.property1.union === 'tao' ? '套' : '组' ,
       pic: values.property1.propertyPhotos,
       status: values.property1.propertyStatus[0].value,
       date: moment().format('YYYY-MM-DD'),
@@ -334,7 +352,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0
   },
   unionArea: {
-    width: 160, 
+    width: 320, 
     height: 60, 
     flexDirection: 'row'
   },

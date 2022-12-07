@@ -1096,3 +1096,53 @@ export const CHECK_STATUS_LIST = {
   DORM_CHECK_PENDING: '待点检',
   DORM_CHECK_OK: '已点检',
 };
+
+//床位看板；
+export const DORMITORY_BED_OVERVIEW_LIST = [
+  {
+    title: '申请住宿',
+    type: 'dormitory_apply',
+    num: 11,
+    trendNumber: 11
+  }, {
+    title: '常规住宿',
+    type: 'dormitory_normal',
+    num: 22,
+    trendNumber: 22
+  }, {
+    title: '临时住宿',
+    type: 'dormitory_temporary',
+    num: 33,
+    trendNumber: -33
+  }, {
+    title: '离宿',
+    type: 'dormitory_leave',
+    num: 44,
+    trendNumber: 44
+  }, {
+    title: '空床位数',
+    type: 'dormitory_empty',
+    num: 55,
+    trendNumber: -55
+  }, {
+    title: '当前在宿',
+    type: 'dormitory_liveIn',
+    num: 66,
+    trendNumber: 66
+  }, {
+    title: '离宿率',
+    type: 'leaveRate',
+    num: 28,
+    trendNumber: 5
+  }, {
+    title: '空置率',
+    type: 'emptyRate',
+    num: 12,
+    trendNumber: -5
+  }, {
+    title: '入住率',
+    type: 'liveInRate',
+    num: 81,
+    trendNumber: 17
+  }
+];
