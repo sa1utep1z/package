@@ -2,7 +2,7 @@ import NAVIGATION_KEYS from '../../navigator/key';
 
 export const WORKBENCH_LIST = [
   {
-    key: 'businessManage',
+    key: 'business',
     moduleName: '商务管理',
     list: [
       {
@@ -143,7 +143,7 @@ export const WORKBENCH_LIST = [
     {
       key: 'dormitoryBedPanel',
       title: '床位看板',
-      imgBackground: require('../../assets/images/roomData.png'),
+      imgBackground: require('../../assets/images/dormitoryBedPanel.png'),
       routeName: NAVIGATION_KEYS.DORMITORY_BED_PANEL
     },
     //  {

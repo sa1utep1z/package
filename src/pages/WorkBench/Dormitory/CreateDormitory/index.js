@@ -40,7 +40,7 @@ const initialValues = {
   floorNum: [],
   roomNum: [],
   bedNum: [],
-  liveInDate: moment().format('YYYY-MM-DD'),
+  liveInDate: '',
   temporaryLiving: '',
 };
 
@@ -66,6 +66,7 @@ const CreateDormitory = ({
   const [queryRestBedListLoading, setQueryRestBedListLoading] = useState(false);
 
   useEffect(()=>{
+    restForm.setFieldValue('liveInDate', moment().format('YYYY-MM-DD'));
     if(params?.type === 'fromRoom'){
       const roomMsg = params.roomMessage;
       if(roomMsg.male){
@@ -494,6 +495,8 @@ const CreateDormitory = ({
                         label="入住日期"
                         isRequire
                         labelStyle={{width: 160}}
+                        startLimit={moment().format('YYYY-MM-DD')}
+                        endLimit={moment().add(3, 'd').format('YYYY-MM-DD')}
                         component={OrderSingleDate}
                       />
                       {rest.values.dormitoryType.length ? rest.values.dormitoryType[0].value === 'DORM_TEMPORARY' && <Field

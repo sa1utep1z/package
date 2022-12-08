@@ -20,10 +20,9 @@ const WorkBench = (props) => {
   const [showList, setShowList] = useState(WORKBENCH_LIST);
 
   useEffect(() => {
-    getSeaPermission();
+    getSeaPermission(); //关于公海的筛选；
   }, [])
 
-  //第一次进来的时候获取是否展示公海;
   const getSeaPermission = async() => {
     try {
       const res = await HomeApi.SeasEnable();
@@ -41,40 +40,45 @@ const WorkBench = (props) => {
       setShowList(WORKBENCH_LIST);
     } catch (error) {
       toast.show('获取公海权限失败,请联系管理员', {type: 'danger'});
-    } finally{
-      filterShowIcons();
+    } finally {
+      filterDormitory(); //关于订单/宿舍的筛选；
     }
   };
 
-  const filterShowIcons = () => {
+  const filterDormitory = () => {
+    const copyList = deepCopy(showList);
+    const dormitoryList = copyList.filter(module => module.key === 'dormitory')[0].list;
+    const businessList = copyList.filter(module => module.key === 'business')[0].list;
     if(permission.length){
+      if(!permission.includes('menu-dormitoryManage-dailyManage-checkManage')){ //点检
+        const findOutIndex = dormitoryList.findIndex(type => type.key === 'dormitoryCheckList');
+        dormitoryList.splice(findOutIndex, 1);
+      }
+      if(!permission.includes('menu-dormitoryManage-dailyManage-disciplineManage')){ //查房
+        const findOutIndex = dormitoryList.findIndex(type => type.key === 'dormitoryViolation');
+        dormitoryList.splice(findOutIndex, 1);
+      }
+      if(!permission.includes('menu-dormitoryManage-bedDataManage-bedData')){ //态势
+        const findOutIndex = dormitoryList.findIndex(type => type.key === 'dormitoryData');
+        dormitoryList.splice(findOutIndex, 1);
+      }
       if(!permission.includes('menu-affairsManage')){
-        const filterShowList = showList.filter(module => module.key !== 'businessManage');
-        setShowList(filterShowList);
-        return;
+        const moduleIndex = copyList.findIndex(module => module.key === 'business');
+        copyList.splice(moduleIndex, 1);
       }
       if(!permission.includes('menu-affairsManage-orderManage')){
-        const copyList = deepCopy(WORKBENCH_LIST);
-        const findOutModule = copyList.find(module => module.key === 'businessManage');
-        const orderIndex = findOutModule.list.findIndex(icon => icon.key === 'orderManage');
-        findOutModule.list.splice(orderIndex, 1);
-        setShowList(copyList);
-        return;
+        const findOutIndex = businessList.findIndex(type => type.key === 'orderManage');
+        businessList.splice(findOutIndex, 1);
       }
       if(!permission.includes('menu-affairsManage-companyManage')){
-        const copyList = deepCopy(WORKBENCH_LIST);
-        const findOutModule = copyList.find(module => module.key === 'businessManage');
-        const orderIndex = findOutModule.list.findIndex(icon => icon.key === 'businessManage');
-        findOutModule.list.splice(orderIndex, 1);
-        setShowList(copyList);
-        return;
+        const findOutIndex = businessList.findIndex(type => type.key === 'businessManage');
+        businessList.splice(findOutIndex, 1);
       }
     }
+    setShowList(copyList);
   };
 
-  const gotoPage = (item) => {
-    navigation.navigate(item.routeName);
-  };
+  const gotoPage = (item) => navigation.navigate(item.routeName);
 
   return (
     <ScrollView style={styles.screen} showsVerticalScrollIndicator={false} >
@@ -85,7 +89,7 @@ const WorkBench = (props) => {
           style={index === showList.length - 1 && styles.cardStyle}
           content={
             <View style={styles.cardContent}>
-              {item?.list?.length && item.list.map((box, index) => (
+              {item?.list?.length ? item.list.map((box, index) => (
                 <TouchableOpacity key={index} style={styles.cardItem} onPress={() => gotoPage(box)}>
                   <View style={styles.imgBox}>
                     <Image style={styles.img} source={box.imgBackground}/>
@@ -100,7 +104,7 @@ const WorkBench = (props) => {
                   <Text style={styles.title}>{box.title}</Text>
                 </TouchableOpacity>
                 )
-              )}
+              ) : <Text style={{fontSize: 26, marginLeft: 40}}>无</Text>}
             </View>
           }
         />

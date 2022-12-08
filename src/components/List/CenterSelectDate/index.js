@@ -27,10 +27,8 @@ const CenterSelectDate = ({
 
   useEffect(()=>{
     getThisWeek();
-    return () => {
-      dispatch(setStartDate(moment()));
-      dispatch(setEndDate(moment()));
-    }
+    dispatch(setStartDate(moment()));
+    dispatch(setEndDate(moment()));
   },[])
 
   //检查是否选中的日期是近一月/近一周;
