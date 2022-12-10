@@ -1,5 +1,5 @@
-import React, {useState, useRef, useImperativeHandle, forwardRef} from "react";
-import { ScrollView, Text, View, TouchableOpacity, StyleSheet, Linking } from "react-native";
+import React, {useState, useRef, useEffect, useImperativeHandle, forwardRef} from "react";
+import { ScrollView, Text, View, TouchableOpacity, StyleSheet, Linking, ActivityIndicator } from "react-native";
 import { Formik, Field } from 'formik';
 import moment from 'moment';
 import { Shadow } from 'react-native-shadow-2';
@@ -7,18 +7,18 @@ import { useToast } from "react-native-toast-notifications";
 import { useDispatch } from "react-redux";
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import { DORMITORY_LEAVE_REASON } from "../../../../../../utils/const";
-import SelectTimeOfFilterMore from '../../../../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
-import DormitoryListApi from '../../../../../../request/Dormitory/DormitoryListApi';
-import { closeDialog } from "../../../../../../redux/features/PageDialog";
-import { SUCCESS_CODE } from '../../../../../../utils/const';
+import { DORMITORY_LEAVE_REASON } from "../../../utils/const";
+import SelectTimeOfFilterMore from '../../HeaderSearchOfDormitory/FilterMore/SelectTimeOfFilterMore';
+import DormitoryListApi from '../../../request/Dormitory/DormitoryListApi';
+import { closeDialog } from "../../../redux/features/PageDialog";
+import { SUCCESS_CODE } from '../../../utils/const';
 
 let restForm;
 const initialValues = {
-  leaveDate: moment().format('YYYY-MM-DD')
+  leaveDate: ''
 };
 
-const Leave = ({
+const LeaveDormitory = ({
   dormitoryInfo,
   refresh
 }, ref) => {
@@ -28,13 +28,18 @@ const Leave = ({
 
   const [selectReason, setSelectReason] = useState('');
   const [reasonWrong, setReasonWrong] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
 
-  useImperativeHandle(ref, () => {
-    return { scrollViewRef, selectReason, setReasonWrong, restForm };
-  }, [selectReason]);
+  useEffect(() => {
+    restForm.setFieldValue('leaveDate', moment().format('YYYY-MM-DD'));
+  }, [])
 
   const onSubmit = (values) => {
-    console.log('提交', values);
+    if(!selectReason){
+      scrollViewRef?.current?.scrollToEnd();
+      setReasonWrong(true);
+      return;
+    }
     const formatValue = {
       liveOutDate: values.leaveDate,
       liveOnReasonType: selectReason
@@ -44,6 +49,7 @@ const Leave = ({
 
   const leaveConfirm = async(params) => {
     try {
+      setBtnLoading(true);
       const res = await DormitoryListApi.leaveConfirm(params, dormitoryInfo.id);
       console.log('leaveConfirm --> res', res);
       if(res?.code !== SUCCESS_CODE){
@@ -56,6 +62,8 @@ const Leave = ({
     } catch (error) {
       console.log('leaveConfirm -> error', error);
       toast.show(`出现了意料之外的问题，请联系管理员处理`, { type: 'danger' });
+    } finally {
+      setBtnLoading(false);
     }
   };
 
@@ -69,6 +77,13 @@ const Leave = ({
     Linking.openURL(`tel:${dormitoryInfo.mobile}`);
   };
 
+  const rejectOnPress = () => dispatch(closeDialog());
+
+  const passOnPress = () => {
+    if(btnLoading) return;
+    restForm.handleSubmit();
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -77,7 +92,7 @@ const Leave = ({
         restForm = rest;
         return (
           <>
-            <View style={{padding: 20, paddingLeft: 30, paddingBottom: 0}}>
+            <View style={{paddingLeft: 50, paddingBottom: 0}}>
               <Text style={styles.itemText}>会员姓名：{dormitoryInfo.userName || '无'}</Text>
               <TouchableOpacity style={{flexDirection: 'row'}} onPress={callPhone}>
                 <Text selectable style={styles.itemText}>会员手机号：<Text selectable style={dormitoryInfo.mobile && styles.blueText}>{dormitoryInfo.mobile || '无'}</Text></Text>
@@ -86,7 +101,7 @@ const Leave = ({
               <Text selectable style={styles.itemText}>会员身份证号：<Text selectable style={styles.blueText}>{dormitoryInfo.idNo || '无'}</Text></Text>
             </View>
             <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-              <View style={{paddingHorizontal: 20, paddingTop: 10}}>
+              <View style={{paddingHorizontal: 40, paddingTop: 10}}>
                 <Shadow style={styles.dormitoryArea}>
                   <View style={styles.dormitoryArea_topArea}>
                     <Text style={styles.dormitoryArea_topAreaText}>住宿信息</Text>
@@ -137,7 +152,7 @@ const Leave = ({
                   </View>
                 </Shadow>
               </View>
-              <View style={{height: 55, paddingHorizontal: 20}}>
+              <View style={{height: 55, paddingHorizontal: 40}}>
                 <Field
                   name="leaveDate"
                   label="退宿日期"
@@ -149,9 +164,9 @@ const Leave = ({
                   component={SelectTimeOfFilterMore}
                 />
               </View>
-              <View style={{height: 200, margin: 20}}>
+              <View style={{height: 200, margin: 20, marginHorizontal: 40}}>
                 <Text style={{fontSize: 26, color: '#333333', marginBottom: 10}}>退宿原因：</Text>
-                <View style={[{flex: 1, borderWidth: 1, borderColor: '#EFEFEF', borderRadius: 10, flexDirection: 'row', flexWrap: 'wrap', padding: 20}, reasonWrong && {borderColor: 'red'}]}>
+                <View style={[{flex: 1, borderWidth: 1, borderColor: '#EFEFEF', borderRadius: 10, flexDirection: 'row', flexWrap: 'wrap', padding: 20, marginLeft: 10}, reasonWrong && {borderColor: 'red'}]}>
                   {reasonWrong && <Text style={{fontSize: 22, color: 'red', textAlignVertical: 'bottom', position: 'absolute', top: -35, right: 10}}>请选择退宿原因</Text>}
                   {DORMITORY_LEAVE_REASON.map((reason, reasonIndex) => {
                     const isSelected = selectReason === reason.value;
@@ -164,6 +179,19 @@ const Leave = ({
                 </View>
               </View>
             </ScrollView>
+            <View style={styles.bottomArea}>
+              <View style={styles.leftArea}>
+                <TouchableOpacity style={styles.buttonArea} onPress={rejectOnPress}>
+                  <Text style={styles.closeText}>取消</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.rightArea}>
+                <TouchableOpacity style={styles.buttonArea} onPress={passOnPress}>
+                  <Text style={[styles.confirmText, btnLoading && {color: '#999999'}]}>确认</Text>
+                  {btnLoading && <ActivityIndicator style={{position: 'absolute', right: 10, bottom: 10}} size={36} color="#999999" />}
+                </TouchableOpacity>
+              </View>
+            </View>
           </>
         )}}
     </Formik>
@@ -283,6 +311,7 @@ const styles = StyleSheet.create({
   },
   buttonArea: {
     flex: 1, 
+    flexDirection: 'row',
     justifyContent: 'center', 
     alignItems: 'center'
   },
@@ -292,7 +321,7 @@ const styles = StyleSheet.create({
   confirmText: {
     fontSize: 28, 
     color: '#409EFF'
-  },
+  }
 })
 
-export default forwardRef(Leave);
+export default forwardRef(LeaveDormitory);

@@ -1,12 +1,19 @@
 import React, { useRef, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+
 import { empty } from "../../Home/listComponent";
 import MessageApi from "../../../request/MessageApi";
 import moment from 'moment';
+import { openDialog, setTitle } from "../../../redux/features/PageDialog";
+import LeaveDormitory from '../../../components/Message/LeaveDormitory';
 
 const SystemMessage = (props) => {
   const { route: { params } } = props;
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [searchContent, setSearchContent] = useState({ pageSize: 20, pageNumber: 0, type: params.type });
   const [messageInfo, setMessageInfo] = useState([]); // 消息数据
   const [isLoading, setIsLoading] = useState(false); // 是否展开
@@ -31,7 +38,7 @@ const SystemMessage = (props) => {
   };
 
   // 标记消息已读
-  const readMessage = async (value, hasRead) => {
+  const readMessage = async (value, hasRead, item) => {
     try {
       if (!hasRead) {
         const res = await MessageApi.MessageRead(value)
@@ -41,6 +48,14 @@ const SystemMessage = (props) => {
       }
       setIsOpen(!isOpen);
       setMessageId(value);
+      if(item.redirectKey === 'liveOut'){
+        if(item.param.status === 'DORM_LIVE_OUT'){
+          toast.show('会员已退宿！', {type: 'warning'});
+          return;
+        }
+        dispatch(setTitle('退宿确认'));
+        dispatch(openDialog(<LeaveDormitory dormitoryInfo={item.param} refresh={refresh}/>));
+      }
     } catch (error) {
       toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }
@@ -65,7 +80,7 @@ const SystemMessage = (props) => {
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead)}>
+      <TouchableOpacity style={styles.contentBox} onPress={() => readMessage(item.messageId, item.hasRead, item)}>
         <Image
           style={styles.iconStyle}
           source={require('../../../assets/images/system.png')}
@@ -142,7 +157,6 @@ const styles = StyleSheet.create({
   },
   contentBox: {
     width: 686,
-    height: 130,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     margin: 30,

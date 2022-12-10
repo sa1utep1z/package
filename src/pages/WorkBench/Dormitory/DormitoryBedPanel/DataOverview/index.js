@@ -5,7 +5,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch } from 'react-redux';
 
 import { HIRE_OVERVIEW_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, TODAY } from "../../../../../utils/const";
-// import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 
 import Tag from "./Tag";
@@ -79,37 +78,41 @@ const DataOverview = ({
         <View style={styles.titleLine}></View>
         <Text style={styles.title}>数据概览</Text>
       </View>
+      {loading ? <ActivityIndicator style={styles.loading} size={40} color="#ffffff" /> : <></>}
       <View style={styles.bottomArea}>
-        <Tag tagAreaStyle={{paddingHorizontal: 20}} lastButton tagList={HIRE_OVERVIEW_TAG_LIST} filterMore={filterMore} setTime={setTime} rangeDate={rangeDate} searchOther={searchOther}/>
+        <Tag 
+          lastButton 
+          tagList={HIRE_OVERVIEW_TAG_LIST} 
+          filterMore={filterMore} 
+          setTime={setTime} 
+          rangeDate={rangeDate} 
+          searchOther={searchOther}
+        />
         <View style={styles.dataArea}>
-          {!loading ? <>
-            {data.map((data, dataIndex) => {
-              return (
-                <View key={dataIndex} style={styles.data}>
-                  <Shadow distance={15} startColor={'#f5f8fa'} endColor={'#fff'}>
-                    <View style={styles.dataBox}>
-                      <View style={styles.dataBox_top}>
-                        <Text style={styles.dataBox_top_text}>{data.title}</Text>
-                      </View>
-                      <View style={styles.dataBox_center}>
-                        <Text style={styles.dataBox_center_text}>{data.num}{data.type.includes('Rate') && '%'}</Text>
-                      </View>
-                      <View style={styles.dataBox_bottom}>
-                        <Text style={styles.dataBox_bottom_text}>{`${compareText()}${data.trendNumber > 0 ? `+${data.trendNumber}` : `${data.trendNumber}`}`}{data.type.includes('Rate') && '%'}</Text>
-                        <Entypo 
-                          size={30} 
-                          name={data.trendNumber === 0 ? 'minus' : data.trendNumber > 0 ? 'arrow-up' : 'arrow-down'}
-                          color={data.trendNumber === 0 ? '#999999' : data.trendNumber > 0 ? '#FF4040' : '#409EFF'}
-                        />
-                      </View>
+          {data.map((data, dataIndex) => {
+            return (
+              <View key={dataIndex} style={styles.data}>
+                <Shadow distance={15} startColor={'#f5f8fa'} endColor={'#fff'}>
+                  <View style={styles.dataBox}>
+                    <View style={styles.dataBox_top}>
+                      <Text style={styles.dataBox_top_text}>{data.title}</Text>
                     </View>
-                  </Shadow>
-                </View>
-              )
-            })}
-          </>: <View style={styles.loadingArea}>
-            <ActivityIndicator size={48} color="#409EFF"/>
-          </View>}
+                    <View style={styles.dataBox_center}>
+                      <Text style={styles.dataBox_center_text}>{data.num}{data.type.includes('Rate') && '%'}</Text>
+                    </View>
+                    <View style={styles.dataBox_bottom}>
+                      <Text style={styles.dataBox_bottom_text}>{`${compareText()}${data.trendNumber > 0 ? `+${data.trendNumber}` : `${data.trendNumber}`}`}{data.type.includes('Rate') && '%'}</Text>
+                      <Entypo 
+                        size={30} 
+                        name={data.trendNumber === 0 ? 'minus' : data.trendNumber > 0 ? 'arrow-up' : 'arrow-down'}
+                        color={data.trendNumber === 0 ? '#999999' : data.trendNumber > 0 ? '#FF4040' : '#409EFF'}
+                      />
+                    </View>
+                  </View>
+                </Shadow>
+              </View>
+            )
+          })}
         </View>
       </View>
     </View>
@@ -118,9 +121,7 @@ const DataOverview = ({
 
 const styles = StyleSheet.create({
   totalArea: {
-    alignSelf: 'center',
-    width: 686,
-    marginBottom: 30, 
+    margin: 20,
     backgroundColor: '#409EFF', 
     borderRadius: 10, 
     padding: 30
@@ -194,9 +195,10 @@ const styles = StyleSheet.create({
     fontSize: 22, 
     color: '#000'
   },
-  loadingArea: {
-    flex: 1, 
-    justifyContent: 'center'
+  loading: {
+    position: 'absolute', 
+    right: 30, 
+    top: 35
   }
 });
 

@@ -199,14 +199,12 @@ const styles = StyleSheet.create({
     color: '#eb00d8'
   },
   topArea: {
-    height: 100, 
     backgroundColor: '#FFFFFF', 
     borderRadius: 8, 
     marginHorizontal: 20, 
     marginBottom: 20
   },
   topArea_top: {
-    flex: 1, 
     flexDirection: 'row', 
     borderBottomWidth: 1, 
     borderColor: '#EFEFEF'
@@ -216,27 +214,30 @@ const styles = StyleSheet.create({
     borderRightWidth: 1, 
     borderColor: '#EFEFEF', 
     justifyContent: 'center', 
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: 10
   },
   topArea_top_right: {
     width: 310, 
     justifyContent: 'center', 
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: 10
   },
   topArea_bottom: {
-    flex: 1, 
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   topArea_bottom_left: {
     flex: 1, 
     justifyContent: 'center', 
     alignItems: 'center',
     borderRightWidth: 1, 
-    borderColor: '#EFEFEF'
+    borderColor: '#EFEFEF',
+    paddingVertical: 10
   },
   topArea_bottom_right: {
     width: 310, 
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingVertical: 10
   },
   topArea_bottom_right_left: {
     width: 150, 

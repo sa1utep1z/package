@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END } from '../../../../../../utils/const';
-import { closeDialog } from '../../../../../../redux/features/HireReport/HireReportDialog';
+import * as PageDialog1 from "../../../../../../redux/features/PageDialog";
 
 const FilterMoreOfOverview = ({
   rangeDate,
@@ -46,12 +46,14 @@ const FilterMoreOfOverview = ({
   };
 
   const confirmOnPress = () => {
-    dispatch(closeDialog());
+    dispatch(PageDialog1.closeDialog());
     const searchContent = {
       rangeTime
     };
     confirm(searchContent);
   };
+
+  const close = () => dispatch(PageDialog1.closeDialog());
 
   //获取时间转字符串显示
   const getRangeDate = () => {
@@ -70,47 +72,36 @@ const FilterMoreOfOverview = ({
 
   return (
     <>
-      <View style={{maxHeight: 450, paddingHorizontal: 10}}>
-        <>
-          <TouchableOpacity style={[styles.touchArea, dateRangePicker && styles.selectedTouchArea]} onPress={changeDateRangePicker}>
-            <Text style={[styles.title, dateRangePicker && styles.fontBold]}>
-              {`时间范围：${getRangeDate()}`}
-            </Text>
+      <View style={{maxHeight: 450, paddingHorizontal: 20, marginBottom: 20}}>
+        <TouchableOpacity style={[styles.touchArea, dateRangePicker && styles.selectedTouchArea]} onPress={changeDateRangePicker}>
+          <Text style={[styles.title, dateRangePicker && styles.fontBold]}>
+            {`时间范围：${getRangeDate()}`}
+          </Text>
+        </TouchableOpacity>
+        {dateRangePicker && <View style={styles.selectArea}>
+          <TouchableOpacity style={styles.selectTime} onPress={()=>showDate('start')}>
+            <AntDesign name='calendar' size={28} color='#333333'/>
+            <Text style={{marginLeft: 4, fontSize: 26}}>{rangeTime.startTime}</Text>
           </TouchableOpacity>
-          {dateRangePicker && (
-            <View style={styles.selectArea}>
-              <TouchableOpacity style={styles.selectTime} onPress={()=>showDate('start')}>
-                <AntDesign
-                  name='calendar'
-                  size={15}
-                  color='#333333'
-                />
-                <Text style={{marginLeft: 4}}>{rangeTime.startTime}</Text>
-              </TouchableOpacity>
-              <Text>至</Text>
-              <TouchableOpacity style={styles.selectTime} onPress={()=>showDate('end')}>
-                <AntDesign
-                  name='calendar' 
-                  size={15}
-                  color='#333333'
-                />
-                <Text style={{marginLeft: 4}}>{rangeTime.endTime}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {showDataPicker && <DateTimePicker 
-            value={dateTime} 
-            onChange={dateChange} 
-          />}
-        </>
+          <Text style={styles.centerText}>至</Text>
+          <TouchableOpacity style={styles.selectTime} onPress={()=>showDate('end')}>
+            <AntDesign name='calendar' size={28} color='#333333'/>
+            <Text style={{marginLeft: 4, fontSize: 26}}>{rangeTime.endTime}</Text>
+          </TouchableOpacity>
+        </View>}
+        {showDataPicker && <DateTimePicker value={dateTime} onChange={dateChange}/>}
       </View>
-      <View style={styles.bottomButtonArea}>
-        <TouchableOpacity style={styles.bottomLeft} onPress={()=>dispatch(closeDialog())}>
-          <Text style={styles.leftText}>取消</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomRight} onPress={confirmOnPress}>
-          <Text style={styles.rightText}>确认</Text>
-        </TouchableOpacity>
+      <View style={styles.bottomArea}>
+        <View style={styles.leftArea}>
+          <TouchableOpacity style={styles.buttonArea} onPress={close}>
+            <Text style={styles.closeText}>取消</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.rightArea}>
+          <TouchableOpacity style={styles.buttonArea} onPress={confirmOnPress}>
+            <Text style={styles.confirmText}>确认</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </>
   )
@@ -121,15 +112,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   touchArea: {
-    height: 40, 
-    borderWidth: 1, 
-    borderRadius: 6, 
+    height: 80, 
+    borderWidth: 2, 
+    borderColor: '#EFEFEF',
+    borderRadius: 12, 
     justifyContent: 'center', 
-    paddingHorizontal: 10, 
-    borderColor: '#EFEFEF'
+    paddingHorizontal: 20
   },
   title: {
-    fontSize: 16, 
+    fontSize: 28, 
     color: '#000'
   },
   selectedTouchArea: {
@@ -139,24 +130,27 @@ const styles = StyleSheet.create({
   },
   selectArea: {
     borderWidth: 1, 
-    borderColor: '#EFEFEF', 
+    height: 100,
+    borderColor: '#999999', 
     borderTopWidth: 0, 
-    borderBottomLeftRadius: 6, 
-    borderBottomRightRadius: 6, 
+    borderBottomLeftRadius: 12, 
+    borderBottomRightRadius: 12, 
     flexDirection: 'row', 
-    alignItems: 'center'
+    padding: 20
   },
   selectTime: {
     flex: 1, 
     borderWidth: 1, 
     borderColor: '#EFEFEF', 
-    marginHorizontal: 10, 
-    height: 30, 
     borderRadius: 6, 
     flexDirection: 'row',
     alignItems: 'center', 
-    justifyContent: 'center',
-    marginVertical: 10
+    justifyContent: 'center'
+  },
+  centerText: {
+    fontSize: 28, 
+    marginHorizontal: 10, 
+    textAlignVertical: 'center'
   },
   itemArea: {
     height: 35, 
@@ -200,36 +194,34 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 8, 
     borderBottomRightRadius: 8
   },
-  bottomButtonArea: {
-    flexDirection: 'row',
-    height: 45,
-    marginTop: 10
+  bottomArea: {
+    height: 100, 
+    flexDirection: 'row'
   },
-  bottomLeft: {
-    flex: 1,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomLeftRadius: 6,
+  leftArea: {
+    flex: 1, 
+    borderTopWidth: 1, 
+    borderRightWidth: 1, 
     borderColor: '#E3E3E3'
   },
-  leftText: {
-    fontSize: 16,
+  rightArea: {
+    flex: 1, 
+    borderTopWidth: 1, 
+    borderColor: '#E3E3E3'
+  },
+  buttonArea: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  closeText: {
+    fontSize: 28, 
     color: '#999999'
   },
-  bottomRight: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderColor: '#E3E3E3',
-    borderBottomRightRadius: 6
-  },
-  rightText: {
-    fontSize: 16,
+  confirmText: {
+    fontSize: 28, 
     color: '#409EFF'
-  }
+  },
 })
 
 export default FilterMoreOfOverview;

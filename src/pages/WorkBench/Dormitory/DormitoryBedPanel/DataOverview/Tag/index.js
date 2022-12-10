@@ -6,7 +6,6 @@ import { THIS_WEEK_START, THIS_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, TODAY
 const Tag = ({
   lastButton = false,
   tagList = [],
-  tagAreaStyle,
   filterMore,
   rangeDate,
   setTime,
@@ -42,7 +41,7 @@ const Tag = ({
 
   return (
     <>
-      <View style={[styles.tagsArea, tagAreaStyle]}>
+      <View style={styles.tagsArea}>
         <View style={{flexDirection: 'row'}}>
           {tagList.map((tag, tagIndex) => {
             const isSelected = selectTag === tag.value;
@@ -67,7 +66,10 @@ const styles = StyleSheet.create({
     height: 70, 
     flexDirection: 'row', 
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#EFEFEF',
+    paddingHorizontal: 20
   },
   tag: {
     height: 40,

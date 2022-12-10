@@ -140,6 +140,7 @@ const All = ({
   };
 
   const statusOnPress = async(item) => {
+    console.log('item', item);
     dispatch(setTitle('状态处理'));
     switch(item.status){
       case 'DORM_LIVE_IN':
