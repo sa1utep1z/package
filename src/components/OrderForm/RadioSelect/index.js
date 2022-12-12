@@ -1,8 +1,6 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ErrorMessage} from 'formik';
-import { CheckBox } from '@rneui/themed';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 /**单选*/

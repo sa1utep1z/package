@@ -239,6 +239,7 @@ const OrderInfo = ({
                     label="用工企业"
                     type="factory"
                     isRequire
+                    canSelect={type === 'create'}
                     component={SingleSelect}
                   />
                   <Field

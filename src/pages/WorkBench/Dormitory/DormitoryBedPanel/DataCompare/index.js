@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { COLOR_LIST, HIRE_DATA_COMPARE_TAB_LIST, THIS_WEEK_START, THIS_WEEK_END, LAST_WEEK_START, LAST_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, LAST_MONTH_START, LAST_MONTH_END, ORIGIN_COMPARE_STATUS_LIST } from "../../../../../utils/const";
 import { openDialog } from "../../../../../redux/features/HireReport/HireReportDialog";
 
-// import Tag from "./Tag";
+import Tag from "./Tag";
 import CompareForm from "./CompareForm";
 import FilterMoreOfCompare from "./FilterMoreOfCompare";
 
@@ -190,76 +190,75 @@ const DataCompare = ({
   };
   
   return (
-    <Shadow style={{marginBottom: 32, alignSelf: 'center'}}>
-      <View style={styles.totalArea}>
-        <View style={styles.titleArea}>
-          <View style={styles.titleLine}></View>
-          <Text style={styles.title}>数据对比</Text>
-        </View>
-        {/* <Tag 
-          tagList={HIRE_DATA_COMPARE_TAB_LIST} 
-          lastButton 
-          filterMore={filterMore} 
-          setTime={setTime} 
-          rangeDate={rangeDate} 
-          searchOther={searchOther}
-          showRangeData={showRangeData}
-          clearSearch={clearSearch} 
-        /> */}
-        <CompareForm
-          data={data}
-          rangeList={rangeList}
-          loading={loading}
-          selectedState={selectedState}
-        /> 
-        <View style={styles.bottomColorList}>
-          {rangeList.map((range, rangeNameIndex) => {
-            const rangeName = range.length ? range : `${rangeNameIndex === 0 ? `${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5)}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5)}` : `${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5)}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5)}`}`;
-            return (
-              <View key={rangeNameIndex} style={styles.colorArea}>
-                <View style={[styles.circle, {backgroundColor: `${COLOR_LIST[rangeNameIndex]}`}]}></View>
-                <Text style={{fontSize: 22, color: `${COLOR_LIST[rangeNameIndex]}`}}>{rangeName}({data.length ? data[rangeNameIndex].total[selectedState[0].value] : 0})</Text> 
-              </View>
-          )})}
-        </View>
-        <View style={styles.bottomMoreSearchArea}>
-          <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选时间：</Text>
-            <Text style={styles.moreSearchText}>{`${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5).replace(/\-/g,"/")}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5).replace(/\-/g,"/")} VS ${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5).replace(/\-/g,"/")}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5).replace(/\-/g,"/")}`}</Text>
-          </View>
-          {!!selectedState.length && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选状态：</Text>
-            <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
-          </View>}
-          {selectedWay.value && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选渠道：</Text>
-            <Text style={styles.moreSearchText}>{selectedWay.title}</Text>
-          </View>}
-          {selectedStore.storeId && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选门店：</Text>
-            <Text style={styles.moreSearchText}>{selectedStore.storeName}</Text>
-          </View>}
-          {selectedRecruiter.value && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选招聘员：</Text>
-            <Text style={styles.moreSearchText}>{selectedRecruiter.label}</Text>
-          </View>}
-          {selectedSupplier.value && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选供应商：</Text>
-            <Text style={styles.moreSearchText}>{selectedSupplier.label}</Text>
-          </View>}
-          {selectedEnterprise.value && <View style={styles.moreSearchArea}>
-            <Text style={styles.moreSearchTitle}>已选企业：</Text>
-            <Text style={styles.moreSearchText}>{selectedEnterprise.label}</Text>
-          </View>}
-        </View>
+    <View style={styles.totalArea}>
+      <View style={styles.titleArea}>
+        <View style={styles.titleLine}></View>
+        <Text style={styles.title}>同期数据对比</Text>
       </View>
-    </Shadow>
+      <Tag 
+        tagList={HIRE_DATA_COMPARE_TAB_LIST} 
+        lastButton 
+        filterMore={filterMore} 
+        setTime={setTime} 
+        rangeDate={rangeDate} 
+        searchOther={searchOther}
+        showRangeData={showRangeData}
+        clearSearch={clearSearch} 
+      />
+      <CompareForm
+        data={data}
+        rangeList={rangeList}
+        loading={loading}
+        selectedState={selectedState}
+      /> 
+      <View style={styles.bottomColorList}>
+        {rangeList.map((range, rangeNameIndex) => {
+          const rangeName = range.length ? range : `${rangeNameIndex === 0 ? `${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5)}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5)}` : `${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5)}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5)}`}`;
+          return (
+            <View key={rangeNameIndex} style={styles.colorArea}>
+              <View style={[styles.circle, {backgroundColor: `${COLOR_LIST[rangeNameIndex]}`}]}></View>
+              <Text style={{fontSize: 22, color: `${COLOR_LIST[rangeNameIndex]}`}}>{rangeName}({data.length ? data[rangeNameIndex].total[selectedState[0].value] : 0})</Text> 
+            </View>
+        )})}
+      </View>
+      <View style={styles.bottomMoreSearchArea}>
+        <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选时间：</Text>
+          <Text style={styles.moreSearchText}>{`${rangeDate.thisRange.startDate.substring(rangeDate.thisRange.startDate.length - 5).replace(/\-/g,"/")}~${rangeDate.thisRange.endDate.substring(rangeDate.thisRange.endDate.length - 5).replace(/\-/g,"/")} VS ${rangeDate.lastRange.startDate.substring(rangeDate.lastRange.startDate.length - 5).replace(/\-/g,"/")}~${rangeDate.lastRange.endDate.substring(rangeDate.lastRange.endDate.length - 5).replace(/\-/g,"/")}`}</Text>
+        </View>
+        {!!selectedState.length && <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选状态：</Text>
+          <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
+        </View>}
+        {selectedWay.value && <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选渠道：</Text>
+          <Text style={styles.moreSearchText}>{selectedWay.title}</Text>
+        </View>}
+        {selectedStore.storeId && <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选门店：</Text>
+          <Text style={styles.moreSearchText}>{selectedStore.storeName}</Text>
+        </View>}
+        {selectedRecruiter.value && <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选招聘员：</Text>
+          <Text style={styles.moreSearchText}>{selectedRecruiter.label}</Text>
+        </View>}
+        {selectedSupplier.value && <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选供应商：</Text>
+          <Text style={styles.moreSearchText}>{selectedSupplier.label}</Text>
+        </View>}
+        {selectedEnterprise.value && <View style={styles.moreSearchArea}>
+          <Text style={styles.moreSearchTitle}>已选企业：</Text>
+          <Text style={styles.moreSearchText}>{selectedEnterprise.label}</Text>
+        </View>}
+      </View>
+    </View>
   )
-}
+};
 
 const styles = StyleSheet.create({
   totalArea: {
-    width: 686,
+    marginHorizontal: 20,
+    marginBottom: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 30

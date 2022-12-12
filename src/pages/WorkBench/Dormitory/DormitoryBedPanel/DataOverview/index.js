@@ -54,7 +54,6 @@ const DataOverview = ({
   };
 
   const filterMore = () => {
-    // dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
     dispatch(setTitle('温馨提示'));
     dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
   };

@@ -1,13 +1,9 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
-import { Text, Dialog, CheckBox } from '@rneui/themed';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import { useToast } from "react-native-toast-notifications";
 
-import SearchInput from '../../SearchInput';
-import EmptyArea from '../../EmptyArea';
-import { deepCopy } from '../../../utils';
 import { openDialog, setTitle } from '../../../redux/features/PageDialog'; 
 import MyMembersApi from '../../../request/MyMembersApi';
 import TopSearchApi from '../../../request/Dormitory/TopSearchApi';
@@ -82,6 +78,7 @@ const HeaderSelectItem = ({
       dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
     }catch(error){
       console.log('getEnterpriseList->error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setLoading(false);
     }
@@ -97,6 +94,7 @@ const HeaderSelectItem = ({
       dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={buildingConfirm}/>));
     }catch(error){
       console.log('getBuildingList->error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setLoading(false);
     }
@@ -118,6 +116,7 @@ const HeaderSelectItem = ({
       dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={floorConfirm}/>));
     }catch(error){
       console.log('getFloorList->error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setLoading(false);
     }
@@ -139,6 +138,7 @@ const HeaderSelectItem = ({
       dispatch(openDialog(<SingleSelectList canSearch selectList={res.data} fieldValue={field.value} confirm={confirm}/>));
     }catch(error){
       console.log('getFloorList->error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setLoading(false);
     }
@@ -153,6 +153,7 @@ const HeaderSelectItem = ({
       dispatch(openDialog(<SingleSelectList canSearch={canSearch} selectList={arr} fieldValue={field.value} confirm={confirm}/>));
     }catch(error){
       console.log('setNormalList->error', error);
+      toast.show(`出现了意料之外的问题，请联系系统管理员处理`, { type: 'danger' });
     }finally{
       setLoading(false);
     }

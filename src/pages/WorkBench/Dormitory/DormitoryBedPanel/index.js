@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { DORMITORY_BED_OVERVIEW_LIST } from "../../../../utils/const";
 
 import DataCompare from "./DataCompare";
+import DataTrend from "./DataTrend";
 import DataOverview from "./DataOverview";
 
 const DormitoryBedPanel = () => {
@@ -50,6 +51,7 @@ const DormitoryBedPanel = () => {
         loading={overViewLoading}
         getData={getOverViewData} 
       />
+      <DataTrend />
       <DataCompare 
         data={compareData}
         loading={compareLoading}

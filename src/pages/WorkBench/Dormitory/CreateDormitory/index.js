@@ -198,7 +198,7 @@ const CreateDormitory = ({
           console.log('DORM_ROUTINE -> res', res);
           break;
         case 'DORM_TEMPORARY':
-          res = await DormitoryListApi.getTemporaryDormitoryList(memberId);
+          res = await DormitoryListApi.getTemporaryDormitoryListInCreatingDormitory(memberId);
           console.log('DORM_TEMPORARY -> res', res);
           break;
       }

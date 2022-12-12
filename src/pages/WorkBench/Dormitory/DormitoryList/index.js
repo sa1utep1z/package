@@ -121,6 +121,7 @@ const DormitoryList = ({
         filterFun={filter}
         selectIndex={index}
         canOperate={canOperate}
+        autoQueryBuilding
         filterMore
         filterMemberInfo
         filterEnterprise
