@@ -107,7 +107,8 @@ const HeaderSearchOfDormitory = ({
       return;
     };
     navigation.navigate(NAVIGATION_KEYS.BATCH_OPERATE_DORMITORY, {
-      selectIndex
+      selectIndex,
+      formValues: restForm.values,
     });
   };
 

@@ -77,6 +77,7 @@ const NAVIGATION_KEYS = {
   MINE: 'mine', //我的
   PERSONAL_CARD: 'personal_card', //对外名片
   RESET: 'reset', //重置密码
+  ABOUT_US: 'about_us', //关于我们
 
   // 消息
   MESSAGE: 'message', //消息

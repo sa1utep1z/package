@@ -47,6 +47,7 @@ const Leave = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 2) return;
     const liveInDateStart = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
     const liveInDateEnd = startDate ? moment(endDate).format('YYYY-MM-DD') : '';
     timer && clearTimeout(timer);

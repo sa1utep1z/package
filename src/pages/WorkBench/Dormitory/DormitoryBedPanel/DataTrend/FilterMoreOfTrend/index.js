@@ -52,14 +52,6 @@ const FilterMoreOfTrend = ({
     }
   };
 
-  const confirmOnPress = () => {
-    dispatch(PageDialog1.closeDialog());
-    const searchContent = {
-      rangeTime
-    };
-    confirm(searchContent);
-  };
-
   const buildingConfirm = value => {
     console.log('buildingConfirm -> value', value);
   };
@@ -91,8 +83,6 @@ const FilterMoreOfTrend = ({
     }
   };
 
-  const close = () => dispatch(PageDialog1.closeDialog());
-
   //获取时间转字符串显示
   const getRangeDate = () => {
     let rangeText = '';
@@ -106,6 +96,16 @@ const FilterMoreOfTrend = ({
       rangeText = '其他周期';
     }
     return rangeText;
+  };
+  
+  const close = () => dispatch(PageDialog1.closeDialog());
+  
+  const confirmOnPress = () => {
+    dispatch(PageDialog1.closeDialog());
+    const searchContent = {
+      rangeTime
+    };
+    confirm(searchContent);
   };
 
   return (

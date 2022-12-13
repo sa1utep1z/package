@@ -47,12 +47,15 @@ const All = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 0) return;
     const liveInDateStart = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
     const liveInDateEnd = endDate ? moment(endDate).format('YYYY-MM-DD') : '';
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
-      getList({...searchContent, ...filterParams, liveInDateStart, liveInDateEnd});
-      getTypeList({...filterParams, liveInDateStart, liveInDateEnd});
+      if(Object.keys(filterParams).length){
+        getList({...searchContent, ...filterParams, liveInDateStart, liveInDateEnd});
+        getTypeList({...filterParams, liveInDateStart, liveInDateEnd});
+      }
     }, 0)
     return () => timer && clearTimeout(timer);
   }, [searchContent, filterParams, startDate, endDate, index])
@@ -140,7 +143,6 @@ const All = ({
   };
 
   const statusOnPress = async(item) => {
-    console.log('item', item);
     dispatch(setTitle('状态处理'));
     switch(item.status){
       case 'DORM_LIVE_IN':

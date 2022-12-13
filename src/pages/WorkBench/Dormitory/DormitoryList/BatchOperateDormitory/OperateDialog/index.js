@@ -33,9 +33,9 @@ const OperateDialog = ({
         liveInDate: values.stayDate,
         liveExpireDate: selectItem === 'DORM_ROUTINE' ? '' : values.liveExpireDate,
       };
-      confirm(params);
+      confirm(selectIndex, params);
     }else{
-      confirm(values.leaveDate, selectReason);
+      confirm(selectIndex, values.leaveDate, selectReason);
     }
   };
 

@@ -5,6 +5,7 @@ import { TabView } from 'react-native-tab-view';
 import { useDispatch } from 'react-redux';
 import { Button } from '@rneui/themed';
 import { useToast } from 'react-native-toast-notifications';
+import { useIsFocused } from '@react-navigation/native';
 
 import HeaderCenterSearch from "../../../../components/Header/HeaderCenterSearch";
 import HeaderSearchOfDormitory from '../../../../components/HeaderSearchOfDormitory';
@@ -24,6 +25,8 @@ const DormitoryList = ({
     params
   }
 }) => {
+  useIsFocused(); //使该页面组件状态始终存在；
+
   const dispatch = useDispatch();
   const layout = useWindowDimensions();
   const navigation = useNavigation();

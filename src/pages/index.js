@@ -76,6 +76,7 @@ const NAVIGATION_PAGES_LIST = {
   MINE: require('./Mine'), //我的
   PERSONAL_CARD: require('./Mine/PersonalCard'), //对外名片
   RESET: require('./Mine/Reset'), //重置密码
+  ABOUT_US: require('./Mine/AboutUs'), //重置密码
 
   // 消息
   MESSAGE: require('./messages/Message'), //消息

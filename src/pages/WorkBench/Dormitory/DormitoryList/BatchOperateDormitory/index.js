@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { Button, CheckBox } from '@rneui/themed';
+import { Button } from '@rneui/themed';
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
@@ -23,13 +23,17 @@ const firstPage = {pageSize: 20, pageNumber: 0};
 const BatchOperateDormitory = ({
   route: {
     params: {
-      selectIndex
+      selectIndex,
+      formValues
     }
   }
 }) => {
   const navigation = useNavigation();
   const toast = useToast();
   const dispatch = useDispatch();
+
+  const startDate = useSelector(state => state.RangeDateOfList.startDate);
+  const endDate = useSelector(state => state.RangeDateOfList.endDate);
 
   const [selectedAll, setSelectedAll] = useState(false);
   const [searchContent, setSearchContent] = useState({status: selectIndex === 1 ? 'DORM_LIVE_PENDING' : 'DORM_LIVE_IN', ...firstPage});
@@ -49,10 +53,23 @@ const BatchOperateDormitory = ({
   useEffect(()=>{
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
-      getList(searchContent);
+      const filteredParams = {
+        companyId: formValues.enterprise.length ? formValues.enterprise[0].value : '', //企业
+        liveInType: formValues.liveType[0].value, //入住类别
+        name: searchContent.name ? searchContent.name : formValues.search || '',
+
+        liveInDateStart: startDate ? moment(startDate).format('YYYY-MM-DD') : '',
+        liveInDateEnd: endDate ? moment(endDate).format('YYYY-MM-DD') : '',
+  
+        roomBuildingId: formValues.buildingNum.length ? formValues.buildingNum[0].value : '', //宿舍楼栋id
+        roomFloorId: formValues.floorNum.length ? formValues.floorNum[0].value : '', //宿舍楼层id
+        roomId: formValues.roomNum.length ? formValues.roomNum[0].value : '', //宿舍房间id
+        roomBedId: formValues.bedNum.length ? formValues.bedNum[0].value : '', //房间床位id
+      };
+      getList({...searchContent, ...filteredParams});
     }, 0)
     return () => timer && clearTimeout(timer);
-  }, [searchContent])
+  }, [searchContent, formValues])
 
   useMemo(()=>{
     //有不选的，那CheckRadio就置否；
@@ -77,9 +94,6 @@ const BatchOperateDormitory = ({
   const filter = (values)=> {
     const filteredParams = {
       name: values.search || '',
-      roomBuildingId: values.buildingNum.length ? values.buildingNum[0].value : '', //宿舍楼栋id
-      roomFloorId: values.floorNum.length ? values.floorNum[0].value : '', //宿舍楼层id
-      roomId: values.roomNum.length ? values.roomNum[0].value : '', //宿舍房间id
     };
     setSearchContent({...searchContent, ...filteredParams});
   };
@@ -111,7 +125,7 @@ const BatchOperateDormitory = ({
     }
   };
 
-  const confirm = async(value, reason) => {
+  const confirm = async(selectIndex, value, reason) => {
     if(selectIndex === 1){
       const params = {
         ids: selectedList.map(item => item.id),
@@ -182,11 +196,18 @@ const BatchOperateDormitory = ({
     setShowList(newArr);
   };
 
-  const goBack = () => navigation.goBack();
+  const cancelButton = () => {
+    if(selectIndex === 3){
+      navigation.goBack();
+      return;
+    }
+    dispatch(setTitle('批量退宿'));
+    dispatch(openDialog(<OperateDialog selectIndex={3} confirm={confirm}/>)); //这里是修改了需求，所以之前根据selectIndex判断全部失效。。
+  }
 
   const confirmButton = () => {
     dispatch(setTitle(`批量${selectIndex === 1 ? '入住' : '退宿'}`));
-    dispatch(openDialog(<OperateDialog selectIndex={selectIndex} confirm={confirm} />));
+    dispatch(openDialog(<OperateDialog selectIndex={selectIndex} confirm={confirm}/>));
   };
 
   const pressItem = (item) => {
@@ -213,8 +234,8 @@ const BatchOperateDormitory = ({
         <Text style={{fontSize: 28, width: 140, color: '#333333', textAlign: 'center'}}>{item.userName}</Text>
         <Text style={{fontSize: 28, flex: 1, color: '#333333', textAlign: 'center'}}>{item.roomBuildingName
 }-{item.roomFloorIndex}F-{item.bedNo}</Text>
-        <Text style={{fontSize: 28, color: '#333333', width: 180, textAlign: 'center'}}>{item.liveInDate ? moment(item.liveInDate).format('YYYY/MM/DD') : '无'}</Text>
-        <MaterialIcons style={{width: 120, textAlign: 'center'}} name={isChecked ? 'radio-button-checked' : 'radio-button-off'} size={32} color={isChecked ? '#409EFF' : '#999999'} />
+        <Text style={{fontSize: 28, flex: 1, color: '#333333', textAlign: 'center'}}>{item.liveInDate ? moment(item.liveInDate).format('YYYY/MM/DD') : '无'}</Text>
+        <MaterialIcons style={{width: 80, textAlign: 'center'}} name={isChecked ? 'radio-button-checked' : 'radio-button-off'} size={32} color={isChecked ? '#409EFF' : '#999999'} />
       </TouchableOpacity>
   )};
 
@@ -230,14 +251,9 @@ const BatchOperateDormitory = ({
 
   return (
     <View style={styles.screen}>
-      <HeaderSearchOfDormitory 
-        filterFun={filter}
-        filterBuilding
-        filterFloorAndRoom
-        filterMemberInfo
-      />
+      <HeaderSearchOfDormitory filterFun={filter} filterMemberInfo/>
       <View style={styles.topArea}>
-        <Text style={styles.topText}>共<Text style={{color: '#409EFF'}}> {showList.length} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>{originData.pageNumber + 1}</Text>/{originData.totalPages} 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
+        <Text style={styles.topText}>共<Text style={{color: '#409EFF'}}> {originData.total} </Text>条数据，当前 <Text style={{color: '#409EFF', paddingHorizontal: 2}}>{originData.pageNumber + 1}</Text>/{originData.totalPages} 页，已选<Text style={{color: 'red'}}> {selectedList.length} </Text>条数据
         </Text>
         <TouchableOpacity style={styles.selectAllBtn} onPress={selectedAllOnPress}>
           <Text style={[styles.selectAllText, selectedAll && {color: '#333333', fontWeight: 'bold'}]}>全选</Text>
@@ -247,8 +263,8 @@ const BatchOperateDormitory = ({
       <View style={styles.topLine}>
         <Text style={[styles.titleText, {width: 140}]}>姓名</Text>
         <Text style={[styles.titleText, {flex: 1}]}>宿舍信息</Text>
-        <Text style={[styles.titleText, {width: 180}]}>入住日期</Text>
-        <Text style={[styles.titleText, {width: 120}]}>选择</Text>
+        <Text style={[styles.titleText, {flex: 1}]}>入住日期</Text>
+        <Text style={[styles.titleText, {width: 80}]}>选择</Text>
       </View>
       <FlatList 
         style={styles.flatListStyle}
@@ -266,10 +282,11 @@ const BatchOperateDormitory = ({
       />
       <View style={styles.buttonArea}>
         <Button
-          title="取消"
-          onPress={goBack}
+          title={selectIndex === 1 ? '退宿' : '返回'}
+          onPress={cancelButton}
           activeOpacity={1}
-          buttonStyle={styles.cancelButton}
+          disabled={selectIndex === 1 && !selectedList.length}
+          buttonStyle={[styles.cancelButton, selectIndex === 1 && {backgroundColor: '#FF4D50', borderColor: '#FF4D50'}, selectIndex === 3 && {backgroundColor: '#409EFF', borderColor: '#409EFF'}]}
           containerStyle={styles.buttonContainerStyle}
           titleStyle={styles.cancelButton_title}
         />
@@ -278,7 +295,7 @@ const BatchOperateDormitory = ({
           title={selectIndex === 1 ? '入住' : '退宿'}
           onPress={confirmButton}
           disabled={!selectedList.length}
-          buttonStyle={styles.confirmButton}
+          buttonStyle={[styles.confirmButton, selectIndex === 1 && {backgroundColor: '#409EFF', borderColor: '#409EFF'}, selectIndex === 3 && {backgroundColor: '#FF4D50', borderColor: '#FF4D50'}]}
           containerStyle={styles.buttonContainerStyle}
           titleStyle={styles.confirmButton_title}
         />
@@ -341,20 +358,18 @@ const styles = StyleSheet.create({
     paddingVertical: 20
   },
   cancelButton: {
-    borderColor: '#409EFF',
     backgroundColor: '#fff',
-    borderWidth: 1,
     borderRadius: 44,
     height: 88
   },
   confirmButton: {
-    borderColor: 'white',
+    borderColor: '#FFFFFF',
     borderRadius: 44,
     height: 88
   },
   cancelButton_title: {
     fontSize: 26, 
-    color: '#409EFF',
+    color: '#ffffff',
     letterSpacing: 5
   },
   confirmButton_title: {

@@ -140,12 +140,12 @@ export const WORKBENCH_LIST = [
         iconSource: require('../../assets/images/HireReportFormIcon.png'),
         routeName: NAVIGATION_KEYS.HIRE_REPORT_FORM
       }, 
-      {
-        key: 'dormitoryBedPanel',
-        title: '床位看板',
-        imgBackground: require('../../assets/images/dormitoryBedPanel.png'),
-        routeName: NAVIGATION_KEYS.DORMITORY_BED_PANEL
-      },
+      // {
+      //   key: 'dormitoryBedPanel',
+      //   title: '床位看板',
+      //   imgBackground: require('../../assets/images/dormitoryBedPanel.png'),
+      //   routeName: NAVIGATION_KEYS.DORMITORY_BED_PANEL
+      // },
     //  {
     //   title: '裂变看板',
     //   imgBackground: require('../../assets/images/deepPink.png'),

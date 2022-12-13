@@ -116,7 +116,7 @@ const Mine = () => {
   const listArea = [
     {iconName: 'idcard', title: '对外名片', onPress: () => navigation.navigate(NAVIGATION_KEYS.PERSONAL_CARD)},
     {iconName: 'unlock', title: '重置密码', onPress: () => showDialog('reset')},
-    {iconName: 'infocirlceo', title: '关于我们', onPress: () => toast.show(`敬请期待...`)},
+    {iconName: 'infocirlceo', title: '关于我们', onPress: () => navigation.navigate(NAVIGATION_KEYS.ABOUT_US)},
     {iconName: 'logout', title: '退出登录', onPress: () => showDialog('logout')}
   ];
 

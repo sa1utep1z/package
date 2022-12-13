@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useRef} from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useToast } from "react-native-toast-notifications";
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment";
+import { useIsFocused } from '@react-navigation/native';
 
 import DormitoryListApi from "../../../../../request/Dormitory/DormitoryListApi";
 import { pageEmpty } from "../../../../Home/listComponent";
 import { SUCCESS_CODE } from '../../../../../utils/const';
 import Footer from '../../../../../components/FlatList/Footer';
-import HomeApi from '../../../../../request/HomeApi';
 import ListApi from '../../../../../request/ListApi';
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 import OrderDetail from "../../../../../components/PageDialog/OrderMessage/OrderDetail";
@@ -31,6 +31,7 @@ const Living = ({
   const flatListRef = useRef(null);
   const toast = useToast();
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const startDate = useSelector(state => state.RangeDateOfList.startDate);
   const endDate = useSelector(state => state.RangeDateOfList.endDate);
@@ -48,6 +49,7 @@ const Living = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 3) return;
     const liveInDateStart = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
     const liveInDateEnd = startDate ? moment(endDate).format('YYYY-MM-DD') : '';
     timer && clearTimeout(timer);

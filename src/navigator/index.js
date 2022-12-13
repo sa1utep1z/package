@@ -433,6 +433,13 @@ export default Navigator = () => {
           headerTitle: '重置密码'
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION_KEYS.ABOUT_US}
+        component={NAVIGATION_PAGES.ABOUT_US}
+        options={{
+          headerTitle: '关于我们'
+        }}
+      />
     </>
   );
 
