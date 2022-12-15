@@ -42,6 +42,7 @@ const All = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 0) return;
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});

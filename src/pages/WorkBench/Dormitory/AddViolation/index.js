@@ -89,14 +89,16 @@ const AddViolation = () => {
   const addViolation = async(params) => {
     try {
       const res = await DormitoryViolationApi.addViolation(params);
-      console.log('res', res);
       if(res?.code !== SUCCESS_CODE){
         toast.show(`开罚单失败，${res?.msg}`, {type: 'danger'});
         return;
       }
-      navigation.navigate(NAVIGATION_KEYS.DORMITORY_VIOLATION, {
-        refresh: true
-      })
+      setTimeout(()=>{
+        toast.show('开罚单成功', {type: 'success'});
+        navigation.navigate(NAVIGATION_KEYS.DORMITORY_VIOLATION, {
+          refresh: true
+        })
+      },500)
     } catch (error) {
       console.log('error', error);
     }

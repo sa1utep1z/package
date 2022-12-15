@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 import { DORMITORY_BED_OVERVIEW_LIST } from "../../../../utils/const";
 
-import DataCompare from "./DataCompare";
-import DataTrend from "./DataTrend";
 import DataOverview from "./DataOverview";
+import DataTrend from "./DataTrend";
+import DataCompare from "./DataCompare";
+import DataBuildingCompare from "./DataBuildingCompare";
 
 const DormitoryBedPanel = () => {
   const scrollViewRef = useRef(null);
@@ -51,8 +52,13 @@ const DormitoryBedPanel = () => {
         loading={overViewLoading}
         getData={getOverViewData} 
       />
-      <DataTrend />
+      <DataTrend/>
       <DataCompare 
+        data={compareData}
+        loading={compareLoading}
+        getData={getCompareData}
+      />
+      <DataBuildingCompare
         data={compareData}
         loading={compareLoading}
         getData={getCompareData}

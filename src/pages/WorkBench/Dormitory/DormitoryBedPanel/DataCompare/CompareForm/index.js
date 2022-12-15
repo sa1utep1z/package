@@ -87,22 +87,8 @@ const CompareForm = ({
         <Line x1="64" y1={-30} x2="64" y2={height - 101} stroke="#999999" strokeWidth="2" />
         <Line x1="64" y1={-30} x2="55" y2={-20} stroke="#999999" strokeWidth="2" />
         <Line x1="64" y1={-30} x2="75" y2={-20} stroke="#999999" strokeWidth="2" />
-        <Text
-          x={5}
-          y={-25}
-          fontSize="22"
-          fontWeight="bold"
-          fill="#333333">
-            人数
-        </Text>
-        <Text
-          x={width - 45}
-          y={400}
-          fontSize="22"
-          fontWeight="bold"
-          fill="#333333">
-            日期
-        </Text>
+        <Text x={5} y={-25} fontSize="22" fontWeight="bold" fill="#333333">人数</Text>
+        <Text x={width - 45} y={400} fontSize="22" fontWeight="bold" fill="#333333">日期</Text>
       </Svg>
     )
   };

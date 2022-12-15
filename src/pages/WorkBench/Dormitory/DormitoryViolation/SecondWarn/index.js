@@ -37,6 +37,7 @@ const SecondWarn = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 2) return;
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});

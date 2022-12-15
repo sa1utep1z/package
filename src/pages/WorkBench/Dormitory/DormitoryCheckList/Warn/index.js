@@ -42,6 +42,7 @@ const Warn = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 1) return;
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});

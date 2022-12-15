@@ -32,11 +32,13 @@ const All = ({
 
   useEffect(() => {
     if(routeParams?.refresh){
+      console.log('进来没')
       refresh();
     }
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 0) return;
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});

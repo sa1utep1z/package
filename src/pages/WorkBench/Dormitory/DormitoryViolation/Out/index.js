@@ -37,6 +37,7 @@ const Out = ({
   }, [routeParams])
 
   useEffect(()=>{
+    if(index !== 3) return;
     timer && clearTimeout(timer);
     timer = setTimeout(()=>{
       getList({...searchContent, ...filterParams});
