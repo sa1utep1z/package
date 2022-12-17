@@ -7,6 +7,7 @@ import DataOverview from "./DataOverview";
 import DataTrend from "./DataTrend";
 import DataCompare from "./DataCompare";
 import DataBuildingCompare from "./DataBuildingCompare";
+import DataCompanyBuildingCompare from "./DataCompanyBuildingCompare";
 
 const DormitoryBedPanel = () => {
   const scrollViewRef = useRef(null);
@@ -58,11 +59,8 @@ const DormitoryBedPanel = () => {
         loading={compareLoading}
         getData={getCompareData}
       />
-      <DataBuildingCompare
-        data={compareData}
-        loading={compareLoading}
-        getData={getCompareData}
-      />
+      <DataBuildingCompare/>
+      <DataCompanyBuildingCompare/>
     </ScrollView>
   )
 };

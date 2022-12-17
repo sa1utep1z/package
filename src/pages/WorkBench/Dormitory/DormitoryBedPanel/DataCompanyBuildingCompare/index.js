@@ -1,15 +1,25 @@
-import React from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState} from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import CompareForm from "./CompareForm";
 
-const DormitoryBedPanel = () => {
+const DataCompanyBuildingCompare = () => {
+
+  const [tag, setTag] = useState('today');
 
   return (
     <View style={styles.totalArea}>
       <View style={styles.titleArea}>
         <View style={styles.titleLine}></View>
-        <Text style={styles.title}>楼栋住宿数据对比</Text>
+        <Text style={styles.title}>企业住宿数据对比</Text>
+      </View>
+      <View style={{flexDirection: 'row', marginTop: 10}}>
+        <TouchableOpacity key='today' style={[styles.tag, tag === 'today' && styles.selectedTag]} onPress={()=>setTag('today')}>
+          <Text style={[styles.tagText, tag === 'today' && styles.selectedTagText]}>今日入住</Text>
+        </TouchableOpacity>
+        <TouchableOpacity key='total' style={[styles.tag, tag === 'total' && styles.selectedTag]} onPress={()=>setTag('total')}>
+          <Text style={[styles.tagText, tag === 'total' && styles.selectedTagText]}>全部</Text>
+        </TouchableOpacity>
       </View>
       <CompareForm/>
       <View style={styles.bottomText}>
@@ -29,10 +39,6 @@ const DormitoryBedPanel = () => {
           <View style={{width: 30, height: 20, marginRight: 8, borderRadius: 5, backgroundColor: '#bbbbbb'}}></View>
           <Text style={{fontSize: 24, color: '#333333'}}>离宿</Text>
         </View>
-        <View style={{flexDirection: 'row', marginRight: 25, alignItems: 'center'}}>
-          <View style={{width: 30, height: 20, marginRight: 8, borderRadius: 5, backgroundColor: '#ff4d50'}}></View>
-          <Text style={{fontSize: 24, color: '#333333'}}>空床位</Text>
-        </View>
       </View>
       <View style={{flexDirection: 'row', marginBottom: 10}}>
         <Text style={{fontSize: 24, color: '#333333'}}>总数据：</Text>
@@ -41,7 +47,6 @@ const DormitoryBedPanel = () => {
           <Text style={{fontSize: 24, color: '#333333', marginRight: 10}}>临时住宿（<Text style={{color: '#0cbbea'}}>50</Text>）</Text>
           <Text style={{fontSize: 24, color: '#333333', marginRight: 10}}>在宿（<Text style={{color: '#160ae9'}}>350</Text>）</Text>
           <Text style={{fontSize: 24, color: '#333333', marginRight: 10}}>离宿（<Text style={{color: '#bbbbbb'}}>150</Text>）</Text>
-          <Text style={{fontSize: 24, color: '#333333', marginRight: 10}}>空床位（<Text style={{color: '#ff4d50'}}>420</Text>）</Text>
         </View>
       </View>
     </View>
@@ -74,11 +79,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   bottomText: {
-    width: '100%', 
     flexDirection: 'row', 
+    justifyContent: 'center',
     alignItems: 'center', 
     marginBottom: 20
-  }
+  },
+  tag: {
+    height: 40,
+    paddingHorizontal: 10,
+    marginRight: 30, 
+    borderRadius: 5, 
+    justifyContent: 'center', 
+    borderWidth: 2, 
+    borderColor: '#E5E5E5'
+  },
+  selectedTag: {
+    backgroundColor: '#409EFF', 
+    borderWidth: 0
+  },
+  tagText: {
+    fontSize: 26, 
+    textAlign: 'center', 
+    color: '#999999'
+  },
+  selectedTagText: {
+    color: '#fff'
+  },
 });
 
-export default DormitoryBedPanel;
+export default DataCompanyBuildingCompare;

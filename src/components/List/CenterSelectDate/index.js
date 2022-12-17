@@ -27,6 +27,7 @@ const CenterSelectDate = ({
 
   useEffect(()=>{
     getThisWeek();
+    setBtnType('');
     dispatch(setStartDate(moment()));
     dispatch(setEndDate(moment()));
   },[])
