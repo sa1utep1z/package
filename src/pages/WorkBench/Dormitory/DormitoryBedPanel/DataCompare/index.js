@@ -52,11 +52,6 @@ const DataCompare = ({
     }
   ]);
   const [selectedState, setSelectedState] = useState(ORIGIN_COMPARE_STATUS_LIST); //状态
-  const [selectedWay, setSelectedWay] = useState({}); //来源渠道
-  const [selectedEnterprise, setSelectedEnterprise] = useState({}); //企业
-  const [selectedStore, setSelectedStore] = useState({}); //门店
-  const [selectedRecruiter, setSelectedRecruiter] = useState({}); //招聘员
-  const [selectedSupplier, setSelectedSupplier] = useState({}); //供应商
 
   useEffect(() => {
     getData(searchContent);

@@ -15,7 +15,7 @@ const originRenderData = {
     }
   ],
   labels: [0, 0, 0, 0, 0, 0, 0],
-  legend: ['未选择']
+  legend: []
 };
 
 const CompareForm = ({

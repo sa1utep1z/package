@@ -1,14 +1,16 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch } from 'react-redux';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import { HIRE_OVERVIEW_TAG_LIST, THIS_WEEK_START, THIS_WEEK_END, THIS_MONTH_START, THIS_MONTH_END, TODAY } from "../../../../../utils/const";
 import { openDialog, setTitle } from "../../../../../redux/features/PageDialog";
 
 import Tag from "./Tag";
 import FilterMoreOfOverview from "./FilterMoreOfOverview";
+import DataOverviewRemark from "./DataOverviewRemark";
 
 const today = {startDate: TODAY, endDate: TODAY};
 const thisWeek = {startDate: THIS_WEEK_START, endDate: THIS_WEEK_END};
@@ -54,7 +56,7 @@ const DataOverview = ({
   };
 
   const filterMore = () => {
-    dispatch(setTitle('温馨提示'));
+    dispatch(setTitle('筛选更多'));
     dispatch(openDialog(<FilterMoreOfOverview confirm={confirm} rangeDate={rangeDate} />));
   };
 
@@ -71,11 +73,19 @@ const DataOverview = ({
     }
   };
 
+  const questionOnPress = () => {
+    dispatch(setTitle('数据说明'));
+    dispatch(openDialog(<DataOverviewRemark />));
+  };
+
   return (
     <View style={styles.totalArea}>
       <View style={styles.titleArea}>
         <View style={styles.titleLine}></View>
-        <Text style={styles.title}>数据概览</Text>
+        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={questionOnPress}>
+          <Text style={styles.title}>数据概览</Text>
+          <AntDesign name='questioncircle' size={36} color='#ffffff'/>
+        </TouchableOpacity>
       </View>
       {loading ? <ActivityIndicator style={styles.loading} size={40} color="#ffffff" /> : <></>}
       <View style={styles.bottomArea}>
@@ -141,7 +151,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36, 
     color: '#fff', 
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginRight: 10
   },
   bottomArea: {
     flex: 1, 

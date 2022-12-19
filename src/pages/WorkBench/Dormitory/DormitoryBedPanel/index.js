@@ -1,5 +1,5 @@
 import React, {useState, useRef} from "react";
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 
 import { DORMITORY_BED_OVERVIEW_LIST } from "../../../../utils/const";
 
@@ -68,6 +68,12 @@ const DormitoryBedPanel = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1
+  },
+  title: {
+    textAlign: 'center', 
+    fontSize: 36, 
+    color: '#000',
+    fontWeight: 'bold',
   }
 });
 

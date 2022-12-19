@@ -78,7 +78,7 @@ const DataTrend = ({
   };
 
   const clearSearch = () => {
-    console.log('执行清除')
+    console.log('执行清除');
   };
 
   const setTime = (range) => {
@@ -119,11 +119,7 @@ const DataTrend = ({
         searchOther={searchOther} 
         clearSearch={clearSearch} 
       />
-      <TrendForm 
-        data={trendData} 
-        loading={trendLoading} 
-        selectedState={selectedState}
-      />
+      <TrendForm data={trendData} loading={trendLoading}/>
       <View style={styles.bottomColorList}>
         {!!trendData.length && trendData.map((data, dataIndex) => (
           <View style={styles.colorArea}>
@@ -132,11 +128,29 @@ const DataTrend = ({
           </View>
         ))}
       </View>
+      <View style={{borderWidth: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 20}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={[styles.circle, {backgroundColor: `#409EFF`}]}></View>
+          <Text style={{fontSize: 22, color: `#409EFF`, marginRight: 20}}>常规住宿（20）</Text> 
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={[styles.circle, {backgroundColor: `#7640FF`}]}></View>
+          <Text style={{fontSize: 22, color: `#7640FF`, marginRight: 20}}>离宿（30）</Text> 
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={[styles.circle, {backgroundColor: `#7640FF`}]}></View>
+          <Text style={{fontSize: 22, color: `#7640FF`, marginRight: 20}}>离宿（40）</Text> 
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={[styles.circle, {backgroundColor: `#FF4348`}]}></View>
+          <Text style={{fontSize: 22, color: `#FF4348`, marginRight: 20}}>空床位数（50）</Text> 
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={[styles.circle, {backgroundColor: `#FF4348`}]}></View>
+          <Text style={{fontSize: 22, color: `#FF4348`, marginRight: 20}}>空床位数（60）</Text> 
+        </View>
+      </View>
       <View style={styles.bottomMoreSearchArea}>
-        {!!selectedState.length && <View style={styles.moreSearchArea}>
-          <Text style={styles.moreSearchTitle}>已选状态：</Text>
-          <Text style={styles.moreSearchText}>{selectedState[0].title}</Text>
-        </View>}
         <View style={styles.moreSearchArea}>
           <Text style={styles.moreSearchTitle}>已选时间：</Text>
           <Text style={styles.moreSearchText}>{`${rangeDate.startDate.replace(/\-/g,"/")} ~ ${rangeDate.endDate.replace(/\-/g,"/")}`}</Text>

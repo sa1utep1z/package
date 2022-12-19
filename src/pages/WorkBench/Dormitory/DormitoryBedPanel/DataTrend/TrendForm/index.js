@@ -5,7 +5,6 @@ import Svg, { Text, Line } from 'react-native-svg';
 import moment from "moment";
 
 import { COLOR_LIST } from "../../../../../../utils/const";
-import EmptyArea from '../../../../../../components/EmptyArea';
 
 let arrayIndex = 0;
 const originRenderData = {
@@ -16,7 +15,7 @@ const originRenderData = {
     }
   ],
   labels: [0, 0, 0, 0, 0, 0, 0],
-  legend: ['无数据']
+  legend: [],
 };
 
 const TrendForm = ({
